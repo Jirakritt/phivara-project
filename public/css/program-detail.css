@@ -1,0 +1,588 @@
+    :root{--detail-dark:#363b2f;--detail-card:#fcfaf5}
+    body{background:var(--cream);font-size:14px}
+    p,li{font-size:14px;line-height:1.85}
+    #cursorRing,.ambient-orb{display:none!important}
+    body.has-cursor,body.has-cursor a,body.has-cursor button{cursor:auto}
+    .detail-btn{min-height:46px;padding:0 25px;border:1px solid var(--gold);border-radius:999px;background:var(--gold);color:#fff;font-family:var(--sans);font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:.3s}
+    .detail-btn:hover{background:var(--olive-dark);border-color:var(--olive-dark);transform:translateY(-2px)}
+    .detail-btn.outline{background:transparent;color:var(--olive-dark);border-color:rgba(199,167,107,.55)}
+    .detail-btn.outline:hover{background:#fff;color:var(--gold);border-color:var(--gold)}
+    .program-detail-hero{padding:54px 0 72px;background:linear-gradient(135deg,#fbf8f1,#efe5d3);overflow:hidden}
+    .program-detail-hero::after{content:"PHIVARA";position:absolute;right:-28px;bottom:-58px;color:rgba(99,85,51,.04);font-family:var(--serif-en);font-size:170px;letter-spacing:.08em}
+    .detail-hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:64px;align-items:center}
+    .detail-visual{position:relative;padding:0 0 28px 28px}
+    .detail-visual::before{content:"";position:absolute;left:0;bottom:0;width:64%;height:70%;border:1px solid rgba(199,167,107,.6)}
+    .detail-visual img{position:relative;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:var(--radius-card);box-shadow:0 28px 70px rgba(55,48,36,.17)}
+    .detail-copy .eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:11px;letter-spacing:.2em;font-weight:600}
+    .detail-copy .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold)}
+    .detail-copy h1{margin:17px 0 18px;font-size:clamp(36px,4.4vw,58px);line-height:1.27;font-weight:400;letter-spacing:-.025em}
+    .detail-meta{display:grid;grid-template-columns:repeat(3,1fr);margin:28px 0 30px;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
+    .detail-meta>div{display:block;padding:18px 14px 18px 0}
+    .detail-meta div+div{padding-left:18px;border-left:1px solid var(--gold-line)}
+    .detail-meta .meta-label{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+    .detail-meta .meta-icon{display:grid;place-items:center;width:18px;height:18px;color:var(--gold-light)}
+    .detail-meta .meta-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .detail-meta .meta-copy{min-width:0}
+    .detail-meta small{display:block;margin:0;color:var(--gold);font-size:13px;letter-spacing:.08em}
+    .detail-meta strong{color:var(--ink);font-size:14px;font-weight:500}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .detail-overview{padding:86px 0;background:#fff}
+    .overview-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:86px}
+    .section-label{color:var(--gold);font-size:11px;letter-spacing:.24em;font-weight:600}
+    .overview-intro h2,.process-heading h2,.related-heading h2{margin:12px 0 20px;font-size:clamp(30px,3.8vw,44px);font-weight:400}
+    .overview-intro p{color:var(--ink-soft)}
+    .benefit-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .audience-heading{grid-column:1/-1;margin:0 0 3px;font-size:24px;font-weight:500}
+    .benefit-card{min-height:165px;padding:25px;border:1px solid var(--gold-line);background:linear-gradient(145deg,#fff,var(--detail-card));transition:.3s}
+    .benefit-card:hover{transform:translateY(-4px);box-shadow:0 16px 35px rgba(65,56,40,.08)}
+    .benefit-card .num{font-family:var(--serif-en);color:var(--gold);font-size:14px}
+    .benefit-card h3{margin:15px 0 8px;font-size:17px;font-weight:500}
+    .benefit-card p{color:var(--ink-soft);font-size:13px}
+    .audience-detail{grid-column:1/-1;padding:28px;border:1px solid var(--gold-line);background:linear-gradient(145deg,#fff,var(--detail-card));color:var(--ink-soft)}
+    .detail-includes{padding:86px 0;background:linear-gradient(135deg,#30372b,#454c3b);color:#fff}
+    .includes-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:80px}
+    .includes-copy h2{margin:12px 0 17px;color:#fff;font-size:clamp(31px,3.6vw,44px);font-weight:400}
+    .includes-copy p{color:rgba(255,255,255,.7)}
+    .includes-list{border-top:1px solid rgba(230,211,170,.28)}
+    .include-row{display:grid;grid-template-columns:50px 1fr;gap:18px;padding:20px 0;border-bottom:1px solid rgba(230,211,170,.23)}
+    .include-row span{font-family:var(--serif-en);color:var(--gold-light)}
+    .include-row h3{margin:0 0 4px;color:#fff;font-size:16px}
+    .include-row p{margin:0;color:rgba(255,255,255,.64);font-size:13px}
+    .detail-process{padding:86px 0;background:var(--cream)}
+    .process-heading{text-align:center;max-width:720px;margin:0 auto 44px}
+    .process-heading p{color:var(--ink-soft)}
+    .process-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--gold-line);background:#fff}
+    .process-step{position:relative;padding:30px 25px;min-height:205px}
+    .process-step+.process-step{border-left:1px solid var(--gold-line)}
+    .process-step b{display:grid;place-items:center;width:36px;height:36px;margin-bottom:21px;border:1px solid var(--gold);border-radius:50%;color:var(--gold);font-family:var(--serif-en);font-weight:400}
+    .process-step h3{font-size:14px;font-weight:500;margin-bottom:0}
+    .process-step p{color:var(--ink-soft);font-size:13px}
+    .process-grid.hormone-terms{grid-template-columns:1fr}
+    .process-grid.hormone-terms .process-step{display:grid;grid-template-columns:42px 1fr;gap:18px;min-height:0;padding:21px 25px;border-left:0;border-top:1px solid var(--gold-line)}
+    .process-grid.hormone-terms .process-step:first-child{border-top:0}
+    .process-grid.hormone-terms .process-step b{margin:0}
+    .contact-section{padding:78px 0;background:#fff}
+    .contact-card{display:grid;grid-template-columns:.75fr 1.25fr;gap:48px;max-width:1000px;margin:auto;padding:38px;border:1px solid var(--gold-line);background:linear-gradient(145deg,#fff,#faf6ee)}
+    .contact-card h2{margin:10px 0 14px;font-size:clamp(28px,3vw,38px)}
+    .contact-card>div>p{color:var(--ink-soft)}
+    .contact-list{display:grid;gap:12px}
+    .contact-item{display:grid;grid-template-columns:44px 1fr;gap:15px;padding:17px;border:1px solid rgba(199,167,107,.28);background:rgba(255,255,255,.72)}
+    .contact-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cream);color:var(--gold);font-size:17px}
+    .contact-item small{display:block;margin-bottom:3px;color:var(--gold);font-size:10px;letter-spacing:.12em}
+    .contact-item strong{font-size:14px;font-weight:500;line-height:1.6}
+    .contact-item a:hover{color:var(--gold)}
+    .detail-cta{padding:80px 0;background:linear-gradient(rgba(55,59,48,.91),rgba(55,59,48,.91)),url("assets/images/hero/herobg02.png") center/cover;color:#fff;text-align:center}
+    .detail-cta h2{max-width:760px;margin:10px auto 15px;color:#fff;font-size:clamp(31px,4vw,47px)}
+    .detail-cta p{max-width:660px;margin:0 auto 28px;color:rgba(255,255,255,.72)}
+    .program-modal-overlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(24,25,21,.75);backdrop-filter:blur(8px)}
+    .program-modal-overlay.open{display:flex}
+    .program-modal{position:relative;width:min(580px,100%);padding:40px;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.3)}
+    .modal-close{position:absolute;right:17px;top:10px;border:0;background:none;color:var(--ink-soft);font-size:28px;cursor:pointer}
+    .program-modal h3{margin:10px 0 8px;font-size:27px}
+    .program-modal>p{color:var(--ink-soft)}
+    .program-modal form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+    .program-modal label{font-size:11px;color:var(--ink-soft)}
+    .program-modal label.full{grid-column:1/-1}
+    .program-modal input,.program-modal select,.program-modal textarea{width:100%;margin-top:6px;padding:12px;border:1px solid var(--gold-line);background:#fff;font-family:var(--sans)}
+    .program-modal .detail-btn{grid-column:1/-1;border:0}
+    .form-success{display:none;padding:28px 0;text-align:center}
+    @media(max-width:980px){.detail-hero-grid,.overview-grid,.includes-grid,.contact-card{grid-template-columns:1fr;gap:40px}.detail-visual{max-width:680px}.process-grid{grid-template-columns:1fr 1fr}.process-step:nth-child(3){border-left:0;border-top:1px solid var(--gold-line)}.process-step:nth-child(4){border-top:1px solid var(--gold-line)}}
+    @media(max-width:700px){.program-detail-hero{padding:35px 0 54px}.detail-hero-grid{gap:34px}.detail-visual{padding:0 0 18px 18px}.detail-copy h1{font-size:34px}.detail-meta{grid-template-columns:1fr}.detail-meta div+div{padding-left:0;border-left:0;border-top:1px solid var(--gold-line)}.benefit-list,.process-grid{grid-template-columns:1fr}.process-step+.process-step,.process-step:nth-child(3){border-left:0;border-top:1px solid var(--gold-line)}.contact-card{padding:24px}.program-modal{padding:34px 22px}.program-modal form{grid-template-columns:1fr}.program-modal label.full,.program-modal .detail-btn{grid-column:auto}}
+
+    /* 2026 Medical Editorial Redesign */
+    .program-detail-hero{padding:70px 0 76px;background:linear-gradient(135deg,#3f4734,#555c46);isolation:isolate}
+    .program-detail-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 14% 16%,rgba(199,167,107,.16),transparent 30%),linear-gradient(115deg,transparent 0 68%,rgba(255,255,255,.025) 68% 69%,transparent 69%)}
+    .program-detail-hero::after{content:"WELLNESS";right:-35px;bottom:-45px;color:rgba(255,255,255,.028);font-size:148px;font-weight:500}
+    .detail-hero-grid{grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:74px}
+    .detail-visual{order:2;padding:0}
+    .detail-visual::before{display:none}
+    .detail-visual::after{display:none}
+    .visual-price-tag{position:absolute;z-index:3;right:18px;bottom:-25px;display:grid;grid-template-columns:auto auto;grid-template-areas:"label label" "price unit";align-items:end;column-gap:3px;min-width:210px;padding:17px 23px 18px 26px;overflow:hidden;border:0;border-radius:3px 18px 3px 18px;background:linear-gradient(135deg,#fff5dd 0%,#ead09b 48%,#c69b51 100%);color:#352d20;font-family:"Lora",Georgia,serif;font-style:normal;box-shadow:0 18px 42px rgba(7,12,9,.3),0 4px 12px rgba(7,12,9,.2),inset 0 1px 0 rgba(255,255,255,.72);animation:priceFloat 3.4s ease-in-out infinite}
+    .visual-price-tag::before{content:"";position:absolute;inset:0 auto 0 0;display:block;width:5px;background:linear-gradient(180deg,#6d552e,#a77e3f);box-shadow:1px 0 0 rgba(255,255,255,.3)}
+    .visual-price-tag::after{content:"";position:absolute;top:-45%;bottom:-45%;left:-55%;width:34%;display:block;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-18deg);animation:priceShimmer 3.8s ease-in-out infinite;pointer-events:none}
+    @keyframes priceShimmer{0%,55%{left:-55%}82%,100%{left:125%}}
+    @keyframes priceFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @media(prefers-reduced-motion:reduce){.visual-price-tag{animation:none}.visual-price-tag::after{animation:none;display:none}}
+    .visual-price-tag small{grid-area:label;margin-bottom:4px;color:#765c31;font-size:11px;font-weight:600;line-height:1;letter-spacing:.18em;opacity:.9}
+    .visual-price-tag strong{grid-area:price;color:#2f291f;font-family:"Lora",Georgia,serif;font-size:30px;font-weight:500;line-height:.95;letter-spacing:-.035em}
+    .visual-price-tag span{grid-area:unit;padding-bottom:1px;color:#644d29;font-family:"Sukhumvit Set","Prompt",sans-serif;font-size:13px;font-weight:600;line-height:1;letter-spacing:.04em}
+    .detail-visual img{border:1px solid rgba(230,211,170,.45);border-radius:var(--radius-card);box-shadow:0 35px 85px rgba(12,15,11,.36)}
+    .detail-copy{order:1;padding:8px 0}
+    .detail-copy .eyebrow{gap:14px;color:var(--gold-light);font-family:var(--serif-en);font-size:10px;font-weight:500;letter-spacing:.24em}
+    .detail-copy .eyebrow::before{width:38px;background:var(--gold-light)}
+    .detail-copy h1{max-width:590px;margin:24px 0 34px;color:#fff;font-size:clamp(34px,3.55vw,47px);line-height:1.24;font-weight:300;letter-spacing:-.02em}
+    .detail-meta{display:grid;grid-template-columns:1.08fr .92fr 1fr;gap:0;margin:0 0 34px;border:0;border-top:1px solid rgba(230,211,170,.28);border-bottom:1px solid rgba(230,211,170,.18);border-radius:0;background:transparent;overflow:visible}
+    .detail-meta>div{position:relative;padding:18px 18px 19px 0}
+    .detail-meta div+div{padding-left:20px;border-left:1px solid rgba(230,211,170,.16)}
+    .detail-meta .meta-label{gap:8px;margin-bottom:8px}
+    .detail-meta .meta-icon{width:22px;height:22px;border:1px solid rgba(230,211,170,.28);border-radius:50%;color:var(--gold-light)}
+    .detail-meta .meta-icon svg{width:12px;height:12px;stroke-width:1.6}
+    .detail-meta small{color:rgba(230,211,170,.82);font-size:11px;font-weight:400;letter-spacing:.1em}
+    .detail-meta strong{display:block;padding-left:30px;color:#fff;font-size:14px;font-weight:400;line-height:1.55}
+    .hero-actions{gap:10px}
+    .detail-copy .detail-btn{min-height:48px;padding:0 24px;border-radius:999px;background:var(--gold-light);border-color:var(--gold-light);color:var(--detail-dark);box-shadow:none}
+    .detail-copy .detail-btn:hover{background:#fff;border-color:#fff}
+    .detail-copy .detail-btn.outline{background:transparent;border-color:rgba(255,255,255,.26);border-radius:999px;color:#fff}
+    .detail-copy .detail-btn.outline:hover{background:rgba(255,255,255,.09)}
+
+    .detail-overview{padding:102px 0;background:#fbfaf7}
+    .overview-grid{grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr);gap:96px;align-items:start}
+    .overview-intro{position:sticky;top:105px}
+    .section-label{display:inline-flex;align-items:center;gap:10px;color:#a58249}
+    .section-label::before{content:"";width:22px;height:1px;background:currentColor}
+    .overview-intro h2{margin:15px 0 22px;font-size:clamp(38px,4vw,52px)}
+    .overview-intro p{font-size:15px;line-height:2}
+    .benefit-list{gap:16px}
+    .audience-heading{padding-bottom:15px;border-bottom:1px solid var(--gold-line);font-size:28px}
+    .audience-detail{padding:32px;border:0;border-radius:18px;background:#f0eadf;color:#544c41;font-size:15px;line-height:2;box-shadow:inset 0 0 0 1px rgba(199,167,107,.22)}
+    .benefit-card{min-height:190px;padding:28px;border:0;border-radius:18px;background:#fff;box-shadow:0 14px 38px rgba(58,50,38,.06)}
+    .benefit-card .num{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#f2ece1}
+    .benefit-card h3{margin-top:20px;font-size:18px}
+
+    .detail-includes{padding:72px 0;background:#eee8dd;color:var(--ink)}
+    .includes-grid{grid-template-columns:280px minmax(0,1fr);gap:52px;align-items:start}
+    .includes-copy{position:sticky;top:105px}
+    .includes-copy h2{margin-bottom:12px;color:var(--ink);font-size:clamp(34px,3.5vw,44px)}
+    .includes-copy p{color:var(--ink-soft);font-size:13px;line-height:1.7}
+    .includes-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0}
+    .include-row{grid-template-columns:28px minmax(0,1fr);gap:9px;min-height:0;padding:13px 12px;border:1px solid rgba(151,123,73,.16);border-radius:10px;background:rgba(255,255,255,.72)}
+    .include-row span{display:grid;place-items:center;width:26px;height:26px;padding:0;border:1px solid var(--gold);border-radius:50%;background:rgba(199,167,107,.14);color:#8d6b32;font-family:var(--serif-en);font-size:9px;font-weight:600;letter-spacing:0}
+    .include-row h3{margin:1px 0 3px;color:var(--ink);font-size:12.5px;line-height:1.4}
+    .include-row p{color:var(--ink-soft);font-size:14px;line-height:1.45}
+
+    .detail-process{padding:72px 0;background:#fff}
+    .process-heading{margin-bottom:28px}
+    .process-heading h2{margin-bottom:10px;font-size:clamp(34px,3.5vw,44px)}
+    .process-heading p{font-size:13px}
+    .process-grid{gap:14px;border:0;background:transparent}
+    .process-step,.process-grid.hormone-terms .process-step{border:1px solid rgba(199,167,107,.25);border-radius:var(--radius-card);background:#fbfaf7}
+    .process-step+.process-step,.process-step:nth-child(3),.process-step:nth-child(4),.process-grid.hormone-terms .process-step,.process-grid.hormone-terms .process-step:first-child{border:1px solid rgba(199,167,107,.25)}
+    .process-grid.hormone-terms{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .process-grid.hormone-terms .process-step{grid-template-columns:30px 1fr;gap:11px;min-height:0;padding:15px 16px;border-radius:10px}
+    .process-grid.hormone-terms .process-step:last-child{grid-column:1/-1;min-height:0}
+    .process-step b{flex:0 0 auto;background:#fff}
+    .process-grid.hormone-terms .process-step b{width:28px;height:28px;margin:0;font-size:11px}
+    .process-grid.hormone-terms .process-step p{font-size:14px;line-height:1.55}
+
+    .contact-section{padding:96px 0;background:#f3eee5}
+    .contact-card{max-width:1120px;padding:50px;border:0;border-radius:24px;background:var(--detail-dark);box-shadow:0 28px 65px rgba(33,34,29,.16)}
+    .contact-card h2{color:#fff;font-size:clamp(34px,3.5vw,46px)}
+    .contact-card>div>p{color:rgba(255,255,255,.66)}
+    .contact-list{gap:10px}
+    .contact-item{border-color:rgba(230,211,170,.18);border-radius:12px;background:rgba(255,255,255,.055)}
+    .contact-icon{background:rgba(230,211,170,.12);color:var(--gold-light)}
+    .contact-item small{color:var(--gold-light)}
+    .contact-item strong{color:#fff}
+
+    .detail-cta{padding:98px 0;background:#c9ab76}
+    .detail-cta .section-label{color:var(--detail-dark)}
+    .detail-cta h2{color:var(--detail-dark);font-size:clamp(38px,4vw,54px)}
+    .detail-cta p{color:rgba(54,59,47,.75)}
+    .detail-cta .detail-btn{background:var(--detail-dark);border-color:var(--detail-dark);color:#fff}
+    .detail-cta .detail-btn:hover{background:#fff;border-color:#fff;color:var(--detail-dark)}
+
+    @media(max-width:980px){
+      .detail-hero-grid{grid-template-columns:1fr;gap:48px}
+      .detail-visual{order:1;max-width:720px}
+      .detail-copy{order:2}
+      .overview-intro,.includes-copy{position:static}
+      .overview-grid,.includes-grid,.contact-card{grid-template-columns:1fr;gap:44px}
+      .includes-list{grid-template-columns:1fr 1fr}
+      .process-grid.hormone-terms{grid-template-columns:1fr}
+      .process-grid.hormone-terms .process-step:last-child{grid-column:auto}
+    }
+    @media(max-width:700px){
+      .program-detail-hero{padding:42px 0 58px}
+      .visual-price-tag{right:10px;bottom:-20px;min-width:184px;padding:14px 18px 15px 22px}
+      .visual-price-tag strong{font-size:30px}
+      .detail-copy h1{font-size:30px}
+      .detail-meta{grid-template-columns:1fr;border-radius:0}
+      .detail-meta>div{padding:15px 0}
+      .detail-meta div+div{padding-left:0;border-left:0;border-top:1px solid rgba(230,211,170,.14)}
+      .detail-overview,.contact-section,.detail-cta{padding:72px 0}
+      .detail-includes,.detail-process{padding:54px 0}
+      .benefit-list,.includes-list{grid-template-columns:1fr}
+      .benefit-card{min-height:0}
+      .include-row{min-height:0}
+      .contact-card{padding:30px 22px;border-radius:18px}
+      .contact-item{grid-template-columns:38px 1fr;padding:15px}
+    }
+
+    /* Compact package information layout */
+    .detail-overview{padding:58px 0}
+    .overview-grid{grid-template-columns:280px minmax(0,1fr);gap:42px}
+    .overview-intro{position:static;padding:26px 0}
+    .overview-intro h2{margin:12px 0 14px;font-size:clamp(32px,3.4vw,42px)}
+    .overview-intro p{font-size:13.5px;line-height:1.75}
+    .benefit-list{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:15px;overflow:visible}
+    .program-context{grid-column:1/-1;margin:0;padding:24px 26px;border:1px solid rgba(199,167,107,.3);border-radius:var(--radius-card);background:#fff;box-shadow:0 10px 28px rgba(58,50,38,.04)}
+    .benefit-list h3{margin:0!important;padding:0 0 10px!important;border-bottom:1px solid var(--gold-line);color:var(--ink)!important;font-size:20px!important;font-weight:600;letter-spacing:0}
+    .benefit-list p{margin:0;color:var(--ink);font-size:14px;line-height:1.7}
+    .program-context p{padding-top:10px}
+    .program-context p+p{padding-top:12px}
+    .benefit-list h3.audience-heading{grid-column:1/-1;margin:12px 0 0!important;padding:20px 24px 10px!important;border:1px solid rgba(199,167,107,.3);border-bottom:0;border-radius:var(--radius-card) var(--radius-card) 0 0;background:#fff}
+    .benefit-list h3.audience-heading::after{content:"";display:block;margin-top:10px;border-bottom:1px solid var(--gold-line)}
+    .audience-detail{grid-column:1/-1;margin:0;padding:8px 24px 22px;border:1px solid rgba(199,167,107,.3);border-top:0;border-radius:0 0 var(--radius-card) var(--radius-card);background:#fff;box-shadow:0 10px 28px rgba(58,50,38,.04);color:var(--ink);font-size:15px;line-height:1.75}
+    .benefit-card{min-height:0;margin:0;padding:24px 30px;border-top:1px solid rgba(199,167,107,.2);border-right:0;border-bottom:0;border-left:0;border-radius:0;box-shadow:none}
+    .benefit-card:nth-of-type(even){border-left:1px solid rgba(199,167,107,.2)}
+
+    .detail-includes{padding:52px 0}
+    .includes-grid{grid-template-columns:280px minmax(0,1fr);gap:42px}
+    .includes-copy{position:static;padding-top:5px}
+    .includes-copy h2{font-size:clamp(30px,3.2vw,39px)}
+    .includes-copy p{font-size:12.5px;line-height:1.6}
+    .includes-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+    .include-row{padding:11px 10px}
+
+    .detail-process{padding:52px 0}
+    .detail-process>.wrap{display:grid;grid-template-columns:280px minmax(0,1fr);gap:42px;align-items:start}
+    .process-heading{margin:0;text-align:left}
+    .process-heading h2{margin:11px 0 10px;font-size:clamp(30px,3.2vw,39px)}
+    .process-heading p{font-size:12.5px;line-height:1.6}
+    .process-grid.hormone-terms{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .process-grid.hormone-terms .process-step{padding:13px 14px}
+    .process-grid.hormone-terms .process-step:last-child{grid-column:auto}
+
+    @media(max-width:980px){
+      .overview-grid,.includes-grid,.detail-process>.wrap{grid-template-columns:1fr;gap:24px}
+      .overview-intro{padding:0}
+      .includes-copy{padding:0}
+      .includes-copy p,.process-heading p{max-width:650px}
+      .includes-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .process-grid.hormone-terms{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:700px){
+      .detail-overview,.detail-includes,.detail-process{padding:42px 0}
+      .overview-grid,.includes-grid,.detail-process>.wrap{gap:20px}
+      .includes-list,.process-grid.hormone-terms{grid-template-columns:1fr}
+      .process-grid.hormone-terms .process-step:last-child{grid-column:auto}
+      .program-context{padding:20px}
+      .benefit-list h3.audience-heading{margin-top:10px!important;padding:18px 20px 9px!important}
+      .audience-detail{padding:7px 20px 20px}
+      .benefit-card,.benefit-card:nth-of-type(even){padding:20px;border-left:0}
+    }
+
+    /* Readability adjustment */
+    .detail-overview p,
+    .detail-includes p,
+    .detail-process p{font-size:14px;line-height:1.65}
+    .detail-overview span,
+    .detail-includes span,
+    .detail-process span{font-size:12px}
+    .include-row h3{font-size:14px}
+    #packageDescription,.detail-process p{font-size:14px}
+    .detail-includes p{font-size:14px}
+    .detail-includes .includes-copy p{font-size:14px}
+    .section-label{font-size:12px!important}
+    .detail-btn.booking-trigger{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--detail-dark)!important}
+    .detail-btn.booking-trigger:hover{background:var(--detail-dark)!important;border-color:var(--detail-dark)!important;color:#fff!important}
+    .desktop-title-break{display:block}
+    .mobile-title-space{display:none}
+    @media(max-width:980px){
+      .desktop-title-break{display:none}
+      .mobile-title-space{display:inline}
+    }
+
+    /* Compact contact directory */
+    .contact-section{padding:38px 0;background:var(--cream-deep)}
+    .contact-card{display:block;max-width:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+    .contact-card>div:first-child{
+      display:block;
+      margin:0 0 14px;
+      padding:0 0 14px;
+      border:0;
+      border-bottom:1px solid var(--gold-line);
+      text-align:left;
+    }
+    .contact-section .section-label{color:#8d6b32}
+    .contact-card h2{margin:6px 0 0;color:var(--ink);font-size:clamp(27px,2.7vw,35px)}
+    .contact-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+    .contact-item{
+      display:grid;
+      grid-template-columns:32px minmax(0,1fr);
+      gap:11px;
+      align-items:center;
+      min-height:76px;
+      padding:12px 14px;
+      border:1px solid rgba(151,123,73,.2);
+      border-radius:8px;
+      background:rgba(255,255,255,.52);
+      text-align:left;
+      box-shadow:none;
+    }
+    .contact-item:first-child{border-left:1px solid rgba(151,123,73,.2)}
+    .contact-item>div{display:block;min-width:0}
+    .contact-icon{width:30px;height:30px;border:1px solid rgba(151,123,73,.28);border-radius:50%;background:rgba(199,167,107,.13);color:#765a32;font-size:14px}
+    .contact-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .contact-item small{margin:0 0 2px;color:#87683b;font-size:10px;font-weight:600;letter-spacing:.08em}
+    .contact-item strong{color:var(--ink);font-size:13px;font-weight:400;line-height:1.45}
+    .contact-item a{color:var(--ink);text-decoration-color:rgba(118,90,50,.36);text-underline-offset:2px}
+    .contact-item a:hover{color:#765a32}
+    @media(max-width:700px){
+      .contact-section{padding:32px 0}
+      .contact-list{grid-template-columns:1fr}
+      .contact-item{min-height:0;padding:11px 13px}
+    }
+
+    p{font-size:14px}
+
+    /* Checkup list table */
+    .detail-overview .overview-grid,
+    .detail-includes .includes-grid,
+    .detail-process>.wrap{display:block}
+    .detail-overview .overview-intro,
+    .detail-includes .includes-copy,
+    .detail-process .process-heading{max-width:760px;margin:0 0 24px;padding:0}
+    .detail-overview .overview-intro h2,
+    .detail-includes .includes-copy h2,
+    .detail-process .process-heading h2{margin-bottom:8px}
+    .detail-overview .benefit-list,
+    .detail-includes .includes-list,
+    .detail-process .process-grid{width:100%}
+    .includes-list{display:block;overflow:hidden;border:1px solid rgba(151,123,73,.22);border-radius:10px;background:rgba(255,255,255,.8);box-shadow:0 10px 28px rgba(58,50,38,.04)}
+    .checkup-table{display:block;width:100%;border-collapse:collapse}
+    .checkup-table thead,.checkup-table thead tr,.checkup-table th{display:block;width:100%}
+    .checkup-table th{padding:11px 15px;border-bottom:1px solid rgba(151,123,73,.28);background:#ded3c1;color:#5f513b;font-size:11px;font-weight:600;letter-spacing:.08em;text-align:left}
+    .checkup-table tbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:rgba(151,123,73,.17)}
+    .checkup-table tbody tr,
+    .checkup-table tbody tr:nth-child(odd),
+    .checkup-table tbody tr:last-child,
+    .checkup-table tbody tr:nth-last-child(2):nth-child(odd){display:block;min-width:0;border:0;background:rgba(255,255,255,.82);transition:background-color .2s ease}
+    .checkup-table tbody tr:hover{background:#fff}
+    .checkup-table td{display:flex;align-items:flex-start;gap:8px;width:100%;min-height:68px;padding:10px 12px;color:var(--ink);font-size:13px;line-height:1.4;vertical-align:top}
+    .checkup-table .checkup-number{display:block;flex:0 0 21px;width:21px;padding-top:1px;color:#8d7449;font-family:var(--sans);font-size:11px;font-weight:400;line-height:1.4}
+    .checkup-table .checkup-copy{min-width:0}
+    .checkup-table .checkup-name{display:block;min-width:0;font-weight:500}
+    .checkup-table .checkup-description{display:block;margin-top:2px;color:var(--ink-soft);font-size:11.5px;line-height:1.4}
+    @media(max-width:980px){
+      .checkup-table tbody{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:700px){
+      .includes-list{border-radius:10px}
+      .checkup-table tbody{grid-template-columns:1fr}
+      .checkup-table td{min-height:0;padding:10px 12px}
+    }
+
+    /* Compact unified information sections */
+    .detail-overview,
+    .detail-includes,
+    .detail-process{padding:38px 0}
+    main section section{padding:0}
+    .detail-overview .overview-intro,
+    .detail-includes .includes-copy,
+    .detail-process .process-heading{
+      display:block;
+      max-width:none;
+      margin:0 0 18px;
+      padding:0 0 17px;
+      border-bottom:1px solid var(--gold-line);
+    }
+    .detail-overview .overview-intro .section-label,
+    .detail-includes .includes-copy .section-label,
+    .detail-process .process-heading .section-label{grid-area:label;align-self:start}
+    .detail-overview .overview-intro h2,
+    .detail-includes .includes-copy h2,
+    .detail-process .process-heading h2{
+      margin:6px 0 0;
+      font-size:clamp(27px,2.7vw,35px);
+      line-height:1.25;
+    }
+
+    .detail-overview .benefit-list{
+      display:block;
+    }
+    .program-description{padding:0 0 16px}
+    .detail-overview .program-description h3,
+    .detail-overview .program-audience-card h3{
+      margin:0 0 8px!important;
+      padding:0!important;
+      border:0;
+      color:var(--ink)!important;
+      font-size:18px!important;
+      line-height:1.35;
+    }
+    .detail-overview .program-description p{
+      margin:0;
+      padding:0;
+      color:var(--ink-soft);
+      font-size:14px;
+      line-height:1.65;
+    }
+    .detail-overview .program-description p+p{margin-top:10px}
+    .detail-overview .program-description strong{
+      color:#8a672e;
+      font-weight:600;
+    }
+    .detail-overview .program-description.pv02-description strong{
+      color:inherit;
+    }
+    .pv02-description .hormone-intro{
+      max-width:900px;
+      font-size:14px;
+      line-height:1.75;
+    }
+    .pv02-description .hormone-text{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:0 24px;
+      margin-top:14px;
+      border-top:1px solid rgba(38,35,29,.14);
+    }
+    .pv02-description .hormone-step{
+      display:grid;
+      grid-template-columns:28px minmax(0,1fr);
+      gap:10px;
+      padding:13px 0;
+      border-bottom:1px solid rgba(38,35,29,.14);
+    }
+    .pv02-description .hormone-step>b{
+      padding-top:1px;
+      color:#98743b;
+      font-size:14px;
+      font-weight:500;
+      line-height:1.5;
+    }
+    .pv02-description .hormone-step p{
+      margin:0!important;
+      padding:0;
+    }
+    .pv02-description .hormone-text strong{
+      display:block;
+      margin-bottom:4px;
+      font-size:15px;
+      font-weight:600;
+    }
+    .gender-checkup-list{
+      overflow:visible;
+      border:0;
+      background:transparent;
+      box-shadow:none;
+    }
+    .gender-checkup-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .gender-checkup-group{
+      overflow:hidden;
+      border:1px solid rgba(151,123,73,.22);
+      border-radius:10px;
+      background:rgba(255,255,255,.8);
+    }
+    .gender-checkup-group h3{
+      margin:0;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(151,123,73,.28);
+      background:#ded3c1;
+      color:#5f513b;
+      font-size:15px;
+      font-weight:600;
+    }
+    .gender-checkup-group .checkup-table tbody{grid-template-columns:1fr}
+    .program-card-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .program-audience-card{
+      padding:17px 18px;
+      border:1px solid rgba(199,167,107,.25);
+      border-radius:10px;
+      background:#fff;
+    }
+    .diamond-list{
+      display:grid;
+      gap:5px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .diamond-list li{
+      position:relative;
+      margin:0;
+      padding-left:17px;
+      color:var(--ink-soft);
+      font-size:14px;
+      line-height:1.55;
+    }
+    .diamond-list li::before{
+      content:"◆";
+      position:absolute;
+      top:.12em;
+      left:0;
+      color:var(--gold);
+      font-size:8px;
+    }
+
+    .detail-includes .includes-list{border-radius:10px;box-shadow:none}
+    .detail-includes .checkup-table th{padding:9px 12px;font-size:12px}
+    .detail-includes .checkup-table td{min-height:0;padding:8px 10px;gap:7px}
+    .detail-includes .checkup-table .checkup-number{flex-basis:22px;width:22px;font-size:12px}
+    .detail-includes .checkup-table .checkup-name{font-size:14px;line-height:1.4}
+    .detail-includes .checkup-table .checkup-description{margin-top:2px;font-size:12.5px;line-height:1.4}
+
+    .detail-process .process-grid,
+    .detail-process .process-grid.hormone-terms{
+      display:block;
+      overflow:visible;
+      border:0;
+      border-radius:0;
+      background:transparent;
+    }
+    .detail-process .process-step,
+    .detail-process .process-grid.hormone-terms .process-step,
+    .detail-process .process-grid.hormone-terms .process-step:first-child{
+      display:grid;
+      grid-template-columns:24px minmax(0,1fr);
+      gap:8px;
+      min-height:0;
+      padding:9px 0;
+      border:0;
+      border-bottom:1px solid rgba(199,167,107,.22);
+      border-radius:0;
+      background:transparent;
+    }
+    .detail-process .process-step:last-child,
+    .detail-process .process-grid.hormone-terms .process-step:last-child{border-bottom:0}
+    .detail-process .process-step b,
+    .detail-process .process-grid.hormone-terms .process-step b{
+      display:block;
+      width:auto;
+      height:auto;
+      margin:0;
+      padding-top:1px;
+      border:0;
+      border-radius:0;
+      background:transparent;
+      color:#98743b;
+      font-family:var(--sans);
+      font-size:14px;
+      font-weight:500;
+      line-height:1.5;
+    }
+    .detail-process .process-step h3{margin:0 0 2px;font-size:13px}
+    .detail-process .process-step p,
+    .detail-process .process-grid.hormone-terms .process-step p{margin:0;font-size:14px;line-height:1.5}
+
+    @media(max-width:700px){
+      .detail-overview,
+      .detail-includes,
+      .detail-process{padding:32px 0}
+      .detail-overview .overview-intro,
+      .detail-includes .includes-copy,
+      .detail-process .process-heading{
+        display:block;
+        margin-bottom:14px;
+        padding-bottom:14px;
+      }
+      .detail-overview .overview-intro h2,
+      .detail-includes .includes-copy h2,
+      .detail-process .process-heading h2{margin:6px 0 0}
+      .pv02-description .hormone-text{grid-template-columns:1fr}
+      .gender-checkup-grid{grid-template-columns:1fr}
+      .program-card-grid{grid-template-columns:1fr}
+      .program-audience-card{padding:16px}
+      .detail-process .process-grid,
+      .detail-process .process-grid.hormone-terms{grid-template-columns:1fr}
+    }
+
