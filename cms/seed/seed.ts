@@ -15,6 +15,8 @@ import config from '../payload.config'
 import { articlesData } from './data/articles'
 import { branchesData } from './data/branches'
 import { doctorsData } from './data/doctors'
+import { ecosystemData } from './data/ecosystem'
+import { homeHeroData } from './data/homeHero'
 import { membershipData } from './data/membership'
 import { genericProgramCopy, programsData, pv02SpecialCopy } from './data/programs'
 import { heading, lexicalFromParagraphs, paragraph, quote } from './lib/lexical'
@@ -121,12 +123,16 @@ async function run() {
         phone: b.phone,
         lineId: b.lineId,
         heroImage,
+        facilities: b.facilities.th.map((text) => ({ text })),
+        directions: b.directions.th,
       },
       {
         tagline: b.tagline.en,
         description: b.description.en,
         address: b.address.en,
         hours: b.hours.en,
+        facilities: b.facilities.en.map((text) => ({ text })),
+        directions: b.directions.en,
       },
     )
     branchIds[b.slug] = id
@@ -347,7 +353,7 @@ async function run() {
     en: 'PHIVARA private lounge',
   })
 
-  await payload.updateGlobal({
+  const membershipTh = await payload.updateGlobal({
     slug: 'membership',
     locale: 'th',
     data: {
@@ -379,10 +385,25 @@ async function run() {
         heading: membershipData.intro.heading.en,
         body: membershipData.intro.body.en,
       },
-      privileges: membershipData.privileges.map((p) => ({ title: p.title.en, description: p.description.en })),
+      // Payload replaces an array field's rows wholesale on update rather
+      // than merging by position (see attachRowIds's comment above) — a
+      // Global hits the exact same issue collections do. Without
+      // reattaching the row ids the 'th' update just created, this 'en'
+      // update would delete+recreate the privileges/journeySteps/faq rows,
+      // silently losing every 'th' value that lived on the old rows.
+      privileges: attachRowIds(
+        membershipData.privileges.map((p) => ({ title: p.title.en, description: p.description.en })),
+        membershipTh.privileges,
+      ),
       promise: { quote: membershipData.promise.quote.en, body: membershipData.promise.body.en },
-      journeySteps: membershipData.journeySteps.map((s) => ({ title: s.title.en, description: s.description.en })),
-      faq: membershipData.faq.map((f) => ({ question: f.question.en, answer: f.answer.en })),
+      journeySteps: attachRowIds(
+        membershipData.journeySteps.map((s) => ({ title: s.title.en, description: s.description.en })),
+        membershipTh.journeySteps,
+      ),
+      faq: attachRowIds(
+        membershipData.faq.map((f) => ({ question: f.question.en, answer: f.answer.en })),
+        membershipTh.faq,
+      ),
       finalCta: {
         overline: membershipData.finalCta.overline.en,
         heading: membershipData.finalCta.heading.en,
@@ -392,6 +413,119 @@ async function run() {
     },
   })
   console.log('  membership global updated')
+
+  // ---------------------------------------------------------------------
+  // Ecosystem global
+  // ---------------------------------------------------------------------
+  const disciplineImages = await Promise.all(
+    ecosystemData.disciplines.map((d) =>
+      getOrCreateMedia(payload, d.image, {
+        th: `${d.title.th} — PHIVARA`,
+        en: `${d.title.en} — PHIVARA`,
+      }),
+    ),
+  )
+
+  const ecosystemTh = await payload.updateGlobal({
+    slug: 'ecosystem',
+    locale: 'th',
+    data: {
+      hero: {
+        eyebrow: ecosystemData.hero.eyebrow.th,
+        headlineLine1: ecosystemData.hero.headlineLine1.th,
+        headlineLine2: ecosystemData.hero.headlineLine2.th,
+        lead: ecosystemData.hero.lead.th,
+      },
+      disciplines: ecosystemData.disciplines.map((d, i) => ({
+        eyebrow: d.eyebrow.th,
+        title: d.title.th,
+        subtitle: d.subtitle.th,
+        description: d.description.th,
+        chips: d.chips.map((c) => ({ label: c.th })),
+        doctorLinkLabel: d.doctorLinkLabel.th,
+        programLinkLabel: d.programLinkLabel.th,
+        articleLinkLabel: d.articleLinkLabel.th,
+        image: disciplineImages[i],
+      })),
+      closingCta: {
+        eyebrow: ecosystemData.closingCta.eyebrow.th,
+        heading: ecosystemData.closingCta.heading.th,
+        body: ecosystemData.closingCta.body.th,
+        buttonLabel: ecosystemData.closingCta.buttonLabel.th,
+      },
+    },
+  })
+  await payload.updateGlobal({
+    slug: 'ecosystem',
+    locale: 'en',
+    data: {
+      hero: {
+        eyebrow: ecosystemData.hero.eyebrow.en,
+        headlineLine1: ecosystemData.hero.headlineLine1.en,
+        headlineLine2: ecosystemData.hero.headlineLine2.en,
+        lead: ecosystemData.hero.lead.en,
+      },
+      // Same wholesale-array-replace issue as the Membership global above —
+      // reattach the row/sub-row ids the 'th' update just created so this
+      // 'en' update merges chips/disciplines in place instead of deleting
+      // and recreating them (which would silently drop the 'th' values).
+      disciplines: attachRowIds(
+        ecosystemData.disciplines.map((d) => ({
+          eyebrow: d.eyebrow.en,
+          title: d.title.en,
+          subtitle: d.subtitle.en,
+          description: d.description.en,
+          chips: d.chips.map((c) => ({ label: c.en })),
+          doctorLinkLabel: d.doctorLinkLabel.en,
+          programLinkLabel: d.programLinkLabel.en,
+          articleLinkLabel: d.articleLinkLabel.en,
+        })),
+        ecosystemTh.disciplines,
+      ),
+      closingCta: {
+        eyebrow: ecosystemData.closingCta.eyebrow.en,
+        heading: ecosystemData.closingCta.heading.en,
+        body: ecosystemData.closingCta.body.en,
+        buttonLabel: ecosystemData.closingCta.buttonLabel.en,
+      },
+    },
+  })
+  console.log('  ecosystem global updated')
+
+  // ---------------------------------------------------------------------
+  // Home hero global
+  // ---------------------------------------------------------------------
+  const heroBackgroundImages = await Promise.all(
+    homeHeroData.backgroundImages.map((path, i) =>
+      getOrCreateMedia(payload, path, { th: `PHIVARA hero background ${i + 1}`, en: `PHIVARA hero background ${i + 1}` }),
+    ),
+  )
+
+  await payload.updateGlobal({
+    slug: 'home-hero',
+    locale: 'th',
+    data: {
+      eyebrow: homeHeroData.eyebrow.th,
+      headline: homeHeroData.headline.th,
+      lead: homeHeroData.lead.th,
+      ctaLabel: homeHeroData.ctaLabel.th,
+      // Not localized (see cms/globals/HomeHero.ts) — set once here, never
+      // touched by the 'en' update below, so there's no risk of the usual
+      // wholesale-array-replace issue clobbering it.
+      backgroundImages: heroBackgroundImages.map((image) => ({ image })),
+    },
+  })
+  await payload.updateGlobal({
+    slug: 'home-hero',
+    locale: 'en',
+    data: {
+      eyebrow: homeHeroData.eyebrow.en,
+      headline: homeHeroData.headline.en,
+      lead: homeHeroData.lead.en,
+      ctaLabel: homeHeroData.ctaLabel.en,
+    },
+  })
+  console.log('  home-hero global updated')
 
   console.log('Done.')
   process.exit(0)

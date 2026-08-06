@@ -136,6 +136,13 @@
 .vip-form-note::before{
   content:""; position:absolute; left:0; top:.58em; width:7px; height:1px; background:var(--vip-gold);
 }
+.vip-form-error{
+  margin:0; padding:9px 12px; border:1px solid rgba(169,88,78,.3); border-radius:8px;
+  background:rgba(169,88,78,.08); color:#A9584E;
+  font:400 12px/1.5 var(--vip-sans);
+}
+.vip-form-error[hidden]{ display:none; }
+.btn-vip-submit[disabled]{ opacity:.6; cursor:not-allowed; }
 .btn-vip-submit{
   min-height:44px; margin:0; padding:0 23px; cursor:pointer;
   border:1px solid var(--vip-gold); border-radius:999px;

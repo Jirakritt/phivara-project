@@ -3,3 +3,13 @@ node_modules
 .env
 *.log
 .DS_Store
+
+# Payload's local upload storage (Media collection files + resized
+# variants) — regenerated every `npm run seed` run, so it doesn't belong in
+# git history. Production should move this to cloud storage (S3 or
+# equivalent) rather than local disk anyway — see the "remaining work"
+# list for that item.
+media
+
+# TypeScript incremental build cache — machine-specific, safe to delete.
+tsconfig.tsbuildinfo

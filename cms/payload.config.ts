@@ -8,12 +8,15 @@ import { Branches } from './collections/Branches'
 import { Doctors } from './collections/Doctors'
 import { Programs } from './collections/Programs'
 import { Articles } from './collections/Articles'
+import { Leads } from './collections/Leads'
 import { Users } from './collections/Users'
 import { Membership } from './globals/Membership'
+import { Ecosystem } from './globals/Ecosystem'
+import { HomeHero } from './globals/HomeHero'
 
 export default buildConfig({
-  collections: [Users, Media, Branches, Doctors, Programs, Articles],
-  globals: [Membership],
+  collections: [Users, Media, Branches, Doctors, Programs, Articles, Leads],
+  globals: [Membership, Ecosystem, HomeHero],
 
   // TH is the source language on the current site; EN is the secondary
   // locale already present as data-en attributes throughout the HTML.

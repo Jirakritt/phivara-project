@@ -4,15 +4,18 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getHomeData } from '@/lib/homeData'
 
-// Rebuilt from phivara-design-html/index.html. Static brand copy (hero,
-// intro/pillars, membership teaser) stays hardcoded here exactly like the
-// original — it isn't modeled in Payload. The sections main.js used to
-// fill from hardcoded const arrays (expertise/program cards, branch rail,
-// specialists carousel, journal grid) are now driven by real CMS content:
-// this component fetches it from Payload and injects it as
-// `window.__PHIVARA_DATA__` for the (lightly patched) public/js/main.js to
-// render, so the original interactions/carousels/animations keep working
-// unchanged.
+// Rebuilt from phivara-design-html/index.html. The hero banner (eyebrow/
+// headline/lead/CTA + rotating background images) now comes from the
+// `home-hero` Payload Global — see src/lib/homeData.ts's getHomeHero() and
+// cms/globals/HomeHero.ts. Everything else below it (intro/pillars,
+// membership teaser) is still static brand copy hardcoded here like the
+// original, not modeled in Payload. The sections main.js used to fill from
+// hardcoded const arrays (expertise/program cards, branch rail, specialists
+// carousel, journal grid, and now the hero background slideshow too) are
+// driven by real CMS content: this component fetches it from Payload and
+// injects it as `window.__PHIVARA_DATA__` for the (lightly patched)
+// public/js/main.js to render, so the original interactions/carousels/
+// animations keep working unchanged.
 export default async function HomePage() {
   const data = await getHomeData()
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify(data).replace(/</g, '\\u003c')};`
@@ -41,22 +44,22 @@ export default async function HomePage() {
         <div className="scrim"></div>
         <div className="wrap">
           <div className="content" id="heroContent">
-            <div className="eyebrow" data-th="THE ART OF BEAUGEVITY" data-en="THE ART OF BEAUGEVITY">THE ART OF BEAUGEVITY</div>
+            <div className="eyebrow" data-th={data.hero.eyebrowTh} data-en={data.hero.eyebrowEn}>{data.hero.eyebrowTh}</div>
             <h1
               id="heroHeadline"
-              data-th="ที่ซึ่งความงามและอายุยืนยาว หลอมรวมเป็นหนึ่ง"
-              data-en="Where beauty, health, and longevity become one."
+              data-th={data.hero.headlineTh}
+              data-en={data.hero.headlineEn}
             ></h1>
             <p
               className="sub"
-              data-th="จุดหมายด้านความงามและอายุยืนยาวระดับโรงพยาบาล ดูแลโดยแพทย์เฉพาะทาง ด้วยความเป็นส่วนตัวและมาตรฐานระดับโรงแรม"
-              data-en="A hospital-grade aesthetic & longevity destination — private, precise, and hotel-grade in every detail."
+              data-th={data.hero.leadTh}
+              data-en={data.hero.leadEn}
             >
-              จุดหมายด้านความงามและอายุยืนยาวระดับโรงพยาบาล ดูแลโดยแพทย์เฉพาะทาง ด้วยความเป็นส่วนตัวและมาตรฐานระดับโรงแรม
+              {data.hero.leadTh}
             </p>
             <div className="cta-row">
-              <a href="#contact" className="btn btn-outline vip-trigger" data-th="จองปรึกษาส่วนตัว" data-en="Book a Private Consultation">
-                จองปรึกษาส่วนตัว
+              <a href="#contact" className="btn btn-outline vip-trigger" data-th={data.hero.ctaLabelTh} data-en={data.hero.ctaLabelEn}>
+                {data.hero.ctaLabelTh}
               </a>
             </div>
           </div>

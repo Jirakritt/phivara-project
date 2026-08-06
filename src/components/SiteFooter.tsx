@@ -39,6 +39,12 @@ export default function SiteFooter({ branches }: { branches: Array<{ nameEn: str
         </div>
         <div className="foot-bottom">
           <p data-th="© 2569 PHIVARA สงวนลิขสิทธิ์" data-en="© 2026 PHIVARA. All rights reserved.">© 2569 PHIVARA สงวนลิขสิทธิ์</p>
+          <div className="foot-legal">
+            <a href="/privacy-policy" data-th="นโยบายความเป็นส่วนตัว" data-en="Privacy Policy">นโยบายความเป็นส่วนตัว</a>
+            {/* Reopens the PDPA consent banner (public/js/consent-banner.js) so
+                a visitor can change their earlier accept/decline choice. */}
+            <a href="#" id="cookieSettingsLink" data-th="ตั้งค่าคุกกี้" data-en="Cookie Settings">ตั้งค่าคุกกี้</a>
+          </div>
           <div className="foot-social">
             <a href="#" aria-label="Instagram">IG</a>
             <a href="#" aria-label="Facebook">FB</a>

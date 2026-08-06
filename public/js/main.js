@@ -52,8 +52,13 @@
     }
   })();
 
-  /* Shared hero image source */
-  const heroImages = [
+  /* Hero background slideshow images — now sourced from the `home-hero`
+     Payload Global (window.__PHIVARA_DATA__.hero.backgroundImages, injected
+     by src/app/(frontend)/page.tsx) instead of a hardcoded list, so staff
+     can change the rotation from the CMS. Falls back to the original
+     hardcoded set only if that data is ever missing/empty. */
+  const cmsHeroImages = (window.__PHIVARA_DATA__ && window.__PHIVARA_DATA__.hero && window.__PHIVARA_DATA__.hero.backgroundImages) || [];
+  const heroImages = cmsHeroImages.length ? cmsHeroImages : [
     'assets/images/hero/herobg01.png',
     'assets/images/hero/herobg02.png',
     'assets/images/hero/herobg03.png',

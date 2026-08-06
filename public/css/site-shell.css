@@ -426,6 +426,18 @@ footer.site-footer .foot-bottom p {
   font-size: 14px;
 }
 
+footer.site-footer .foot-legal { display: flex; gap: 20px; }
+
+footer.site-footer .foot-legal a {
+  color: #faf5ec;
+  opacity: .75;
+  font-size: 13px;
+  text-decoration: none;
+  transition: opacity .3s ease;
+}
+
+footer.site-footer .foot-legal a:hover { opacity: 1; color: var(--shell-gold-light); }
+
 footer.site-footer .foot-social { display: flex; gap: 16px; }
 
 footer.site-footer .foot-social a {

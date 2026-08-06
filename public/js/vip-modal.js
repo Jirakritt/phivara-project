@@ -88,6 +88,7 @@
               </label>
             </div>
             <p class="vip-form-note" data-th="ข้อมูลของคุณจะใช้เพื่อการติดต่อกลับและจัดการนัดหมายเท่านั้น" data-en="Your information will only be used to contact you and arrange this appointment.">ข้อมูลของคุณจะใช้เพื่อการติดต่อกลับและจัดการนัดหมายเท่านั้น</p>
+            <p class="vip-form-error" id="vipFormError" hidden data-th="ขออภัย ระบบไม่สามารถส่งคำขอได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง หรือโทรติดต่อเราโดยตรง" data-en="Sorry, we couldn't submit your request right now. Please try again or call us directly.">ขออภัย ระบบไม่สามารถส่งคำขอได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง หรือโทรติดต่อเราโดยตรง</p>
             <button type="submit" class="btn-vip-submit">
               <span data-th="ส่งคำขอนัดหมาย" data-en="Request an Appointment">ส่งคำขอนัดหมาย</span>
               <svg viewBox="0 0 20 12" fill="none" aria-hidden="true"><path d="M1 6h17M13 1l5 5-5 5" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -114,6 +115,8 @@
     const dialog = overlay.querySelector('.vip-modal');
     const form = document.getElementById('vipForm');
     const success = document.getElementById('vipFormSuccess');
+    const formError = document.getElementById('vipFormError');
+    const submitButton = form.querySelector('.btn-vip-submit');
     const notes = form.elements.notes;
     const service = form.elements.service;
     const phone = form.elements.phone;
@@ -167,6 +170,7 @@
       lastFocusedElement = trigger;
       form.style.display = '';
       success.classList.remove('show');
+      formError.hidden = true;
       const context = triggerContext(trigger);
       notes.value = context;
       if(trigger.dataset.branch && [...form.elements.branch.options].some(option => option.value === trigger.dataset.branch)){
@@ -240,16 +244,51 @@
       else phone.setCustomValidity('');
     });
 
-    form.addEventListener('submit', event => {
+    form.addEventListener('submit', async event => {
       event.preventDefault();
       if(!validatePhone(true)){
         phone.reportValidity();
         phone.focus();
         return;
       }
-      form.style.display = 'none';
-      success.classList.add('show');
-      success.querySelector('h3').focus?.();
+
+      formError.hidden = true;
+      submitButton.disabled = true;
+
+      // Submits to our own /api/leads route (backed by the `leads` Payload
+      // collection) rather than showing a fake success state — every
+      // ".booking-trigger"/".vip-trigger" click site-wide funnels through
+      // this one form, so this is the single place that needed fixing.
+      try {
+        const response = await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.elements.name.value.trim(),
+            phone: phone.value.trim(),
+            branch: form.elements.branch.value,
+            service: service.value,
+            notes: notes.value.trim(),
+            sourcePath: window.location.pathname
+          })
+        });
+
+        if(!response.ok) throw new Error('Lead submission failed');
+
+        // Fires GA4's generate_lead / Meta Pixel's Lead event, defined in
+        // consent-banner.js. Safe no-op if the visitor never accepted the
+        // PDPA consent banner (or no GA4/Pixel id is configured yet) —
+        // phivaraTrackLead only exists once analytics was actually loaded.
+        window.phivaraTrackLead?.();
+
+        form.style.display = 'none';
+        success.classList.add('show');
+        success.querySelector('h3').focus?.();
+      } catch(error) {
+        formError.hidden = false;
+      } finally {
+        submitButton.disabled = false;
+      }
     });
 
     translateModal();

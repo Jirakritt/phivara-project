@@ -5,6 +5,7 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getHomeData } from '@/lib/homeData'
 import { getDoctorDetail, getDoctorJournalArticles } from '@/lib/doctorsData'
+import { getDoctorSignaturePrograms } from '@/lib/programsData'
 
 // Doctors.schedule.day is a plain select enum (monday..sunday) with no
 // bilingual label of its own — map it to display text matching the
@@ -17,6 +18,20 @@ const DAY_LABELS: Record<string, { th: string; en: string }> = {
   friday: { th: 'ศุกร์', en: 'Friday' },
   saturday: { th: 'เสาร์', en: 'Saturday' },
   sunday: { th: 'อาทิตย์', en: 'Sunday' },
+}
+
+// Doctors.specialty ('plastic' | 'longevity' | 'dermatology' | 'wellness',
+// see SPECIALTY_FILTER_OPTIONS in doctorsData.ts) uses different value
+// strings than Leads.service ('plastic-surgery' | 'longevity' |
+// 'dermatology' | 'wellness' | 'membership') — this form has no service
+// picker of its own (unlike the VIP modal), so the doctor's own specialty
+// stands in for it, mapped through here rather than duplicating the
+// mismatch inline.
+const SPECIALTY_TO_LEAD_SERVICE: Record<string, string> = {
+  plastic: 'plastic-surgery',
+  longevity: 'longevity',
+  dermatology: 'dermatology',
+  wellness: 'wellness',
 }
 
 // Rebuilt from phivara-design-html/doctor_detail.html. The original page
@@ -36,11 +51,13 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ s
   if (!doctor) notFound()
 
   const journal = await getDoctorJournalArticles(doctor.id)
+  const signaturePrograms = await getDoctorSignaturePrograms(doctor.specialty)
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
   const rich = doctor.rich
 
   const notesDefaultTh = `นัดหมายขอปรึกษาแพทย์: ${doctor.nameTh}`
   const notesDefaultEn = `Book appointment with: ${doctor.nameEn}`
+  const leadService = SPECIALTY_TO_LEAD_SERVICE[doctor.specialty] || 'longevity'
 
   return (
     <>
@@ -151,6 +168,37 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ s
                       <li key={ii} data-th={item.th} data-en={item.en}>{item.th}</li>
                     ))}
                   </ul>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {signaturePrograms.length > 0 && (
+        <section className="signature-programs-section" id="programs" aria-labelledby="programs-heading">
+          <div className="wrap">
+            <div className="section-intro">
+              <div className="eyebrow center" data-th="SIGNATURE MEDICAL PROGRAMS" data-en="SIGNATURE MEDICAL PROGRAMS">SIGNATURE MEDICAL PROGRAMS</div>
+              <h2 id="programs-heading" data-th="โปรแกรมการตรวจที่เกี่ยวข้อง" data-en="Related Medical Programs">โปรแกรมการตรวจที่เกี่ยวข้อง</h2>
+            </div>
+
+            <div className="prog-grid">
+              {signaturePrograms.map((program) => (
+                <article key={program.slug} className="prog-card">
+                  <div className="prog-icon-badge" aria-hidden="true">
+                    {/* One consistent icon for every card — the original
+                        hand-picked a bespoke icon per one-off curated
+                        program, which doesn't apply now that this section
+                        is auto-matched from real program data. */}
+                    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
+                  </div>
+                  <h3 data-th={program.titleTh} data-en={program.titleEn}>{program.titleTh}</h3>
+                  <p data-th={program.shortDescriptionTh} data-en={program.shortDescriptionEn}>{program.shortDescriptionTh}</p>
+                  <a className="prog-detail-link" href={`/program/${program.slug}`}>
+                    <span data-th="อ่านรายละเอียดโปรแกรม" data-en="View Program Details">อ่านรายละเอียดโปรแกรม</span>
+                    <svg viewBox="0 0 18 12" aria-hidden="true"><path d="M1 6h15M12 2l4 4-4 4" /></svg>
+                  </a>
                 </article>
               ))}
             </div>
@@ -271,7 +319,16 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ s
               </div>
             </div>
 
-            <form className="contact-form-card" id="vipDirectForm" aria-labelledby="appointment-form-heading" data-success-th="ขอบคุณครับ/ค่ะ ระบบได้รับข้อมูลการนัดหมายแล้ว เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด" data-success-en="Thank you. Your appointment request has been received. Our team will contact you shortly.">
+            <form
+              className="contact-form-card"
+              id="vipDirectForm"
+              aria-labelledby="appointment-form-heading"
+              data-service={leadService}
+              data-success-th="ขอบคุณครับ/ค่ะ ระบบได้รับข้อมูลการนัดหมายแล้ว เจ้าหน้าที่จะติดต่อกลับโดยเร็วที่สุด"
+              data-success-en="Thank you. Your appointment request has been received. Our team will contact you shortly."
+              data-error-th="ขออภัย ระบบไม่สามารถส่งคำขอได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง หรือโทรติดต่อเราโดยตรง"
+              data-error-en="Sorry, we couldn't submit your request right now. Please try again or call us directly."
+            >
               <div className="contact-form-head">
                 <div className="eyebrow" data-th="APPOINTMENT DETAILS" data-en="APPOINTMENT DETAILS">APPOINTMENT DETAILS</div>
                 <h3 id="appointment-form-heading" data-th="ส่งคำขอนัดหมาย" data-en="Submit an Appointment Request">ส่งคำขอนัดหมาย</h3>

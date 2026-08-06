@@ -73,6 +73,7 @@ export interface Config {
     doctors: Doctor;
     programs: Program;
     articles: Article;
+    leads: Lead;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +87,7 @@ export interface Config {
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    leads: LeadsSelect<false> | LeadsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -97,9 +99,13 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('th' | 'en') | ('th' | 'en')[];
   globals: {
     membership: Membership;
+    ecosystem: Ecosystem;
+    'home-hero': HomeHero;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
+    ecosystem: EcosystemSelect<false> | EcosystemSelect<true>;
+    'home-hero': HomeHeroSelect<false> | HomeHeroSelect<true>;
   };
   locale: 'th' | 'en';
   widgets: {
@@ -580,6 +586,40 @@ export interface Article {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Booking requests submitted through the VIP Concierge modal and doctor appointment forms across the site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads".
+ */
+export interface Lead {
+  id: number;
+  name: string;
+  phone: string;
+  /**
+   * Branch slug selected in the modal, e.g. "sanampao" (not a relationship — see field comment)
+   */
+  branch: string;
+  service: 'plastic-surgery' | 'longevity' | 'dermatology' | 'wellness' | 'membership';
+  /**
+   * Free-text notes/preferred time. Pre-filled with doctor/program context when the modal was opened from a specific card (see triggerContext() in vip-modal.js).
+   */
+  notes?: string | null;
+  /**
+   * Only set by the doctor detail page's own appointment form (public/js/doctor-appointment-form.js) — the shared VIP modal has no date field, so this stays empty for those leads.
+   */
+  preferredDate?: string | null;
+  /**
+   * Page path the form was submitted from, e.g. /program/pv02 — for triage context, not shown to the visitor.
+   */
+  sourcePath?: string | null;
+  /**
+   * Internal triage status — not visible to the visitor.
+   */
+  status: 'new' | 'contacted' | 'booked' | 'closed';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -626,6 +666,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'leads';
+        value: number | Lead;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -962,6 +1006,22 @@ export interface ArticlesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads_select".
+ */
+export interface LeadsSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  branch?: T;
+  service?: T;
+  notes?: T;
+  preferredDate?: T;
+  sourcePath?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1063,6 +1123,71 @@ export interface Membership {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ecosystem".
+ */
+export interface Ecosystem {
+  id: number;
+  hero: {
+    eyebrow?: string | null;
+    headlineLine1: string;
+    headlineLine2: string;
+    lead?: string | null;
+  };
+  /**
+   * Exactly 4 rows, in order: Longevity, Dermatology, Aesthetic Wellness, Plastic Surgery.
+   */
+  disciplines?:
+    | {
+        eyebrow: string;
+        title: string;
+        subtitle: string;
+        description: string;
+        chips?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        doctorLinkLabel: string;
+        programLinkLabel: string;
+        articleLinkLabel: string;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  closingCta: {
+    eyebrow?: string | null;
+    heading: string;
+    body?: string | null;
+    buttonLabel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-hero".
+ */
+export interface HomeHero {
+  id: number;
+  eyebrow?: string | null;
+  headline: string;
+  lead?: string | null;
+  ctaLabel?: string | null;
+  /**
+   * Rotating hero background slideshow (public/js/main.js cross-fades between these every 7s).
+   */
+  backgroundImages?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
 export interface MembershipSelect<T extends boolean = true> {
@@ -1116,6 +1241,69 @@ export interface MembershipSelect<T extends boolean = true> {
         heading?: T;
         body?: T;
         buttonLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ecosystem_select".
+ */
+export interface EcosystemSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headlineLine1?: T;
+        headlineLine2?: T;
+        lead?: T;
+      };
+  disciplines?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        subtitle?: T;
+        description?: T;
+        chips?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        doctorLinkLabel?: T;
+        programLinkLabel?: T;
+        articleLinkLabel?: T;
+        image?: T;
+        id?: T;
+      };
+  closingCta?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+        buttonLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-hero_select".
+ */
+export interface HomeHeroSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  lead?: T;
+  ctaLabel?: T;
+  backgroundImages?:
+    | T
+    | {
+        image?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

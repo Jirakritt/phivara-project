@@ -1,6 +1,15 @@
 // Source: phivara-design-html/js/site-shell.js `branches` array — the one
 // place on the current site that already treats branch data as structured
 // data rather than repeated markup.
+//
+// facilities/directions below are migrated from phivara-design-html/js/
+// branch-detail.js's per-branch `branchDataMap` (facilitiesTh/En,
+// directionsTh/En) — real operational content (amenities, BTS/parking
+// directions), unlike that same file's per-branch doctors/programs/articles
+// arrays, which are fictional mockup entries never linked to the real
+// Doctors/Programs/Articles collections and are intentionally NOT migrated
+// here. Doctors/Programs for a branch page are queried from the real
+// collections via their existing `branch` relationship field instead.
 export const branchesData = [
   {
     slug: 'sanampao',
@@ -19,6 +28,24 @@ export const branchesData = [
     phone: '02-XXX-XXXX',
     lineId: '@phivara',
     image: 'assets/images/brand/about-lounge.jpg',
+    facilities: {
+      th: [
+        'ห้องผ่าตัดปลอดเชื้อแรงดันบวก (Positive Pressure OR) มาตรฐานโรงพยาบาลพญาไท 2',
+        'ห้องพักฟื้นส่วนตัว VIP Recovery Suite พร้อมพยาบาลดูแลตลอด 24 ชั่วโมง',
+        'เครื่องมือยกกระชับ Ulthera SPT และ Thermage FLX ของแท้ตรวจสอบได้',
+        'VIP Private Lounge สำหรับการปรึกษาแบบเป็นส่วนตัวสูง',
+      ],
+      en: [
+        'Phyathai 2 Hospital-grade Positive Pressure Sterile Operating Theaters',
+        'Private VIP Recovery Suites with 24-hour dedicated nursing care',
+        'Authentic U.S. FDA-approved Ulthera SPT & Thermage FLX technology',
+        'Exclusive VIP Lounge for confidential doctor consultations',
+      ],
+    },
+    directions: {
+      th: 'เดินทางสะดวกด้วย รถไฟฟ้า BTS ลงสถานีสนามเป้า (ทางออก 1) เชื่อมตรงเข้าสู่โรงพยาบาลพญาไท 2 ชั้น 8 อาคาร A มีอาคารจอดรถกว้างขวางรองรับกว่า 500 คัน พร้อมบริการ Valet Parking',
+      en: 'Direct BTS SkyTrain access via Sanampao Station (Exit 1) into Phyathai 2 Hospital, 8th Floor Building A. Spacious parking building for 500+ cars with complimentary Valet Parking.',
+    },
   },
   {
     slug: 'phaholyothin',
@@ -37,6 +64,24 @@ export const branchesData = [
     phone: '02-XXX-XXXX',
     lineId: '@phivara',
     image: 'assets/images/treatments/expertise-plastic.jpg',
+    facilities: {
+      th: [
+        'ห้องตรวจวิเคราะห์สุขภาพเชิงลึก Precision Diagnostics Suite',
+        'ห้อง IV Drip Lounge บรรยากาศเงียบสงบส่วนตัวระดับเฟิร์สคลาส',
+        'ศูนย์วิเคราะห์เส้นผมและหนังศีรษะ Trichology Center',
+        'ระบบสำรองนัดหมายและดูแลส่วนบุคคล VIP Concierge Service',
+      ],
+      en: [
+        'Precision Diagnostics Suite for cellular health evaluation',
+        'First-class private IV Infusion Therapy Lounge',
+        'Advanced Hair & Scalp Trichology Diagnostic Unit',
+        'Dedicated VIP Concierge & Personalized Care Team',
+      ],
+    },
+    directions: {
+      th: 'ตั้งอยู่บนถนนพหลโยธิน ซอยพหลโยธิน 2 (BTS อารีย์ หรือ BTS สนามเป้า) อาคาร PHIVARA Medical Center ชั้น 6 มีที่จอดรถในอาคารกว่า 150 คัน พร้อมบริการล้างรถและ Valet Service',
+      en: 'Located on Phaholyothin Road (BTS Ari or BTS Sanampao), PHIVARA Medical Center 6th Floor. Covered parking for 150+ cars with Valet Service.',
+    },
   },
   {
     slug: 'sriayudhaya',
@@ -55,6 +100,24 @@ export const branchesData = [
     phone: '02-XXX-XXXX',
     lineId: '@phivara',
     image: 'assets/images/treatments/specialist-3.jpg',
+    facilities: {
+      th: [
+        'ห้องหัตถการเลเซอร์และผิวพรรณมาตรฐาน U.S. FDA Certified Suite',
+        'เครื่อง Ulthera SPT, Thermage FLX, PicoSure Pro ของแท้มีสติ๊กเกอร์ตรวจสอบ',
+        'ระบบสแกนวิเคราะห์สภาพผิวเชิงลึก VISIA Complexion Analysis',
+        'ห้องทรีตเมนต์ผ่อนคลายบรรยากาศสปาหรูระดับโรงแรม 5 ดาว',
+      ],
+      en: [
+        'U.S. FDA Certified Laser & Dermatology Procedure Suite',
+        'Authentic Ulthera SPT, Thermage FLX & PicoSure Pro equipment',
+        'VISIA 3D Complexion & Pigment Analysis technology',
+        '5-star hotel luxury private skincare treatment rooms',
+      ],
+    },
+    directions: {
+      th: 'ตั้งอยู่บนถนนศรีอยุธยา (ใกล้แยกพญาไท และ BTS พญาไท / Airport Rail Link พญาไท) ชั้น 5 อาคาร PHIVARA Medical Center เดินทางสะดวก มีที่จอดรถใต้ดินกว่า 200 คัน',
+      en: 'Located on Sri Ayudhaya Road (Near Phaya Thai Intersection, BTS/ARL Phaya Thai), 5th Floor PHIVARA Medical Center. Underground parking for 200+ vehicles.',
+    },
   },
   {
     slug: 'petchakasem',
@@ -73,6 +136,24 @@ export const branchesData = [
     phone: '02-XXX-XXXX',
     lineId: '@phivara',
     image: 'assets/images/hero/herobg03.png',
+    facilities: {
+      th: [
+        'ศูนย์ดูแลเรือนร่างและสลายไขมันแบบรีสอร์ต Resort-Style Body Wellness Hub',
+        'เครื่อง CoolSculpting Elite และ EMSculpt NEO ของแท้มาตรฐาน U.S. FDA',
+        'ห้องสปาเชิงบำบัดและไฮโดรเทอราพีส่วนตัว Private Hydro-Therapy Suite',
+        'พื้นที่สวนพักผ่อนสีเขียวและบ่อน้ำแร่ธรรมชาติสำหรับผู้ใช้บริการ VIP',
+      ],
+      en: [
+        'Resort-Style Body Wellness & Sculpting Center',
+        'Authentic CoolSculpting Elite & EMSculpt NEO technology',
+        'Private Therapeutic Hydro-Therapy & Spa Suites',
+        'Tranquil green garden lounge & mineral hydro-wellness pool',
+      ],
+    },
+    directions: {
+      th: 'ตั้งอยู่ที่ ซอยเพชรเกษม 19 (ใกล้ MRT บางไผ่ เพียง 300 เมตร) อาคาร PHIVARA Wellness Center ชั้น 4 บรรยากาศเงียบสงบสไตล์รีสอร์ต พร้อมลานจอดรถส่วนตัวรองรับ 100 คัน',
+      en: 'Located on Petchakasem Soi 19 (Only 300 meters from MRT Bang Phai Station), PHIVARA Wellness Center 4th Floor. Private resort-style parking for 100+ cars.',
+    },
   },
   {
     slug: 'sriracha',
@@ -91,5 +172,23 @@ export const branchesData = [
     phone: '038-XXX-XXX',
     lineId: '@phivara',
     image: 'assets/images/hero/herobg04.png',
+    facilities: {
+      th: [
+        'ศูนย์การแพทย์และความงามฝั่งตะวันออก Eastern Seaboard Medical Center Suite',
+        'ห้องผ่าตัดมาตรฐานโรงพยาบาลพร้อมวิสัญญีแพทย์ประจำ',
+        'บริการผู้ป่วยต่างชาติ International Patient VIP Lounge & Multilingual Staff',
+        'วิวทะเลพาโนรามาและบริการ VIP Limousine Transfer จากสนามบินสุวรรณภูมิ/อู่ตะเภา',
+      ],
+      en: [
+        'Eastern Seaboard Premier Medical & Longevity Center Suite',
+        'Hospital-grade operating suites with dedicated anesthesiologists',
+        'International Patient VIP Lounge with 5-language multilingual team',
+        'Panoramic ocean view lounge & VIP Limousine Transfer from BKK/UTP Airports',
+      ],
+    },
+    directions: {
+      th: 'ตั้งอยู่ริมถนนสุขุมวิท ใจกลางเมืองศรีราชา (ใกล้โรบินสัน ศรีราชา และโรงพยาบาลสมิติเวช ศรีราชา) ชั้น 7 อาคาร PHIVARA Medical Center พร้อมบริการลานจอดรถ VIP',
+      en: 'Located on Sukhumvit Road, Central Si Racha (Near Robinson Si Racha & Samitivej Hospital), 7th Floor PHIVARA Medical Center. VIP parking facilities.',
+    },
   },
 ] as const

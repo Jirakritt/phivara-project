@@ -88,6 +88,25 @@ export async function getProgramsListing(): Promise<ProgramCard[]> {
   return pairs.map(({ th, en }) => mapProgramCard(th, en))
 }
 
+// "Signature Programs" on a doctor's detail page. The original
+// doctor_detail.html hand-curated 4 programs for its one example doctor
+// (Dr. Kobkulya) — there was no such curation for any of the other ~30
+// real doctors. Rather than leave the section out or add a manual
+// per-doctor picker field, this auto-matches by specialty: a longevity
+// doctor sees longevity programs, a dermatology doctor sees dermatology
+// programs, etc. — same category-first approach as getOtherArticles()'s
+// "CONTINUE READING" matching on the article detail page.
+export async function getDoctorSignaturePrograms(specialty: string, limit = 4): Promise<ProgramCard[]> {
+  if (!specialty) return []
+  const pairs = await findBothLocales<any>('programs', {
+    limit,
+    depth: 1,
+    sort: 'slug',
+    where: { _status: { equals: 'published' }, category: { equals: specialty } },
+  })
+  return pairs.map(({ th, en }) => mapProgramCard(th, en))
+}
+
 // Highlight carousel at the top of /program — program.html hardcoded
 // exactly pv01/pv02/pv03/pv06 here; that's now the `featured` checkbox.
 export async function getFeaturedPrograms(): Promise<ProgramHighlightCard[]> {

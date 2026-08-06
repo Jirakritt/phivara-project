@@ -1,0 +1,98 @@
+/* PDPA consent banner. Loaded on every page via the root layout — see
+   src/app/(frontend)/layout.tsx and public/js/consent-banner.js. */
+
+#consentBanner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 400;
+  background: var(--cream-card, #FCFAF5);
+  border-top: 1px solid var(--gold-line, rgba(199, 167, 107, 0.35));
+  box-shadow: 0 -12px 32px rgba(33, 28, 22, 0.12);
+  padding: 20px 24px;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#consentBanner.visible {
+  transform: translateY(0);
+}
+
+#consentBanner[hidden] {
+  display: none;
+}
+
+.consent-banner-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 32px;
+}
+
+.consent-banner-copy {
+  flex: 1 1 480px;
+}
+
+.consent-banner-copy p {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-soft, #4A4239);
+}
+
+.consent-banner-copy a {
+  color: var(--ink, #211C16);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.consent-banner-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.consent-banner-actions button {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 11px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.consent-banner-actions button:hover {
+  transform: translateY(-1px);
+}
+
+#consentRejectBtn {
+  background: transparent;
+  border: 1px solid var(--ink, #211C16);
+  color: var(--ink, #211C16);
+}
+
+#consentAcceptBtn {
+  background: var(--gold, #C7A76B);
+  border: 1px solid var(--gold, #C7A76B);
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  #consentBanner {
+    padding: 18px 16px;
+  }
+  .consent-banner-actions {
+    width: 100%;
+  }
+  .consent-banner-actions button {
+    flex: 1 1 auto;
+  }
+}

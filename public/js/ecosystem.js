@@ -1,67 +1,17 @@
 'use strict';
 
-(function () {
+// Ported from phivara-design-html/js/ecosystem.js. Left out on purpose
+// (site-runtime.js already covers these on every page): preloader hide,
+// header scroll state + progress bar, mobile menu toggle, language toggle,
+// reveal-on-scroll animations. Kept: everything specific to this page — the
+// eco ring's hover/click-to-scroll behavior, the cursor-following ambient
+// orb in the hero, and the (currently unused, kept for parity) counters.
+function initEcosystemPage() {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.documentElement.style.setProperty('--ambient-gold-rgb', '194,166,123');
 
-  /* Preloader */
-  window.addEventListener('load', () => {
-    setTimeout(() => document.getElementById('preloader').classList.add('done'), reduceMotion ? 80 : 1100);
-  });
-
-  /* Sticky header shrink + progress bar */
-  const header = document.getElementById('siteHeader');
-  const progressBar = document.getElementById('progressBar');
-  window.addEventListener('scroll', () => {
-    if (header) header.classList.toggle('scrolled', window.scrollY > 40);
-    const h = document.documentElement;
-    if (progressBar) progressBar.style.width = ((h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100) + '%';
-  });
-
-  /* Mobile menu */
-  const burger = document.getElementById('burgerBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  if (burger && mobileMenu) {
-    burger.addEventListener('click', () => {
-      const open = mobileMenu.classList.toggle('open');
-      burger.classList.toggle('open', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    });
-    mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
-      mobileMenu.classList.remove('open');
-      burger.classList.remove('open');
-      document.body.style.overflow = '';
-    }));
-  }
-
-  /* Language toggle */
-  const langToggle = document.getElementById('langToggle');
-  function setLang(lang) {
-    document.querySelectorAll('[data-th]').forEach((el) => {
-      if (el.children.length > 0) return;
-      const translation = el.getAttribute('data-' + lang);
-      if (translation !== null) el.textContent = translation;
-    });
-    document.querySelectorAll('[data-placeholder-th]').forEach((el) => {
-      const placeholder = el.getAttribute('data-placeholder-' + lang);
-      if (placeholder !== null) el.setAttribute('placeholder', placeholder);
-    });
-    if (langToggle) langToggle.querySelectorAll('span').forEach((s) => s.classList.toggle('active', s.dataset.val === lang));
-    document.documentElement.lang = lang;
-  }
-  if (langToggle) langToggle.addEventListener('click', (e) => { const val = e.target.dataset.val; if (val) setLang(val); });
-
-  /* Reveal + stagger observer (also drives SVG line-draw icons) */
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('in'); });
-  }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
-  document.querySelectorAll('.reveal, .stagger').forEach((el) => revealObserver.observe(el));
-  document.querySelectorAll('.stagger').forEach((group) => {
-    Array.from(group.children).forEach((child, i) => { child.style.transitionDelay = (i * 0.09) + 's'; });
-  });
-
-  /* Eco ring: hover a tag to spotlight its segment + click to jump to section */
+  /* Eco ring: click a tag to jump to its section */
   document.querySelectorAll('.eco-ring-tag').forEach((tag) => {
     tag.addEventListener('click', (e) => {
       e.preventDefault();
@@ -70,7 +20,7 @@
     });
   });
 
-  /* Floating ambient orb that follows the cursor within hero */
+  /* Floating ambient orb that follows the cursor within the hero */
   const orb = document.getElementById('ecoOrb');
   const heroZone = document.getElementById('ecoHero');
   if (orb && heroZone && !reduceMotion) {
@@ -83,7 +33,7 @@
     heroZone.addEventListener('mouseleave', () => orb.classList.remove('visible'));
   }
 
-  /* Counters (products/doctors covered per category) */
+  /* Counters (kept for parity — no .eco-counter elements on the page currently) */
   const counters = document.querySelectorAll('.eco-counter');
   const countObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -104,4 +54,14 @@
     });
   }, { threshold: 0.6 });
   counters.forEach((c) => countObserver.observe(c));
-})();
+}
+
+// Next.js loads this with the `afterInteractive` strategy, which can run
+// after the browser's DOMContentLoaded has already fired — so run
+// immediately if the DOM is already parsed (same fix as the other ported
+// page scripts in this project).
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEcosystemPage);
+} else {
+  initEcosystemPage();
+}

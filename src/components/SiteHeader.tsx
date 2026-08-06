@@ -18,7 +18,13 @@
 // on every internal nav click keeps every page's legacy JS behaving
 // exactly like it did on the original static multi-page site.
 
-type NavKey = 'home' | 'ecosystem' | 'program' | 'doctor' | 'article' | 'contact'
+// 'membership' isn't one of the 6 real nav items below (membership.html
+// never had its own top-nav entry on the original site either — it's only
+// reachable via CTA buttons) — it's accepted here purely so SiteHeader can
+// be given an honest `page` value on /membership without ever matching a
+// NAVIGATION entry, which correctly leaves every tab unhighlighted, same as
+// the original static page's behavior.
+type NavKey = 'home' | 'ecosystem' | 'program' | 'doctor' | 'article' | 'contact' | 'membership'
 
 const NAVIGATION: Array<{ key: NavKey; href: string; th: string; en: string }> = [
   { key: 'home', href: '#top', th: 'หน้าแรก', en: 'Home' },
@@ -32,17 +38,26 @@ const NAVIGATION: Array<{ key: NavKey; href: string; th: string; en: string }> =
 function NavLinks({ page }: { page: NavKey }) {
   return (
     <>
-      {NAVIGATION.map((item) => (
-        <a
-          key={item.key}
-          href={item.href}
-          className={item.key === page ? 'active' : undefined}
-          data-th={item.th}
-          data-en={item.en}
-        >
-          {item.th}
-        </a>
-      ))}
+      {NAVIGATION.map((item) => {
+        // 'home's href is '#top' in the table above, which only makes sense
+        // when you're already ON the home page (scroll-to-top). On every
+        // other page that same href was previously used as-is, so clicking
+        // "หน้าแรก" just jumped to the top of the current page instead of
+        // navigating home — same fix as the logo link right below already
+        // has for this exact case.
+        const href = item.key === 'home' && page !== 'home' ? '/' : item.href
+        return (
+          <a
+            key={item.key}
+            href={href}
+            className={item.key === page ? 'active' : undefined}
+            data-th={item.th}
+            data-en={item.en}
+          >
+            {item.th}
+          </a>
+        )
+      })}
     </>
   )
 }

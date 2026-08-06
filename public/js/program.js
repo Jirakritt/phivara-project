@@ -61,7 +61,7 @@ function initProgramPage() {
       paginationControl.render(currentPage, totalPages);
     }
 
-    window.PhivaraCatalog.createDropdownGroup([
+    const dropdowns = window.PhivaraCatalog.createDropdownGroup([
       {
         name: 'category', selectBox: categorySelect, button: categoryBtn, buttonText: categoryText, items: categoryItems, valueKey: 'category',
         onSelect(value) { activeCategory = value; currentPage = 1; filterPrograms(); }
@@ -72,6 +72,18 @@ function initProgramPage() {
       }
     ]);
     window.PhivaraCatalog.createSearch({ input: search, onSearch() { currentPage = 1; filterPrograms(); } });
+
+    // Pre-filter from URL, e.g. program.html?category=longevity (used by
+    // ecosystem.html links). doctor.js/article.js already did this for their
+    // own ?specialty=/?category= params; program.js never had it even on the
+    // original static site, so this is a small parity fix added alongside
+    // the ecosystem page that actually links here with ?category=.
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    if (categoryParam && dropdowns.category) {
+      dropdowns.category.selectByValue(categoryParam);
+    }
+
     filterPrograms();
   }
 

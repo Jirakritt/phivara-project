@@ -1,4 +1,4 @@
-import { findBothLocales, mediaUrl } from './payload'
+import { findBothLocales, getPayloadClient, mediaUrl } from './payload'
 
 // Thai months in Buddhist Era style, matching the original site's date
 // formatting (e.g. "28 พฤษภาคม 2569").
@@ -78,11 +78,52 @@ export interface HomeArticle {
   readTimeEn: string
 }
 
+export interface HomeHero {
+  eyebrowTh: string
+  eyebrowEn: string
+  headlineTh: string
+  headlineEn: string
+  leadTh: string
+  leadEn: string
+  ctaLabelTh: string
+  ctaLabelEn: string
+  backgroundImages: string[]
+}
+
 export interface HomeData {
+  hero: HomeHero
   branches: HomeBranch[]
   doctors: HomeDoctor[]
   programs: HomeProgram[]
   articles: HomeArticle[]
+}
+
+// Source: cms/globals/HomeHero.ts (a Payload Global — see that file's
+// comment for why the homepage hero is modeled this way instead of staying
+// hardcoded). backgroundImages isn't localized, so only one locale query is
+// needed for it; the text fields still need both.
+async function getHomeHero(): Promise<HomeHero> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [th, en] = (await Promise.all([
+    payload.findGlobal({ slug: 'home-hero', locale: 'th' }),
+    payload.findGlobal({ slug: 'home-hero', locale: 'en' }),
+  ])) as [any, any]
+
+  return {
+    eyebrowTh: th.eyebrow || '',
+    eyebrowEn: en?.eyebrow || th.eyebrow || '',
+    headlineTh: th.headline || '',
+    headlineEn: en?.headline || th.headline || '',
+    leadTh: th.lead || '',
+    leadEn: en?.lead || th.lead || '',
+    ctaLabelTh: th.ctaLabel || '',
+    ctaLabelEn: en?.ctaLabel || th.ctaLabel || '',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    backgroundImages: (th.backgroundImages || [])
+      .map((row: any) => mediaUrl(row.image))
+      .filter((url: string | undefined): url is string => Boolean(url)),
+  }
 }
 
 // The raw Payload doc shapes below are intentionally loose (`any`-ish) —
@@ -91,7 +132,8 @@ export interface HomeData {
 // Payload schema in TypeScript.
 
 export async function getHomeData(): Promise<HomeData> {
-  const [branchPairs, doctorPairs, programPairs, articlePairs] = await Promise.all([
+  const [hero, branchPairs, doctorPairs, programPairs, articlePairs] = await Promise.all([
+    getHomeHero(),
     // No manual "display order" field exists yet — sort by id (creation
     // order) so branches render in the same order they were seeded
     // (sanampao, phaholyothin, sriayudhaya, petchakasem, sriracha), matching
@@ -178,5 +220,5 @@ export async function getHomeData(): Promise<HomeData> {
     readTimeEn: `${th.readTimeMinutes} min`,
   }))
 
-  return { branches, doctors, programs, articles }
+  return { hero, branches, doctors, programs, articles }
 }
