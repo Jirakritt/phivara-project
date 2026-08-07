@@ -249,29 +249,37 @@ export default async function HomePage() {
       </section>
 
       {/* ================= MEMBERSHIP ================= */}
+      {/* Sourced from Payload's `membership` Global (hero + finalCta.buttonLabel)
+          — same content that powers /membership — see getHomeData()/
+          getMembershipTeaser() in src/lib/homeData.ts. */}
       <section className="membership" id="membership">
         <div className="mem-grid">
-          <img className="ph-photo reveal" src="/assets/images/hero/herobgcopy.png" alt="PHIVARA AUM Membership" />
+          <img className="ph-photo reveal" src={data.membershipTeaser.image} alt="PHIVARA AUM Membership" />
           <div className="mem-text reveal">
-            <div className="eyebrow" data-th="VIP Concierge" data-en="VIP Concierge">VIP Concierge</div>
-            <h2 data-th="พันธมิตรตลอดชีวิต ไม่ใช่แค่การรักษาครั้งเดียว" data-en="A Lifelong Partnership, Not a One-Time Treatment">
-              พันธมิตรตลอดชีวิต ไม่ใช่แค่การรักษาครั้งเดียว
+            <div className="eyebrow" data-th={data.membershipTeaser.eyebrowTh} data-en={data.membershipTeaser.eyebrowEn}>
+              {data.membershipTeaser.eyebrowTh}
+            </div>
+            <h2 data-th={data.membershipTeaser.headlineTh} data-en={data.membershipTeaser.headlineEn}>
+              {data.membershipTeaser.headlineTh}
             </h2>
-            <p
-              data-th="สิทธิพิเศษเฉพาะสมาชิก แพทย์ประจำตัว ห้องสวีทส่วนตัว การรีวิวความงามประจำปี และการดูแลระดับ concierge ตลอดทั้งปี — by invitation, by appointment"
-              data-en="Dedicated specialists, private suite access, annual beauty reviews, and year-round concierge care — by invitation, by appointment."
-            >
-              สิทธิพิเศษเฉพาะสมาชิก แพทย์ประจำตัว ห้องสวีทส่วนตัว การรีวิวความงามประจำปี และการดูแลระดับ concierge ตลอดทั้งปี — by invitation, by appointment
+            <p data-th={data.membershipTeaser.leadTh} data-en={data.membershipTeaser.leadEn}>
+              {data.membershipTeaser.leadTh}
             </p>
-            <div>
+            <div className="mem-cta-row">
               <a
                 href="#vipModalOverlay"
                 className="btn btn-outline vip-trigger"
                 data-service="membership"
-                data-th="Request Membership Consideration"
-                data-en="Request Membership Consideration"
+                data-th={data.membershipTeaser.ctaLabelTh}
+                data-en={data.membershipTeaser.ctaLabelEn}
               >
-                Request Membership Consideration
+                {data.membershipTeaser.ctaLabelTh}
+              </a>
+              <a href="/membership" className="arrow-link">
+                <span data-th="ดูรายละเอียด" data-en="View Details">ดูรายละเอียด</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
               </a>
             </div>
           </div>

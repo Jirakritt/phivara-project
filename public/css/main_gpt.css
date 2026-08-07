@@ -422,6 +422,15 @@
   .mem-text .eyebrow::before{ background:var(--gold-light); }
   .mem-text h2{ color:#fff; font-size:clamp(25px,3.2vw,36px); margin:20px 0 22px; line-height:1.35; font-weight:300; }
   .mem-text p{ color:#D9CFB8; font-weight:300; font-size:15.5px; line-height:1.9; margin-bottom:32px; }
+  .mem-cta-row{ display:flex; align-items:center; gap:28px; flex-wrap:wrap; }
+  /* Secondary "View Details" link to /membership — .arrow-link's default
+     gold/olive-dark hover pair is tuned for light backgrounds; olive-dark
+     on this section's dark olive bg would disappear on hover, so both
+     states are overridden here to the same light gold/cream tones already
+     used for .mem-text .eyebrow on this section. */
+  .mem-cta-row .arrow-link{ color:#F2E3C9; white-space:nowrap; }
+  .mem-cta-row .arrow-link:hover{ color:#fff; }
+  .mem-cta-row .arrow-link svg{ width:14px; height:14px; stroke-width:1.6; }
   @media(max-width:900px){ .mem-grid{ grid-template-columns:1fr; } .mem-grid .ph-photo{ min-height:280px; } .mem-text{ padding:50px 28px; } }
 
   /* ---------- Flagship destinations ---------- */

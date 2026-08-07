@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { isAdmin, isStaff } from '../access/roles'
+import { isAdmin, leadsBranchScopedAccess } from '../access/roles'
 
 // Captures every submission from the site-wide VIP Concierge booking modal
 // (public/js/vip-modal.js's #vipForm — the single shared form behind every
@@ -20,10 +20,14 @@ export const Leads: CollectionConfig = {
   },
   access: {
     // Public form submissions — anyone can create a lead, nobody outside
-    // staff can read/list/modify other people's contact info.
+    // staff can read/list/modify other people's contact info. A
+    // branch-scoped Content Editor/Medical Reviewer only sees and updates
+    // leads for their own assigned branch(es) — see leadsBranchScopedAccess
+    // (branch is stored as a slug string here, not a relationship, so it
+    // resolves the user's assigned branch ids to slugs before filtering).
     create: () => true,
-    read: isStaff,
-    update: isStaff,
+    read: leadsBranchScopedAccess,
+    update: leadsBranchScopedAccess,
     // Deletion stays admin-only so a lead can't be accidentally wiped
     // during day-to-day triage.
     delete: isAdmin,

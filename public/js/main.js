@@ -169,7 +169,7 @@
             <span class="tag">${category.tag}</span>
             <h3 data-th="${category.titleTh}" data-en="${category.titleEn}">${category.titleTh}</h3>
           </div>
-          <a href="#" class="arrow-link go more">
+          <a href="/program?category=${category.key}" class="arrow-link go more">
             <span data-th="ดูโปรแกรมทั้งหมด" data-en="View All Programs">ดูโปรแกรมทั้งหมด</span>
             <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M1 5H13M13 5L9 1M13 5L9 9" stroke="currentColor" stroke-width="1.3"/></svg>
           </a>
@@ -245,7 +245,7 @@
   const programsPerPanel = 4;
   function renderProgramCard(program){
     const { slug, branchTh, branchEn, titleTh, titleEn, descriptionTh, descriptionEn, image, price } = program;
-    const href = `program_detail.html?id=${slug}`;
+    const href = `/program/${slug}`;
     const formattedPrice = Number(price || 0).toLocaleString('en-US');
 
     return `<div class="program-card">
@@ -287,7 +287,7 @@
   const journalArticles = cmsData.articles || [];
   const journalGrid = document.getElementById('journalGrid');
   journalGrid.innerHTML = journalArticles.map((article,index) => {
-    const href = `article_detail.html?id=${article.id}`;
+    const href = `/article/${article.id}`;
     return `<article class="journal-card s-item" style="transition-delay:${index * 0.1}s">
       <a class="journal-card__media" href="${href}"><img class="journal-card__image" src="${article.image}" alt="${article.alt}"></a>
       <div class="journal-card__body">
@@ -306,73 +306,13 @@
     </article>`;
   }).join('');
 
-  /* Shared award data and card template */
-  const awards = [
-    {
-      image:'assets/images/awards/award-01.png',
-      alt:'COVID Management Initiative of the Year - Thailand, Healthcare Asia Awards 2022',
-      captionTh:'COVID Management Initiative of the Year - Thailand · Healthcare Asia Awards 2022',
-      captionEn:'COVID Management Initiative of the Year - Thailand · Healthcare Asia Awards 2022'
-    },
-    {
-      image:'assets/images/awards/award-02.png',
-      alt:'Gold Stevie Award, Excellence in Innovation - Health Care Industry, Asia-Pacific Stevie Awards 2026',
-      captionTh:'Gold Stevie Award ด้านนวัตกรรมทางการแพทย์ · Asia-Pacific Stevie Awards 2026',
-      captionEn:'Gold Stevie Award, Excellence in Innovation - Health Care Industry · Asia-Pacific Stevie Awards 2026'
-    },
-    {
-      image:'assets/images/awards/award-03.png',
-      alt:'Asia-Pacific Stevie Awards 2026 medallion',
-      captionTh:'เหรียญรางวัล Asia-Pacific Stevie Awards 2026',
-      captionEn:'Asia-Pacific Stevie Awards 2026'
-    },
-    {
-      image:'assets/images/awards/award-04.png',
-      alt:'Dental Clinic of the Year - Thailand, Healthcare Asia Awards 2026',
-      captionTh:'Dental Clinic of the Year - Thailand · Healthcare Asia Awards 2026',
-      captionEn:'Dental Clinic of the Year - Thailand · Healthcare Asia Awards 2026'
-    },
-    {
-      image:'assets/images/awards/award-05.png',
-      alt:'Health Promotion Initiative of the Year - Thailand, Healthcare Asia Awards 2025',
-      captionTh:'Health Promotion Initiative of the Year - Thailand · Healthcare Asia Awards 2025',
-      captionEn:'Health Promotion Initiative of the Year - Thailand · Healthcare Asia Awards 2025'
-    },
-    {
-      image:'assets/images/awards/award-06.png',
-      alt:'Fertility Centre of the Year in Asia Pacific, GlobalHealth Asia-Pacific Awards 2022',
-      captionTh:'Fertility Centre of the Year in Asia Pacific · GlobalHealth Asia-Pacific Awards 2022',
-      captionEn:'Fertility Centre of the Year in Asia Pacific · GlobalHealth Asia-Pacific Awards 2022'
-    },
-    {
-      image:'assets/images/awards/award-07.jpeg',
-      alt:'Dental Medical Centre of the Year in the Asia Pacific, GlobalHealth Asia-Pacific Awards 2021',
-      captionTh:'Dental Medical Centre of the Year in the Asia Pacific · GlobalHealth Asia-Pacific Awards 2021',
-      captionEn:'Dental Medical Centre of the Year in the Asia Pacific · GlobalHealth Asia-Pacific Awards 2021'
-    },
-    {
-      image:'assets/images/awards/award-08.jpeg',
-      alt:'Integrated Health and Wellness Service Provider of the Year in the Asia-Pacific, GlobalHealth Asia-Pacific Awards 2021',
-      captionTh:'Integrated Health and Wellness Service Provider of the Year in the Asia-Pacific · GlobalHealth Asia-Pacific Awards 2021',
-      captionEn:'Integrated Health and Wellness Service Provider of the Year in the Asia-Pacific · GlobalHealth Asia-Pacific Awards 2021'
-    },
-    {
-      image:'assets/images/awards/award-09.png',
-      alt:'Health and Wellness Initiative of the Year - Thailand, Healthcare Asia Awards 2025',
-      captionTh:'Health and Wellness Initiative of the Year - Thailand · Healthcare Asia Awards 2025',
-      captionEn:'Health and Wellness Initiative of the Year - Thailand · Healthcare Asia Awards 2025'
-    },
-    {
-      image:'assets/images/awards/award-10.png',
-      alt:'Integrated Health and Wellness Service Provider of the Year in Asia Pacific, GlobalHealth Asia-Pacific Awards 2022',
-      captionTh:'Integrated Health and Wellness Service Provider of the Year in Asia Pacific · GlobalHealth Asia-Pacific Awards 2022',
-      captionEn:'Integrated Health and Wellness Service Provider of the Year in Asia Pacific · GlobalHealth Asia-Pacific Awards 2022'
-    }
-  ];
+  /* Awards data + card template.
+     Sourced from Payload's `awards` collection — see src/lib/homeData.ts. */
+  const awards = cmsData.awards || [];
   const awardTrack = document.getElementById('awardTrack');
   awardTrack.innerHTML = awards.map(award => `
     <div class="award-card">
-      <div class="photo-wrap"><img class="ph-photo" src="${award.image}" alt="${award.alt}" onerror="this.hidden=true"></div>
+      <div class="photo-wrap"><img class="ph-photo" src="${award.image}" alt="${award.captionEn}" onerror="this.hidden=true"></div>
       <p class="award-caption" data-th="${award.captionTh}" data-en="${award.captionEn}">${award.captionTh}</p>
     </div>
   `).join('');
@@ -473,7 +413,7 @@
           <div class="flagship-location" data-th="PHIVARA ${branch.nameTh}" data-en="PHIVARA ${branch.nameEn}">PHIVARA ${branch.nameTh}</div>
           <h3 data-th="${branch.titleTh}" data-en="${branch.titleEn}">${branch.titleTh}</h3>
           <p data-th="${branch.descriptionTh}" data-en="${branch.descriptionEn}">${branch.descriptionTh}</p>
-          <a href="branch-${branch.id}.html" class="arrow-link flagship-link">
+          <a href="/branch/${branch.id}" class="arrow-link flagship-link">
             <span data-th="อ่านข้อมูลสาขา" data-en="Read branch details">อ่านข้อมูลสาขา</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -557,7 +497,7 @@
     /* Sourced from Payload's `doctors` collection — see src/lib/homeData.ts. */
     const doctorProfiles = cmsData.doctors || [];
     function renderDoctorCard(profile){
-      const profileHref = `doctor_detail.html?id=${profile.id}`;
+      const profileHref = `/doctor/${profile.id}`;
       return `<div class="spec-card">
         <div class="photo-wrap"><a href="${profileHref}" aria-label="${profile.nameTh}"><img class="ph-photo" src="${profile.image}" alt="${profile.nameTh}"></a></div>
         <div class="program-branch">

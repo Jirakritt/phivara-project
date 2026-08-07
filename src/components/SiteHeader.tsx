@@ -18,13 +18,14 @@
 // on every internal nav click keeps every page's legacy JS behaving
 // exactly like it did on the original static multi-page site.
 
-// 'membership' isn't one of the 6 real nav items below (membership.html
-// never had its own top-nav entry on the original site either — it's only
-// reachable via CTA buttons) — it's accepted here purely so SiteHeader can
-// be given an honest `page` value on /membership without ever matching a
+// 'membership' and 'notFound' aren't among the 6 real nav items below
+// (membership.html never had its own top-nav entry on the original site
+// either — it's only reachable via CTA buttons; not-found.tsx obviously
+// isn't a nav destination at all) — both are accepted here purely so
+// SiteHeader can be given an honest `page` value without ever matching a
 // NAVIGATION entry, which correctly leaves every tab unhighlighted, same as
 // the original static page's behavior.
-type NavKey = 'home' | 'ecosystem' | 'program' | 'doctor' | 'article' | 'contact' | 'membership'
+type NavKey = 'home' | 'ecosystem' | 'program' | 'doctor' | 'article' | 'contact' | 'membership' | 'notFound'
 
 const NAVIGATION: Array<{ key: NavKey; href: string; th: string; en: string }> = [
   { key: 'home', href: '#top', th: 'หน้าแรก', en: 'Home' },

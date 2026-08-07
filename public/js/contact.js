@@ -7,7 +7,7 @@
   if (!grid) return;
 
   grid.innerHTML = branches.map((branch, index) => {
-    const detailHref = `branch-${branch.id}.html`;
+    const detailHref = `/branch/${branch.id}`;
     const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(branch.addressTh)}`;
     const numStr = String(index + 1).padStart(2, '0');
 

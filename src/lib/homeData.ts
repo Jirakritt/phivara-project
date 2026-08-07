@@ -90,12 +90,32 @@ export interface HomeHero {
   backgroundImages: string[]
 }
 
+export interface HomeAward {
+  image: string
+  captionTh: string
+  captionEn: string
+}
+
+export interface HomeMembershipTeaser {
+  eyebrowTh: string
+  eyebrowEn: string
+  headlineTh: string
+  headlineEn: string
+  leadTh: string
+  leadEn: string
+  ctaLabelTh: string
+  ctaLabelEn: string
+  image: string
+}
+
 export interface HomeData {
   hero: HomeHero
   branches: HomeBranch[]
   doctors: HomeDoctor[]
   programs: HomeProgram[]
   articles: HomeArticle[]
+  awards: HomeAward[]
+  membershipTeaser: HomeMembershipTeaser
 }
 
 // Source: cms/globals/HomeHero.ts (a Payload Global — see that file's
@@ -126,14 +146,44 @@ async function getHomeHero(): Promise<HomeHero> {
   }
 }
 
+// Homepage "VIP Concierge" teaser (before the footer) — reuses the
+// `membership` Global that already powers the full /membership page instead
+// of staying hardcoded, so editing membership copy in one place updates both
+// places. hero.* covers the eyebrow/headline/lead; finalCta.buttonLabel is
+// reused for the CTA button text since it's the same "Request Membership
+// Consideration" action as the teaser's button. hero.heroImage isn't filled
+// in by the current seed data, so this falls back to the original teaser
+// photo when empty (same defensive pattern used elsewhere in this file).
+async function getMembershipTeaser(): Promise<HomeMembershipTeaser> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [th, en] = (await Promise.all([
+    payload.findGlobal({ slug: 'membership', locale: 'th' }),
+    payload.findGlobal({ slug: 'membership', locale: 'en' }),
+  ])) as [any, any]
+
+  return {
+    eyebrowTh: th.hero?.kicker || '',
+    eyebrowEn: en?.hero?.kicker || th.hero?.kicker || '',
+    headlineTh: th.hero?.headline || '',
+    headlineEn: en?.hero?.headline || th.hero?.headline || '',
+    leadTh: th.hero?.lead || '',
+    leadEn: en?.hero?.lead || th.hero?.lead || '',
+    ctaLabelTh: th.finalCta?.buttonLabel || '',
+    ctaLabelEn: en?.finalCta?.buttonLabel || th.finalCta?.buttonLabel || '',
+    image: mediaUrl(th.hero?.heroImage) || '/assets/images/hero/herobgcopy.png',
+  }
+}
+
 // The raw Payload doc shapes below are intentionally loose (`any`-ish) —
 // this file's only job is reshaping CMS content into the flat objects
 // public/js/main.js already knows how to render, not modeling the full
 // Payload schema in TypeScript.
 
 export async function getHomeData(): Promise<HomeData> {
-  const [hero, branchPairs, doctorPairs, programPairs, articlePairs] = await Promise.all([
+  const [hero, membershipTeaser, branchPairs, doctorPairs, programPairs, articlePairs, awardPairs] = await Promise.all([
     getHomeHero(),
+    getMembershipTeaser(),
     // No manual "display order" field exists yet — sort by id (creation
     // order) so branches render in the same order they were seeded
     // (sanampao, phaholyothin, sriayudhaya, petchakasem, sriracha), matching
@@ -152,6 +202,10 @@ export async function getHomeData(): Promise<HomeData> {
       sort: '-publishedDate',
       where: { _status: { equals: 'published' } },
     }),
+    // Same "sort by id" convention as branches — matches the order awards
+    // were seeded in (award-01..10), same as the array order main.js used
+    // to hardcode.
+    findBothLocales<any>('awards', { limit: 50, depth: 1, sort: 'id' }),
   ])
 
   const branches: HomeBranch[] = branchPairs.map(({ th, en }) => ({
@@ -220,5 +274,11 @@ export async function getHomeData(): Promise<HomeData> {
     readTimeEn: `${th.readTimeMinutes} min`,
   }))
 
-  return { hero, branches, doctors, programs, articles }
+  const awards: HomeAward[] = awardPairs.map(({ th, en }) => ({
+    image: mediaUrl(th.image) || '',
+    captionTh: th.caption || '',
+    captionEn: en?.caption || th.caption || '',
+  }))
+
+  return { hero, branches, doctors, programs, articles, awards, membershipTeaser }
 }

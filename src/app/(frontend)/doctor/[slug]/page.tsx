@@ -34,6 +34,37 @@ const SPECIALTY_TO_LEAD_SERVICE: Record<string, string> = {
   wellness: 'wellness',
 }
 
+// Previously missing entirely — doctor pages just inherited the root
+// layout's static title/description. Same seo.title/description/ogImage/
+// noIndex pattern as the article and program detail pages.
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const doctor = await getDoctorDetail(slug)
+  if (!doctor) return {}
+
+  const title = doctor.seo.title || `${doctor.nameEn} | PHIVARA`
+  const description = doctor.seo.description || doctor.rich?.bioEn || doctor.noteEn || undefined
+  const ogImage = doctor.seo.ogImage || doctor.portraitImage
+
+  return {
+    title,
+    description,
+    robots: doctor.seo.noIndex ? { index: false, follow: true } : undefined,
+    openGraph: {
+      title,
+      description,
+      type: 'profile',
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  }
+}
+
 // Rebuilt from phivara-design-html/doctor_detail.html. The original page
 // was hardcoded for one doctor (Dr. Kobkulya) with a JS overlay
 // (applyDr01Profile) that DOM-patched it into a second hardcoded doctor

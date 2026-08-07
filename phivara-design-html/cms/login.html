@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHIVARA CMS | เข้าสู่ระบบ (Mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cms-admin.css">
+</head>
+<body>
+
+<div class="login-shell">
+  <div class="login-card">
+    <div class="login-brand">
+      <img src="../assets/images/brand/emblem.png" alt="PHIVARA">
+      <span class="word">PHIVARA<small>Content Studio</small></span>
+    </div>
+
+    <!-- Example error state — shown when credentials are wrong. Remove/hide when this is wired to real Payload auth. -->
+    <!--
+    <div class="login-error">⚠ อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+    -->
+
+    <form>
+      <div class="field-row">
+        <label>อีเมล <span class="req">*</span></label>
+        <input type="text" placeholder="name@phivara.com">
+      </div>
+      <div class="field-row">
+        <label>รหัสผ่าน <span class="req">*</span></label>
+        <input type="password" placeholder="••••••••••">
+      </div>
+
+      <div class="login-remember">
+        <label><input type="checkbox"> จดจำฉันไว้ในระบบ</label>
+        <a href="#">ลืมรหัสผ่าน?</a>
+      </div>
+
+      <a href="dashboard.html" class="btn-cms btn-cms-gold">เข้าสู่ระบบ</a>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

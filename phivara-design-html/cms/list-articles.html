@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHIVARA CMS | บทความ (Mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cms-admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-logo">
+      <img src="../assets/images/brand/emblem.png" alt="PHIVARA">
+      <span class="word">PHIVARA<small>Content Studio</small></span>
+    </a>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">เนื้อหาเว็บไซต์</div>
+        <ul>
+          <li><a href="list-doctors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg> แพทย์ผู้เชี่ยวชาญ</a></li>
+          <li><a href="list-view.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> โปรแกรมตรวจ</a></li>
+          <li><a href="list-articles.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> บทความ</a></li>
+          <li><a href="list-branches.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 9h1M9 13h1M14 9h1M14 13h1"/></svg> สาขา</a></li>
+          <li><a href="list-leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 8h18"/></svg> รายชื่อผู้สนใจ (Leads)</a></li>
+          <li><a href="list-media.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg> คลังรูปภาพ</a></li>
+        </ul>
+      </div>
+
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">ตั้งค่าหน้าเว็บ</div>
+        <ul>
+          <li><a href="edit-home-hero.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg> หน้าแรก (Hero)</a></li>
+          <li><a href="edit-ecosystem.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg> ระบบนิเวศ PHIVARA</a></li>
+          <li><a href="edit-membership.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg> สมาชิก (Membership)</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="admin-sidebar-foot">
+      <a href="list-users.html">ผู้ใช้งาน &amp; สิทธิ์การเข้าถึง</a>
+      <a href="#">ออกจากระบบ</a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-breadcrumb"><span>PHIVARA CMS</span><span class="sep">/</span><span class="current">บทความ</span></div>
+      <div class="admin-topbar-right">
+        <div class="admin-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg> ค้นหาบทความ…</div>
+        <div class="locale-switch"><span class="active">TH</span><span>EN</span></div>
+        <a href="edit-articles.html" class="btn-cms btn-cms-gold">+ เขียนบทความใหม่</a>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <div class="admin-page-head">
+        <div>
+          <h1>บทความ</h1>
+          <p>ทั้งหมด 18 รายการ — จัดการคลังความรู้ที่แสดงบนหน้า /article</p>
+        </div>
+      </div>
+
+      <div class="admin-filters">
+        <div class="filter-chip active">ทั้งหมด (18)</div>
+        <div class="filter-chip">เผยแพร่แล้ว (15)</div>
+        <div class="filter-chip">ฉบับร่าง (3)</div>
+        <div class="filter-chip">⭐ ยอดนิยม (5)</div>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox"></th>
+              <th>ชื่อบทความ</th>
+              <th>หมวดหมู่</th>
+              <th>วันที่เผยแพร่</th>
+              <th>ยอดนิยม</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><a href="edit-articles.html" class="cell-title">Blue Ocean Pathway คืออะไร และช่วยออกแบบสุขภาพอย่างไร</a><div class="cell-sub">slug: blue-ocean-pathway</div></td>
+              <td><span class="cat-badge">Longevity</span></td>
+              <td>28 พ.ค. 2569</td>
+              <td>⭐</td>
+              <td><span class="status-pill published">เผยแพร่แล้ว</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><a href="#" class="cell-title">เคล็ดลับดูแลผิวจากแพทย์ผู้เชี่ยวชาญในทุกช่วงวัย</a><div class="cell-sub">slug: skin-care-tips</div></td>
+              <td><span class="cat-badge">Wellness</span></td>
+              <td>15 พ.ค. 2569</td>
+              <td>—</td>
+              <td><span class="status-pill published">เผยแพร่แล้ว</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><a href="#" class="cell-title">สมดุลฮอร์โมนกับความอ่อนเยาว์ที่ยั่งยืน</a><div class="cell-sub">slug: hormone-balance</div></td>
+              <td><span class="cat-badge">Longevity</span></td>
+              <td>2 พ.ค. 2569</td>
+              <td>⭐</td>
+              <td><span class="status-pill draft">ฉบับร่าง</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><a href="#" class="cell-title">เลือกฟิลเลอร์อย่างไรให้เหมาะกับใบหน้า</a><div class="cell-sub">slug: choosing-filler</div></td>
+              <td><span class="cat-badge">Dermatology</span></td>
+              <td>20 เม.ย. 2569</td>
+              <td>—</td>
+              <td><span class="status-pill published">เผยแพร่แล้ว</span></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><a href="#" class="cell-title">สิ่งที่ควรรู้ก่อนปรึกษาศัลยกรรมจมูก</a><div class="cell-sub">slug: rhinoplasty-questions</div></td>
+              <td><span class="cat-badge">Wellness</span></td>
+              <td>8 เม.ย. 2569</td>
+              <td>—</td>
+              <td><span class="status-pill draft">ฉบับร่าง</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+</body>
+</html>

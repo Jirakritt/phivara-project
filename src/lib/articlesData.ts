@@ -1,4 +1,6 @@
-import { findBothLocales, mediaUrl } from './payload'
+import type { SeoData } from './payload'
+
+import { findBothLocales, mapSeo, mediaUrl } from './payload'
 
 export interface ArticleCard {
   slug: string
@@ -57,6 +59,7 @@ export interface ArticleDetail extends ArticleCard {
   noteBox: { headingTh: string; headingEn: string; textTh: string; textEn: string } | null
   tags: string[]
   relatedDoctors: ArticleDoctorRef[]
+  seo: SeoData
 }
 
 const THAI_MONTHS = [
@@ -245,6 +248,7 @@ export async function getArticleDetail(slug: string): Promise<ArticleDetail | nu
       : null,
     tags: (th.tags || []).map((t: any) => t.text),
     relatedDoctors,
+    seo: mapSeo(th.seo),
   }
 }
 

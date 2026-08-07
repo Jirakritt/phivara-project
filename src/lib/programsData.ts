@@ -1,4 +1,6 @@
-import { findBothLocales, mediaUrl } from './payload'
+import type { SeoData } from './payload'
+
+import { findBothLocales, mapSeo, mediaUrl } from './payload'
 
 // Card-level fields shown on /program and reused as the base of the detail
 // page. Note: program.html's own client-side JS stripped the 2-bullet
@@ -52,6 +54,7 @@ export interface ProgramDetail extends ProgramCard {
   contactHoursTh?: string
   contactHoursEn?: string
   contactPhone?: string
+  seo: SeoData
 }
 
 export interface ProgramHighlightCard extends ProgramCard {
@@ -177,6 +180,7 @@ export async function getProgramDetail(slug: string): Promise<ProgramDetail | nu
     contactHoursTh: th.contactOverride?.hours,
     contactHoursEn: en?.contactOverride?.hours || th.contactOverride?.hours,
     contactPhone: th.contactOverride?.phone,
+    seo: mapSeo(th.seo),
   }
 }
 

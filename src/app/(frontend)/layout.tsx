@@ -11,9 +11,27 @@ import Script from 'next/script'
 // every page regardless of route, so it's the right spot for something
 // that must appear everywhere rather than duplicating it per page like the
 // legacy page-specific scripts.
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+
 export const metadata = {
+  // Needed so relative Open Graph image URLs (e.g. an uploaded media file's
+  // /api/media/... path) resolve to absolute URLs — required by LINE/
+  // Facebook/Twitter, which won't fetch a relative image path.
+  metadataBase: new URL(SITE_URL),
   title: 'PHIVARA | The Art of Beaugevity',
   description: 'Hospital-grade aesthetic & longevity destination.',
+  // Site-wide fallback for any page that doesn't set its own openGraph
+  // (e.g. static pages like /membership, /ecosystem, /contact) — article/
+  // program/doctor detail pages override this with their own seo.ogImage
+  // or cover image (see generateMetadata in their respective page.tsx).
+  openGraph: {
+    siteName: 'PHIVARA',
+    title: 'PHIVARA | The Art of Beaugevity',
+    description: 'Hospital-grade aesthetic & longevity destination.',
+    images: [{ url: '/logo/phivara_logo.jpg' }],
+    locale: 'th_TH',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

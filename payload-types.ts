@@ -73,6 +73,7 @@ export interface Config {
     doctors: Doctor;
     programs: Program;
     articles: Article;
+    awards: Award;
     leads: Lead;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +88,7 @@ export interface Config {
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    awards: AwardsSelect<false> | AwardsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -143,6 +145,10 @@ export interface User {
   id: number;
   name: string;
   role: 'admin' | 'editor' | 'medical-reviewer';
+  /**
+   * สาขาที่ผู้ใช้คนนี้ดูแล — ใช้จำกัดสิทธิ์แก้ไข/ลบข้อมูลเฉพาะสาขาที่เลือก (Admin ไม่ต้องตั้งค่านี้ เพราะเข้าถึงได้ทุกสาขาอยู่แล้ว)
+   */
+  assignedBranches?: (number | Branch)[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -161,52 +167,6 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  caption?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    hero?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -264,14 +224,68 @@ export interface Branch {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  caption?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "doctors".
  */
 export interface Doctor {
   id: number;
   /**
-   * e.g. dr01 — used in doctor_detail.html?id=
+   * URL for the doctor page, e.g. /doctor/dr-punnawit-sirimetha. Leave blank to auto-generate from Name En, or type your own custom URL.
    */
-  slug: string;
+  slug?: string | null;
   nameTh: string;
   nameEn: string;
   branch: number | Branch;
@@ -287,6 +301,14 @@ export interface Doctor {
    * Small credential line under the specialty, e.g. "Board Certified Plastic Surgeon"
    */
   subNote?: string | null;
+  /**
+   * Large portrait for doctor_detail hero
+   */
+  portrait?: (number | null) | Media;
+  /**
+   * Thumbnail for listing/carousel cards
+   */
+  cardPhoto?: (number | null) | Media;
   /**
    * Hero badge on doctor_detail, e.g. "แพทย์ประจำศูนย์ศัลยกรรมตกแต่ง โรงพยาบาลพญาไทศรีราชา"
    */
@@ -304,14 +326,6 @@ export interface Doctor {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Large portrait for doctor_detail hero
-   */
-  portrait?: (number | null) | Media;
-  /**
-   * Thumbnail for listing/carousel cards
-   */
-  cardPhoto?: (number | null) | Media;
   bio?: {
     root: {
       type: string;
@@ -366,8 +380,22 @@ export interface Doctor {
    */
   contactFact?: string | null;
   seo?: {
+    /**
+     * Browser tab title / Google search result title. Leave blank to use the page title.
+     */
     title?: string | null;
+    /**
+     * Google search result snippet (~150–160 characters). Leave blank to use the page summary.
+     */
     description?: string | null;
+    /**
+     * Preview image shown when this page is shared on LINE, Facebook, or Twitter. Leave blank to use the page's own cover image.
+     */
+    ogImage?: (number | null) | Media;
+    /**
+     * Hide this page from Google search results (the page itself stays live and reachable by direct link).
+     */
+    noIndex?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -388,11 +416,27 @@ export interface Program {
    */
   code?: string | null;
   category: 'plastic' | 'dermatology' | 'longevity' | 'wellness';
+  title: string;
+  /**
+   * THB
+   */
+  price: number;
+  /**
+   * Show in the /program highlight carousel (program.html originally hardcoded pv01, pv02, pv03, pv06 here)
+   */
+  featured?: boolean | null;
+  /**
+   * Leave blank if this program is available at every branch.
+   */
+  branch?: (number | null) | Branch;
+  /**
+   * e.g. "รับบริการได้ถึง 30/12/69"
+   */
+  validityNote?: string | null;
   /**
    * Card badge, e.g. "LONGEVITY", "CARDIOVASCULAR", "CELLULAR HEALTH"
    */
   tag?: string | null;
-  title: string;
   /**
    * Catalog card description
    */
@@ -410,20 +454,11 @@ export interface Program {
    * e.g. "ปรึกษาแพทย์พร้อมสรุปผล", "เหมาะสำหรับทุกเพศ"
    */
   cardNote?: string | null;
-  /**
-   * THB
-   */
-  price: number;
-  /**
-   * Show in the /program highlight carousel (program.html originally hardcoded pv01, pv02, pv03, pv06 here)
-   */
-  featured?: boolean | null;
-  /**
-   * e.g. "รับบริการได้ถึง 30/12/69"
-   */
-  validityNote?: string | null;
-  branch?: (number | null) | Branch;
   heroImage?: (number | null) | Media;
+  /**
+   * Hidden keywords for the catalog search box
+   */
+  searchKeywords?: string | null;
   /**
    * Full "เกี่ยวกับโปรแกรมตรวจ" description on the detail page
    */
@@ -486,13 +521,23 @@ export interface Program {
     hours?: string | null;
     phone?: string | null;
   };
-  /**
-   * Hidden keywords for the catalog search box
-   */
-  searchKeywords?: string | null;
   seo?: {
+    /**
+     * Browser tab title / Google search result title. Leave blank to use the page title.
+     */
     title?: string | null;
+    /**
+     * Google search result snippet (~150–160 characters). Leave blank to use the page summary.
+     */
     description?: string | null;
+    /**
+     * Preview image shown when this page is shared on LINE, Facebook, or Twitter. Leave blank to use the page's own cover image.
+     */
+    ogImage?: (number | null) | Media;
+    /**
+     * Hide this page from Google search results (the page itself stays live and reachable by direct link).
+     */
+    noIndex?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -518,18 +563,17 @@ export interface Article {
    * Display badge, e.g. "เวชศาสตร์อายุยืนยาว"
    */
   categoryLabel?: string | null;
+  /**
+   * Optional — only set this if the article is specific to one branch. Leave blank for general editorial content.
+   */
+  branch?: (number | null) | Branch;
   coverImage: number | Media;
-  author?: {
-    name?: string | null;
-    role?: string | null;
-    avatar?: (number | null) | Media;
-    /**
-     * Optional link to a specific doctor byline
-     */
-    doctor?: (number | null) | Doctor;
-  };
   publishedDate: string;
   readTimeMinutes: number;
+  /**
+   * Surface in the "MOST READ" sidebar
+   */
+  popular?: boolean | null;
   /**
    * Main prose. H2 sections build the table of contents automatically; use blocks below for note-box / insight-grid components seen on the current site.
    */
@@ -565,6 +609,15 @@ export interface Article {
     heading?: string | null;
     text?: string | null;
   };
+  author?: {
+    name?: string | null;
+    role?: string | null;
+    avatar?: (number | null) | Media;
+    /**
+     * Optional link to a specific doctor byline
+     */
+    doctor?: (number | null) | Doctor;
+  };
   tags?:
     | {
         text: string;
@@ -573,17 +626,41 @@ export interface Article {
     | null;
   relatedPrograms?: (number | Program)[] | null;
   relatedDoctors?: (number | Doctor)[] | null;
-  /**
-   * Surface in the "MOST READ" sidebar
-   */
-  popular?: boolean | null;
   seo?: {
+    /**
+     * Browser tab title / Google search result title. Leave blank to use the page title.
+     */
     title?: string | null;
+    /**
+     * Google search result snippet (~150–160 characters). Leave blank to use the page summary.
+     */
     description?: string | null;
+    /**
+     * Preview image shown when this page is shared on LINE, Facebook, or Twitter. Leave blank to use the page's own cover image.
+     */
+    ogImage?: (number | null) | Media;
+    /**
+     * Hide this page from Google search results (the page itself stays live and reachable by direct link).
+     */
+    noIndex?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "awards".
+ */
+export interface Award {
+  id: number;
+  image: number | Media;
+  /**
+   * e.g. "COVID Management Initiative of the Year - Thailand · Healthcare Asia Awards 2022"
+   */
+  caption: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * Booking requests submitted through the VIP Concierge modal and doctor appointment forms across the site.
@@ -668,6 +745,10 @@ export interface PayloadLockedDocument {
         value: number | Article;
       } | null)
     | ({
+        relationTo: 'awards';
+        value: number | Award;
+      } | null)
+    | ({
         relationTo: 'leads';
         value: number | Lead;
       } | null);
@@ -720,6 +801,7 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  assignedBranches?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -788,6 +870,16 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
@@ -837,6 +929,8 @@ export interface DoctorsSelect<T extends boolean = true> {
   specialty?: T;
   specialtyLabel?: T;
   subNote?: T;
+  portrait?: T;
+  cardPhoto?: T;
   hospitalTitle?: T;
   boardCertification?: T;
   tags?:
@@ -845,8 +939,6 @@ export interface DoctorsSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
-  portrait?: T;
-  cardPhoto?: T;
   bio?: T;
   credentialGroups?:
     | T
@@ -876,6 +968,8 @@ export interface DoctorsSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        ogImage?: T;
+        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -889,8 +983,12 @@ export interface ProgramsSelect<T extends boolean = true> {
   slug?: T;
   code?: T;
   category?: T;
-  tag?: T;
   title?: T;
+  price?: T;
+  featured?: T;
+  branch?: T;
+  validityNote?: T;
+  tag?: T;
   shortDescription?: T;
   highlights?:
     | T
@@ -899,11 +997,8 @@ export interface ProgramsSelect<T extends boolean = true> {
         id?: T;
       };
   cardNote?: T;
-  price?: T;
-  featured?: T;
-  validityNote?: T;
-  branch?: T;
   heroImage?: T;
+  searchKeywords?: T;
   aboutProgram?: T;
   purposeList?:
     | T
@@ -939,12 +1034,13 @@ export interface ProgramsSelect<T extends boolean = true> {
         hours?: T;
         phone?: T;
       };
-  searchKeywords?: T;
   seo?:
     | T
     | {
         title?: T;
         description?: T;
+        ogImage?: T;
+        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -960,17 +1056,11 @@ export interface ArticlesSelect<T extends boolean = true> {
   summary?: T;
   category?: T;
   categoryLabel?: T;
+  branch?: T;
   coverImage?: T;
-  author?:
-    | T
-    | {
-        name?: T;
-        role?: T;
-        avatar?: T;
-        doctor?: T;
-      };
   publishedDate?: T;
   readTimeMinutes?: T;
+  popular?: T;
   body?: T;
   insightSteps?:
     | T
@@ -985,6 +1075,14 @@ export interface ArticlesSelect<T extends boolean = true> {
         heading?: T;
         text?: T;
       };
+  author?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        avatar?: T;
+        doctor?: T;
+      };
   tags?:
     | T
     | {
@@ -993,16 +1091,27 @@ export interface ArticlesSelect<T extends boolean = true> {
       };
   relatedPrograms?: T;
   relatedDoctors?: T;
-  popular?: T;
   seo?:
     | T
     | {
         title?: T;
         description?: T;
+        ogImage?: T;
+        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "awards_select".
+ */
+export interface AwardsSelect<T extends boolean = true> {
+  image?: T;
+  caption?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

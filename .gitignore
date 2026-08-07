@@ -13,3 +13,8 @@ media
 
 # TypeScript incremental build cache — machine-specific, safe to delete.
 tsconfig.tsbuildinfo
+
+# Local database/media backups (see the backup instructions) — these can
+# contain real visitor data (Leads) once the site is live, so they must
+# never end up in git history.
+backups

@@ -6,6 +6,11 @@ import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
 
 import { importMap } from './admin/importMap.js'
+// PHIVARA brand theme (colors/fonts) for the admin panel — see the file's
+// own top comment for the approach. Imported after Payload's own CSS so it
+// can override it (custom CSS outside Payload's @layer already wins on
+// specificity regardless of order, but this keeps intent obvious too).
+import './custom.scss'
 
 type Args = {
   children: React.ReactNode

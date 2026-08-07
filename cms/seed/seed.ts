@@ -13,6 +13,7 @@ import { getPayload, type Payload } from 'payload'
 
 import config from '../payload.config'
 import { articlesData } from './data/articles'
+import { awardsData } from './data/awards'
 import { branchesData } from './data/branches'
 import { doctorsData } from './data/doctors'
 import { ecosystemData } from './data/ecosystem'
@@ -60,7 +61,7 @@ function attachRowIds(enValue: any, sourceValue: any): any {
 
 async function createLocalized(
   payload: Payload,
-  collection: 'branches' | 'doctors' | 'programs' | 'articles',
+  collection: 'branches' | 'doctors' | 'programs' | 'articles' | 'awards',
   thData: Record<string, unknown>,
   enData: Record<string, unknown>,
 ): Promise<string | number> {
@@ -81,7 +82,7 @@ async function createLocalized(
 }
 
 async function clearExisting(payload: Payload) {
-  const collections = ['articles', 'programs', 'doctors', 'branches', 'media'] as const
+  const collections = ['articles', 'programs', 'doctors', 'branches', 'awards', 'media'] as const
   for (const collection of collections) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { docs } = await payload.find({ collection: collection as any, limit: 1000, depth: 0 })
@@ -343,6 +344,20 @@ async function run() {
 
     const id = await createLocalized(payload, 'articles', thData, enData)
     console.log(`  article: ${a.title.en} -> ${id}`)
+  }
+
+  // ---------------------------------------------------------------------
+  // Awards
+  // ---------------------------------------------------------------------
+  for (const a of awardsData) {
+    const image = await getOrCreateMedia(payload, a.image, { th: a.captionTh, en: a.captionEn })
+    const id = await createLocalized(
+      payload,
+      'awards',
+      { image, caption: a.captionTh },
+      { caption: a.captionEn },
+    )
+    console.log(`  award: ${a.captionEn} -> ${id}`)
   }
 
   // ---------------------------------------------------------------------

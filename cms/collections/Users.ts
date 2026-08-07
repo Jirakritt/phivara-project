@@ -37,5 +37,25 @@ export const Users: CollectionConfig = {
         { label: 'Medical Reviewer', value: 'medical-reviewer' },
       ],
     },
+    {
+      // Scopes a Content Editor / Medical Reviewer to only the branch(es)
+      // listed here — see branchScopedContent/publishedOrBranchScopedStaff
+      // in cms/access/roles.ts. Left empty (or role = admin), the user has
+      // no branch-tagged content in scope at all, so this must be filled in
+      // for every non-admin account before they can do anything useful.
+      name: 'assignedBranches',
+      type: 'relationship',
+      relationTo: 'branches',
+      hasMany: true,
+      access: {
+        // Only admins can change who's assigned to which branch; editors
+        // can't grant themselves a wider scope.
+        update: isAdminField,
+      },
+      admin: {
+        condition: (data) => data?.role !== 'admin',
+        description: 'สาขาที่ผู้ใช้คนนี้ดูแล — ใช้จำกัดสิทธิ์แก้ไข/ลบข้อมูลเฉพาะสาขาที่เลือก (Admin ไม่ต้องตั้งค่านี้ เพราะเข้าถึงได้ทุกสาขาอยู่แล้ว)',
+      },
+    },
   ],
 }

@@ -63,7 +63,7 @@ cat ~/.ssh/phivara_deploy.pub
 
 ```bash
 # clone
-git clone git@github.com:<your-org>/<repo>.git /var/www/phivara
+git clone git@github.com:Jirakritt/phivara-project.git /var/www/phivara
 cd /var/www/phivara
 
 # .env — สร้างเองบน server, ห้าม commit เข้า git

@@ -1,0 +1,605 @@
+/* ==========================================================================
+   PHIVARA admin theme — re-skins Payload's default admin panel to match the
+   public site's brand palette/fonts. Loaded by (payload)/layout.tsx as the
+   root-level admin stylesheet (Payload's documented `custom.scss`
+   convention: https://payloadcms.com/docs/admin/customizing-css).
+
+   Approach: Payload's whole color system is a single 21-stop grayscale
+   ramp (--color-base-0..1000 in @payloadcms/ui's colors.scss) that
+   --theme-elevation-* derives from — nav, borders, hover states, cards,
+   etc. all read off that one ramp. Recoloring the ramp itself (instead of
+   chasing every individual component) re-themes the whole panel in one
+   place and keeps all of Payload's built-in contrast/hover logic intact.
+   --color-base-700 lands exactly on the site's --olive-dark (#443E1C) as
+   an anchor point. --theme-bg/--theme-text are overridden directly too,
+   since they're read from a separate --color-bg variable Payload sets at
+   runtime rather than from the ramp.
+
+   Logo/icon swap and Ecosystem discipline row labels are handled separately
+   via custom admin React components (cms/admin/components/Graphics.tsx and
+   EcosystemRowLabel.tsx, wired in payload.config.ts / Ecosystem.ts).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500&display=swap');
+
+@font-face { font-family: 'Sukhumvit Set'; src: url('/assets/fonts/sukhumvit-set/SukhumvitSet-Light.ttf') format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sukhumvit Set'; src: url('/assets/fonts/sukhumvit-set/SukhumvitSet-Text.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sukhumvit Set'; src: url('/assets/fonts/sukhumvit-set/SukhumvitSet-Medium.ttf') format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Sukhumvit Set'; src: url('/assets/fonts/sukhumvit-set/SukhumvitSet-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+
+:root {
+  // ---- Typography ----
+  --font-family-sans: 'Sukhumvit Set', 'Prompt', sans-serif;
+
+  // ---- Base grayscale ramp -> warm cream/olive ramp ----
+  // Same 21 stops, same relative light->dark progression Payload expects,
+  // just shifted from neutral gray to the site's cream/gold/olive hues.
+  --color-base-0: #FAF7F0;
+  --color-base-50: #F3EEE1;
+  --color-base-100: #EAE2CF;
+  --color-base-150: #DED3B8;
+  --color-base-200: #CFC1A0;
+  --color-base-250: #C0B08A;
+  --color-base-300: #B29F76;
+  --color-base-350: #A38F66;
+  --color-base-400: #948058;
+  --color-base-450: #86724C;
+  --color-base-500: #776441;
+  --color-base-550: #695738;
+  --color-base-600: #5A4A2F;
+  --color-base-650: #4C3E28;
+  --color-base-700: #443E1C; // == site --olive-dark
+  --color-base-750: #3A3419;
+  --color-base-800: #2E2A16;
+  --color-base-850: #232013;
+  --color-base-900: #1A1810;
+  --color-base-950: #100F0A;
+  --color-base-1000: #000000;
+
+  // ---- Directly-consumed theme variables (app.scss reads these, not the
+  // ramp above, for the page background/text/input background) ----
+  --color-bg: #FAF7F0;
+  --theme-bg: #FAF7F0;
+  --theme-text: #2E2A16;
+  --theme-input-bg: #FFFFFF;
+}
+
+html[data-theme='dark'] {
+  --color-bg: #211C16;
+  --theme-bg: #211C16;
+  --theme-text: #F3EEE1;
+  --theme-input-bg: #2E2A16;
+}
+
+// Success color (Payload's focus-ring/checkbox/toggle "on" color, per
+// vars.scss's $focus-box-shadow) shifted from its default green to the
+// site's gold so focus rings and active toggles read as on-brand.
+:root {
+  --theme-success-500: #C7A76B;
+  --theme-success-550: #B8985C;
+  --theme-success-400: #D2B98F;
+}
+
+body,
+input,
+textarea,
+select,
+button {
+  font-family: var(--font-family-sans), sans-serif;
+}
+
+// Payload's nav/sidebar and primary "save" button read from the ramp
+// above already; this just nudges the active nav-group indicator and
+// primary button hover to the site's gold accent for a clearer brand tie.
+.nav__link--active,
+.step-nav a[aria-current='page'] {
+  color: #C7A76B !important;
+}
+
+.btn--style-primary:not(.btn--disabled) {
+  background: #443E1C !important;
+  border-color: #443E1C !important;
+}
+
+.btn--style-primary:not(.btn--disabled):hover {
+  background: #5A4A2F !important;
+  border-color: #5A4A2F !important;
+}
+
+/* ==========================================================================
+   Custom Nav (cms/admin/components/Nav.tsx) — matches the reviewed CMS
+   mockup's .admin-sidebar (phivara-design-html/cms/dashboard.html). The
+   component reuses Payload's real `nav` / `nav__scroll` classes so sticky
+   positioning, height, flex layout, mobile slide-open/close, and the header
+   gutter (--nav-padding-block-start) all keep working unmodified — this
+   block only adds the visual skin plus the new `.phivara-nav__*` classes the
+   component renders inside that scroll container.
+   ========================================================================== */
+:root {
+  --nav-width: 264px;
+}
+
+.phivara-nav {
+  background: #443E1C; // --olive-dark
+  border-right: none;
+
+  .nav__scroll {
+    color: #F8F4EC; // --cream
+  }
+}
+
+.phivara-nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px 26px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(248, 244, 236, 0.14);
+
+  img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+  }
+
+  .word {
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    color: #F8F4EC;
+    line-height: 1.2;
+  }
+
+  .word small {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: #E6D3AA; // --gold-light
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+}
+
+.phivara-nav__groups {
+  flex: 1;
+}
+
+.phivara-nav__group {
+  margin-bottom: 24px;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.phivara-nav__label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(248, 244, 236, 0.42);
+  padding: 0 10px 10px;
+}
+
+.phivara-nav__group a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: rgba(248, 244, 236, 0.82);
+  text-decoration: none;
+  transition: 0.2s;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    opacity: 0.85;
+  }
+
+  &:hover {
+    background: rgba(248, 244, 236, 0.08);
+    color: #fff;
+  }
+
+  &.active {
+    background: #C7A76B; // --gold
+    color: #443E1C;
+    font-weight: 500;
+
+    svg {
+      opacity: 1;
+    }
+  }
+}
+
+.phivara-nav__foot {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(248, 244, 236, 0.14);
+  font-size: 11px;
+
+  a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: rgba(248, 244, 236, 0.7);
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(248, 244, 236, 0.08);
+      color: #fff;
+    }
+  }
+}
+
+/* ==========================================================================
+   Custom Dashboard (cms/admin/components/Dashboard.tsx) — matches the
+   reviewed mockup's overview cards (phivara-design-html/cms/dashboard.html).
+   Rendered inside Payload's own DefaultTemplate/Gutter, so only the content
+   itself needs styling here.
+   ========================================================================== */
+.phivara-dashboard {
+  &__head {
+    margin-bottom: 24px;
+
+    h1 {
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--theme-text);
+    }
+
+    p {
+      font-size: 13px;
+      color: var(--theme-elevation-500);
+      margin-top: 4px;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--theme-elevation-500);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 36px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__card {
+    display: block;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 8px;
+    padding: 22px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: 0.2s;
+
+    &:hover {
+      border-color: #C7A76B; // --gold
+      box-shadow: 0 14px 34px rgba(68, 62, 28, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: var(--theme-elevation-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+
+      svg {
+        width: 19px;
+        height: 19px;
+        color: #6E6530; // --olive
+      }
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--theme-text);
+    }
+
+    .stat {
+      font-size: 12px;
+      color: var(--theme-elevation-500);
+
+      strong {
+        color: var(--theme-text);
+        font-weight: 600;
+      }
+    }
+
+    .go {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #6E6530; // --olive
+    }
+  }
+
+  &__activity {
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  &__activity-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--theme-elevation-50);
+    font-size: 12.5px;
+    text-decoration: none;
+    color: inherit;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--theme-elevation-0);
+    }
+
+    .what {
+      color: var(--theme-text);
+
+      strong {
+        font-weight: 500;
+      }
+    }
+
+    .when {
+      color: var(--theme-elevation-500);
+      font-size: 11.5px;
+      flex: 0 0 auto;
+    }
+  }
+}
+
+/* ==========================================================================
+   Login / minimal-template shell — matches the reviewed login mockup
+   (phivara-design-html/cms/login.html .login-shell/.login-card). Targets
+   Payload's real `.template-minimal` (used for Login, Forgot Password,
+   Create First User, Unauthorized) — CSS only, no component override, so
+   the actual auth form logic is untouched.
+   ========================================================================== */
+.template-minimal {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(199, 167, 107, 0.16), transparent 46%),
+    radial-gradient(circle at 84% 88%, rgba(110, 101, 48, 0.14), transparent 50%),
+    linear-gradient(160deg, #443E1C 0%, #2f2a13 55%, #443E1C 100%);
+}
+
+.template-minimal__wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  background: #FCFAF5; // --cream-card
+  border-radius: 14px;
+  padding: 40px 38px 34px;
+  box-shadow: 0 40px 90px rgba(20, 18, 8, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.login__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+
+  img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+  }
+}
+
+/* ==========================================================================
+   List view card styling — matches the reviewed mockup's rounded
+   .admin-table-wrap card look. Targets Payload's real list-view DOM
+   (.list-header/.list-controls/.table-wrap/table) with CSS only; sorting,
+   filtering, pagination, and bulk actions are all untouched.
+   ========================================================================== */
+.list-header {
+  margin-bottom: 18px;
+
+  &__title {
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
+
+.table-wrap {
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-wrap table thead th {
+  background: var(--theme-elevation-50);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+.table-wrap table tbody tr:hover {
+  background: var(--theme-elevation-0);
+}
+
+/* ==========================================================================
+   List view status/category badges — matches the mockup's .status-pill /
+   .cat-badge. Payload's built-in select-field list Cell already renders a
+   `selected--{value}` class on the wrapping span (confirmed via live DOM:
+   .cell-_status > span.selected--published/.selected--draft,
+   .cell-category / .cell-specialty > span.selected--{plastic|dermatology|
+   longevity|wellness}) — this only styles those existing real classes, no
+   custom Cell component needed.
+   ========================================================================== */
+.cell-_status {
+  .selected--published,
+  .selected--draft {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+  }
+
+  .selected--published {
+    background: rgba(110, 101, 48, 0.12);
+    color: #6E6530; // --olive
+
+    &::before {
+      background: #6E6530;
+    }
+  }
+
+  .selected--draft {
+    background: rgba(199, 167, 107, 0.16);
+    color: #8a6a2f;
+
+    &::before {
+      background: #C7A76B; // --gold
+    }
+  }
+}
+
+.cell-category,
+.cell-specialty {
+  span[class^='selected--'] {
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: #A5583C; // --terracotta
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+}
+
+/* ==========================================================================
+   Edit view — reposition the document-controls bar (Status / Save / Publish)
+   into a sticky right-hand "meta card", matching the reviewed mockup's
+   2-column edit layout (phivara-design-html/cms/css/cms-admin.css
+   .edit-layout/.meta-sidebar). CSS-only: `.doc-controls` and
+   `.collection-edit__main-wrapper` are real sibling nodes Payload already
+   renders (confirmed on both Collection and Global edit views, which share
+   the same `.collection-edit__form` class) — we only change their visual
+   position/direction via CSS Grid + flex-direction, so all save/publish/
+   draft/version logic stays exactly as Payload implements it. Only applied
+   above 1024px; below that it falls back to Payload's normal stacked
+   full-width bar (same behavior as before this change).
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .collection-edit__form {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .collection-edit__form > .doc-controls {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 90px;
+    width: auto;
+    background: var(--theme-input-bg);
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 8px;
+    padding: 20px 22px;
+
+    .doc-controls__wrapper {
+      flex-direction: column;
+      align-items: stretch;
+      height: auto;
+      gap: 14px;
+    }
+
+    .doc-controls__content {
+      flex-direction: column;
+      align-items: stretch;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .doc-controls__meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .doc-controls__controls-wrapper {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .doc-controls__controls {
+      flex-direction: column;
+      align-items: stretch;
+
+      button,
+      a {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .doc-controls__divider {
+      display: none;
+    }
+  }
+
+  .collection-edit__form > .collection-edit__main-wrapper {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}

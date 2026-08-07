@@ -1,4 +1,6 @@
-import { findBothLocales, mediaUrl } from './payload'
+import type { SeoData } from './payload'
+
+import { findBothLocales, mapSeo, mediaUrl } from './payload'
 
 export interface DoctorCard {
   id: string | number
@@ -43,6 +45,7 @@ export interface DoctorRichProfile {
 export interface DoctorDetail extends DoctorCard {
   portraitImage: string
   rich: DoctorRichProfile | null
+  seo: SeoData
 }
 
 export interface DoctorJournalCard {
@@ -168,6 +171,7 @@ export async function getDoctorDetail(slug: string): Promise<DoctorDetail | null
     ...card,
     portraitImage: mediaUrl(th.portrait) || mediaUrl(th.cardPhoto) || '/assets/images/doctors/dr01.png',
     rich,
+    seo: mapSeo(th.seo),
   }
 }
 

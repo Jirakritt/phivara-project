@@ -10,7 +10,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const program = await getProgramDetail(slug)
   if (!program) return {}
-  return { title: `PHIVARA | ${program.titleEn} — ${program.titleTh}` }
+
+  const title = program.seo.title || `PHIVARA | ${program.titleEn} — ${program.titleTh}`
+  const description = program.seo.description || program.shortDescriptionEn || program.shortDescriptionTh || undefined
+  const ogImage = program.seo.ogImage || program.image
+
+  return {
+    title,
+    description,
+    robots: program.seo.noIndex ? { index: false, follow: true } : undefined,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  }
 }
 
 // Rebuilt from phivara-design-html/program_detail.html. The original was a

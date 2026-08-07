@@ -15,47 +15,79 @@ export const Ecosystem: GlobalConfig = {
     read: () => true,
     update: hasAnyRole('admin', 'editor'),
   },
+  // Grouped into tabs (UI-only — none are named, so this doesn't change how
+  // the data is stored/queried) to match the reviewed CMS mockup
+  // (phivara-design-html/cms/edit-ecosystem.html). The 4 discipline rows use
+  // a custom RowLabel (cms/admin/components/EcosystemRowLabel.tsx) showing
+  // each row's own Title instead of the generic "Discipline 01/02/03/04".
   fields: [
     {
-      name: 'hero',
-      type: 'group',
-      fields: [
-        { name: 'eyebrow', type: 'text', localized: true, defaultValue: 'THE PHIVARA ECOSYSTEM' },
-        { name: 'headlineLine1', type: 'text', localized: true, required: true },
-        { name: 'headlineLine2', type: 'text', localized: true, required: true },
-        { name: 'lead', type: 'textarea', localized: true },
-      ],
-    },
-    {
-      name: 'disciplines',
-      type: 'array',
-      minRows: 4,
-      maxRows: 4,
-      admin: { description: 'Exactly 4 rows, in order: Longevity, Dermatology, Aesthetic Wellness, Plastic Surgery.' },
-      fields: [
-        { name: 'eyebrow', type: 'text', localized: true, required: true },
-        { name: 'title', type: 'text', localized: true, required: true },
-        { name: 'subtitle', type: 'text', localized: true, required: true },
-        { name: 'description', type: 'textarea', localized: true, required: true },
+      type: 'tabs',
+      tabs: [
         {
-          name: 'chips',
-          type: 'array',
-          fields: [{ name: 'label', type: 'text', localized: true, required: true }],
+          label: 'Hero',
+          fields: [
+            {
+              name: 'hero',
+              type: 'group',
+              fields: [
+                { name: 'eyebrow', type: 'text', localized: true, defaultValue: 'THE PHIVARA ECOSYSTEM' },
+                { name: 'headlineLine1', type: 'text', localized: true, required: true },
+                { name: 'headlineLine2', type: 'text', localized: true, required: true },
+                { name: 'lead', type: 'textarea', localized: true },
+              ],
+            },
+          ],
         },
-        { name: 'doctorLinkLabel', type: 'text', localized: true, required: true },
-        { name: 'programLinkLabel', type: 'text', localized: true, required: true },
-        { name: 'articleLinkLabel', type: 'text', localized: true, required: true },
-        { name: 'image', type: 'upload', relationTo: 'media' },
-      ],
-    },
-    {
-      name: 'closingCta',
-      type: 'group',
-      fields: [
-        { name: 'eyebrow', type: 'text', localized: true, defaultValue: 'BEGIN YOUR JOURNEY' },
-        { name: 'heading', type: 'text', localized: true, required: true },
-        { name: 'body', type: 'textarea', localized: true },
-        { name: 'buttonLabel', type: 'text', localized: true },
+        {
+          label: '4 สาขาความเชี่ยวชาญ',
+          fields: [
+            {
+              name: 'disciplines',
+              type: 'array',
+              minRows: 4,
+              maxRows: 4,
+              admin: {
+                description: 'Exactly 4 rows, in order: Longevity, Dermatology, Aesthetic Wellness, Plastic Surgery.',
+                components: {
+                  // Shows each row's own Title instead of "Discipline 01/02/03/04" —
+                  // see cms/admin/components/EcosystemRowLabel.tsx.
+                  RowLabel: '/cms/admin/components/EcosystemRowLabel#DisciplineRowLabel',
+                },
+              },
+              fields: [
+                { name: 'eyebrow', type: 'text', localized: true, required: true },
+                { name: 'title', type: 'text', localized: true, required: true },
+                { name: 'subtitle', type: 'text', localized: true, required: true },
+                { name: 'description', type: 'textarea', localized: true, required: true },
+                {
+                  name: 'chips',
+                  type: 'array',
+                  fields: [{ name: 'label', type: 'text', localized: true, required: true }],
+                },
+                { name: 'doctorLinkLabel', type: 'text', localized: true, required: true },
+                { name: 'programLinkLabel', type: 'text', localized: true, required: true },
+                { name: 'articleLinkLabel', type: 'text', localized: true, required: true },
+                { name: 'image', type: 'upload', relationTo: 'media' },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Closing CTA',
+          fields: [
+            {
+              name: 'closingCta',
+              type: 'group',
+              fields: [
+                { name: 'eyebrow', type: 'text', localized: true, defaultValue: 'BEGIN YOUR JOURNEY' },
+                { name: 'heading', type: 'text', localized: true, required: true },
+                { name: 'body', type: 'textarea', localized: true },
+                { name: 'buttonLabel', type: 'text', localized: true },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

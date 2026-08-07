@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHIVARA CMS | แดชบอร์ด (Mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cms-admin.css">
+<style>
+  .overview-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:36px; }
+  .overview-card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px; transition:.2s; }
+  .overview-card:hover{ border-color:var(--gold); box-shadow:0 14px 34px rgba(68,62,28,.08); transform:translateY(-2px); }
+  .overview-card .icon-wrap{ width:38px; height:38px; border-radius:9px; background:var(--cream-deep); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .overview-card .icon-wrap svg{ width:19px; height:19px; color:var(--olive); }
+  .overview-card h3{ font-size:15px; font-weight:500; margin-bottom:4px; }
+  .overview-card .stat{ font-size:12px; color:var(--ink-soft); }
+  .overview-card .stat strong{ color:var(--ink); font-weight:600; }
+  .overview-card a.go{ display:inline-block; margin-top:14px; font-size:11.5px; font-weight:600; color:var(--olive); }
+  .section-label{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 14px; font-weight:600; }
+  .activity-list{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .activity-row{ display:flex; align-items:center; gap:14px; padding:15px 20px; border-bottom:1px solid var(--cream-deep); font-size:12.5px; }
+  .activity-row:last-child{ border-bottom:0; }
+  .activity-row .who{ width:26px; height:26px; border-radius:50%; background:var(--olive-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; flex:0 0 auto; }
+  .activity-row .what{ flex:1; color:var(--ink); }
+  .activity-row .what strong{ font-weight:500; }
+  .activity-row .when{ color:var(--ink-soft); font-size:11.5px; flex:0 0 auto; }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-logo">
+      <img src="../assets/images/brand/emblem.png" alt="PHIVARA">
+      <span class="word">PHIVARA<small>Content Studio</small></span>
+    </a>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">เนื้อหาเว็บไซต์</div>
+        <ul>
+          <li><a href="list-doctors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg> แพทย์ผู้เชี่ยวชาญ</a></li>
+          <li><a href="list-view.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> โปรแกรมตรวจ</a></li>
+          <li><a href="list-articles.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> บทความ</a></li>
+          <li><a href="list-branches.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 9h1M9 13h1M14 9h1M14 13h1"/></svg> สาขา</a></li>
+          <li><a href="list-leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 8h18"/></svg> รายชื่อผู้สนใจ (Leads)</a></li>
+          <li><a href="list-media.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg> คลังรูปภาพ</a></li>
+        </ul>
+      </div>
+
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">ตั้งค่าหน้าเว็บ</div>
+        <ul>
+          <li><a href="edit-home-hero.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg> หน้าแรก (Hero)</a></li>
+          <li><a href="edit-ecosystem.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg> ระบบนิเวศ PHIVARA</a></li>
+          <li><a href="edit-membership.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg> สมาชิก (Membership)</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="admin-sidebar-foot">
+      <a href="list-users.html">ผู้ใช้งาน &amp; สิทธิ์การเข้าถึง</a>
+      <a href="#">ออกจากระบบ</a>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-breadcrumb"><span class="current">แดชบอร์ด</span></div>
+      <div class="admin-topbar-right">
+        <div class="locale-switch"><span class="active">TH</span><span>EN</span></div>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <div class="admin-page-head">
+        <div>
+          <h1>สวัสดี, กัญญา 👋</h1>
+          <p>ภาพรวมเนื้อหาทั้งหมดของเว็บไซต์ PHIVARA</p>
+        </div>
+      </div>
+
+      <p class="section-label">เนื้อหาเว็บไซต์</p>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <h3>แพทย์ผู้เชี่ยวชาญ</h3>
+          <div class="stat"><strong>32</strong> รายการ · 2 ฉบับร่าง</div>
+          <a class="go" href="list-doctors.html">จัดการรายชื่อแพทย์ →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <h3>โปรแกรมตรวจ</h3>
+          <div class="stat"><strong>24</strong> รายการ · 5 ฉบับร่าง</div>
+          <a class="go" href="list-view.html">จัดการโปรแกรมตรวจ →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <h3>บทความ</h3>
+          <div class="stat"><strong>18</strong> รายการ · 3 ฉบับร่าง</div>
+          <a class="go" href="list-articles.html">จัดการบทความ →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 9h1M9 13h1M14 9h1M14 13h1"/></svg></div>
+          <h3>สาขา</h3>
+          <div class="stat"><strong>5</strong> สาขา</div>
+          <a class="go" href="list-branches.html">จัดการข้อมูลสาขา →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 8h18"/></svg></div>
+          <h3>รายชื่อผู้สนใจ (Leads)</h3>
+          <div class="stat"><strong>7</strong> รายการใหม่วันนี้</div>
+          <a class="go" href="list-leads.html">ดูรายชื่อผู้สนใจ →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <h3>คลังรูปภาพ</h3>
+          <div class="stat"><strong>146</strong> ไฟล์</div>
+          <a class="go" href="list-media.html">เปิดคลังรูปภาพ →</a>
+        </div>
+      </div>
+
+      <p class="section-label">ตั้งค่าหน้าเว็บ (Globals)</p>
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></div>
+          <h3>หน้าแรก (Hero)</h3>
+          <div class="stat">แก้ไขล่าสุด <strong>5 วันที่แล้ว</strong></div>
+          <a class="go" href="edit-home-hero.html">แก้ไขหน้าแรก →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
+          <h3>ระบบนิเวศ PHIVARA</h3>
+          <div class="stat">แก้ไขล่าสุด <strong>2 สัปดาห์ที่แล้ว</strong></div>
+          <a class="go" href="edit-ecosystem.html">แก้ไขหน้าระบบนิเวศ →</a>
+        </div>
+        <div class="overview-card">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg></div>
+          <h3>สมาชิก (Membership)</h3>
+          <div class="stat">แก้ไขล่าสุด <strong>1 เดือนที่แล้ว</strong></div>
+          <a class="go" href="edit-membership.html">แก้ไขหน้าสมาชิก →</a>
+        </div>
+      </div>
+
+      <p class="section-label">กิจกรรมล่าสุด</p>
+      <div class="activity-list">
+        <div class="activity-row">
+          <div class="who">กว.</div>
+          <div class="what"><strong>กัญญา ว.</strong> เผยแพร่โปรแกรม "โปรแกรมประเมินสุขภาพและอายุชีวภาพ"</div>
+          <div class="when">2 ชม. ที่แล้ว</div>
+        </div>
+        <div class="activity-row">
+          <div class="who">ณช.</div>
+          <div class="what"><strong>ณัฐชา ท.</strong> เพิ่มบทความใหม่ "สมดุลฮอร์โมนกับความอ่อนเยาว์ที่ยั่งยืน" (ฉบับร่าง)</div>
+          <div class="when">เมื่อวาน</div>
+        </div>
+        <div class="activity-row">
+          <div class="who">พญ.</div>
+          <div class="what"><strong>พญ. กอบกุลยา</strong> อัปเดตตารางออกตรวจของตนเอง</div>
+          <div class="when">3 วันที่แล้ว</div>
+        </div>
+        <div class="activity-row">
+          <div class="who">กว.</div>
+          <div class="what"><strong>กัญญา ว.</strong> แก้ไขข้อความหน้าแรก (Home Hero)</div>
+          <div class="when">5 วันที่แล้ว</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+</body>
+</html>

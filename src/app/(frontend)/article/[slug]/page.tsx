@@ -11,7 +11,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const article = await getArticleDetail(slug)
   if (!article) return {}
-  return { title: `${article.titleEn} | PHIVARA Journal` }
+
+  const title = article.seo.title || `${article.titleEn} | PHIVARA Journal`
+  const description = article.seo.description || article.summaryEn || article.summaryTh || undefined
+  const ogImage = article.seo.ogImage || article.image
+
+  return {
+    title,
+    description,
+    robots: article.seo.noIndex ? { index: false, follow: true } : undefined,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  }
 }
 
 // Rebuilt from phivara-design-html/article_detail.html, which was a single
