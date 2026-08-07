@@ -1,11 +1,24 @@
-// Ported 1:1 from phivara-design-html/js/site-shell.js's <phivara-footer>
-// custom element — see SiteHeader.tsx for why this is a React component
-// instead of a custom element, and for why internal links here are plain
-// <a> tags rather than next/link (forces a full page load so each page's
-// legacy JS re-initializes instead of silently no-op'ing on client-side
-// route transitions).
+// Originally ported 1:1 from phivara-design-html/js/site-shell.js's
+// <phivara-footer> custom element — see SiteHeader.tsx for why this is a
+// React component instead of a custom element, and for why internal links
+// here are plain <a> tags rather than next/link (forces a full page load so
+// each page's legacy JS re-initializes instead of silently no-op'ing on
+// client-side route transitions).
+//
+// Tagline / link columns / copyright / social links now come from the
+// `footer` Global (cms/globals/Footer.ts, fetched via
+// src/lib/homeData.ts's getFooterContent()) instead of being hardcoded —
+// editable in /admin. The "สาขา" column stays wired directly to the
+// Branches collection (the `branches` prop), same as before.
+import type { HomeFooter } from '@/lib/homeData'
 
-export default function SiteFooter({ branches }: { branches: Array<{ nameEn: string }> }) {
+export default function SiteFooter({
+  branches,
+  footer,
+}: {
+  branches: Array<{ nameEn: string }>
+  footer: HomeFooter
+}) {
   return (
     <footer className="site-footer">
       <div className="wrap">
@@ -15,21 +28,22 @@ export default function SiteFooter({ branches }: { branches: Array<{ nameEn: str
               <img src="/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
               <span className="word">PHIVARA</span>
             </div>
-            <p data-th="จุดหมายด้านความงามและอายุยืนยาวระดับโรงพยาบาล" data-en="A hospital-grade aesthetic &amp; longevity destination.">
-              จุดหมายด้านความงามและอายุยืนยาวระดับโรงพยาบาล
+            <p data-th={footer.taglineTh} data-en={footer.taglineEn}>
+              {footer.taglineTh}
             </p>
           </div>
-          <div className="foot-col">
-            <h4 data-th="สำรวจ" data-en="Explore">สำรวจ</h4>
-            <a href="/doctor" data-th="แพทย์ผู้เชี่ยวชาญ" data-en="Doctors">แพทย์ผู้เชี่ยวชาญ</a>
-          </div>
-          <div className="foot-col">
-            <h4 data-th="บริษัท" data-en="Company">บริษัท</h4>
-            <a href="/article" data-th="คลังความรู้" data-en="Journal">คลังความรู้</a>
-            <a href="#" data-th="ผู้ป่วยต่างชาติ" data-en="International Patients">ผู้ป่วยต่างชาติ</a>
-            <a href="#" data-th="ร่วมงานกับเรา" data-en="Careers">ร่วมงานกับเรา</a>
-            <a href="#" data-th="ข่าวประชาสัมพันธ์" data-en="Press">ข่าวประชาสัมพันธ์</a>
-          </div>
+          {footer.linkGroups.map((group, i) => (
+            <div className="foot-col" key={`${group.headingTh}-${i}`}>
+              <h4 data-th={group.headingTh} data-en={group.headingEn}>
+                {group.headingTh}
+              </h4>
+              {group.links.map((link, j) => (
+                <a key={`${link.url}-${j}`} href={link.url} data-th={link.labelTh} data-en={link.labelEn}>
+                  {link.labelTh}
+                </a>
+              ))}
+            </div>
+          ))}
           <div className="foot-col" id="footerLocations">
             <h4 data-th="สาขา" data-en="Locations">สาขา</h4>
             {branches.map((branch) => (
@@ -38,7 +52,9 @@ export default function SiteFooter({ branches }: { branches: Array<{ nameEn: str
           </div>
         </div>
         <div className="foot-bottom">
-          <p data-th="© 2569 PHIVARA สงวนลิขสิทธิ์" data-en="© 2026 PHIVARA. All rights reserved.">© 2569 PHIVARA สงวนลิขสิทธิ์</p>
+          <p data-th={footer.copyrightTh} data-en={footer.copyrightEn}>
+            {footer.copyrightTh}
+          </p>
           <div className="foot-legal">
             <a href="/privacy-policy" data-th="นโยบายความเป็นส่วนตัว" data-en="Privacy Policy">นโยบายความเป็นส่วนตัว</a>
             {/* Reopens the PDPA consent banner (public/js/consent-banner.js) so
@@ -46,9 +62,13 @@ export default function SiteFooter({ branches }: { branches: Array<{ nameEn: str
             <a href="#" id="cookieSettingsLink" data-th="ตั้งค่าคุกกี้" data-en="Cookie Settings">ตั้งค่าคุกกี้</a>
           </div>
           <div className="foot-social">
-            <a href="#" aria-label="Instagram">IG</a>
-            <a href="#" aria-label="Facebook">FB</a>
-            <a href="#" aria-label="LINE">LN</a>
+            {footer.social.instagram && (
+              <a href={footer.social.instagram} aria-label="Instagram">IG</a>
+            )}
+            {footer.social.facebook && (
+              <a href={footer.social.facebook} aria-label="Facebook">FB</a>
+            )}
+            {footer.social.line && <a href={footer.social.line} aria-label="LINE">LN</a>}
           </div>
         </div>
       </div>

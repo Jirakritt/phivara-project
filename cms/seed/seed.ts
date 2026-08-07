@@ -17,6 +17,7 @@ import { awardsData } from './data/awards'
 import { branchesData } from './data/branches'
 import { doctorsData } from './data/doctors'
 import { ecosystemData } from './data/ecosystem'
+import { footerData } from './data/footer'
 import { homeHeroData } from './data/homeHero'
 import { membershipData } from './data/membership'
 import { genericProgramCopy, programsData, pv02SpecialCopy } from './data/programs'
@@ -541,6 +542,36 @@ async function run() {
     },
   })
   console.log('  home-hero global updated')
+
+  // ---------------------------------------------------------------------
+  // Footer global
+  // ---------------------------------------------------------------------
+  await payload.updateGlobal({
+    slug: 'footer',
+    locale: 'th',
+    data: {
+      tagline: footerData.tagline.th,
+      linkGroups: footerData.linkGroups.map((group) => ({
+        heading: group.heading.th,
+        links: group.links.map((link) => ({ label: link.label.th, url: link.url })),
+      })),
+      copyrightText: footerData.copyrightText.th,
+      socialLinks: footerData.socialLinks,
+    },
+  })
+  await payload.updateGlobal({
+    slug: 'footer',
+    locale: 'en',
+    data: {
+      tagline: footerData.tagline.en,
+      linkGroups: footerData.linkGroups.map((group) => ({
+        heading: group.heading.en,
+        links: group.links.map((link) => ({ label: link.label.en, url: link.url })),
+      })),
+      copyrightText: footerData.copyrightText.en,
+    },
+  })
+  console.log('  footer global updated')
 
   console.log('Done.')
   process.exit(0)

@@ -288,7 +288,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         )}
       </main>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
       <div className="copy-toast" id="copyToast" data-th="คัดลอกลิงก์แล้ว" data-en="Link copied">คัดลอกลิงก์แล้ว</div>
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />

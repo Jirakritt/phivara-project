@@ -269,7 +269,7 @@ export default async function BranchDetailPage({ params }: { params: Promise<{ s
         </div>
       </main>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/vip-modal.js" strategy="afterInteractive" />

@@ -292,7 +292,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <SiteFooter branches={data.branches} />
+      <SiteFooter branches={data.branches} footer={data.footer} />
 
       <Script src="/js/main.js" strategy="afterInteractive" />
       <Script src="/js/vip-modal.js" strategy="afterInteractive" />

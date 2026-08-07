@@ -14,7 +14,8 @@
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
     "seed": "tsx cms/seed/seed.ts",
-    "seed:awards": "tsx cms/seed/seedAwards.ts"
+    "seed:awards": "tsx cms/seed/seedAwards.ts",
+    "seed:footer": "tsx cms/seed/seedFooter.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.87.0",

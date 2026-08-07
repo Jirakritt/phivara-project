@@ -168,7 +168,7 @@ export default async function EcosystemPage() {
         </section>
       </main>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/ecosystem.js" strategy="afterInteractive" />

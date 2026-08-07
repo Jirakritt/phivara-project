@@ -138,6 +138,17 @@ const settingsItems: NavItem[] = [
     type: 'global',
     icon: icon(<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" />),
   },
+  {
+    slug: 'footer',
+    label: 'ท้ายหน้าเว็บ (Footer)',
+    type: 'global',
+    icon: icon(
+      <>
+        <rect x="3" y="14" width="18" height="7" rx="1" />
+        <path d="M3 10h18M7 14v7M17 14v7" />
+      </>,
+    ),
+  },
 ]
 
 export function Nav() {

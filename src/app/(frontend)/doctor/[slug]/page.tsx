@@ -408,7 +408,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ s
         </div>
       </section>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/doctor-appointment-form.js" strategy="afterInteractive" />

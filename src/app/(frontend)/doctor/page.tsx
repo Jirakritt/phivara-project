@@ -196,7 +196,7 @@ export default async function DoctorListPage() {
         </div>
       </section>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/catalog-controls.js" strategy="afterInteractive" />

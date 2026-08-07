@@ -108,6 +108,27 @@ export interface HomeMembershipTeaser {
   image: string
 }
 
+export interface HomeFooterLink {
+  labelTh: string
+  labelEn: string
+  url: string
+}
+
+export interface HomeFooterGroup {
+  headingTh: string
+  headingEn: string
+  links: HomeFooterLink[]
+}
+
+export interface HomeFooter {
+  taglineTh: string
+  taglineEn: string
+  linkGroups: HomeFooterGroup[]
+  copyrightTh: string
+  copyrightEn: string
+  social: { instagram: string; facebook: string; line: string }
+}
+
 export interface HomeData {
   hero: HomeHero
   branches: HomeBranch[]
@@ -116,6 +137,7 @@ export interface HomeData {
   articles: HomeArticle[]
   awards: HomeAward[]
   membershipTeaser: HomeMembershipTeaser
+  footer: HomeFooter
 }
 
 // Source: cms/globals/HomeHero.ts (a Payload Global — see that file's
@@ -175,15 +197,60 @@ async function getMembershipTeaser(): Promise<HomeMembershipTeaser> {
   }
 }
 
+// Site-wide footer (cms/globals/Footer.ts) — shown on every page. The
+// "สาขา" column is deliberately NOT sourced from here (see that file's
+// comment); this only covers the manually-authored columns/tagline/
+// copyright/social links.
+async function getFooterContent(): Promise<HomeFooter> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [th, en] = (await Promise.all([
+    payload.findGlobal({ slug: 'footer', locale: 'th' }),
+    payload.findGlobal({ slug: 'footer', locale: 'en' }),
+  ])) as [any, any]
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const linkGroups: HomeFooterGroup[] = (th.linkGroups || []).map((group: any, i: number) => {
+    const enGroup = en?.linkGroups?.[i]
+    return {
+      headingTh: group.heading || '',
+      headingEn: enGroup?.heading || group.heading || '',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      links: (group.links || []).map((link: any, j: number) => {
+        const enLink = enGroup?.links?.[j]
+        return {
+          labelTh: link.label || '',
+          labelEn: enLink?.label || link.label || '',
+          url: link.url || '#',
+        }
+      }),
+    }
+  })
+
+  return {
+    taglineTh: th.tagline || '',
+    taglineEn: en?.tagline || th.tagline || '',
+    linkGroups,
+    copyrightTh: th.copyrightText || '',
+    copyrightEn: en?.copyrightText || th.copyrightText || '',
+    social: {
+      instagram: th.socialLinks?.instagram || '',
+      facebook: th.socialLinks?.facebook || '',
+      line: th.socialLinks?.line || '',
+    },
+  }
+}
+
 // The raw Payload doc shapes below are intentionally loose (`any`-ish) —
 // this file's only job is reshaping CMS content into the flat objects
 // public/js/main.js already knows how to render, not modeling the full
 // Payload schema in TypeScript.
 
 export async function getHomeData(): Promise<HomeData> {
-  const [hero, membershipTeaser, branchPairs, doctorPairs, programPairs, articlePairs, awardPairs] = await Promise.all([
+  const [hero, membershipTeaser, footer, branchPairs, doctorPairs, programPairs, articlePairs, awardPairs] = await Promise.all([
     getHomeHero(),
     getMembershipTeaser(),
+    getFooterContent(),
     // No manual "display order" field exists yet — sort by id (creation
     // order) so branches render in the same order they were seeded
     // (sanampao, phaholyothin, sriayudhaya, petchakasem, sriracha), matching
@@ -280,5 +347,5 @@ export async function getHomeData(): Promise<HomeData> {
     captionEn: en?.caption || th.caption || '',
   }))
 
-  return { hero, branches, doctors, programs, articles, awards, membershipTeaser }
+  return { hero, branches, doctors, programs, articles, awards, membershipTeaser, footer }
 }

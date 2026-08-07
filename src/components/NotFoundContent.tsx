@@ -116,7 +116,7 @@ export default async function NotFoundContent() {
         </section>
       </main>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/vip-modal.js" strategy="afterInteractive" />

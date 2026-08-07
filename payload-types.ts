@@ -103,11 +103,13 @@ export interface Config {
     membership: Membership;
     ecosystem: Ecosystem;
     'home-hero': HomeHero;
+    footer: Footer;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
     ecosystem: EcosystemSelect<false> | EcosystemSelect<true>;
     'home-hero': HomeHeroSelect<false> | HomeHeroSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
   };
   locale: 'th' | 'en';
   widgets: {
@@ -1297,6 +1299,50 @@ export interface HomeHero {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  /**
+   * ข้อความใต้โลโก้ PHIVARA มุมซ้ายของ footer
+   */
+  tagline?: string | null;
+  /**
+   * แต่ละคอลัมน์มีหัวข้อ + รายการเมนูย่อย (ไม่รวมคอลัมน์ "สาขา" ซึ่งดึงจากรายชื่อสาขาอัตโนมัติ)
+   */
+  linkGroups?:
+    | {
+        heading: string;
+        links?:
+          | {
+              label: string;
+              /**
+               * เช่น /doctor หรือ https://example.com
+               */
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * ข้อความลิขสิทธิ์แถวล่างสุด เช่น © 2569 PHIVARA สงวนลิขสิทธิ์
+   */
+  copyrightText?: string | null;
+  /**
+   * เว้นว่างช่องไหนไว้ ไอคอนนั้นจะไม่แสดง
+   */
+  socialLinks?: {
+    instagram?: string | null;
+    facebook?: string | null;
+    line?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
 export interface MembershipSelect<T extends boolean = true> {
@@ -1413,6 +1459,37 @@ export interface HomeHeroSelect<T extends boolean = true> {
     | {
         image?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  tagline?: T;
+  linkGroups?:
+    | T
+    | {
+        heading?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  copyrightText?: T;
+  socialLinks?:
+    | T
+    | {
+        instagram?: T;
+        facebook?: T;
+        line?: T;
       };
   updatedAt?: T;
   createdAt?: T;

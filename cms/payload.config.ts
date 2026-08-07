@@ -24,10 +24,11 @@ import { Users } from './collections/Users'
 import { Membership } from './globals/Membership'
 import { Ecosystem } from './globals/Ecosystem'
 import { HomeHero } from './globals/HomeHero'
+import { Footer } from './globals/Footer'
 
 export default buildConfig({
   collections: [Users, Media, Branches, Doctors, Programs, Articles, Awards, Leads],
-  globals: [Membership, Ecosystem, HomeHero],
+  globals: [Membership, Ecosystem, HomeHero, Footer],
 
   // TH is the source language on the current site; EN is the secondary
   // locale already present as data-en attributes throughout the HTML.

@@ -133,7 +133,7 @@ export default async function PrivacyPolicyPage() {
         </section>
       </main>
 
-      <SiteFooter branches={homeData.branches} />
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} />
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
     </>
