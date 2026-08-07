@@ -14,6 +14,8 @@ export const metadata = {
 // original built the branch grid client-side from the shared
 // `PhivaraSiteShell.branches` array; every branch card is now
 // server-rendered directly from Payload.
+export const revalidate = 60
+
 export default async function ContactPage() {
   const [branches, homeData] = await Promise.all([getBranchesListing(), getHomeData()])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`

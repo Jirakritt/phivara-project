@@ -18,6 +18,8 @@ export const metadata = {
 // pre-filtered via query params (?specialty=/?category=) that those pages
 // already read on load — see src/lib/ecosystemData.ts's DISCIPLINE_META
 // comment for why those slugs live in code rather than the CMS.
+export const revalidate = 60
+
 export default async function EcosystemPage() {
   const [content, homeData] = await Promise.all([getEcosystemContent(), getHomeData()])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`

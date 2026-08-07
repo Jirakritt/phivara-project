@@ -48,6 +48,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 //   links.
 // - "CONTINUE READING" pulls the next few real articles instead of 3
 //   hardcoded cards.
+export const revalidate = 60
+
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const [article, homeData] = await Promise.all([getArticleDetail(slug), getHomeData()])

@@ -14,6 +14,8 @@ export const metadata = {
 // js/doctor.js from a hardcoded array — here every published doctor is
 // server-rendered directly from Payload, and js/doctor.js (patched) only
 // handles filtering/search/pagination on top of the real cards.
+export const revalidate = 60
+
 export default async function DoctorListPage() {
   const [doctors, homeData] = await Promise.all([getDoctorsListing(), getHomeData()])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`

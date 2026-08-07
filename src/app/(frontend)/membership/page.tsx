@@ -15,6 +15,8 @@ export const metadata = {
 // modal), so this page is a near-literal port. Content now comes from the
 // `membership` Payload Global (cms/globals/Membership.ts) instead of being
 // hardcoded, so staff can edit copy without a code change.
+export const revalidate = 60
+
 export default async function MembershipPage() {
   const [content, homeData] = await Promise.all([getMembershipContent(), getHomeData()])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`

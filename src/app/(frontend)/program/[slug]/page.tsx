@@ -44,6 +44,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 // The original page's local "#bookingModal" is intentionally not ported —
 // public/js/vip-modal.js already intercepts every ".booking-trigger" click
 // site-wide and opens the shared VIP modal, prefilled via `data-program`.
+export const revalidate = 60
+
 export default async function ProgramDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const [program, homeData] = await Promise.all([getProgramDetail(slug), getHomeData()])

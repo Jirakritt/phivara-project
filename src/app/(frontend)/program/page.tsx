@@ -16,6 +16,8 @@ export const metadata = {
 // branch/price info client-side, and stripped the highlight bullets back
 // out again — every program is now server-rendered directly from Payload
 // with real data from the start, so none of that DOM-patching is needed.
+export const revalidate = 60
+
 export default async function ProgramListPage() {
   const [programs, featured, homeData] = await Promise.all([
     getProgramsListing(),

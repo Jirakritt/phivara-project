@@ -13,6 +13,8 @@ export const metadata = {
 // entity name, address, DPO contact) that need to come from PHIVARA's own
 // legal/compliance team before this goes live. Linked from the site-wide
 // PDPA consent banner (src/app/(frontend)/layout.tsx) and the footer.
+export const revalidate = 60
+
 export default async function PrivacyPolicyPage() {
   const homeData = await getHomeData()
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`

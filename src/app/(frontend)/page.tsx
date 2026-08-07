@@ -16,6 +16,12 @@ import { getHomeData } from '@/lib/homeData'
 // injects it as `window.__PHIVARA_DATA__` for the (lightly patched)
 // public/js/main.js to render, so the original interactions/carousels/
 // animations keep working unchanged.
+// Regenerate this static page in the background at most every 60s, so
+// content published in the CMS shows up on the live site without needing a
+// full `next build` + restart (see DEPLOY.md — deploys already do a build,
+// this just keeps in-between edits fresh too).
+export const revalidate = 60
+
 export default async function HomePage() {
   const data = await getHomeData()
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify(data).replace(/</g, '\\u003c')};`

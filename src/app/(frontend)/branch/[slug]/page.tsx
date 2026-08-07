@@ -35,6 +35,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 //   branch in branch-detail.js and has no home in the Doctor schema, so all
 //   of a branch's doctors render uniformly as the same spec-card used on
 //   /doctor instead.
+export const revalidate = 60
+
 export default async function BranchDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const [branch, homeData] = await Promise.all([getBranchDetail(slug), getHomeData()])

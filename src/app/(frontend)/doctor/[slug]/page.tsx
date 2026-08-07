@@ -76,6 +76,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 // dr01) get the full credentials/schedule layout — everyone else gets a
 // simpler but still correct profile (photo, name, specialty, branch,
 // booking CTA) instead of someone else's bio.
+export const revalidate = 60
+
 export default async function DoctorDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const [doctor, homeData] = await Promise.all([getDoctorDetail(slug), getHomeData()])

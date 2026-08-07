@@ -16,6 +16,8 @@ export const metadata = {
 // CMS content — the other 17 were mockup placeholders never wired to data.
 // The grid here is server-rendered from the real Articles collection only;
 // article.js's filter/sort/search/pagination logic is otherwise reused as-is.
+export const revalidate = 60
+
 export default async function ArticleListPage() {
   const [articles, homeData] = await Promise.all([getArticlesListing(), getHomeData()])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
