@@ -18,3 +18,8 @@ tsconfig.tsbuildinfo
 # contain real visitor data (Leads) once the site is live, so they must
 # never end up in git history.
 backups
+
+# Original static-HTML design mockups used as a build reference during
+# development — not part of the running Next.js/Payload app, no reason to
+# ship it to the server or keep it in git history going forward.
+phivara-design-html
