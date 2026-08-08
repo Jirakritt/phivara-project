@@ -8,7 +8,17 @@
     .detail-btn.outline{background:transparent;color:var(--olive-dark);border-color:rgba(199,167,107,.55)}
     .detail-btn.outline:hover{background:#fff;color:var(--gold);border-color:var(--gold)}
     .program-detail-hero{padding:54px 0 72px;background:linear-gradient(135deg,#fbf8f1,#efe5d3);overflow:hidden}
-    .program-detail-hero::after{content:"PHIVARA";position:absolute;right:-28px;bottom:-58px;color:rgba(99,85,51,.04);font-family:var(--serif-en);font-size:170px;letter-spacing:.08em}
+    /* Decorative background watermark text ("PHIVARA" here, overridden to
+       "WELLNESS" by the redesign rule further down). Being position:absolute
+       with no z-index makes it a positioned box that paints ABOVE the
+       hero's normal in-flow content (the two buttons in .hero-actions
+       included) per CSS stacking order — invisible at ~3% opacity, but
+       still captures clicks/taps over its bounding box. That's exactly why
+       the "นัดหมายปรึกษาโปรแกรม" / "ดูรายละเอียด" buttons stopped responding
+       to taps wherever the watermark text happened to sit behind them.
+       pointer-events:none lets every click pass straight through to
+       whatever is actually underneath. */
+    .program-detail-hero::after{content:"PHIVARA";position:absolute;right:-28px;bottom:-58px;color:rgba(99,85,51,.04);font-family:var(--serif-en);font-size:170px;letter-spacing:.08em;pointer-events:none}
     .detail-hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:64px;align-items:center}
     .detail-visual{position:relative;padding:0 0 28px 28px}
     .detail-visual::before{content:"";position:absolute;left:0;bottom:0;width:64%;height:70%;border:1px solid rgba(199,167,107,.6)}
