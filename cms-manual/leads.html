@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS — รายชื่อผู้สนใจ (Leads) | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans); background:var(--cream); color:var(--ink); font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+  header.doc-header{background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:46px 0 40px; border-bottom:3px solid var(--gold);}
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  header.doc-header .brand img{width:38px; height:38px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:15px; font-weight:500;}
+  header.doc-header .brand a{color:inherit; text-decoration:none; font-size:12px; letter-spacing:.05em; margin-left:auto; opacity:.75; border-bottom:1px solid rgba(255,255,255,.4);}
+  header.doc-header .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em; color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;}
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(28px,4vw,40px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:14px; max-width:600px; color:rgba(255,255,255,.78); font-size:15px;}
+  nav.toc{background:var(--cream-deep); border-bottom:1px solid var(--line); padding:18px 0; position:sticky; top:0; z-index:10;}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:8px 22px;}
+  nav.toc a{font-size:13px; color:var(--olive-dark); text-decoration:none; font-weight:500; letter-spacing:.02em; border-bottom:1px solid transparent; padding-bottom:2px; transition:.25s;}
+  nav.toc a:hover{color:var(--gold); border-color:var(--gold);}
+  main{padding:56px 0 90px;}
+  section{margin-bottom:58px;}
+  section:last-child{margin-bottom:0;}
+  .section-label{display:inline-flex; align-items:center; gap:10px; color:var(--gold); font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;}
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(24px,3vw,30px); color:var(--ink); margin-bottom:16px;}
+  h3{font-family:var(--serif-en); font-weight:500; font-size:19px; color:var(--olive-dark); margin:26px 0 10px;}
+  p{margin-bottom:12px; color:var(--ink-soft);}
+  strong{color:var(--ink); font-weight:600;}
+  code{background:var(--gold-pale); color:var(--olive-dark); padding:2px 7px; border-radius:5px; font-size:13.5px; font-family:ui-monospace,Menlo,monospace;}
+  .callout{background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold); border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;}
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+  ol.steps{list-style:none; counter-reset:step; margin:18px 0;}
+  ol.steps li{counter-increment:step; position:relative; padding:14px 0 14px 46px; border-bottom:1px solid var(--line);}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(step); position:absolute; left:0; top:12px; width:28px; height:28px; border-radius:50%; background:var(--gold); color:#fff; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center;}
+  ol.steps li strong{display:block; margin-bottom:3px; color:var(--ink);}
+  table.field-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  table.field-table th, table.field-table td{text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.field-table th{background:var(--cream-deep); color:var(--olive-dark); font-weight:600; font-size:12.5px; letter-spacing:.05em; text-transform:uppercase;}
+  table.field-table td:first-child{white-space:nowrap; font-weight:600; color:var(--ink);}
+  table.field-table td.optional{color:var(--olive-soft); font-style:italic; font-size:13px;}
+  .tag{display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:2px 9px; border-radius:999px; background:var(--gold-pale); color:#8d6b32; margin-left:6px;}
+  .tag.required{background:#FBEAF0; color:#993556;}
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0;}
+  .role-card{background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card); padding:20px; text-align:center;}
+  .role-card .role-name{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:10px;}
+  .role-card ul{list-style:none; font-size:13.5px; text-align:left;}
+  .role-card li{padding:4px 0 4px 20px; position:relative; color:var(--ink-soft);}
+  .role-card li::before{content:"✓"; position:absolute; left:0; color:var(--gold); font-weight:700;}
+  .role-card li.no::before{content:"✕"; color:#c0908a;}
+  .role-card li.no{color:var(--olive-soft);}
+  .pipeline{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0;}
+  .pipeline .step{flex:1 1 140px; background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card); padding:16px 18px; text-align:center;}
+  .pipeline .step .dot{width:10px; height:10px; border-radius:50%; background:var(--gold); margin:0 auto 8px;}
+  .pipeline .step strong{display:block; font-size:14px; margin-bottom:4px;}
+  .pipeline .step span{font-size:12px; color:var(--olive-soft);}
+  footer.doc-footer{background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;}
+  footer.doc-footer strong{color:#fff;}
+  footer.doc-footer a{color:rgba(255,255,255,.85);}
+  @media(max-width:720px){.role-grid{grid-template-columns:1fr;} nav.toc .wrap{gap:6px 16px; overflow-x:auto; flex-wrap:nowrap;}}
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand"><img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" /><span>PHIVARA</span><a href="index.html">← หน้าหลักคู่มือ</a></div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>วิธีใช้งานเมนู "รายชื่อผู้สนใจ" (Leads)</h1>
+    <p class="lead">คู่มือสำหรับทีมติดตามลูกค้า อธิบายที่มาของข้อมูล, ฟิลด์แต่ละช่อง, และวิธีใช้สถานะเพื่อบริหารการติดตาม</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">ภาพรวม</a>
+    <a href="#roles">สิทธิ์การใช้งาน</a>
+    <a href="#fields">ฟิลด์ทั้งหมด</a>
+    <a href="#workflow">ขั้นตอนติดตาม</a>
+    <a href="#tips">เคล็ดลับ</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="overview">
+    <div class="section-label">ภาพรวม</div>
+    <h2>เมนู "รายชื่อผู้สนใจ" คืออะไร</h2>
+    <p>เก็บทุกคำขอนัดหมาย/ปรึกษาที่ผู้เข้าชมเว็บไซต์ส่งเข้ามา ทั้งจาก<strong>ป๊อปอัป VIP Concierge</strong> (ปุ่ม "จองปรึกษาส่วนตัว" ที่ปรากฏแทบทุกหน้า) และ<strong>ฟอร์มนัดหมายในหน้าโปรไฟล์แพทย์แต่ละคน</strong> — ทั้งสองฟอร์มส่งข้อมูลมารวมที่เมนูนี้ที่เดียว</p>
+    <div class="callout warn">
+      <span class="callout-label">ต่างจากเมนูอื่นทั้งหมด</span>
+      <p>เมนูนี้<strong>ไม่ได้ใช้สร้างเนื้อหาเว็บไซต์</strong> — รายการในนี้เกิดขึ้นเองอัตโนมัติทุกครั้งที่มีคนกรอกฟอร์มบนเว็บไซต์ ทีมงานมีหน้าที่ "เปิดดูและติดตาม" ไม่ใช่ "สร้างใหม่"</p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-label">สิทธิ์การใช้งาน</div>
+    <h2>ใครทำอะไรได้บ้าง</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">Admin</div>
+        <ul><li>ดู/แก้ไขได้ทุกสาขา</li><li>ลบรายการได้</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Content Editor</div>
+        <ul><li>ดู/แก้ไขได้เฉพาะสาขาที่ตัวเองดูแล</li><li class="no">ลบไม่ได้</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Medical Reviewer</div>
+        <ul><li>ดู/แก้ไขได้เฉพาะสาขาที่ตัวเองดูแล</li><li class="no">ลบไม่ได้</li></ul>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">หมายเหตุ</span>
+      <p>การลบสงวนไว้ให้ Admin เท่านั้น เพื่อป้องกันการลบข้อมูลติดต่อลูกค้าโดยไม่ตั้งใจระหว่างการติดตามงานประจำวัน</p>
+    </div>
+  </section>
+
+  <section id="fields">
+    <div class="section-label">รายละเอียด</div>
+    <h2>ฟิลด์ทั้งหมดในรายการ</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>ชื่อ (name)</td><td>ชื่อผู้ติดต่อ ตามที่กรอกในฟอร์ม</td></tr>
+      <tr><td>เบอร์โทร (phone)</td><td>ระบบตรวจสอบรูปแบบเบอร์ตั้งแต่ตอนกรอกฟอร์ม (9–10 หลัก หรือรูปแบบ +66) ก่อนบันทึกเข้าระบบเสมอ</td></tr>
+      <tr><td>สาขา (branch)</td><td>สาขาที่ผู้ติดต่อเลือกในฟอร์ม</td></tr>
+      <tr><td>บริการที่สนใจ (service)</td><td>หนึ่งใน 5 หมวด: Plastic Surgery, Anti-Aging &amp; Longevity, Dermatology, Aesthetic Wellness, PHIVARA AUM Membership</td></tr>
+      <tr><td>บันทึกเพิ่มเติม (notes)</td><td class="optional">ข้อความที่ผู้ติดต่อพิมพ์เพิ่มเติมเอง หรือระบบเติมให้อัตโนมัติถ้าเปิดฟอร์มจากการ์ดแพทย์/โปรแกรมเจาะจง</td></tr>
+      <tr><td>วันที่ต้องการนัด (preferredDate)</td><td class="optional">มีเฉพาะรายการที่มาจากฟอร์มนัดหมายในหน้าแพทย์ (ป๊อปอัป VIP ไม่มีช่องนี้)</td></tr>
+      <tr><td>หน้าเว็บต้นทาง (sourcePath)</td><td class="optional">อ่านอย่างเดียว — บอกว่าฟอร์มถูกส่งจากหน้าไหน เช่น <code>/program/pv02</code> ใช้ดูบริบทตอนติดต่อกลับ</td></tr>
+      <tr><td>สถานะ (status)</td><td>ใช้บริหารการติดตาม — แก้ไขได้โดยทีมงาน (ดูรายละเอียดหัวข้อถัดไป)</td></tr>
+    </table>
+  </section>
+
+  <section id="workflow">
+    <div class="section-label">การติดตามงาน</div>
+    <h2>ขั้นตอนแนะนำ: ใช้สถานะ (status) บริหารคิว</h2>
+    <div class="pipeline">
+      <div class="step"><div class="dot"></div><strong>New</strong><span>เพิ่งเข้ามา ยังไม่ได้ติดต่อ</span></div>
+      <div class="step"><div class="dot"></div><strong>Contacted</strong><span>ติดต่อกลับแล้ว รอนัดหมาย</span></div>
+      <div class="step"><div class="dot"></div><strong>Booked</strong><span>นัดหมายสำเร็จแล้ว</span></div>
+      <div class="step"><div class="dot"></div><strong>Closed</strong><span>จบงาน (นัดแล้ว หรือไม่สนใจต่อ)</span></div>
+    </div>
+    <ol class="steps">
+      <li><strong>เปิดเมนู "รายชื่อผู้สนใจ (Leads)"</strong> — รายการใหม่ล่าสุดจะอยู่บนสุด สถานะเริ่มต้นเป็น "New" เสมอ</li>
+      <li><strong>ติดต่อลูกค้ากลับ</strong> ตามเบอร์โทรที่ให้ไว้ แล้วเปลี่ยนสถานะเป็น "Contacted"</li>
+      <li><strong>เมื่อได้นัดหมายแล้ว</strong> เปลี่ยนสถานะเป็น "Booked"</li>
+      <li><strong>เมื่อจบงาน</strong> (ไม่ว่านัดสำเร็จหรือลูกค้าไม่สนใจต่อ) เปลี่ยนเป็น "Closed" เพื่อให้แยกออกจากงานที่ยังค้างอยู่</li>
+    </ol>
+  </section>
+
+  <section id="tips">
+    <div class="section-label">เคล็ดลับ</div>
+    <h2>ข้อควรรู้เพิ่มเติม</h2>
+    <div class="callout">
+      <span class="callout-label">การกรองข้อมูล</span>
+      <p>ใช้ตัวกรอง/เรียงลำดับในหน้ารายการเพื่อดูเฉพาะรายการ "New" ที่ยังไม่ได้ติดต่อก่อน จะช่วยไม่ให้พลาดลูกค้าที่รอการติดต่อกลับ</p>
+    </div>
+    <div class="callout warn">
+      <span class="callout-label">ข้อมูลส่วนบุคคล</span>
+      <p>ข้อมูลในเมนูนี้เป็นข้อมูลส่วนบุคคลของผู้เข้าชมเว็บไซต์จริง (ชื่อ, เบอร์โทร) ควรใช้เพื่อการติดต่อกลับตามวัตถุประสงค์เท่านั้น และไม่ควรคัดลอกออกไปเก็บที่อื่นโดยไม่จำเป็น</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: รายชื่อผู้สนใจ (Leads) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+</footer>
+
+</body>
+</html>

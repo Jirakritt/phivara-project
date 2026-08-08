@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS — หน้าแรก Hero (Home Hero) | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans); background:var(--cream); color:var(--ink); font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+  header.doc-header{background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:46px 0 40px; border-bottom:3px solid var(--gold);}
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  header.doc-header .brand img{width:38px; height:38px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:15px; font-weight:500;}
+  header.doc-header .brand a{color:inherit; text-decoration:none; font-size:12px; letter-spacing:.05em; margin-left:auto; opacity:.75; border-bottom:1px solid rgba(255,255,255,.4);}
+  header.doc-header .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em; color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;}
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(28px,4vw,40px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:14px; max-width:600px; color:rgba(255,255,255,.78); font-size:15px;}
+  nav.toc{background:var(--cream-deep); border-bottom:1px solid var(--line); padding:18px 0; position:sticky; top:0; z-index:10;}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:8px 22px;}
+  nav.toc a{font-size:13px; color:var(--olive-dark); text-decoration:none; font-weight:500; letter-spacing:.02em; border-bottom:1px solid transparent; padding-bottom:2px; transition:.25s;}
+  nav.toc a:hover{color:var(--gold); border-color:var(--gold);}
+  main{padding:56px 0 90px;}
+  section{margin-bottom:58px;}
+  section:last-child{margin-bottom:0;}
+  .section-label{display:inline-flex; align-items:center; gap:10px; color:var(--gold); font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;}
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(24px,3vw,30px); color:var(--ink); margin-bottom:16px;}
+  h3{font-family:var(--serif-en); font-weight:500; font-size:19px; color:var(--olive-dark); margin:26px 0 10px;}
+  p{margin-bottom:12px; color:var(--ink-soft);}
+  strong{color:var(--ink); font-weight:600;}
+  code{background:var(--gold-pale); color:var(--olive-dark); padding:2px 7px; border-radius:5px; font-size:13.5px; font-family:ui-monospace,Menlo,monospace;}
+  .callout{background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold); border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;}
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+  table.field-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  table.field-table th, table.field-table td{text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.field-table th{background:var(--cream-deep); color:var(--olive-dark); font-weight:600; font-size:12.5px; letter-spacing:.05em; text-transform:uppercase;}
+  table.field-table td:first-child{white-space:nowrap; font-weight:600; color:var(--ink);}
+  table.field-table td.optional{color:var(--olive-soft); font-style:italic; font-size:13px;}
+  .tag{display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:2px 9px; border-radius:999px; background:var(--gold-pale); color:#8d6b32; margin-left:6px;}
+  .tag.required{background:#FBEAF0; color:#993556;}
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0;}
+  .role-card{background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card); padding:20px; text-align:center;}
+  .role-card .role-name{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:10px;}
+  .role-card ul{list-style:none; font-size:13.5px; text-align:left;}
+  .role-card li{padding:4px 0 4px 20px; position:relative; color:var(--ink-soft);}
+  .role-card li::before{content:"✓"; position:absolute; left:0; color:var(--gold); font-weight:700;}
+  .role-card li.no::before{content:"✕"; color:#c0908a;}
+  .role-card li.no{color:var(--olive-soft);}
+  footer.doc-footer{background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;}
+  footer.doc-footer strong{color:#fff;}
+  footer.doc-footer a{color:rgba(255,255,255,.85);}
+  @media(max-width:720px){.role-grid{grid-template-columns:1fr;} nav.toc .wrap{gap:6px 16px; overflow-x:auto; flex-wrap:nowrap;}}
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand"><img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" /><span>PHIVARA</span><a href="index.html">← หน้าหลักคู่มือ</a></div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>วิธีใช้งานเมนู "หน้าแรก (Hero)"</h1>
+    <p class="lead">คู่มือสำหรับผู้ดูแลเนื้อหา อธิบายการแก้ไขข้อความและรูปพื้นหลังส่วนบนสุดของหน้าแรก</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">ภาพรวม</a>
+    <a href="#roles">สิทธิ์การใช้งาน</a>
+    <a href="#fields">ฟิลด์ทั้งหมด</a>
+    <a href="#images">รูปพื้นหลังหมุน</a>
+    <a href="#tips">เคล็ดลับ</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="overview">
+    <div class="section-label">ภาพรวม</div>
+    <h2>เมนู "หน้าแรก (Hero)" คืออะไร</h2>
+    <p>ใช้แก้ไขส่วน hero — ส่วนบนสุดของหน้าแรกที่ผู้เข้าชมเห็นเป็นอย่างแรก ประกอบด้วยข้อความ eyebrow, หัวข้อใหญ่, ข้อความนำ, ปุ่ม CTA และรูปพื้นหลังที่หมุนสลับกันไปเรื่อยๆ</p>
+    <div class="callout warn">
+      <span class="callout-label">เป็น Global ไม่มี Draft</span>
+      <p>เมนูนี้มีข้อมูล<strong>ชุดเดียว ไม่ใช่รายการที่สร้างใหม่ได้</strong> (เหมือน "Ecosystem", "Membership", "Footer", "แถบบนสุด") และ<strong>ไม่มีระบบร่าง</strong> — แก้ไขแล้วบันทึก จะขึ้นหน้าแรกจริงทันที (ภายใน 60 วินาที) ควรตรวจทานให้ถูกต้องก่อนบันทึกทุกครั้ง</p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-label">สิทธิ์การใช้งาน</div>
+    <h2>ใครทำอะไรได้บ้าง</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">Admin</div>
+        <ul><li>แก้ไขได้</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Content Editor</div>
+        <ul><li>แก้ไขได้</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Medical Reviewer</div>
+        <ul><li class="no">แตะต้องเมนูนี้ไม่ได้เลย</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="fields">
+    <div class="section-label">รายละเอียด</div>
+    <h2>ฟิลด์ทั้งหมด</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>Eyebrow</td><td class="optional">ข้อความเล็กเหนือหัวข้อใหญ่ ค่าเริ่มต้น "THE ART OF BEAUGEVITY"</td></tr>
+      <tr><td>หัวข้อใหญ่ (headline) <span class="tag required">จำเป็น</span></td><td>ข้อความหลักตัวใหญ่ที่สุดบนหน้าแรก</td></tr>
+      <tr><td>ข้อความนำ (lead)</td><td class="optional">ย่อหน้าสั้นใต้หัวข้อใหญ่</td></tr>
+      <tr><td>ข้อความปุ่ม (ctaLabel)</td><td class="optional">ข้อความบนปุ่มกดหลัก ค่าเริ่มต้น "จองปรึกษาส่วนตัว"</td></tr>
+    </table>
+  </section>
+
+  <section id="images">
+    <div class="section-label">รูปภาพ</div>
+    <h2>รูปพื้นหลังหมุน (backgroundImages)</h2>
+    <p>รายการรูปที่จะสลับ (cross-fade) กันไปเรื่อยๆ ทุก 7 วินาที เป็นพื้นหลังของ hero — ต้องมีอย่างน้อย 1 รูป เพิ่มได้หลายรูป</p>
+    <table class="field-table">
+      <tr><th>รายการ</th><th>ค่าที่แนะนำ</th></tr>
+      <tr><td>ขนาด (พิกเซล)</td><td>อย่างน้อย <strong>1920 × 1080 px</strong> (แสดงเต็มความกว้างจอ ต้องความละเอียดสูง)</td></tr>
+      <tr><td>อัตราส่วนภาพ</td><td>แนวนอน 16:9</td></tr>
+      <tr><td>ขนาดไฟล์</td><td>ไม่ควรเกิน <strong>1.5 MB</strong> ต่อไฟล์ (ยิ่งหลายรูป ยิ่งกระทบความเร็วโหลดหน้าแรกทั้งหมด)</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="callout-label">ข้อควรระวัง</span>
+      <p>รูปเหล่านี้โหลดพร้อมกันตั้งแต่เปิดหน้าแรก เพราะเป็นส่วนแรกที่ผู้เข้าชมเห็น ถ้าเพิ่มรูปเยอะเกินไปหรือไฟล์ใหญ่เกินไป จะทำให้หน้าแรกโหลดช้าลงอย่างเห็นได้ชัด แนะนำไม่เกิน 4–5 รูป</p>
+    </div>
+  </section>
+
+  <section id="tips">
+    <div class="section-label">เคล็ดลับ</div>
+    <h2>ข้อควรรู้เพิ่มเติม</h2>
+    <div class="callout">
+      <span class="callout-label">ผลกระทบสูง</span>
+      <p>ส่วนนี้เป็นสิ่งแรกที่ทุกคนเห็นเมื่อเข้าเว็บไซต์ การแก้ไขควรผ่านการตรวจทานอย่างรอบคอบก่อนบันทึกทุกครั้ง เพราะไม่มีระบบร่างให้พรีวิวก่อน</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: หน้าแรก (Hero) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+</footer>
+
+</body>
+</html>

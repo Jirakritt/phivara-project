@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans); background:var(--cream); color:var(--ink); font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 28px;}
+  header.doc-header{background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:64px 0 56px; border-bottom:3px solid var(--gold);}
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:30px;}
+  header.doc-header .brand img{width:42px; height:42px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:16px; font-weight:500;}
+  header.doc-header .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em; color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;}
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(30px,4.5vw,46px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:16px; max-width:640px; color:rgba(255,255,255,.78); font-size:15.5px;}
+  main{padding:56px 0 90px;}
+  section{margin-bottom:54px;}
+  section:last-child{margin-bottom:0;}
+  .section-label{display:inline-flex; align-items:center; gap:10px; color:var(--gold); font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;}
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(22px,3vw,27px); color:var(--ink); margin-bottom:8px;}
+  section > p.section-desc{color:var(--ink-soft); max-width:640px; margin-bottom:22px;}
+  .callout{background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold); border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;}
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p{color:var(--ink-soft); margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+  .card-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  a.menu-card{
+    display:block; background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card);
+    padding:22px 22px 20px; text-decoration:none; color:inherit; transition:.25s; position:relative; overflow:hidden;
+  }
+  a.menu-card:hover{border-color:var(--gold); box-shadow:0 8px 24px rgba(80,74,66,.10); transform:translateY(-2px);}
+  a.menu-card .card-icon{width:38px; height:38px; border-radius:10px; background:var(--gold-pale); color:#8d6b32; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:14px; font-family:var(--serif-en); font-weight:600;}
+  a.menu-card .card-title{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:6px;}
+  a.menu-card .card-title-en{font-size:11.5px; letter-spacing:.08em; color:var(--olive-soft); text-transform:uppercase; margin-bottom:8px; display:block;}
+  a.menu-card .card-desc{font-size:13px; color:var(--ink-soft); line-height:1.6;}
+  a.menu-card .card-arrow{position:absolute; top:20px; right:20px; color:var(--gold); font-size:16px; opacity:0; transition:.25s;}
+  a.menu-card:hover .card-arrow{opacity:1;}
+  .badge{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.04em; padding:2px 8px; border-radius:999px; margin-bottom:10px;}
+  .badge.collection{background:var(--gold-pale); color:#8d6b32;}
+  .badge.global{background:#EAF0E6; color:#5c7a4a;}
+  .badge.admin-only{background:#FBEAF0; color:#993556;}
+  footer.doc-footer{background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;}
+  footer.doc-footer strong{color:#fff;}
+  @media(max-width:860px){.card-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.card-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand"><img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" /><span>PHIVARA</span></div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>คู่มือการใช้งานระบบจัดการเนื้อหา (CMS)</h1>
+    <p class="lead">รวมคู่มือการใช้งานทุกเมนูของ PHIVARA CMS แยกตามเมนู อธิบายฟิลด์แต่ละช่อง สิทธิ์การใช้งานตามบทบาท (role) และขนาดรูปภาพที่แนะนำ เลือกเมนูที่ต้องการอ่านด้านล่าง</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="collections">
+    <div class="section-label">กลุ่มที่ 1</div>
+    <h2>เนื้อหาที่สร้าง/เพิ่มรายการได้ (Collections)</h2>
+    <p class="section-desc">เมนูกลุ่มนี้มีหลายรายการ สร้างเพิ่ม แก้ไข หรือลบรายการแต่ละรายการได้อิสระ</p>
+    <div class="card-grid">
+      <a class="menu-card" href="articles.html">
+        <span class="badge collection">Collection · มี Draft</span>
+        <div class="card-title-en">Articles</div>
+        <div class="card-title">บทความ</div>
+        <div class="card-desc">สร้าง/แก้ไขบทความสุขภาพและความงาม จัดการสถานะร่าง/เผยแพร่</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="doctors.html">
+        <span class="badge collection">Collection · มี Draft</span>
+        <div class="card-title-en">Doctors</div>
+        <div class="card-title">แพทย์</div>
+        <div class="card-desc">ข้อมูลประวัติแพทย์ รูปโปรไฟล์ ตารางออกตรวจ และการมอบหมายสาขา</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="programs.html">
+        <span class="badge collection">Collection · มี Draft</span>
+        <div class="card-title-en">Programs</div>
+        <div class="card-title">โปรแกรม</div>
+        <div class="card-desc">แพ็กเกจ/โปรแกรมการรักษา ราคา รายละเอียด และเนื้อหาหน้ารายละเอียด</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="branches.html">
+        <span class="badge collection">Collection</span>
+        <div class="card-title-en">Branches</div>
+        <div class="card-title">สาขา</div>
+        <div class="card-desc">ข้อมูลแต่ละสาขา ที่อยู่ เวลาทำการ แกลเลอรี และแพทย์/โปรแกรมประจำสาขา</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="leads.html">
+        <span class="badge collection">Collection · Inbox</span>
+        <div class="card-title-en">Leads</div>
+        <div class="card-title">ลูกค้าเป้าหมาย</div>
+        <div class="card-desc">รายการที่ลูกค้ากรอกฟอร์มติดต่อ/นัดหมายจากหน้าเว็บไซต์ ติดตามสถานะการติดต่อ</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="media.html">
+        <span class="badge collection">Collection</span>
+        <div class="card-title-en">Media</div>
+        <div class="card-title">คลังสื่อ / รูปภาพ</div>
+        <div class="card-desc">คลังไฟล์รูปภาพกลาง ใช้ร่วมกันได้ทุกเมนูที่ต้องอัปโหลดรูป</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="awards.html">
+        <span class="badge admin-only">Collection · Admin เท่านั้น</span>
+        <div class="card-title-en">Awards</div>
+        <div class="card-title">รางวัล / ผลงาน</div>
+        <div class="card-desc">โลโก้รางวัลและผลงานที่แสดงในหน้าแรก จัดการได้เฉพาะ Admin</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="users.html">
+        <span class="badge admin-only">Collection · Admin เท่านั้น</span>
+        <div class="card-title-en">Users</div>
+        <div class="card-title">ผู้ใช้งาน</div>
+        <div class="card-desc">จัดการบัญชีล็อกอิน บทบาท (role) และสาขาที่รับผิดชอบของผู้ใช้แต่ละคน</div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="globals">
+    <div class="section-label">กลุ่มที่ 2</div>
+    <h2>หน้า/ส่วนเดี่ยวของเว็บไซต์ (Globals)</h2>
+    <p class="section-desc">เมนูกลุ่มนี้มีข้อมูลชุดเดียว ไม่สร้างเพิ่ม/ลบรายการ — แก้ไขแล้วมีผลกับหน้านั้นทันที ไม่มีระบบร่าง (Draft)</p>
+    <div class="card-grid">
+      <a class="menu-card" href="home-hero.html">
+        <span class="badge global">Global · ไม่มี Draft</span>
+        <div class="card-title-en">Home Hero</div>
+        <div class="card-title">หน้าแรก (Hero)</div>
+        <div class="card-desc">ข้อความและภาพสไลด์โชว์ส่วนบนสุดของหน้าแรก</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="ecosystem.html">
+        <span class="badge global">Global · ไม่มี Draft</span>
+        <div class="card-title-en">Ecosystem</div>
+        <div class="card-title">4 สาขาความเชี่ยวชาญ</div>
+        <div class="card-desc">ส่วนแนะนำ 4 สาขาความเชี่ยวชาญบนหน้าแรก โครงสร้างตายตัว 4 แถวเท่านั้น</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="membership.html">
+        <span class="badge global">Global · ไม่มี Draft</span>
+        <div class="card-title-en">Membership</div>
+        <div class="card-title">สมาชิก</div>
+        <div class="card-desc">เนื้อหาหน้า PHIVARA AUM Membership ทั้งหน้า ตั้งแต่ hero ถึง FAQ</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="footer.html">
+        <span class="badge global">Global · ไม่มี Draft</span>
+        <div class="card-title-en">Footer</div>
+        <div class="card-title">ส่วนท้ายเว็บไซต์</div>
+        <div class="card-desc">คอลัมน์ลิงก์ ข้อความลิขสิทธิ์ และลิงก์โซเชียลมีเดีย แสดงทุกหน้า</div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="menu-card" href="topbar.html">
+        <span class="badge global">Global · ไม่มี Draft</span>
+        <div class="card-title-en">TopBar</div>
+        <div class="card-title">แถบบนสุด</div>
+        <div class="card-desc">ข้อความแบรนด์และสายด่วน/LINE บนแถบบางด้านบนสุด แสดงทุกหน้า</div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="notes">
+    <div class="section-label">ข้อควรรู้ทั่วไป</div>
+    <h2>ก่อนเริ่มใช้งาน</h2>
+    <div class="callout">
+      <span class="callout-label">Draft vs ไม่มี Draft</span>
+      <p>เมนู บทความ / แพทย์ / โปรแกรม มีระบบร่าง (Draft) ให้บันทึกแบบยังไม่เผยแพร่ได้ — ส่วนเมนูอื่นๆ ทั้งหมด (Branches, Leads, Awards, Users และ Globals ทุกตัว) ไม่มีระบบร่าง แก้ไขแล้วบันทึกจะขึ้นเว็บไซต์จริงทันที</p>
+    </div>
+    <div class="callout warn">
+      <span class="callout-label">Draft ไม่มี Live Preview</span>
+      <p>แม้บทความ/แพทย์/โปรแกรมจะบันทึกเป็นร่างได้ แต่หน้าเว็บไซต์จริงจะ<strong>ไม่แสดงเนื้อหาที่เป็นร่างเลย แม้แต่กับผู้ที่ล็อกอินอยู่</strong> — ต้องกด Publish ก่อนจึงจะเห็นผลบนหน้าเว็บไซต์ได้</p>
+    </div>
+    <div class="callout">
+      <span class="callout-label">สิทธิ์ตามสาขา (Branch Scoping)</span>
+      <p>ผู้ใช้งานที่เป็น Content Editor หรือ Medical Reviewer จะเห็น/แก้ไขได้เฉพาะเนื้อหาของสาขาที่ตนถูกมอบหมาย (assignedBranches) เท่านั้น — ตั้งค่าได้ที่เมนู "ผู้ใช้งาน"</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · อัปเดตล่าสุด สิงหาคม 2569</div>
+</footer>
+
+</body>
+</html>

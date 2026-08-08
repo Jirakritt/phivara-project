@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS — บทความ (Articles) | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--sans); background:var(--cream); color:var(--ink);
+    font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  header.doc-header{
+    background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:46px 0 40px;
+    border-bottom:3px solid var(--gold);
+  }
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  header.doc-header .brand img{width:38px; height:38px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:15px; font-weight:500;}
+  header.doc-header .brand a{color:inherit; text-decoration:none; font-size:12px; letter-spacing:.05em; margin-left:auto; opacity:.75; border-bottom:1px solid rgba(255,255,255,.4);}
+  header.doc-header .eyebrow{
+    display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em;
+    color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;
+  }
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(28px,4vw,40px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:14px; max-width:600px; color:rgba(255,255,255,.78); font-size:15px;}
+
+  nav.toc{
+    background:var(--cream-deep); border-bottom:1px solid var(--line); padding:18px 0;
+    position:sticky; top:0; z-index:10;
+  }
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:8px 22px;}
+  nav.toc a{
+    font-size:13px; color:var(--olive-dark); text-decoration:none; font-weight:500;
+    letter-spacing:.02em; border-bottom:1px solid transparent; padding-bottom:2px; transition:.25s;
+  }
+  nav.toc a:hover{color:var(--gold); border-color:var(--gold);}
+
+  main{padding:56px 0 90px;}
+  section{margin-bottom:58px;}
+  section:last-child{margin-bottom:0;}
+
+  .section-label{
+    display:inline-flex; align-items:center; gap:10px; color:var(--gold);
+    font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;
+  }
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(24px,3vw,30px); color:var(--ink); margin-bottom:16px;}
+  h3{font-family:var(--serif-en); font-weight:500; font-size:19px; color:var(--olive-dark); margin:26px 0 10px;}
+  p{margin-bottom:12px; color:var(--ink-soft);}
+  strong{color:var(--ink); font-weight:600;}
+  code{
+    background:var(--gold-pale); color:var(--olive-dark); padding:2px 7px; border-radius:5px;
+    font-size:13.5px; font-family:ui-monospace,Menlo,monospace;
+  }
+
+  .callout{
+    background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold);
+    border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;
+  }
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+
+  ol.steps{list-style:none; counter-reset:step; margin:18px 0;}
+  ol.steps li{
+    counter-increment:step; position:relative; padding:14px 0 14px 46px; border-bottom:1px solid var(--line);
+  }
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{
+    content:counter(step); position:absolute; left:0; top:12px; width:28px; height:28px; border-radius:50%;
+    background:var(--gold); color:#fff; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center;
+  }
+  ol.steps li strong{display:block; margin-bottom:3px; color:var(--ink);}
+
+  table.field-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  table.field-table th, table.field-table td{
+    text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;
+  }
+  table.field-table th{
+    background:var(--cream-deep); color:var(--olive-dark); font-weight:600; font-size:12.5px;
+    letter-spacing:.05em; text-transform:uppercase;
+  }
+  table.field-table td:first-child{white-space:nowrap; font-weight:600; color:var(--ink);}
+  table.field-table td.optional{color:var(--olive-soft); font-style:italic; font-size:13px;}
+  .tag{
+    display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:2px 9px;
+    border-radius:999px; background:var(--gold-pale); color:#8d6b32; margin-left:6px;
+  }
+  .tag.required{background:#FBEAF0; color:#993556;}
+
+  .tab-card{
+    background:var(--cream-card); border:1px solid var(--gold-line); border-radius:var(--radius-card);
+    padding:26px 28px; margin-bottom:22px; box-shadow:0 10px 28px rgba(58,50,38,.04);
+  }
+  .tab-card .tab-num{
+    display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    background:var(--olive-dark); color:#fff; font-size:12px; font-weight:600; margin-right:10px;
+  }
+  .tab-card h3{margin-top:0; display:flex; align-items:center;}
+
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0;}
+  .role-card{
+    background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card);
+    padding:20px; text-align:center;
+  }
+  .role-card .role-name{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:10px;}
+  .role-card ul{list-style:none; font-size:13.5px; text-align:left;}
+  .role-card li{padding:4px 0 4px 20px; position:relative; color:var(--ink-soft);}
+  .role-card li::before{content:"✓"; position:absolute; left:0; color:var(--gold); font-weight:700;}
+  .role-card li.no::before{content:"✕"; color:#c0908a;}
+  .role-card li.no{color:var(--olive-soft);}
+
+  .status-pair{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:18px 0;}
+  .status-box{border-radius:var(--radius-card); padding:20px 22px; border:1px solid var(--line);}
+  .status-box.draft{background:#F5F1E9;}
+  .status-box.published{background:#EEF3E4;}
+  .status-box .pill{
+    display:inline-block; font-size:11.5px; font-weight:600; letter-spacing:.05em; padding:3px 12px;
+    border-radius:999px; margin-bottom:10px;
+  }
+  .status-box.draft .pill{background:#E4DCC7; color:#7a6a3f;}
+  .status-box.published .pill{background:#c8dba0; color:#3b6d11;}
+
+  footer.doc-footer{
+    background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;
+  }
+  footer.doc-footer strong{color:#fff;}
+  footer.doc-footer a{color:rgba(255,255,255,.85);}
+
+  @media(max-width:720px){
+    .role-grid{grid-template-columns:1fr;}
+    .status-pair{grid-template-columns:1fr;}
+    nav.toc .wrap{gap:6px 16px; overflow-x:auto; flex-wrap:nowrap;}
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand">
+      <img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
+      <span>PHIVARA</span>
+      <a href="index.html">← หน้าหลักคู่มือ</a>
+    </div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>วิธีใช้งานเมนู "บทความ" (Articles)</h1>
+    <p class="lead">คู่มือสำหรับผู้ดูแลเนื้อหา อธิบายทุกฟิลด์ในหน้าสร้าง/แก้ไขบทความ, สิทธิ์การใช้งานตามบทบาท, และขั้นตอนตั้งแต่ร่างจนถึงเผยแพร่</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">ภาพรวม</a>
+    <a href="#roles">สิทธิ์การใช้งาน</a>
+    <a href="#create">สร้างบทความใหม่</a>
+    <a href="#tab-basic">ข้อมูลพื้นฐาน</a>
+    <a href="#tab-content">เนื้อหาบทความ</a>
+    <a href="#tab-author">ผู้เขียน &amp; แท็ก</a>
+    <a href="#tab-seo">SEO</a>
+    <a href="#status">Draft / Published</a>
+    <a href="#tips">เคล็ดลับ</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="overview">
+    <div class="section-label">ภาพรวม</div>
+    <h2>เมนู "บทความ" คืออะไร</h2>
+    <p>เมนู <strong>บทความ (Articles)</strong> อยู่ในแถบเมนูซ้ายของ <code>/admin</code> ใช้จัดการเนื้อหาที่แสดงในหน้า <strong>"คลังความรู้"</strong> ของเว็บไซต์ — ทั้งบทความที่ขึ้นหน้าแรก, หน้ารายการบทความ, และการ์ด "อ่านต่อ"/"MOST READ" ที่ปรากฏในหลายหน้าของเว็บ</p>
+    <div class="callout">
+      <span class="callout-label">ก่อนเริ่ม</span>
+      <p>บทความ 1 รายการ ประกอบด้วย 4 แท็บ: <strong>ข้อมูลพื้นฐาน</strong>, <strong>เนื้อหาบทความ</strong>, <strong>ผู้เขียน &amp; แท็ก &amp; ที่เกี่ยวข้อง</strong> และ <strong>SEO</strong> — ไม่จำเป็นต้องกรอกครบทุกฟิลด์ในทุกแท็บ ฟิลด์ที่มีเครื่องหมาย <span class="tag required">จำเป็น</span> เท่านั้นที่ต้องกรอกก่อนบันทึกได้</p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-label">สิทธิ์การใช้งาน</div>
+    <h2>ใครทำอะไรได้บ้าง</h2>
+    <p>สิทธิ์ขึ้นอยู่กับบทบาท (role) ของบัญชีผู้ใช้ และสาขาที่ผู้ใช้ถูกกำหนดให้ดูแล (สำหรับ Content Editor / Medical Reviewer)</p>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">Admin</div>
+        <ul>
+          <li>สร้างบทความใหม่</li>
+          <li>แก้ไขบทความทั้งหมด (ทุกสาขา)</li>
+          <li>เผยแพร่ / เปลี่ยนสถานะ</li>
+          <li>ลบบทความทั้งหมด</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Content Editor</div>
+        <ul>
+          <li>สร้างบทความใหม่</li>
+          <li>แก้ไขบทความของสาขาตัวเอง + บทความที่ไม่ผูกสาขา</li>
+          <li>เผยแพร่ / เปลี่ยนสถานะ</li>
+          <li>ลบได้เฉพาะบทความสาขาตัวเอง</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Medical Reviewer</div>
+        <ul>
+          <li>สร้างบทความใหม่</li>
+          <li>แก้ไขบทความของสาขาตัวเอง + บทความที่ไม่ผูกสาขา</li>
+          <li>เผยแพร่ / เปลี่ยนสถานะ</li>
+          <li class="no">ลบบทความไม่ได้</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">หมายเหตุเรื่องสาขา</span>
+      <p>ฟิลด์ <code>สาขา (branch)</code> ในแท็บ "ข้อมูลพื้นฐาน" เป็นตัวกำหนดขอบเขตนี้ — ถ้า Content Editor หรือ Medical Reviewer ถูกกำหนดให้ดูแลสาขาใด จะเห็นและแก้ไขได้เฉพาะบทความของสาขานั้น บวกกับบทความที่ "ไม่ระบุสาขา" (เนื้อหาส่วนกลาง) เท่านั้น</p>
+    </div>
+  </section>
+
+  <section id="create">
+    <div class="section-label">เริ่มต้นใช้งาน</div>
+    <h2>ขั้นตอนสร้างบทความใหม่</h2>
+    <ol class="steps">
+      <li><strong>เข้าเมนู "บทความ"</strong>ที่แถบซ้ายของ <code>/admin</code> แล้วกดปุ่ม "สร้างใหม่" มุมขวาบน</li>
+      <li><strong>กรอกแท็บ "ข้อมูลพื้นฐาน" ให้ครบ</strong>อย่างน้อย: slug, หัวข้อ, หมวดหมู่, รูปปก, วันที่เผยแพร่ และเวลาอ่านโดยประมาณ (ดูรายละเอียดแต่ละฟิลด์ด้านล่าง)</li>
+      <li><strong>เขียนเนื้อหาในแท็บ "เนื้อหาบทความ"</strong> — ใช้ตัวแก้ไขข้อความ (rich text editor) พิมพ์เนื้อหาหลัก เพิ่ม note box หรือ insight steps ได้ตามต้องการ</li>
+      <li><strong>ระบุผู้เขียนและแท็ก</strong>ในแท็บถัดไป — ถ้าไม่กรอกชื่อผู้เขียน ระบบจะใช้ค่าเริ่มต้น "ทีมแพทย์ PHIVARA" ให้อัตโนมัติ</li>
+      <li><strong>ใส่ข้อมูล SEO (ไม่บังคับ)</strong> — เว้นว่างได้ ระบบจะดึงหัวข้อ/สรุปของบทความไปใช้แทนโดยอัตโนมัติ</li>
+      <li><strong>บันทึกเป็นฉบับร่าง หรือกดเผยแพร่</strong>ที่มุมขวาบน — ดูความแตกต่างในหัวข้อ "Draft / Published" ด้านล่าง</li>
+    </ol>
+  </section>
+
+  <section id="tab-basic">
+    <div class="section-label">แท็บที่ 1</div>
+    <h2>ข้อมูลพื้นฐาน</h2>
+    <p>ฟิลด์หลักที่กำหนดว่าบทความนี้คืออะไร แสดงที่ไหน และแสดงอย่างไรในหน้ารายการ</p>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>Slug <span class="tag required">จำเป็น</span></td><td>ส่วนท้าย URL ของบทความ เช่น <code>blue-ocean-pathway</code> จะได้ลิงก์ <code>phivara.site/article/blue-ocean-pathway</code> — ต้องไม่ซ้ำกับบทความอื่น (ระบบบังคับ) แนะนำให้ใช้ตัวอักษรอังกฤษเล็กและขีดกลางเท่านั้น (ระบบไม่ได้บังคับรูปแบบนี้ แต่ถ้าใส่ภาษาไทยหรือเว้นวรรคจะได้ลิงก์ที่ดูไม่เรียบร้อยและแชร์ยาก)</td></tr>
+      <tr><td>หัวข้อ (title) <span class="tag required">จำเป็น</span></td><td>ชื่อบทความ — รองรับทั้งภาษาไทยและอังกฤษแยกกัน (สลับภาษาได้มุมขวาบนของฟอร์ม)</td></tr>
+      <tr><td>สรุป (summary)</td><td class="optional">ข้อความสั้นใต้หัวข้อในการ์ด และใช้เป็น meta description เริ่มต้นถ้าไม่ได้กรอกในแท็บ SEO</td></tr>
+      <tr><td>หมวดหมู่ (category) <span class="tag required">จำเป็น</span></td><td>เลือกจาก 4 หมวด: Longevity Medicine, Dermatology, Plastic Surgery, Aesthetic Wellness — ใช้กรองบทความในหน้ารายการ</td></tr>
+      <tr><td>ป้ายหมวดหมู่ที่แสดงผล (categoryLabel)</td><td>ข้อความที่แสดงเป็นแท็กบนการ์ดจริง เช่น "เวชศาสตร์อายุยืนยาว" — แยกจากค่า category ด้านบนซึ่งใช้สำหรับกรองข้อมูลเท่านั้น ไม่ได้แสดงผลตรงๆ ในระบบไม่มีค่าตั้งต้นถ้าเว้นว่างไว้ <strong>แท็กบนการ์ดจะโชว์เป็นช่องว่างเปล่าๆ</strong> จึงควรกรอกทุกครั้งแม้ระบบจะไม่บังคับ</td></tr>
+      <tr><td>สาขา (branch)</td><td class="optional">ระบุเฉพาะถ้าบทความนี้เจาะจงสาขาใดสาขาหนึ่ง เว้นว่างไว้สำหรับบทความเนื้อหาส่วนกลางทั่วไป</td></tr>
+      <tr><td>รูปปก (coverImage) <span class="tag required">จำเป็น</span></td><td>รูปภาพหลักของบทความ — <strong>มีฟิลด์รูปเดียว ไม่มี "thumbnail" แยกต่างหาก</strong> รูปเดียวกันนี้ถูกใช้ทั้งเป็นรูปเล็กในการ์ดหน้ารายการ และรูปใหญ่เต็มความกว้างบนหน้ารายละเอียด ดูขนาดที่แนะนำในหัวข้อ "รูปภาพ" ท้ายคู่มือนี้</td></tr>
+      <tr><td>วันที่เผยแพร่ (publishedDate) <span class="tag required">จำเป็น</span></td><td>ใช้เรียงลำดับบทความ (ใหม่สุดขึ้นก่อน) และแสดงผลบนหน้าเว็บ</td></tr>
+      <tr><td>เวลาอ่านโดยประมาณ (readTimeMinutes) <span class="tag required">จำเป็น</span></td><td>ใส่เป็นตัวเลขนาที ระบบจะแสดงเป็น "X นาที" ให้อัตโนมัติ</td></tr>
+      <tr><td>บทความยอดนิยม (popular)</td><td class="optional">ติ๊กเพื่อให้บทความนี้ไปโชว์ในกล่อง "MOST READ" ด้านข้างของหน้าอื่นๆ</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-content">
+    <div class="section-label">แท็บที่ 2</div>
+    <h2>เนื้อหาบทความ</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>เนื้อหาหลัก (body)</td><td>ตัวแก้ไขข้อความแบบ rich text — หัวข้อระดับ H2 ที่พิมพ์ในนี้จะถูกดึงไปสร้างสารบัญ (table of contents) อัตโนมัติในหน้าบทความจริง</td></tr>
+      <tr><td>ขั้นตอนแนะนำ (insightSteps)</td><td class="optional">กล่องขั้นตอนแบบมีตัวเลข ใช้เมื่อต้องการอธิบายกระบวนการเป็นสเต็ป เช่น ขั้นตอนของโปรแกรมหนึ่งๆ — ไม่บังคับใช้ทุกบทความ<br /><strong>ข้อสำคัญ:</strong> กล่องนี้จะไปแสดงในตำแหน่งที่ถูกต้องก็ต่อเมื่อในเนื้อหาหลัก (body) มีหัวข้อ H2 สองอันวางติดกันโดยไม่มีข้อความคั่นระหว่างกลาง (เช่น พิมพ์หัวข้อ "กระบวนการ 4 ขั้นตอน" แล้วขึ้นหัวข้อถัดไปทันทีโดยไม่พิมพ์ย่อหน้าคั่น) ถ้าโครงสร้างไม่ตรงแบบนี้ ข้อมูลที่กรอกในนี้จะไม่แสดงบนหน้าเว็บเลยแม้จะกรอกไว้แล้วก็ตาม</td></tr>
+      <tr><td>กล่องข้อความเน้น (noteBox)</td><td class="optional">กล่อง callout พิเศษ เช่น "สิ่งสำคัญที่ควรรู้" มีหัวข้อ + เนื้อความสั้น เว้นว่างได้ถ้าบทความไม่ต้องการ</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-author">
+    <div class="section-label">แท็บที่ 3</div>
+    <h2>ผู้เขียน &amp; แท็ก &amp; ที่เกี่ยวข้อง</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>ผู้เขียน (author)</td><td>ชื่อ, ตำแหน่ง, รูปโปรไฟล์ — ถ้าเว้นว่างชื่อจะขึ้นเป็น "ทีมแพทย์ PHIVARA" โดยอัตโนมัติ และเลือกผูกกับแพทย์ท่านใดท่านหนึ่งได้ (ไม่บังคับ)</td></tr>
+      <tr><td>แท็ก (tags)</td><td class="optional">คำสำคัญของบทความ แสดงเป็นชิปท้ายบทความ เพิ่มได้หลายรายการ</td></tr>
+      <tr><td>โปรแกรมที่เกี่ยวข้อง (relatedPrograms)</td><td class="optional">เลือกโปรแกรมตรวจที่เชื่อมโยงกับบทความนี้ เพื่อแนะนำในหน้ารายละเอียด</td></tr>
+      <tr><td>แพทย์ที่เกี่ยวข้อง (relatedDoctors)</td><td class="optional">เลือกแพทย์ที่เชื่อมโยงกับบทความนี้</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-seo">
+    <div class="section-label">แท็บที่ 4</div>
+    <h2>SEO</h2>
+    <p>ทุกฟิลด์ในแท็บนี้ <strong>ไม่บังคับ</strong> — ถ้าเว้นว่าง ระบบจะดึงข้อมูลจากแท็บ "ข้อมูลพื้นฐาน" มาใช้แทนโดยอัตโนมัติ</p>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>Title</td><td class="optional">ชื่อที่แสดงบนแท็บเบราว์เซอร์และผลการค้นหา Google — เว้นว่างจะใช้หัวข้อบทความแทน</td></tr>
+      <tr><td>Description</td><td class="optional">คำอธิบายสั้นใต้ลิงก์ในผลการค้นหา Google (แนะนำ ~150–160 ตัวอักษร) — เว้นว่างจะใช้สรุปบทความแทน</td></tr>
+      <tr><td>OG Image</td><td class="optional">รูปพรีวิวเมื่อแชร์ลิงก์ผ่าน LINE / Facebook — เว้นว่างจะใช้รูปปกบทความแทน ถ้าจะอัปโหลดรูปแยกต่างหาก แนะนำขนาด <strong>1200 × 630 px</strong> (อัตราส่วน 1.91:1 มาตรฐานของ social preview)</td></tr>
+      <tr><td>ซ่อนจากการค้นหา (noIndex)</td><td class="optional">ติ๊กถ้าต้องการให้บทความนี้ยังเข้าถึงได้ผ่านลิงก์ตรง แต่ไม่ให้ Google จัดอันดับแสดงผล</td></tr>
+    </table>
+  </section>
+
+  <section id="status">
+    <div class="section-label">สถานะบทความ</div>
+    <h2>Draft กับ Published ต่างกันอย่างไร</h2>
+    <p>บทความทุกฉบับมี 2 สถานะ ปรับได้จากปุ่มมุมขวาบนของหน้าแก้ไข:</p>
+    <div class="status-pair">
+      <div class="status-box draft">
+        <span class="pill">DRAFT (ฉบับร่าง)</span>
+        <p>อ่าน/แก้ไขได้เฉพาะในหน้าฟอร์มของ <code>/admin</code> เท่านั้น <strong>ไม่มีลิงก์พรีวิวบนเว็บไซต์จริง</strong> — ต่อให้ล็อกอินอยู่ก็ตาม การเข้าลิงก์ <code>phivara.site/article/&lt;slug&gt;</code> ของบทความที่ยังเป็น draft จะเจอหน้า "ไม่พบหน้าที่คุณค้นหา" เสมอ จนกว่าจะเปลี่ยนเป็น Published</p>
+      </div>
+      <div class="status-box published">
+        <span class="pill">PUBLISHED (เผยแพร่แล้ว)</span>
+        <p>แสดงบนเว็บไซต์จริงทันที ทุกคนเข้าถึงได้ — หน้าเว็บจะอัปเดตข้อมูลใหม่ภายใน 60 วินาทีหลังบันทึก</p>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">ขั้นตอนแนะนำ</span>
+      <p>ทีม Content Editor ร่างและบันทึกเป็น Draft ก่อน จากนั้นให้ Medical Reviewer ตรวจทานความถูกต้องทางการแพทย์ แล้วจึงเปลี่ยนสถานะเป็น Published — สอดคล้องกับขั้นตอนตรวจทานเนื้อหาก่อนเผยแพร่จริง</p>
+    </div>
+  </section>
+
+  <section id="tips">
+    <div class="section-label">เคล็ดลับ</div>
+    <h2>ข้อควรรู้เพิ่มเติม</h2>
+    <div class="callout">
+      <span class="callout-label">สลับภาษา</span>
+      <p>ฟิลด์ที่รองรับ 2 ภาษา (หัวข้อ, สรุป, เนื้อหา ฯลฯ) จะมีตัวเลือกภาษา TH/EN อยู่ด้านบนของฟอร์ม — กรอกภาษาไทยให้ครบก่อน แล้วค่อยสลับไปกรอกภาษาอังกฤษ ถ้าลืมกรอกอังกฤษ เว็บไซต์จะแสดงข้อความภาษาไทยแทนโดยอัตโนมัติ ไม่ทำให้หน้าเว็บว่างเปล่า</p>
+    </div>
+    <div class="callout warn">
+      <span class="callout-label">ข้อควรระวัง</span>
+      <p>ฟิลด์ <code>Slug</code> ควรตั้งให้เรียบร้อยตั้งแต่ครั้งแรก — ถ้าเปลี่ยน slug ภายหลังจากที่เผยแพร่และมีการแชร์ลิงก์ไปแล้ว ลิงก์เดิมจะใช้งานไม่ได้อีกต่อไป</p>
+    </div>
+    <div class="callout">
+      <span class="callout-label">รูปภาพ</span>
+      <p>อัปโหลดรูปปกและรูปอื่นๆ ผ่านฟิลด์ upload ได้โดยตรง ไม่ต้องอัปโหลดเข้าเมนู "คลังสื่อ (Media)" ล่วงหน้า ระบบจะเพิ่มเข้าคลังสื่อให้อัตโนมัติเมื่อบันทึก</p>
+    </div>
+
+    <h3>ขนาดรูปภาพที่แนะนำสำหรับรูปปก (coverImage)</h3>
+    <div class="callout">
+      <span class="callout-label">รูปเดียว ใช้ 2 จุด</span>
+      <p>บทความมีช่องอัปโหลดรูป <strong>เพียงจุดเดียวคือ "รูปปก" (coverImage)</strong> ไม่มีฟิลด์ thumbnail แยก — รูปที่อัปโหลดจะไปแสดงทั้งเป็น<strong>รูปเล็กในการ์ด</strong>หน้ารายการบทความ (อัตราส่วน 16:10) และ<strong>รูปใหญ่เต็มความกว้าง</strong>บนหน้ารายละเอียด (อัตราส่วน 16:9) พร้อมกัน — ถ้าเปลี่ยนรูปนี้ ทั้งสองจุดจะเปลี่ยนตามไปด้วยเสมอ</p>
+    </div>
+    <p>เพราะรูปเดียวต้องใช้ได้ดีทั้งสองจุด จึงควรเป็นภาพแนวนอน ความละเอียดสูงพอสมควร แต่ไม่ควรใหญ่เกินจำเป็นเพราะจะทำให้เว็บโหลดช้า โดยเฉพาะบนมือถือ</p>
+    <table class="field-table">
+      <tr><th>รายการ</th><th>ค่าที่แนะนำ</th></tr>
+      <tr><td>ขนาด (พิกเซล)</td><td>ประมาณ <strong>1600 × 900 px</strong> (ไม่ควรต่ำกว่า 1200 × 675 px เพราะจะเบลอบนจอใหญ่)</td></tr>
+      <tr><td>อัตราส่วนภาพ</td><td>แนวนอน 16:9 หรือใกล้เคียง (ระบบจะครอปภาพให้พอดีกรอบอัตโนมัติ ไม่ทำให้ภาพยืด/บิดเบี้ยว)</td></tr>
+      <tr><td>ขนาดไฟล์</td><td>ไม่ควรเกิน <strong>1 MB</strong> ต่อไฟล์ (ควรอยู่ระหว่าง 300 KB – 800 KB)</td></tr>
+      <tr><td>ไฟล์ที่รองรับ</td><td>JPEG, PNG, หรือ WebP — แนะนำ JPEG/WebP คุณภาพ 75–85% เพราะไฟล์เล็กกว่า PNG มาก โดยที่คุณภาพแทบไม่ต่างกัน</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="callout-label">ข้อควรระวัง</span>
+      <p>รูปที่ถ่ายตรงจากกล้อง/มือถือมักมีขนาดใหญ่มาก (4–8 MB, บางครั้งกว้างเกิน 4000 px) ควรย่อขนาดและบีบอัดก่อนอัปโหลดเสมอ — ใช้เว็บฟรีอย่าง <code>squoosh.app</code> หรือ <code>tinypng.com</code> ย่อขนาดได้ง่ายโดยไม่ต้องลงโปรแกรมเพิ่ม</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: บทความ (Articles) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+</footer>
+
+</body>
+</html>

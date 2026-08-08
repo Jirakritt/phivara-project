@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS — แพทย์ผู้เชี่ยวชาญ (Doctors) | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--sans); background:var(--cream); color:var(--ink);
+    font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  header.doc-header{
+    background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:46px 0 40px;
+    border-bottom:3px solid var(--gold);
+  }
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  header.doc-header .brand img{width:38px; height:38px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:15px; font-weight:500;}
+  header.doc-header .brand a{color:inherit; text-decoration:none; font-size:12px; letter-spacing:.05em; margin-left:auto; opacity:.75; border-bottom:1px solid rgba(255,255,255,.4);}
+  header.doc-header .eyebrow{
+    display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em;
+    color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;
+  }
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(28px,4vw,40px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:14px; max-width:600px; color:rgba(255,255,255,.78); font-size:15px;}
+
+  nav.toc{
+    background:var(--cream-deep); border-bottom:1px solid var(--line); padding:18px 0;
+    position:sticky; top:0; z-index:10;
+  }
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:8px 22px;}
+  nav.toc a{
+    font-size:13px; color:var(--olive-dark); text-decoration:none; font-weight:500;
+    letter-spacing:.02em; border-bottom:1px solid transparent; padding-bottom:2px; transition:.25s;
+  }
+  nav.toc a:hover{color:var(--gold); border-color:var(--gold);}
+
+  main{padding:56px 0 90px;}
+  section{margin-bottom:58px;}
+  section:last-child{margin-bottom:0;}
+
+  .section-label{
+    display:inline-flex; align-items:center; gap:10px; color:var(--gold);
+    font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;
+  }
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(24px,3vw,30px); color:var(--ink); margin-bottom:16px;}
+  h3{font-family:var(--serif-en); font-weight:500; font-size:19px; color:var(--olive-dark); margin:26px 0 10px;}
+  p{margin-bottom:12px; color:var(--ink-soft);}
+  strong{color:var(--ink); font-weight:600;}
+  code{
+    background:var(--gold-pale); color:var(--olive-dark); padding:2px 7px; border-radius:5px;
+    font-size:13.5px; font-family:ui-monospace,Menlo,monospace;
+  }
+
+  .callout{
+    background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold);
+    border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;
+  }
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+
+  ol.steps{list-style:none; counter-reset:step; margin:18px 0;}
+  ol.steps li{
+    counter-increment:step; position:relative; padding:14px 0 14px 46px; border-bottom:1px solid var(--line);
+  }
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{
+    content:counter(step); position:absolute; left:0; top:12px; width:28px; height:28px; border-radius:50%;
+    background:var(--gold); color:#fff; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center;
+  }
+  ol.steps li strong{display:block; margin-bottom:3px; color:var(--ink);}
+
+  table.field-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  table.field-table th, table.field-table td{
+    text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;
+  }
+  table.field-table th{
+    background:var(--cream-deep); color:var(--olive-dark); font-weight:600; font-size:12.5px;
+    letter-spacing:.05em; text-transform:uppercase;
+  }
+  table.field-table td:first-child{white-space:nowrap; font-weight:600; color:var(--ink);}
+  table.field-table td.optional{color:var(--olive-soft); font-style:italic; font-size:13px;}
+  .tag{
+    display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:2px 9px;
+    border-radius:999px; background:var(--gold-pale); color:#8d6b32; margin-left:6px;
+  }
+  .tag.required{background:#FBEAF0; color:#993556;}
+
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0;}
+  .role-card{
+    background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card);
+    padding:20px; text-align:center;
+  }
+  .role-card .role-name{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:10px;}
+  .role-card ul{list-style:none; font-size:13.5px; text-align:left;}
+  .role-card li{padding:4px 0 4px 20px; position:relative; color:var(--ink-soft);}
+  .role-card li::before{content:"✓"; position:absolute; left:0; color:var(--gold); font-weight:700;}
+  .role-card li.no::before{content:"✕"; color:#c0908a;}
+  .role-card li.no{color:var(--olive-soft);}
+
+  .status-pair{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:18px 0;}
+  .status-box{border-radius:var(--radius-card); padding:20px 22px; border:1px solid var(--line);}
+  .status-box.draft{background:#F5F1E9;}
+  .status-box.published{background:#EEF3E4;}
+  .status-box .pill{
+    display:inline-block; font-size:11.5px; font-weight:600; letter-spacing:.05em; padding:3px 12px;
+    border-radius:999px; margin-bottom:10px;
+  }
+  .status-box.draft .pill{background:#E4DCC7; color:#7a6a3f;}
+  .status-box.published .pill{background:#c8dba0; color:#3b6d11;}
+
+  footer.doc-footer{
+    background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;
+  }
+  footer.doc-footer strong{color:#fff;}
+  footer.doc-footer a{color:rgba(255,255,255,.85);}
+
+  @media(max-width:720px){
+    .role-grid{grid-template-columns:1fr;}
+    .status-pair{grid-template-columns:1fr;}
+    nav.toc .wrap{gap:6px 16px; overflow-x:auto; flex-wrap:nowrap;}
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand">
+      <img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
+      <span>PHIVARA</span>
+      <a href="index.html">← หน้าหลักคู่มือ</a>
+    </div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>วิธีใช้งานเมนู "แพทย์ผู้เชี่ยวชาญ" (Doctors)</h1>
+    <p class="lead">คู่มือสำหรับผู้ดูแลเนื้อหา อธิบายทุกฟิลด์ในหน้าสร้าง/แก้ไขโปรไฟล์แพทย์, สิทธิ์การใช้งานตามบทบาท, และขั้นตอนตั้งแต่ร่างจนถึงเผยแพร่</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">ภาพรวม</a>
+    <a href="#roles">สิทธิ์การใช้งาน</a>
+    <a href="#create">สร้างโปรไฟล์ใหม่</a>
+    <a href="#tab-basic">ข้อมูลพื้นฐาน</a>
+    <a href="#tab-photo">รูปภาพโปรไฟล์</a>
+    <a href="#tab-cred">ประวัติและวุฒิบัตร</a>
+    <a href="#tab-schedule">ตารางออกตรวจ</a>
+    <a href="#status">Draft / Published</a>
+    <a href="#tips">เคล็ดลับ</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="overview">
+    <div class="section-label">ภาพรวม</div>
+    <h2>เมนู "แพทย์ผู้เชี่ยวชาญ" คืออะไร</h2>
+    <p>ใช้จัดการโปรไฟล์แพทย์ทั้งหมด — แสดงในหน้า <strong>"แพทย์ผู้เชี่ยวชาญ"</strong> (หน้ารายชื่อ + หน้ารายละเอียดรายบุคคล), การ์ด "OUR SPECIALISTS" บนหน้าแรก, และในหน้าสาขาที่แพทย์สังกัดอยู่</p>
+    <div class="callout">
+      <span class="callout-label">ก่อนเริ่ม</span>
+      <p>โปรไฟล์แพทย์ 1 คน แบ่งเป็น 5 แท็บ: <strong>ข้อมูลพื้นฐาน</strong>, <strong>รูปภาพโปรไฟล์</strong>, <strong>ประวัติและวุฒิบัตร</strong>, <strong>ตารางออกตรวจ &amp; ติดต่อ</strong> และ <strong>SEO</strong></p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-label">สิทธิ์การใช้งาน</div>
+    <h2>ใครทำอะไรได้บ้าง</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">Admin</div>
+        <ul><li>สร้าง/แก้ไข/ลบได้ทุกโปรไฟล์ ทุกสาขา</li><li>เผยแพร่ / เปลี่ยนสถานะ</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Content Editor</div>
+        <ul><li>สร้างโปรไฟล์ใหม่ได้</li><li>แก้ไข/ลบเฉพาะแพทย์สาขาตัวเอง</li><li>เผยแพร่ / เปลี่ยนสถานะ</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Medical Reviewer</div>
+        <ul><li>สร้างโปรไฟล์ใหม่ได้</li><li>แก้ไขเฉพาะแพทย์สาขาตัวเอง</li><li class="no">ลบไม่ได้</li></ul>
+      </div>
+    </div>
+    <div class="callout warn">
+      <span class="callout-label">ต่างจากบทความ</span>
+      <p>ฟิลด์ <code>สาขา (branch)</code> ของแพทย์เป็น <strong>ฟิลด์บังคับ ไม่มีตัวเลือก "ไม่ระบุสาขา"</strong> เหมือนบทความ/โปรแกรม — แพทย์ทุกคนต้องผูกกับสาขาใดสาขาหนึ่งเสมอ ดังนั้น Content Editor / Medical Reviewer จะเห็นและแก้ไขได้เฉพาะแพทย์ของสาขาที่ตัวเองดูแลเท่านั้น ไม่มีกรณี "โปรไฟล์ส่วนกลาง" ที่ทุกคนแก้ได้</p>
+    </div>
+  </section>
+
+  <section id="create">
+    <div class="section-label">เริ่มต้นใช้งาน</div>
+    <h2>ขั้นตอนสร้างโปรไฟล์แพทย์ใหม่</h2>
+    <ol class="steps">
+      <li><strong>เข้าเมนู "แพทย์ผู้เชี่ยวชาญ"</strong> แล้วกด "สร้างใหม่"</li>
+      <li><strong>กรอกแท็บ "ข้อมูลพื้นฐาน"</strong> — ชื่อไทย/อังกฤษ, สาขา, และความเชี่ยวชาญ เป็นข้อมูลบังคับ ส่วน slug ปล่อยว่างได้ ระบบจะสร้างให้อัตโนมัติจากชื่อภาษาอังกฤษ</li>
+      <li><strong>อัปโหลดรูปในแท็บ "รูปภาพโปรไฟล์"</strong> — มี 2 ช่องแยกกัน (ดูรายละเอียดด้านล่าง)</li>
+      <li><strong>กรอกประวัติ/วุฒิบัตรในแท็บถัดไป</strong> — ไม่บังคับ แพทย์ที่ยังไม่กรอกส่วนนี้จะแสดงหน้าโปรไฟล์แบบย่อ (รูป+ชื่อ+ความเชี่ยวชาญ+ปุ่มจอง) แทนโปรไฟล์เต็ม</li>
+      <li><strong>ระบุตารางออกตรวจ (ถ้ามี)</strong> และข้อมูล SEO (ไม่บังคับ)</li>
+      <li><strong>บันทึกเป็น Draft หรือกดเผยแพร่</strong></li>
+    </ol>
+  </section>
+
+  <section id="tab-basic">
+    <div class="section-label">แท็บที่ 1</div>
+    <h2>ข้อมูลพื้นฐาน</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>Slug</td><td class="optional">ปล่อยว่างได้ — ระบบสร้าง URL ให้อัตโนมัติจากชื่ออังกฤษ เช่น "Dr. Punnawit Sirimetha" → <code>dr-punnawit-sirimetha</code> ได้ลิงก์ <code>phivara.site/doctor/dr-punnawit-sirimetha</code> ถ้าต้องการตั้งเองก็พิมพ์ทับได้</td></tr>
+      <tr><td>ชื่อไทย (nameTh) <span class="tag required">จำเป็น</span></td><td>ชื่อ-นามสกุลแพทย์ ภาษาไทย</td></tr>
+      <tr><td>ชื่ออังกฤษ (nameEn) <span class="tag required">จำเป็น</span></td><td>ชื่อ-นามสกุลแพทย์ ภาษาอังกฤษ — ใช้สร้าง slug อัตโนมัติด้วย ควรกรอกให้ถูกต้องตั้งแต่แรก</td></tr>
+      <tr><td>สาขา (branch) <span class="tag required">จำเป็น</span></td><td>สาขาที่แพทย์ประจำอยู่ — บังคับเลือก ไม่มีตัวเลือกเว้นว่าง</td></tr>
+      <tr><td>ความเชี่ยวชาญ (specialty) <span class="tag required">จำเป็น</span></td><td>เลือกจาก 4 หมวด: Plastic Surgery, Dermatology, Longevity Medicine, Aesthetic Wellness — ใช้กรองในหน้ารายชื่อแพทย์</td></tr>
+      <tr><td>ป้ายความเชี่ยวชาญที่แสดงผล (specialtyLabel)</td><td class="optional">ข้อความบนการ์ด เช่น "ศัลยกรรมตกแต่งรอบดวงตาและใบหน้า" — เว้นว่างจะไม่มีข้อความนี้บนการ์ด (ต่างจาก category ด้านบนซึ่งใช้กรองเท่านั้น)</td></tr>
+      <tr><td>ข้อความรองใต้ความเชี่ยวชาญ (subNote)</td><td class="optional">บรรทัดเล็กใต้ specialtyLabel เช่น "Board Certified Plastic Surgeon"</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-photo">
+    <div class="section-label">แท็บที่ 2</div>
+    <h2>รูปภาพโปรไฟล์</h2>
+    <div class="callout">
+      <span class="callout-label">2 ช่องรูป แยกกันชัดเจน</span>
+      <p>ต่างจากเมนูบทความที่มีรูปเดียวใช้ 2 จุด — โปรไฟล์แพทย์มี<strong>รูปแยก 2 ช่อง</strong> สำหรับ 2 จุดแสดงผลที่ต่างกัน ควรอัปโหลดให้ครบทั้งคู่</p>
+    </div>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>ใช้ที่ไหน</th><th>ขนาด/อัตราส่วนที่แนะนำ</th></tr>
+      <tr><td>รูปภาพขนาดใหญ่ (portrait)</td><td>รูป hero ด้านซ้ายบนหน้ารายละเอียดแพทย์</td><td>แนวตั้ง ~4:5 (เช่น 1000×1250 px) ไฟล์ไม่เกิน 1 MB</td></tr>
+      <tr><td>รูปการ์ด (cardPhoto)</td><td>การ์ดในหน้ารายชื่อแพทย์ และ "OUR SPECIALISTS" หน้าแรก</td><td>แนวตั้ง 4:5 เช่นกัน (เช่น 800×1000 px) ไฟล์ไม่เกิน 600 KB</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="callout-label">ถ้าอัปโหลดแค่ช่องเดียว</span>
+      <p>เว็บไซต์จะดึงรูปอีกช่องมาใช้แทนโดยอัตโนมัติถ้าอีกช่องว่าง (การ์ดจะลองใช้ cardPhoto ก่อน แล้วค่อย fallback ไป portrait) แต่ควรอัปโหลดให้ครบทั้ง 2 ช่องเพื่อผลลัพธ์ที่ดีที่สุด เพราะรูปที่ตั้งใจครอปมาสำหรับจุดหนึ่งอาจดูไม่สวยเมื่อถูกใช้แทนอีกจุด</p>
+    </div>
+    <div class="callout">
+      <span class="callout-label">ใช้รูปเดียวกัน (ไฟล์เดียว) ทั้ง 2 ช่องได้ไหม</span>
+      <p>ได้ — ทั้งสองจุดใช้อัตราส่วนเดียวกันคือ <strong>4:5</strong> และเว็บไซต์ครอปรูปให้พอดีกรอบอัตโนมัติอยู่แล้ว (CSS <code>object-fit: cover</code>) ต่อให้อัปโหลดไฟล์เดียวกันในทั้ง 2 ช่อง หรือไฟล์ใหญ่กว่าที่แนะนำ ก็จะแสดงผลถูกต้องไม่ผิดเพี้ยน</p>
+      <p>ที่แนะนำให้แยกขนาด 2 ค่าไม่ใช่เพราะสัดส่วนต่างกัน แต่เพื่อประหยัดเวลาโหลดหน้าเว็บ: <strong>portrait</strong> โชว์ใหญ่แค่จุดเดียวต่อหน้า ใช้ไฟล์ใหญ่ได้ไม่กระทบ ส่วน <strong>cardPhoto</strong> จะโชว์เล็กแต่ปรากฏพร้อมกันหลายใบในหน้าเดียว (เช่นหน้ารายชื่อแพทย์) ถ้าใช้ไฟล์ใหญ่เท่า portrait ทุกใบ หน้านั้นจะโหลดหนักโดยไม่จำเป็น ถ้าไม่ติดปัญหาความเร็วเว็บไซต์ก็ใช้ไฟล์เดียวกันทั้งสองช่องได้เลย</p>
+    </div>
+  </section>
+
+  <section id="tab-cred">
+    <div class="section-label">แท็บที่ 3</div>
+    <h2>ประวัติและวุฒิบัตร</h2>
+    <p>ทุกฟิลด์ในแท็บนี้ <strong>ไม่บังคับ</strong> — ถ้าเว้นว่างทั้งหมด หน้าโปรไฟล์แพทย์จะแสดงแบบย่อ (รูป, ชื่อ, ความเชี่ยวชาญ, ปุ่มจอง) แทนโปรไฟล์เต็มรูปแบบ</p>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>ตำแหน่งในโรงพยาบาล (hospitalTitle)</td><td class="optional">ป้าย badge บน hero เช่น "แพทย์ประจำศูนย์ศัลยกรรมตกแต่ง โรงพยาบาลพญาไทศรีราชา"</td></tr>
+      <tr><td>วุฒิบัตร (boardCertification)</td><td class="optional">บรรทัดใต้ชื่อแพทย์ เช่น "วุฒิบัตรสาขาศัลยศาสตร์ตกแต่ง..."</td></tr>
+      <tr><td>แท็กสั้น (tags)</td><td class="optional">ชิปเล็กๆ บนหัวโปรไฟล์ เช่น "✦ Plastic Surgery" เพิ่มได้หลายรายการ</td></tr>
+      <tr><td>ประวัติโดยย่อ (bio)</td><td class="optional">ข้อความ rich text อธิบายแพทย์ท่านนี้</td></tr>
+      <tr><td>กลุ่มคุณวุฒิ (credentialGroups)</td><td class="optional">ตารางคุณวุฒิแบ่งเป็นหมวด เช่น "การศึกษา", "ประสบการณ์การทำงาน", "ความเชี่ยวชาญทางคลินิก" — แต่ละหมวดมีหัวข้อ + รายการย่อยได้หลายบรรทัด</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-schedule">
+    <div class="section-label">แท็บที่ 4</div>
+    <h2>ตารางออกตรวจ &amp; ติดต่อ</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>ตารางออกตรวจ (schedule)</td><td class="optional">เพิ่มได้หลายแถว แต่ละแถวเลือกวันในสัปดาห์ + ช่วงเวลา (เช่น "09:00 - 20:00 น.") + สถานที่ (ไม่บังคับ) — ถ้าไม่กรอกเลย ส่วน "ตารางเวลาออกตรวจ" จะไม่แสดงบนหน้าโปรไฟล์</td></tr>
+      <tr><td>ข้อความชวนนัดหมาย (contactIntro)</td><td class="optional">ย่อหน้าเชิญชวนให้นัดหมายบนหน้าโปรไฟล์</td></tr>
+      <tr><td>ข้อมูลติดต่อสั้น (contactFact)</td><td class="optional">เช่น "ศูนย์ศัลยกรรมตกแต่ง · โรงพยาบาลพญาไทศรีราชา"</td></tr>
+    </table>
+  </section>
+
+  <section id="status">
+    <div class="section-label">สถานะโปรไฟล์</div>
+    <h2>Draft กับ Published ต่างกันอย่างไร</h2>
+    <div class="status-pair">
+      <div class="status-box draft">
+        <span class="pill">DRAFT (ฉบับร่าง)</span>
+        <p>แก้ไขได้เฉพาะในหน้าฟอร์มของ <code>/admin</code> — ไม่มีลิงก์พรีวิวบนเว็บไซต์จริง แม้ล็อกอินอยู่ก็ตาม ลิงก์โปรไฟล์นี้จะขึ้นหน้า "ไม่พบหน้าที่คุณค้นหา" จนกว่าจะเผยแพร่</p>
+      </div>
+      <div class="status-box published">
+        <span class="pill">PUBLISHED (เผยแพร่แล้ว)</span>
+        <p>แสดงบนเว็บไซต์จริงทันที — หน้าเว็บจะอัปเดตข้อมูลใหม่ภายใน 60 วินาทีหลังบันทึก</p>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">ทำไมต้องมี Draft</span>
+      <p>ข้อมูลวุฒิบัตร/ประสบการณ์แพทย์เป็นการอ้างสิทธิ์ทางการแพทย์ ควรให้ Medical Reviewer ตรวจสอบความถูกต้องก่อนเผยแพร่จริงเสมอ</p>
+    </div>
+  </section>
+
+  <section id="tips">
+    <div class="section-label">เคล็ดลับ</div>
+    <h2>ข้อควรรู้เพิ่มเติม</h2>
+    <div class="callout">
+      <span class="callout-label">สลับภาษา</span>
+      <p>ฟิลด์ข้อความเกือบทั้งหมดรองรับ TH/EN แยกกัน — ถ้าลืมกรอกอังกฤษ เว็บไซต์จะแสดงข้อความภาษาไทยแทนโดยอัตโนมัติ</p>
+    </div>
+    <div class="callout warn">
+      <span class="callout-label">ข้อควรระวัง</span>
+      <p>ถ้าย้ายแพทย์ไปสาขาอื่น (แก้ฟิลด์ "สาขา") และคุณเป็น Content Editor/Medical Reviewer ที่ไม่ได้ดูแลสาขาใหม่นั้น จะ<strong>แก้ไขโปรไฟล์นี้ต่อไม่ได้อีก</strong>หลังบันทึก เพราะสาขาใหม่ไม่อยู่ในขอบเขตที่คุณดูแล — ควรให้ Admin เป็นผู้ย้ายสาขาแทน</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: แพทย์ผู้เชี่ยวชาญ (Doctors) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+</footer>
+
+</body>
+</html>

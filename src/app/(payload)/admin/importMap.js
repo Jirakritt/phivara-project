@@ -27,6 +27,7 @@ import { Nav as Nav_433b21d65d91ca840ffbca0ad0927802 } from '../../../../cms/adm
 import { Icon as Icon_da9967f403efb20982bfa1cb1dd32bed } from '../../../../cms/admin/components/Graphics'
 import { Logo as Logo_da9967f403efb20982bfa1cb1dd32bed } from '../../../../cms/admin/components/Graphics'
 import { Dashboard as Dashboard_c7ab1fc3e40c7f5b67b7f1dd2fdf5770 } from '../../../../cms/admin/components/Dashboard'
+import { ManualView as ManualView_8a288e040baef44b6d1d4547e8897460 } from '../../../../cms/admin/components/ManualView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -60,5 +61,6 @@ export const importMap = {
   "/cms/admin/components/Graphics#Icon": Icon_da9967f403efb20982bfa1cb1dd32bed,
   "/cms/admin/components/Graphics#Logo": Logo_da9967f403efb20982bfa1cb1dd32bed,
   "/cms/admin/components/Dashboard#Dashboard": Dashboard_c7ab1fc3e40c7f5b67b7f1dd2fdf5770,
+  "/cms/admin/components/ManualView#ManualView": ManualView_8a288e040baef44b6d1d4547e8897460,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

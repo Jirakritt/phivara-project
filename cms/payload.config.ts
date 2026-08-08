@@ -83,6 +83,15 @@ export default buildConfig({
         dashboard: {
           Component: '/cms/admin/components/Dashboard#Dashboard',
         },
+        // "คู่มือการใช้งาน CMS" — /admin/manual, linked from Nav.tsx's
+        // sidebar footer. Embeds the static cms-manual/*.html pages (served
+        // by src/app/cms-manual/[[...slug]]/route.ts) in an iframe. Being a
+        // route under /admin, Payload's own auth already gates it — no
+        // per-collection access rule needed here.
+        manual: {
+          Component: '/cms/admin/components/ManualView#ManualView',
+          path: '/manual',
+        },
       },
     },
   },

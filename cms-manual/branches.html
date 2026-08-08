@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS — สาขา (Branches) | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans); background:var(--cream); color:var(--ink); font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+  header.doc-header{background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:46px 0 40px; border-bottom:3px solid var(--gold);}
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  header.doc-header .brand img{width:38px; height:38px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:15px; font-weight:500;}
+  header.doc-header .brand a{color:inherit; text-decoration:none; font-size:12px; letter-spacing:.05em; margin-left:auto; opacity:.75; border-bottom:1px solid rgba(255,255,255,.4);}
+  header.doc-header .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em; color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;}
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(28px,4vw,40px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:14px; max-width:600px; color:rgba(255,255,255,.78); font-size:15px;}
+  nav.toc{background:var(--cream-deep); border-bottom:1px solid var(--line); padding:18px 0; position:sticky; top:0; z-index:10;}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:8px 22px;}
+  nav.toc a{font-size:13px; color:var(--olive-dark); text-decoration:none; font-weight:500; letter-spacing:.02em; border-bottom:1px solid transparent; padding-bottom:2px; transition:.25s;}
+  nav.toc a:hover{color:var(--gold); border-color:var(--gold);}
+  main{padding:56px 0 90px;}
+  section{margin-bottom:58px;}
+  section:last-child{margin-bottom:0;}
+  .section-label{display:inline-flex; align-items:center; gap:10px; color:var(--gold); font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;}
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(24px,3vw,30px); color:var(--ink); margin-bottom:16px;}
+  h3{font-family:var(--serif-en); font-weight:500; font-size:19px; color:var(--olive-dark); margin:26px 0 10px;}
+  p{margin-bottom:12px; color:var(--ink-soft);}
+  strong{color:var(--ink); font-weight:600;}
+  code{background:var(--gold-pale); color:var(--olive-dark); padding:2px 7px; border-radius:5px; font-size:13.5px; font-family:ui-monospace,Menlo,monospace;}
+  .callout{background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold); border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;}
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+  ol.steps{list-style:none; counter-reset:step; margin:18px 0;}
+  ol.steps li{counter-increment:step; position:relative; padding:14px 0 14px 46px; border-bottom:1px solid var(--line);}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(step); position:absolute; left:0; top:12px; width:28px; height:28px; border-radius:50%; background:var(--gold); color:#fff; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center;}
+  ol.steps li strong{display:block; margin-bottom:3px; color:var(--ink);}
+  table.field-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  table.field-table th, table.field-table td{text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.field-table th{background:var(--cream-deep); color:var(--olive-dark); font-weight:600; font-size:12.5px; letter-spacing:.05em; text-transform:uppercase;}
+  table.field-table td:first-child{white-space:nowrap; font-weight:600; color:var(--ink);}
+  table.field-table td.optional{color:var(--olive-soft); font-style:italic; font-size:13px;}
+  .tag{display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:2px 9px; border-radius:999px; background:var(--gold-pale); color:#8d6b32; margin-left:6px;}
+  .tag.required{background:#FBEAF0; color:#993556;}
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0;}
+  .role-card{background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card); padding:20px; text-align:center;}
+  .role-card .role-name{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:10px;}
+  .role-card ul{list-style:none; font-size:13.5px; text-align:left;}
+  .role-card li{padding:4px 0 4px 20px; position:relative; color:var(--ink-soft);}
+  .role-card li::before{content:"✓"; position:absolute; left:0; color:var(--gold); font-weight:700;}
+  .role-card li.no::before{content:"✕"; color:#c0908a;}
+  .role-card li.no{color:var(--olive-soft);}
+  footer.doc-footer{background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;}
+  footer.doc-footer strong{color:#fff;}
+  footer.doc-footer a{color:rgba(255,255,255,.85);}
+  @media(max-width:720px){.role-grid{grid-template-columns:1fr;} nav.toc .wrap{gap:6px 16px; overflow-x:auto; flex-wrap:nowrap;}}
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand"><img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" /><span>PHIVARA</span><a href="index.html">← หน้าหลักคู่มือ</a></div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>วิธีใช้งานเมนู "สาขา" (Branches)</h1>
+    <p class="lead">คู่มือสำหรับผู้ดูแลเนื้อหา อธิบายทุกฟิลด์ในหน้าแก้ไขข้อมูลสาขา และสิทธิ์การใช้งานตามบทบาท</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">ภาพรวม</a>
+    <a href="#roles">สิทธิ์การใช้งาน</a>
+    <a href="#tab-basic">ข้อมูลพื้นฐาน</a>
+    <a href="#tab-address">ที่อยู่ &amp; เวลาทำการ</a>
+    <a href="#tab-gallery">รูปภาพ &amp; แกลเลอรี</a>
+    <a href="#tab-facilities">สิ่งอำนวยความสะดวก &amp; เส้นทาง</a>
+    <a href="#tab-related">แพทย์ &amp; โปรแกรมที่เกี่ยวข้อง</a>
+    <a href="#tips">เคล็ดลับ</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="overview">
+    <div class="section-label">ภาพรวม</div>
+    <h2>เมนู "สาขา" คืออะไร</h2>
+    <p>ใช้จัดการข้อมูลของแต่ละสาขา PHIVARA ทั้ง 5 แห่ง — แสดงในหน้ารายละเอียดสาขา, ตัวเลือกสาขาในฟอร์มจองปรึกษา, และคอลัมน์ "สาขา" ที่ footer ของทุกหน้า (คอลัมน์นี้ดึงจากที่นี่โดยตรง แก้จาก footer ไม่ได้ ต้องแก้ที่เมนูนี้)</p>
+    <div class="callout warn">
+      <span class="callout-label">ต่างจากเมนูอื่น</span>
+      <p>สาขา<strong>ไม่มีระบบ Draft/Published</strong> — บันทึกแล้วขึ้นเว็บไซต์จริงทันที ไม่มีขั้นตอนตรวจทานก่อนเผยแพร่ ควรตรวจสอบข้อมูลให้ถูกต้องก่อนบันทึกทุกครั้ง โดยเฉพาะเบอร์โทรและที่อยู่</p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-label">สิทธิ์การใช้งาน</div>
+    <h2>ใครทำอะไรได้บ้าง</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">Admin</div>
+        <ul><li>สร้าง/แก้ไข/ลบได้ทุกสาขา</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Content Editor</div>
+        <ul><li class="no">สร้างสาขาใหม่ไม่ได้</li><li>แก้ไขได้เฉพาะสาขาที่ตัวเองถูกกำหนดให้ดูแล</li><li class="no">ลบไม่ได้</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Medical Reviewer</div>
+        <ul><li class="no">แตะต้องเมนูนี้ไม่ได้เลย</li></ul>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">หมายเหตุ</span>
+      <p>สาขาใหม่หรือการลบสาขาต้องให้ Admin เป็นผู้ทำเท่านั้น เพราะเป็นข้อมูลโครงสร้างที่หลายเมนู (แพทย์, โปรแกรม, บทความ, ผู้ใช้งาน) ผูกอยู่ด้วย</p>
+    </div>
+  </section>
+
+  <section id="tab-basic">
+    <div class="section-label">แท็บที่ 1</div>
+    <h2>ข้อมูลพื้นฐาน</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>Slug <span class="tag required">จำเป็น</span></td><td>รหัสสาขาที่ใช้ในลิงก์และฟอร์มจอง เช่น <code>sanampao</code>, <code>phaholyothin</code>, <code>sriayudhaya</code>, <code>sriracha</code>, <code>petchakasem</code> — <strong>ห้ามเปลี่ยนค่านี้ทีหลัง</strong> ถ้าไม่จำเป็น เพราะฟิลด์อื่นๆ ในระบบ (leads เก่า) อ้างอิงค่านี้อยู่</td></tr>
+      <tr><td>ชื่อไทย (nameTh) <span class="tag required">จำเป็น</span></td><td>ชื่อสาขาภาษาไทย</td></tr>
+      <tr><td>ชื่ออังกฤษ (nameEn) <span class="tag required">จำเป็น</span></td><td>ชื่อสาขาภาษาอังกฤษ</td></tr>
+      <tr><td>แท็กไลน์ (tagline)</td><td class="optional">เช่น "Hospital-Grade Plastic Surgery Center"</td></tr>
+      <tr><td>คำอธิบาย (description)</td><td class="optional">ย่อหน้าแนะนำสาขา</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-address">
+    <div class="section-label">แท็บที่ 2</div>
+    <h2>ที่อยู่ &amp; เวลาทำการ</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>ที่อยู่ (address)</td><td class="optional">ที่อยู่เต็มของสาขา</td></tr>
+      <tr><td>เวลาทำการ (hours)</td><td class="optional">เช่น "ทุกวัน 09:00 - 20:00 น."</td></tr>
+      <tr><td>เบอร์โทร (phone)</td><td class="optional">ไม่รองรับ 2 ภาษา (ใช้เบอร์เดียวกันทุกภาษา)</td></tr>
+      <tr><td>LINE ID (lineId)</td><td class="optional">ค่าเริ่มต้น <code>@phivara</code> เปลี่ยนได้ถ้าสาขานี้มี LINE แยก</td></tr>
+      <tr><td>ลิงก์แผนที่ (mapUrl)</td><td class="optional">ลิงก์ Google Maps — ปัจจุบันยังไม่มีการนำไปแสดงผลบนเว็บไซต์จริง เตรียมไว้สำหรับใช้ในอนาคต</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-gallery">
+    <div class="section-label">แท็บที่ 3</div>
+    <h2>รูปภาพ &amp; แกลเลอรี</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>รูปภาพหลัก (heroImage)</td><td class="optional">รูป hero บนหน้ารายละเอียดสาขา — แนะนำแนวนอน ความละเอียดสูง (~1600×900 px) ไฟล์ไม่เกิน 1 MB</td></tr>
+      <tr><td>แกลเลอรี (gallery)</td><td class="optional">อัลบั้มรูปเพิ่มเติมของสาขา แต่ละรูปใส่คำบรรยาย (caption) ได้</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-facilities">
+    <div class="section-label">แท็บที่ 4</div>
+    <h2>สิ่งอำนวยความสะดวก &amp; เส้นทาง</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>สิ่งอำนวยความสะดวก (facilities)</td><td class="optional">การ์ดจุดเด่นของสาขา เช่น "Positive Pressure Operating Theaters" เพิ่มได้หลายรายการ</td></tr>
+      <tr><td>เส้นทางเดินทาง (directions)</td><td class="optional">คำอธิบายการเดินทาง เช่น รถไฟฟ้า/ที่จอดรถ</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-related">
+    <div class="section-label">แท็บที่ 5</div>
+    <h2>แพทย์ &amp; โปรแกรมที่เกี่ยวข้อง</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>แพทย์ (doctors)</td><td class="optional">เลือกแพทย์ที่จะโชว์เด่นบนหน้าสาขานี้ — ไม่จำเป็นต้องเลือกเอง เพราะระบบจะดึงแพทย์ที่ตั้งค่า "สาขา" ตรงกับสาขานี้มาแสดงอัตโนมัติอยู่แล้ว ใช้ฟิลด์นี้เมื่อต้องการ "เลือกเน้น" เป็นพิเศษเท่านั้น</td></tr>
+      <tr><td>โปรแกรมแนะนำ (featuredPrograms)</td><td class="optional">เลือกโปรแกรมที่ต้องการโปรโมตบนหน้าสาขานี้</td></tr>
+    </table>
+  </section>
+
+  <section id="tips">
+    <div class="section-label">เคล็ดลับ</div>
+    <h2>ข้อควรรู้เพิ่มเติม</h2>
+    <div class="callout warn">
+      <span class="callout-label">ข้อควรระวัง</span>
+      <p>เบอร์โทรและที่อยู่ในเมนูนี้ถูกใช้แสดงผลในหลายจุดของเว็บไซต์ (footer, หน้าติดต่อ, หน้าสาขา) รวมถึงข้อความ "สายด่วนส่วนตัว" ที่แถบบนสุดของเว็บ (เมนู "แถบบนสุด") เป็นข้อความแยกต่างหาก ไม่ได้ดึงจากเบอร์โทรสาขาอัตโนมัติ — ถ้าต้องการให้เบอร์ตรงกัน ต้องไปแก้ทั้ง 2 เมนูแยกกัน</p>
+    </div>
+    <div class="callout">
+      <span class="callout-label">ไม่มี Draft</span>
+      <p>เพราะไม่มีระบบร่าง การแก้ไขข้อมูลสาขาจะขึ้นเว็บไซต์จริงทันทีที่กดบันทึก (ภายใน 60 วินาที) — ควรตรวจทานให้ถูกต้องก่อนบันทึกเสมอ โดยเฉพาะเบอร์โทรและที่อยู่</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: สาขา (Branches) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+</footer>
+
+</body>
+</html>

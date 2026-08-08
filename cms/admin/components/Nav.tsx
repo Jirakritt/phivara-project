@@ -252,6 +252,9 @@ export function Nav() {
               ผู้ใช้งาน &amp; สิทธิ์การเข้าถึง
             </Link>
           )}
+          <Link href={formatAdminURL({ adminRoute, path: '/manual' })} prefetch={false}>
+            คู่มือการใช้งาน CMS
+          </Link>
           <Link
             href={formatAdminURL({ adminRoute, path: config.admin.routes.logout })}
             prefetch={false}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>คู่มือการใช้งาน CMS — โปรแกรมตรวจ (Programs) | PHIVARA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBFAF7; --cream-card:#FFFEFC; --cream-deep:#F1ECE3;
+    --olive:#877C6B; --olive-dark:#504A42; --olive-soft:#AAA08F;
+    --gold:#B89560; --gold-bright:#D2B98F; --gold-pale:#F2E9DA; --gold-line:rgba(184,149,96,.30);
+    --ink:#302E2A; --ink-soft:#45413C; --line:#DED7CD;
+    --serif:'Prompt','Lora',serif; --serif-en:'Lora',serif; --sans:'Prompt',sans-serif;
+    --radius-card:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans); background:var(--cream); color:var(--ink); font-size:15.5px; line-height:1.75; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+  header.doc-header{background:linear-gradient(135deg,#3f4734,#555c46); color:#fff; padding:46px 0 40px; border-bottom:3px solid var(--gold);}
+  header.doc-header .brand{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  header.doc-header .brand img{width:38px; height:38px;}
+  header.doc-header .brand span{font-family:var(--serif-en); letter-spacing:.18em; font-size:15px; font-weight:500;}
+  header.doc-header .brand a{color:inherit; text-decoration:none; font-size:12px; letter-spacing:.05em; margin-left:auto; opacity:.75; border-bottom:1px solid rgba(255,255,255,.4);}
+  header.doc-header .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11.5px; letter-spacing:.24em; color:var(--gold-bright); font-weight:500; text-transform:uppercase; margin-bottom:14px;}
+  header.doc-header .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-bright);}
+  header.doc-header h1{font-family:var(--serif-en); font-weight:500; font-size:clamp(28px,4vw,40px); line-height:1.25;}
+  header.doc-header p.lead{margin-top:14px; max-width:600px; color:rgba(255,255,255,.78); font-size:15px;}
+  nav.toc{background:var(--cream-deep); border-bottom:1px solid var(--line); padding:18px 0; position:sticky; top:0; z-index:10;}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:8px 22px;}
+  nav.toc a{font-size:13px; color:var(--olive-dark); text-decoration:none; font-weight:500; letter-spacing:.02em; border-bottom:1px solid transparent; padding-bottom:2px; transition:.25s;}
+  nav.toc a:hover{color:var(--gold); border-color:var(--gold);}
+  main{padding:56px 0 90px;}
+  section{margin-bottom:58px;}
+  section:last-child{margin-bottom:0;}
+  .section-label{display:inline-flex; align-items:center; gap:10px; color:var(--gold); font-size:11.5px; letter-spacing:.22em; font-weight:600; text-transform:uppercase; margin-bottom:10px;}
+  .section-label::before{content:"";width:22px;height:1px;background:var(--gold);}
+  h2{font-family:var(--serif-en); font-weight:500; font-size:clamp(24px,3vw,30px); color:var(--ink); margin-bottom:16px;}
+  h3{font-family:var(--serif-en); font-weight:500; font-size:19px; color:var(--olive-dark); margin:26px 0 10px;}
+  p{margin-bottom:12px; color:var(--ink-soft);}
+  strong{color:var(--ink); font-weight:600;}
+  code{background:var(--gold-pale); color:var(--olive-dark); padding:2px 7px; border-radius:5px; font-size:13.5px; font-family:ui-monospace,Menlo,monospace;}
+  .callout{background:var(--cream-card); border:1px solid var(--gold-line); border-left:4px solid var(--gold); border-radius:var(--radius-card); padding:20px 24px; margin:18px 0;}
+  .callout.warn{border-left-color:#A9584E; background:#FBF2F0;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .callout-label{font-weight:600; color:var(--gold); font-size:13px; letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:6px;}
+  .callout.warn .callout-label{color:#A9584E;}
+  ol.steps{list-style:none; counter-reset:step; margin:18px 0;}
+  ol.steps li{counter-increment:step; position:relative; padding:14px 0 14px 46px; border-bottom:1px solid var(--line);}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(step); position:absolute; left:0; top:12px; width:28px; height:28px; border-radius:50%; background:var(--gold); color:#fff; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center;}
+  ol.steps li strong{display:block; margin-bottom:3px; color:var(--ink);}
+  table.field-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+  table.field-table th, table.field-table td{text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.field-table th{background:var(--cream-deep); color:var(--olive-dark); font-weight:600; font-size:12.5px; letter-spacing:.05em; text-transform:uppercase;}
+  table.field-table td:first-child{white-space:nowrap; font-weight:600; color:var(--ink);}
+  table.field-table td.optional{color:var(--olive-soft); font-style:italic; font-size:13px;}
+  .tag{display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; padding:2px 9px; border-radius:999px; background:var(--gold-pale); color:#8d6b32; margin-left:6px;}
+  .tag.required{background:#FBEAF0; color:#993556;}
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0;}
+  .role-card{background:var(--cream-card); border:1px solid var(--line); border-radius:var(--radius-card); padding:20px; text-align:center;}
+  .role-card .role-name{font-family:var(--serif-en); font-weight:500; font-size:17px; color:var(--ink); margin-bottom:10px;}
+  .role-card ul{list-style:none; font-size:13.5px; text-align:left;}
+  .role-card li{padding:4px 0 4px 20px; position:relative; color:var(--ink-soft);}
+  .role-card li::before{content:"✓"; position:absolute; left:0; color:var(--gold); font-weight:700;}
+  .role-card li.no::before{content:"✕"; color:#c0908a;}
+  .role-card li.no{color:var(--olive-soft);}
+  .status-pair{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:18px 0;}
+  .status-box{border-radius:var(--radius-card); padding:20px 22px; border:1px solid var(--line);}
+  .status-box.draft{background:#F5F1E9;}
+  .status-box.published{background:#EEF3E4;}
+  .status-box .pill{display:inline-block; font-size:11.5px; font-weight:600; letter-spacing:.05em; padding:3px 12px; border-radius:999px; margin-bottom:10px;}
+  .status-box.draft .pill{background:#E4DCC7; color:#7a6a3f;}
+  .status-box.published .pill{background:#c8dba0; color:#3b6d11;}
+  footer.doc-footer{background:var(--olive-dark); color:rgba(255,255,255,.7); padding:30px 0; text-align:center; font-size:13px;}
+  footer.doc-footer strong{color:#fff;}
+  footer.doc-footer a{color:rgba(255,255,255,.85);}
+  @media(max-width:720px){.role-grid{grid-template-columns:1fr;} .status-pair{grid-template-columns:1fr;} nav.toc .wrap{gap:6px 16px; overflow-x:auto; flex-wrap:nowrap;}}
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="wrap">
+    <div class="brand"><img src="../public/assets/images/brand/emblem.png" alt="PHIVARA emblem" /><span>PHIVARA</span><a href="index.html">← หน้าหลักคู่มือ</a></div>
+    <div class="eyebrow">CMS User Manual</div>
+    <h1>วิธีใช้งานเมนู "โปรแกรมตรวจ" (Programs)</h1>
+    <p class="lead">คู่มือสำหรับผู้ดูแลเนื้อหา อธิบายทุกฟิลด์ในหน้าสร้าง/แก้ไขโปรแกรมตรวจ, สิทธิ์การใช้งานตามบทบาท, และขั้นตอนตั้งแต่ร่างจนถึงเผยแพร่</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">ภาพรวม</a>
+    <a href="#roles">สิทธิ์การใช้งาน</a>
+    <a href="#create">สร้างโปรแกรมใหม่</a>
+    <a href="#tab-basic">ข้อมูลพื้นฐาน</a>
+    <a href="#tab-catalog">การ์ดแคตตาล็อก</a>
+    <a href="#tab-detail">เนื้อหาหน้ารายละเอียด</a>
+    <a href="#status">Draft / Published</a>
+    <a href="#tips">เคล็ดลับ</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="overview">
+    <div class="section-label">ภาพรวม</div>
+    <h2>เมนู "โปรแกรมตรวจ" คืออะไร</h2>
+    <p>ใช้จัดการโปรแกรมตรวจ/แพ็กเกจทั้งหมด — แสดงในหน้า <strong>"โปรแกรมตรวจ"</strong> (หน้ารายการ + หน้ารายละเอียด), แถบ carousel แนะนำบนหน้าแรกและหน้าโปรแกรม, และในหน้าโปรไฟล์แพทย์ (ส่วน "โปรแกรมการตรวจที่เกี่ยวข้อง")</p>
+    <div class="callout">
+      <span class="callout-label">ก่อนเริ่ม</span>
+      <p>โปรแกรม 1 รายการ แบ่งเป็น 4 แท็บ: <strong>ข้อมูลพื้นฐาน</strong>, <strong>การ์ดแคตตาล็อก</strong>, <strong>เนื้อหาหน้ารายละเอียด</strong> และ <strong>SEO</strong></p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-label">สิทธิ์การใช้งาน</div>
+    <h2>ใครทำอะไรได้บ้าง</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-name">Admin</div>
+        <ul><li>สร้าง/แก้ไข/ลบได้ทุกโปรแกรม</li><li>เผยแพร่ / เปลี่ยนสถานะ</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Content Editor</div>
+        <ul><li>สร้างโปรแกรมใหม่ได้</li><li>แก้ไขโปรแกรมสาขาตัวเอง + โปรแกรมที่ไม่ผูกสาขา</li><li>ลบได้เฉพาะของสาขาตัวเอง</li></ul>
+      </div>
+      <div class="role-card">
+        <div class="role-name">Medical Reviewer</div>
+        <ul><li>สร้างโปรแกรมใหม่ได้</li><li>แก้ไขโปรแกรมสาขาตัวเอง + ที่ไม่ผูกสาขา</li><li class="no">ลบไม่ได้</li></ul>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">เรื่องสาขา</span>
+      <p>ฟิลด์ <code>สาขา (branch)</code> ไม่บังคับ — เว้นว่างไว้ถ้าโปรแกรมนี้ให้บริการได้ทุกสาขา (เนื้อหาส่วนกลาง) ซึ่งจะแก้ไขได้โดย Content Editor/Medical Reviewer ของทุกสาขา แต่<strong>ลบได้เฉพาะ Admin</strong>เท่านั้น เพื่อป้องกันไม่ให้สาขาใดสาขาหนึ่งลบโปรแกรมที่สาขาอื่นก็ใช้อยู่โดยไม่ตั้งใจ</p>
+    </div>
+  </section>
+
+  <section id="create">
+    <div class="section-label">เริ่มต้นใช้งาน</div>
+    <h2>ขั้นตอนสร้างโปรแกรมใหม่</h2>
+    <ol class="steps">
+      <li><strong>เข้าเมนู "โปรแกรมตรวจ"</strong> แล้วกด "สร้างใหม่"</li>
+      <li><strong>กรอกแท็บ "ข้อมูลพื้นฐาน"</strong> — slug, หมวดหมู่, ชื่อโปรแกรม และราคาเป็นข้อมูลบังคับ</li>
+      <li><strong>กรอกแท็บ "การ์ดแคตตาล็อก"</strong> — เนื้อหาที่จะแสดงบนการ์ดในหน้ารายการ รวมถึงรูปภาพ</li>
+      <li><strong>กรอกแท็บ "เนื้อหาหน้ารายละเอียด"</strong> — รายละเอียดเต็มของโปรแกรม (ไม่บังคับ แต่แนะนำให้กรอกอย่างน้อย "เกี่ยวกับโปรแกรมตรวจ")</li>
+      <li><strong>ใส่ SEO ถ้าต้องการ</strong> แล้วบันทึกเป็น Draft หรือเผยแพร่</li>
+    </ol>
+  </section>
+
+  <section id="tab-basic">
+    <div class="section-label">แท็บที่ 1</div>
+    <h2>ข้อมูลพื้นฐาน</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>Slug <span class="tag required">จำเป็น</span></td><td>ส่วนท้าย URL เช่น <code>pv01</code> ได้ลิงก์ <code>phivara.site/program/pv01</code> — ต้องไม่ซ้ำกับโปรแกรมอื่น (ระบบไม่ได้บังคับรูปแบบตัวอักษร แต่แนะนำให้ใช้อังกฤษ/ตัวเลขล้วน)</td></tr>
+      <tr><td>รหัสโปรแกรม (code)</td><td class="optional">รหัสสั้นแสดงผล เช่น "PV · 01"</td></tr>
+      <tr><td>หมวดหมู่ (category) <span class="tag required">จำเป็น</span></td><td>เลือกจาก 4 หมวด: Plastic Surgery, Dermatology, Longevity Medicine, Aesthetic Wellness</td></tr>
+      <tr><td>ชื่อโปรแกรม (title) <span class="tag required">จำเป็น</span></td><td>ชื่อเต็มของโปรแกรม/แพ็กเกจ</td></tr>
+      <tr><td>ราคา (price) <span class="tag required">จำเป็น</span></td><td>หน่วยเป็นบาท (THB) กรอกเป็นตัวเลขล้วน ไม่ต้องใส่ "บาท" หรือลูกน้ำ ระบบจะจัดรูปแบบให้เอง</td></tr>
+      <tr><td>โปรแกรมแนะนำ (featured)</td><td class="optional">ติ๊กเพื่อให้โปรแกรมนี้ไปแสดงใน carousel แนะนำ (จำกัดจำนวนแสดงผล — ถ้ามีหลายรายการติ๊กพร้อมกันมาก ควรพิจารณาว่าจำเป็นทุกรายการหรือไม่)</td></tr>
+      <tr><td>สาขา (branch)</td><td class="optional">เว้นว่างถ้าให้บริการได้ทุกสาขา</td></tr>
+      <tr><td>ข้อความอายุสิทธิ์ (validityNote)</td><td class="optional">เช่น "รับบริการได้ถึง 30/12/69"</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-catalog">
+    <div class="section-label">แท็บที่ 2</div>
+    <h2>การ์ดแคตตาล็อก</h2>
+    <p>สิ่งที่แสดงบนการ์ดในหน้ารายการ "/program" และ carousel แนะนำ</p>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>ป้ายการ์ด (tag)</td><td class="optional">เช่น "LONGEVITY", "CARDIOVASCULAR", "CELLULAR HEALTH"</td></tr>
+      <tr><td>คำอธิบายย่อ (shortDescription)</td><td class="optional">ข้อความสั้นบนการ์ด</td></tr>
+      <tr><td>จุดเด่น (highlights)</td><td class="optional">bullet point 2 ข้อที่แสดงบนการ์ด</td></tr>
+      <tr><td>หมายเหตุการ์ด (cardNote)</td><td class="optional">เช่น "ปรึกษาแพทย์พร้อมสรุปผล", "เหมาะสำหรับทุกเพศ"</td></tr>
+      <tr><td>รูปภาพหลัก (heroImage)</td><td><strong>รูปเดียว ใช้ 2 จุด</strong> — เป็นทั้งรูปการ์ดในหน้ารายการ และรูปหลักบนหน้ารายละเอียด (ถ้าไม่ได้อัปโหลดรูปแยกในแท็บถัดไป) ดูขนาดแนะนำด้านล่าง</td></tr>
+      <tr><td>คำค้นหาซ่อน (searchKeywords)</td><td class="optional">คำที่ไม่แสดงผล แต่ใช้ให้ช่องค้นหาในหน้าแคตตาล็อกหาโปรแกรมนี้เจอง่ายขึ้น</td></tr>
+    </table>
+    <h3>ขนาดรูปภาพที่แนะนำ (heroImage)</h3>
+    <table class="field-table">
+      <tr><th>รายการ</th><th>ค่าที่แนะนำ</th></tr>
+      <tr><td>ขนาด (พิกเซล)</td><td>ประมาณ <strong>1500 × 1000 px</strong></td></tr>
+      <tr><td>อัตราส่วนภาพ</td><td>แนวนอน 3:2</td></tr>
+      <tr><td>ขนาดไฟล์</td><td>ไม่ควรเกิน <strong>1 MB</strong> (แนะนำ 300–800 KB, JPEG/WebP)</td></tr>
+    </table>
+  </section>
+
+  <section id="tab-detail">
+    <div class="section-label">แท็บที่ 3</div>
+    <h2>เนื้อหาหน้ารายละเอียด</h2>
+    <table class="field-table">
+      <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
+      <tr><td>เกี่ยวกับโปรแกรมตรวจ (aboutProgram)</td><td class="optional">คำอธิบายเต็มแบบ rich text</td></tr>
+      <tr><td>ตรวจเพื่ออะไร (purposeList)</td><td class="optional">bullet list วัตถุประสงค์</td></tr>
+      <tr><td>เหมาะกับใคร (audienceList)</td><td class="optional">bullet list กลุ่มเป้าหมาย</td></tr>
+      <tr><td>รายการตรวจ (checkupItems)</td><td class="optional">ตารางรายการตรวจ — แต่ละแถวเลือกกลุ่มได้ (ทั้งหมด/ชาย/หญิง) ใช้แยกรายการตรวจชาย-หญิงในโปรแกรมเดียวได้</td></tr>
+      <tr><td>ข้อกำหนดและเงื่อนไข (termsOfService)</td><td class="optional">รายการหัวข้อ + คำอธิบาย เช่น เงื่อนไขการใช้สิทธิ์</td></tr>
+      <tr><td>ข้อมูลติดต่อ (contactOverride)</td><td class="optional">ใช้เมื่อโปรแกรมนี้ต้องการแสดงสถานที่/เวลา/เบอร์โทรที่ต่างจากค่าเริ่มต้นของสาขา — ส่วนใหญ่ไม่ต้องกรอก ปล่อยว่างให้ใช้ข้อมูลสาขาตามปกติ</td></tr>
+    </table>
+  </section>
+
+  <section id="status">
+    <div class="section-label">สถานะโปรแกรม</div>
+    <h2>Draft กับ Published ต่างกันอย่างไร</h2>
+    <div class="status-pair">
+      <div class="status-box draft">
+        <span class="pill">DRAFT (ฉบับร่าง)</span>
+        <p>ไม่มีลิงก์พรีวิวบนเว็บไซต์จริง — ลิงก์โปรแกรมนี้จะขึ้นหน้า "ไม่พบหน้าที่คุณค้นหา" จนกว่าจะเผยแพร่</p>
+      </div>
+      <div class="status-box published">
+        <span class="pill">PUBLISHED (เผยแพร่แล้ว)</span>
+        <p>แสดงบนเว็บไซต์จริงทันที อัปเดตภายใน 60 วินาทีหลังบันทึก</p>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="callout-label">ทำไมต้องมี Draft</span>
+      <p>รายการตรวจและเงื่อนไขเป็นข้อมูลทางการแพทย์/สัญญา ควรผ่านการตรวจทานก่อนเผยแพร่จริงเสมอ</p>
+    </div>
+  </section>
+
+  <section id="tips">
+    <div class="section-label">เคล็ดลับ</div>
+    <h2>ข้อควรรู้เพิ่มเติม</h2>
+    <div class="callout">
+      <span class="callout-label">ราคา</span>
+      <p>ราคาที่กรอกจะแสดงบนการ์ดและหน้ารายละเอียดทันทีที่เผยแพร่ ตรวจสอบตัวเลขให้ถูกต้องก่อนกดเผยแพร่ทุกครั้ง เพราะเป็นข้อมูลที่ลูกค้าใช้ตัดสินใจโดยตรง</p>
+    </div>
+    <div class="callout warn">
+      <span class="callout-label">ข้อควรระวัง</span>
+      <p>โปรแกรมที่ติ๊ก "โปรแกรมแนะนำ" (featured) จำนวนมากเกินไปจะทำให้ carousel หน้าแรกดูรกและโปรแกรมที่สำคัญจริงๆ ถูกกลืนไป ควรเลือกติ๊กเฉพาะโปรแกรมที่ต้องการโปรโมตจริงๆ</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="doc-footer">
+  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: โปรแกรมตรวจ (Programs) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+</footer>
+
+</body>
+</html>

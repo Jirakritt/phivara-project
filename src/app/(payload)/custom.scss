@@ -603,3 +603,21 @@ button {
     grid-row: 1;
   }
 }
+
+/* ==========================================================================
+   Manual view (cms/admin/components/ManualView.tsx) — full-bleed iframe
+   embedding the static cms-manual/*.html pages at /admin/manual. Rendered
+   directly inside .template-default__wrap (no Gutter wrapper, unlike
+   Dashboard.tsx, which opts into Gutter itself) — no padding to undo here.
+   ========================================================================== */
+.phivara-manual-view {
+  height: calc(100vh - var(--app-header-height));
+
+  &__frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #FBFAF7; // --cream, matches the manual's own background
+  }
+}
