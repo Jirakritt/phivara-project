@@ -41,7 +41,7 @@ export default async function ArticleListPage() {
       <div id="progressBar"></div>
       <div id="cursorRing"></div>
 
-      <SiteHeader page="article" />
+      <SiteHeader page="article" topbar={homeData.topbar} />
 
       <div className="breadcrumb-subbar">
         <div className="wrap">

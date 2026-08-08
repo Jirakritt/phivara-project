@@ -104,12 +104,14 @@ export interface Config {
     ecosystem: Ecosystem;
     'home-hero': HomeHero;
     footer: Footer;
+    topbar: Topbar;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
     ecosystem: EcosystemSelect<false> | EcosystemSelect<true>;
     'home-hero': HomeHeroSelect<false> | HomeHeroSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    topbar: TopbarSelect<false> | TopbarSelect<true>;
   };
   locale: 'th' | 'en';
   widgets: {
@@ -1343,6 +1345,27 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topbar".
+ */
+export interface Topbar {
+  id: number;
+  /**
+   * ข้อความฝั่งซ้ายของแถบบนสุด เช่น PHIVARA Aesthetic & Longevity Center
+   */
+  tagline?: string | null;
+  /**
+   * ข้อความสายด่วน ใส่เบอร์โทรจริงแทน 02-XXX-XXXX เช่น สายด่วนส่วนตัว: 02-123-4567
+   */
+  hotlineText?: string | null;
+  /**
+   * ข้อความ LINE เช่น LINE: @phivara
+   */
+  lineText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
 export interface MembershipSelect<T extends boolean = true> {
@@ -1491,6 +1514,18 @@ export interface FooterSelect<T extends boolean = true> {
         facebook?: T;
         line?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topbar_select".
+ */
+export interface TopbarSelect<T extends boolean = true> {
+  tagline?: T;
+  hotlineText?: T;
+  lineText?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

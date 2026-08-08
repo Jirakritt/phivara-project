@@ -149,6 +149,17 @@ const settingsItems: NavItem[] = [
       </>,
     ),
   },
+  {
+    slug: 'topbar',
+    label: 'แถบบนสุด (Top Bar)',
+    type: 'global',
+    icon: icon(
+      <>
+        <rect x="3" y="4" width="18" height="5" rx="1" />
+        <path d="M7 15h5M7 18h8" />
+      </>,
+    ),
+  },
 ]
 
 export function Nav() {

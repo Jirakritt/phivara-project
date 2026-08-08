@@ -38,7 +38,7 @@ export default async function DoctorListPage() {
       <div id="progressBar"></div>
       <div id="cursorRing"></div>
 
-      <SiteHeader page="doctor" />
+      <SiteHeader page="doctor" topbar={homeData.topbar} />
 
       <div className="breadcrumb-subbar">
         <div className="wrap">

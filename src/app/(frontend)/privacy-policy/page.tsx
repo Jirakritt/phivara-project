@@ -34,7 +34,7 @@ export default async function PrivacyPolicyPage() {
       </div>
       <div id="progressBar"></div>
 
-      <SiteHeader page="home" />
+      <SiteHeader page="home" topbar={homeData.topbar} />
 
       <div className="breadcrumb-subbar">
         <div className="wrap">

@@ -86,7 +86,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
       </div>
       <div className="reading-progress" id="readingProgress"></div>
 
-      <SiteHeader page="article" />
+      <SiteHeader page="article" topbar={homeData.topbar} />
 
       <div className="breadcrumb-subbar">
         <div className="wrap">

@@ -129,6 +129,15 @@ export interface HomeFooter {
   social: { instagram: string; facebook: string; line: string }
 }
 
+export interface HomeTopBar {
+  taglineTh: string
+  taglineEn: string
+  hotlineTextTh: string
+  hotlineTextEn: string
+  lineTextTh: string
+  lineTextEn: string
+}
+
 export interface HomeData {
   hero: HomeHero
   branches: HomeBranch[]
@@ -138,6 +147,7 @@ export interface HomeData {
   awards: HomeAward[]
   membershipTeaser: HomeMembershipTeaser
   footer: HomeFooter
+  topbar: HomeTopBar
 }
 
 // Source: cms/globals/HomeHero.ts (a Payload Global — see that file's
@@ -241,16 +251,39 @@ async function getFooterContent(): Promise<HomeFooter> {
   }
 }
 
+// Site-wide top bar (cms/globals/TopBar.ts) — the thin gold strip above the
+// main header, shown on every page. Previously hardcoded in SiteHeader.tsx,
+// including a placeholder "02-XXX-XXXX" hotline number that was never
+// replaced — now editable per-locale from /admin.
+async function getTopBarContent(): Promise<HomeTopBar> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [th, en] = (await Promise.all([
+    payload.findGlobal({ slug: 'topbar', locale: 'th' }),
+    payload.findGlobal({ slug: 'topbar', locale: 'en' }),
+  ])) as [any, any]
+
+  return {
+    taglineTh: th.tagline || '',
+    taglineEn: en?.tagline || th.tagline || '',
+    hotlineTextTh: th.hotlineText || '',
+    hotlineTextEn: en?.hotlineText || th.hotlineText || '',
+    lineTextTh: th.lineText || '',
+    lineTextEn: en?.lineText || th.lineText || '',
+  }
+}
+
 // The raw Payload doc shapes below are intentionally loose (`any`-ish) —
 // this file's only job is reshaping CMS content into the flat objects
 // public/js/main.js already knows how to render, not modeling the full
 // Payload schema in TypeScript.
 
 export async function getHomeData(): Promise<HomeData> {
-  const [hero, membershipTeaser, footer, branchPairs, doctorPairs, programPairs, articlePairs, awardPairs] = await Promise.all([
+  const [hero, membershipTeaser, footer, topbar, branchPairs, doctorPairs, programPairs, articlePairs, awardPairs] = await Promise.all([
     getHomeHero(),
     getMembershipTeaser(),
     getFooterContent(),
+    getTopBarContent(),
     // No manual "display order" field exists yet — sort by id (creation
     // order) so branches render in the same order they were seeded
     // (sanampao, phaholyothin, sriayudhaya, petchakasem, sriracha), matching
@@ -347,5 +380,5 @@ export async function getHomeData(): Promise<HomeData> {
     captionEn: en?.caption || th.caption || '',
   }))
 
-  return { hero, branches, doctors, programs, articles, awards, membershipTeaser, footer }
+  return { hero, branches, doctors, programs, articles, awards, membershipTeaser, footer, topbar }
 }

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import type { HomeTopBar } from '@/lib/homeData'
+
 // Ported 1:1 from phivara-design-html/js/site-shell.js's <phivara-header>
 // custom element (same markup/classNames/ids so the existing CSS and
 // public/js/main.js — which wires up #langToggle, #burgerBtn, #mobileMenu,
@@ -118,17 +120,17 @@ function NavLinks({ page }: { page: NavKey }) {
   )
 }
 
-export default function SiteHeader({ page = 'home' as NavKey }: { page?: NavKey }) {
+export default function SiteHeader({ page = 'home' as NavKey, topbar }: { page?: NavKey; topbar: HomeTopBar }) {
   return (
     <>
       <div className="topbar">
         <div className="wrap">
-          <div className="tb-left" data-th="PHIVARA Aesthetic &amp; Longevity Center" data-en="PHIVARA Aesthetic &amp; Longevity Center">
-            PHIVARA Aesthetic &amp; Longevity Center
+          <div className="tb-left" data-th={topbar.taglineTh} data-en={topbar.taglineEn}>
+            {topbar.taglineTh}
           </div>
           <div className="tb-right">
-            <span data-th="สายด่วนส่วนตัว: 02-XXX-XXXX" data-en="Private Hotline: 02-XXX-XXXX">สายด่วนส่วนตัว: 02-XXX-XXXX</span>
-            <span data-th="LINE: @phivara" data-en="LINE: @phivara">LINE: @phivara</span>
+            <span data-th={topbar.hotlineTextTh} data-en={topbar.hotlineTextEn}>{topbar.hotlineTextTh}</span>
+            <span data-th={topbar.lineTextTh} data-en={topbar.lineTextEn}>{topbar.lineTextTh}</span>
             <div className="lang-toggle" id="langToggle" aria-label="Language">
               <span className="active" data-val="th">TH</span>
               <span data-val="en">EN</span>

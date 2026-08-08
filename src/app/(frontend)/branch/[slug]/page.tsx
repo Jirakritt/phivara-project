@@ -64,7 +64,7 @@ export default async function BranchDetailPage({ params }: { params: Promise<{ s
       </div>
       <div id="progressBar"></div>
 
-      <SiteHeader page="contact" />
+      <SiteHeader page="contact" topbar={homeData.topbar} />
 
       <main className="branch-detail-main">
         <div className="branch-detail-crumb">

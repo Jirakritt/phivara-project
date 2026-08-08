@@ -49,7 +49,7 @@ export default async function NotFoundContent() {
         dangerouslySetInnerHTML={{ __html: "document.title = 'PHIVARA | ไม่พบหน้าที่คุณค้นหา';" }}
       />
 
-      <SiteHeader page="notFound" />
+      <SiteHeader page="notFound" topbar={homeData.topbar} />
 
       <main>
         <section className="notfound-hero">

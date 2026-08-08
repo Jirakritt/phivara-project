@@ -21,6 +21,7 @@ import { footerData } from './data/footer'
 import { homeHeroData } from './data/homeHero'
 import { membershipData } from './data/membership'
 import { genericProgramCopy, programsData, pv02SpecialCopy } from './data/programs'
+import { topbarData } from './data/topbar'
 import { heading, lexicalFromParagraphs, paragraph, quote } from './lib/lexical'
 import { getOrCreateMedia } from './lib/media'
 
@@ -572,6 +573,29 @@ async function run() {
     },
   })
   console.log('  footer global updated')
+
+  // ---------------------------------------------------------------------
+  // TopBar global
+  // ---------------------------------------------------------------------
+  await payload.updateGlobal({
+    slug: 'topbar',
+    locale: 'th',
+    data: {
+      tagline: topbarData.tagline.th,
+      hotlineText: topbarData.hotlineText.th,
+      lineText: topbarData.lineText.th,
+    },
+  })
+  await payload.updateGlobal({
+    slug: 'topbar',
+    locale: 'en',
+    data: {
+      tagline: topbarData.tagline.en,
+      hotlineText: topbarData.hotlineText.en,
+      lineText: topbarData.lineText.en,
+    },
+  })
+  console.log('  topbar global updated')
 
   console.log('Done.')
   process.exit(0)

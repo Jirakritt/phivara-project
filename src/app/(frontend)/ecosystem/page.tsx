@@ -41,7 +41,7 @@ export default async function EcosystemPage() {
       <div id="progressBar"></div>
       <div id="cursorRing"></div>
 
-      <SiteHeader page="ecosystem" />
+      <SiteHeader page="ecosystem" topbar={homeData.topbar} />
 
       <div className="breadcrumb-subbar">
         <div className="wrap">

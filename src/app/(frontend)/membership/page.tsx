@@ -37,7 +37,7 @@ export default async function MembershipPage() {
       </div>
       <div id="progressBar"></div>
 
-      <SiteHeader page="membership" />
+      <SiteHeader page="membership" topbar={homeData.topbar} />
 
       <main>
         <section className="aum-hero" id="top">

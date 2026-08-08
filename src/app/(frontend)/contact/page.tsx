@@ -37,7 +37,7 @@ export default async function ContactPage() {
       <div id="progressBar"></div>
       <div id="cursorRing"></div>
 
-      <SiteHeader page="contact" />
+      <SiteHeader page="contact" topbar={homeData.topbar} />
 
       <div className="breadcrumb-subbar">
         <div className="wrap">

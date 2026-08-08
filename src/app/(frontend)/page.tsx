@@ -42,7 +42,7 @@ export default async function HomePage() {
       <div id="progressBar"></div>
       <div id="cursorRing"></div>
 
-      <SiteHeader page="home" />
+      <SiteHeader page="home" topbar={data.topbar} />
 
       {/* ================= HERO ================= */}
       <section className="hero" id="top">

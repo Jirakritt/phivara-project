@@ -109,7 +109,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ s
       <div id="progressBar" aria-hidden="true"></div>
       <div id="cursorRing" aria-hidden="true"></div>
 
-      <SiteHeader page="doctor" />
+      <SiteHeader page="doctor" topbar={homeData.topbar} />
 
       <nav className="breadcrumb-subbar" aria-label="Breadcrumb">
         <div className="wrap">
