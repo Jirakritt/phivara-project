@@ -84,7 +84,7 @@ export const Programs: CollectionConfig = {
               type: 'relationship',
               relationTo: 'branches',
               admin: { description: 'Leave blank if this program is available at every branch.' },
-              validate: validateBranchInScope(),
+              validate: validateBranchInScope(true),
             },
             {
               name: 'validityNote',

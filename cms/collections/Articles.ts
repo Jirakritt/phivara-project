@@ -69,7 +69,7 @@ export const Articles: CollectionConfig = {
               type: 'relationship',
               relationTo: 'branches',
               admin: { description: 'Optional — only set this if the article is specific to one branch. Leave blank for general editorial content.' },
-              validate: validateBranchInScope(),
+              validate: validateBranchInScope(true),
             },
             { name: 'coverImage', type: 'upload', relationTo: 'media', required: true },
             { name: 'publishedDate', type: 'date', required: true },

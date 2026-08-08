@@ -66,7 +66,7 @@ export const Doctors: CollectionConfig = {
               type: 'relationship',
               relationTo: 'branches',
               required: true,
-              validate: validateBranchInScope(),
+              validate: validateBranchInScope(false),
             },
             {
               name: 'specialty',

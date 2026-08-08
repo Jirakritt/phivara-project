@@ -51,8 +51,7 @@
 .note-box p{margin:0;font-size:14px}
 
 .article-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:50px;padding-top:26px;border-top:1px solid var(--line)}
-.article-tags a{padding:7px 13px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--ink-soft);transition:.25s}
-.article-tags a:hover{border-color:var(--gold);color:var(--olive-dark)}
+.article-tags span{padding:7px 13px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--ink-soft)}
 
 .author-box{display:grid;grid-template-columns:110px 1fr;gap:28px;margin-top:50px;padding:30px;border:1px solid var(--gold-line);border-radius:var(--radius-card);background:var(--cream-card)}
 .author-box img{width:110px;height:130px;object-fit:cover;object-position:top;background:var(--cream-deep)}

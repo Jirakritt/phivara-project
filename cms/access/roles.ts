@@ -139,16 +139,28 @@ export const publishedOrBranchScopedStaff =
 
 // Field-level validate for a collection's `branch` relationship field —
 // admins can set/clear it freely; a branch-scoped editor/reviewer can only
-// point it at one of their own assigned branches (never blank it out to
-// make a doc shared/global, and never assign another branch's content).
+// point it at one of their own assigned branches (never assign another
+// branch's content).
+//
+// `allowUnassigned`: when true (Articles, Programs — see their admin
+// descriptions: "leave blank for shared/general content"), a branch-scoped
+// editor/reviewer is also allowed to leave the field blank, matching the
+// `allowUnassigned:true` used by those collections' own access functions.
+// When false (Doctors — branch is required on every doctor, no shared case
+// exists there), leaving it blank is still rejected. Defaults to false so
+// existing call sites that don't pass an argument keep their current
+// (required) behavior.
 export const validateBranchInScope =
-  () =>
+  (allowUnassigned = false) =>
   (value: unknown, { req }: { req: { user: unknown } }) => {
     const user = req.user as UserWithBranches | null
     if (!user || user.role === 'admin') return true
     if (user.role !== 'editor' && user.role !== 'medical-reviewer') return true
     const branchIds = getUserBranchIds(user)
-    if (!value) return 'กรุณาเลือกสาขา — คุณกำหนดสาขาให้เนื้อหาได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
+    if (!value) {
+      if (allowUnassigned) return true
+      return 'กรุณาเลือกสาขา — คุณกำหนดสาขาให้เนื้อหาได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
+    }
     const valueId = typeof value === 'object' && value !== null ? (value as { id: number | string }).id : value
     if (branchIds.includes(valueId as number | string)) return true
     return 'คุณกำหนดสาขาได้เฉพาะสาขาที่คุณดูแลเท่านั้น'

@@ -174,7 +174,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
                 {article.tags.length > 0 && (
                   <div className="article-tags">
-                    {article.tags.map((tag) => <a href="#" key={tag}>#{tag}</a>)}
+                    {article.tags.map((tag) => <span key={tag}>#{tag}</span>)}
                   </div>
                 )}
 
