@@ -84,6 +84,15 @@
   align-items: center;
 }
 
+/* Grid/flex items default to min-width:auto (i.e. their content's
+   min-content size), which can force the track wider than its available
+   space if a child can't shrink below that. Explicit 0 lets the
+   overflow-wrap rules above actually take effect instead of being
+   overridden by this default. */
+.doc-info-stage {
+  min-width: 0;
+}
+
 .doc-portrait-stage {
   position: relative;
 }
@@ -136,6 +145,8 @@
   color: var(--ink);
   line-height: 1.15;
   margin-bottom: 8px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .doc-hero-title-badge {
@@ -143,6 +154,9 @@
   color: var(--gold);
   font-weight: 500;
   margin-bottom: 4px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .doc-role-row {
@@ -197,6 +211,8 @@
   margin-bottom: 24px;
   padding-bottom: 18px;
   border-bottom: 1px solid rgba(184,149,96,0.2);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .doctor-detail-page .doc-tags-wrap {
@@ -208,6 +224,28 @@
   color: var(--ink-soft);
   font-size: 14.5px;
   line-height: 1.8;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* The booking CTA's label is built dynamically as "จองนัดหมายปรึกษา
+   {doctor.nameTh}" (see doctor/[slug]/page.tsx) — much longer than the
+   short, fixed button labels the global .btn{white-space:nowrap} rule
+   (main.css) was designed for. On a narrow phone screen that long Thai
+   string can't wrap (nowrap) and, since Thai has no space characters for
+   the browser to find a natural break point either, the button silently
+   overflows past the viewport edge — clipped rather than scrolled, because
+   html/body sets overflow-x:hidden/clip. Overriding wrap behavior just for
+   this CTA group fixes it without touching the nowrap short buttons used
+   everywhere else on the site (header CTA, tab nav, etc).
+*/
+.doc-cta-group .btn {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
+  height: auto;
+  line-height: 1.4;
 }
 
 .section-intro {
