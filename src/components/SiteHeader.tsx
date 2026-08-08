@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 // Ported 1:1 from phivara-design-html/js/site-shell.js's <phivara-header>
 // custom element (same markup/classNames/ids so the existing CSS and
 // public/js/main.js — which wires up #langToggle, #burgerBtn, #mobileMenu,
@@ -36,6 +38,52 @@ const NAVIGATION: Array<{ key: NavKey; href: string; th: string; en: string }> =
   { key: 'contact', href: '/contact', th: 'ติดต่อ', en: 'Contact' },
 ]
 
+// Icons are only ever shown in the mobile slide-out menu (see
+// `.mobile-menu a .nav-icon` in main.css — hidden by default, shown there)
+// so the desktop top nav stays exactly as it was. Same hand-drawn line-icon
+// convention as the rest of the site (fill:none, stroke:currentColor,
+// round caps/joins — see .doc-branch-label svg in doctor-detail.css) rather
+// than pulling in an icon library for six glyphs.
+const NAV_ICONS: Record<NavKey, ReactNode> = {
+  home: (
+    <>
+      <path d="M4 11.5 12 4l8 7.5" />
+      <path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9" />
+    </>
+  ),
+  ecosystem: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <line x1="12" y1="11" x2="12" y2="16.5" />
+      <circle cx="12" cy="7.6" r="0.9" fill="currentColor" stroke="none" />
+    </>
+  ),
+  program: (
+    <>
+      <rect x="6" y="4" width="12" height="17" rx="2" />
+      <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="M9 11h6M9 15h6" />
+    </>
+  ),
+  doctor: (
+    <>
+      <circle cx="12" cy="8.2" r="3.4" />
+      <path d="M5 20c0-4 3.2-6.6 7-6.6s7 2.6 7 6.6" />
+    </>
+  ),
+  article: (
+    <>
+      <path d="M4 5.5c2.4-1 5-1 7 .3V19c-2-1.3-4.6-1.3-7-.3V5.5Z" />
+      <path d="M20 5.5c-2.4-1-5-1-7 .3V19c2-1.3 4.6-1.3 7-.3V5.5Z" />
+    </>
+  ),
+  contact: (
+    <path d="M6.2 4h2.6l1.3 3.6-1.8 1.4a10.8 10.8 0 0 0 4.7 4.7l1.4-1.8 3.6 1.3v2.6a1.4 1.4 0 0 1-1.5 1.4A14.6 14.6 0 0 1 4.8 5.5 1.4 1.4 0 0 1 6.2 4Z" />
+  ),
+  membership: null,
+  notFound: null,
+}
+
 function NavLinks({ page }: { page: NavKey }) {
   return (
     <>
@@ -52,10 +100,17 @@ function NavLinks({ page }: { page: NavKey }) {
             key={item.key}
             href={href}
             className={item.key === page ? 'active' : undefined}
-            data-th={item.th}
-            data-en={item.en}
           >
-            {item.th}
+            <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+              {NAV_ICONS[item.key]}
+            </svg>
+            {/* data-th/data-en go on this inner span, not the <a> itself —
+                site-runtime.js's language toggle does
+                element.textContent = element.getAttribute('data-th'|'data-en')
+                on every [data-th]/[data-en] match, which would wipe out the
+                svg icon sibling above if it lived on the same element (same
+                pattern already used for .prog-detail-link below). */}
+            <span data-th={item.th} data-en={item.en}>{item.th}</span>
           </a>
         )
       })}
