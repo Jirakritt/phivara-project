@@ -103,10 +103,16 @@ function mapArticleCard(th: any, en: any): ArticleCard {
 }
 
 // /article catalog grid — every published article, card-level fields only.
+// depth:1 (not 0) is required here even though these are "card-level"
+// queries — mapArticleCard() reads coverImage.url via mediaUrl(), which
+// only exists once the upload relationship is populated one level deep. At
+// depth:0 coverImage comes back as a bare ID, mediaUrl() silently returns
+// undefined, and every card falls through to the hardcoded placeholder
+// photo regardless of what was actually uploaded.
 export async function getArticlesListing(): Promise<ArticleCard[]> {
   const pairs = await findBothLocales<any>('articles', {
     limit: 200,
-    depth: 0,
+    depth: 1,
     sort: '-publishedDate',
     where: { _status: { equals: 'published' } },
   })
@@ -117,7 +123,7 @@ export async function getArticlesListing(): Promise<ArticleCard[]> {
 export async function getPopularArticles(excludeSlug?: string, limit = 3): Promise<ArticleCard[]> {
   const pairs = await findBothLocales<any>('articles', {
     limit: limit + 1,
-    depth: 0,
+    depth: 1,
     sort: '-publishedDate',
     where: { _status: { equals: 'published' }, popular: { equals: true } },
   })
@@ -136,7 +142,7 @@ export async function getOtherArticles(excludeSlug: string, category?: string, l
   if (category) {
     const categoryPairs = await findBothLocales<any>('articles', {
       limit: limit + 1,
-      depth: 0,
+      depth: 1,
       sort: '-publishedDate',
       where: { _status: { equals: 'published' }, category: { equals: category } },
     })
@@ -152,7 +158,7 @@ export async function getOtherArticles(excludeSlug: string, category?: string, l
   if (collected.length < limit) {
     const fallbackPairs = await findBothLocales<any>('articles', {
       limit: limit + seenSlugs.size,
-      depth: 0,
+      depth: 1,
       sort: '-publishedDate',
       where: { _status: { equals: 'published' } },
     })

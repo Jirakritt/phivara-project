@@ -23,3 +23,8 @@ backups
 # development — not part of the running Next.js/Payload app, no reason to
 # ship it to the server or keep it in git history going forward.
 phivara-design-html
+
+# One-off sample/test assets handed to staff to try uploading through the
+# CMS (e.g. the sample article cover image) — not part of the app, no
+# reason to keep in git history.
+sample-article

@@ -62,10 +62,17 @@ function mapBranchCard(th: any, en: any): BranchCard {
 // "LOCATION 01" numbering here, in the footer, and on /branch/[slug] all
 // agree with each other and with the original site's curated order
 // (Sanampao first, as the flagship branch).
+// depth:1 (not 0) is required even though these are "card-level" fields —
+// mapBranchCard() reads heroImage.url via mediaUrl(), which only exists
+// once the upload relationship is populated one level deep (same bug/fix as
+// articlesData.ts's getArticlesListing — see its comment for the full
+// explanation). At depth:0 heroImage comes back as a bare ID, mediaUrl()
+// silently returns undefined, and every card falls through to the
+// hardcoded placeholder photo regardless of what was actually uploaded.
 export async function getBranchesListing(): Promise<BranchCard[]> {
   const pairs = await findBothLocales<any>('branches', {
     limit: 20,
-    depth: 0,
+    depth: 1,
     sort: 'id',
   })
   return pairs.map(({ th, en }) => mapBranchCard(th, en))
@@ -73,7 +80,7 @@ export async function getBranchesListing(): Promise<BranchCard[]> {
 
 export async function getBranchDetail(slug: string): Promise<BranchDetail | null> {
   const [pairs, doctors, programs] = await Promise.all([
-    findBothLocales<any>('branches', { limit: 1, depth: 0, where: { slug: { equals: slug } } }),
+    findBothLocales<any>('branches', { limit: 1, depth: 1, where: { slug: { equals: slug } } }),
     getDoctorsListing(),
     getProgramsListing(),
   ])
