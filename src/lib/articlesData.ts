@@ -53,6 +53,7 @@ export interface ArticleDoctorRef {
 export interface ArticleDetail extends ArticleCard {
   authorNameTh: string
   authorNameEn: string
+  authorImage: string
   bodyBlocks: ArticleBodyBlock[]
   toc: ArticleTocEntry[]
   insightSteps: Array<{ titleTh: string; titleEn: string; descriptionTh: string; descriptionEn: string }>
@@ -61,6 +62,12 @@ export interface ArticleDetail extends ArticleCard {
   relatedDoctors: ArticleDoctorRef[]
   seo: SeoData
 }
+
+// Shown next to the byline and in the "MEDICAL REVIEW" box when an
+// article's author.avatar (Articles.ts) is left blank — see
+// public/assets/images/authors/default-author.png for how it's built (a
+// tinted crop of the site's own emblem on a soft brand-gradient circle).
+const DEFAULT_AUTHOR_IMAGE = '/assets/images/authors/default-author.png'
 
 const THAI_MONTHS = [
   'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -236,6 +243,7 @@ export async function getArticleDetail(slug: string): Promise<ArticleDetail | nu
     ...card,
     authorNameTh: th.author?.name || 'ทีมแพทย์ PHIVARA',
     authorNameEn: en?.author?.name || th.author?.name || 'PHIVARA Medical Team',
+    authorImage: mediaUrl(th.author?.avatar) || DEFAULT_AUTHOR_IMAGE,
     bodyBlocks,
     toc,
     insightSteps: (th.insightSteps || []).map((step: any, i: number) => ({

@@ -109,7 +109,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
                 <h1 data-th={article.titleTh} data-en={article.titleEn}>{article.titleTh}</h1>
                 <div className="story-meta">
                   <span className="story-author">
-                    <img src={article.image} alt="" />
+                    <img src={article.authorImage} alt="" />
                     {/* author.name already stores the full "บทความโดย ..." / "By ..." phrase (see cms/seed/data/articles.ts authorName), not just the bare name */}
                     <span data-th={article.authorNameTh} data-en={article.authorNameEn}>{article.authorNameTh}</span>
                   </span>
@@ -179,7 +179,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
                 )}
 
                 <div className="author-box">
-                  <img src={article.image} alt={authorBareNameTh} />
+                  <img src={article.authorImage} alt={authorBareNameTh} />
                   <div>
                     <small>MEDICAL REVIEW</small>
                     <h3 data-th={authorBareNameTh} data-en={authorBareNameEn}>{authorBareNameTh}</h3>
