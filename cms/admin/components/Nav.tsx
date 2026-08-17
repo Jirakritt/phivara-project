@@ -252,6 +252,17 @@ export function Nav() {
               ผู้ใช้งาน &amp; สิทธิ์การเข้าถึง
             </Link>
           )}
+          {/* Same admin-only gating as the Users link above — LanguageSettings.access.read
+              is public (the frontend needs it), so isEntityVisible alone isn't enough
+              to hide this from non-admin staff. */}
+          {user?.role === 'admin' && isEntityVisible({ globalSlug: 'language-settings' }) && (
+            <Link
+              href={formatAdminURL({ adminRoute, path: '/globals/language-settings' })}
+              prefetch={false}
+            >
+              การจัดการภาษา
+            </Link>
+          )}
           <Link href={formatAdminURL({ adminRoute, path: '/manual' })} prefetch={false}>
             คู่มือการใช้งาน CMS
           </Link>

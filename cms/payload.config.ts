@@ -26,17 +26,62 @@ import { Ecosystem } from './globals/Ecosystem'
 import { HomeHero } from './globals/HomeHero'
 import { Footer } from './globals/Footer'
 import { TopBar } from './globals/TopBar'
+import { LanguageSettings } from './globals/LanguageSettings'
 
 export default buildConfig({
   collections: [Users, Media, Branches, Doctors, Programs, Articles, Awards, Leads],
-  globals: [Membership, Ecosystem, HomeHero, Footer, TopBar],
+  globals: [Membership, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings],
 
-  // TH is the source language on the current site; EN is the secondary
-  // locale already present as data-en attributes throughout the HTML.
+  // TH is the source language and the site's permanent default/fallback.
+  // 13 more locales are pre-provisioned here so an Admin can turn each one
+  // on later purely from the CMS (LanguageSettings global) with no further
+  // deploy — Payload ties localized fields to this static list, so a
+  // locale that was never added here at all would still need a code
+  // change + migration. EN is the only one live going into this project;
+  // the rest start fully off (see LanguageSettings.ts's DEFAULT_ON).
+  //
+  // `filterAvailableLocales` hides any locale from the CMS's own locale
+  // switcher unless LanguageSettings has turned its "cmsEditable" flag on
+  // for it — so staff only ever see languages that are actually meant to
+  // be worked on right now, not all 14 at once. Thai (the config's
+  // `defaultLocale`) is always kept regardless of that setting. Fails open
+  // to th/en only if LanguageSettings can't be read for any reason (e.g.
+  // very first boot before its default document exists), so a problem here
+  // can never lock the whole admin UI out of every locale.
   localization: {
-    locales: ['th', 'en'],
+    locales: [
+      { code: 'th', label: 'ไทย (Thai)' },
+      { code: 'en', label: 'English' },
+      { code: 'ja', label: '日本語 (Japanese)' },
+      { code: 'zh', label: '中文 (Chinese)' },
+      { code: 'vi', label: 'Tiếng Việt (Vietnamese)' },
+      { code: 'km', label: 'ភាសាខ្មែរ (Khmer)' },
+      { code: 'ar', label: 'العربية (Arabic)', rtl: true },
+      { code: 'ms', label: 'Bahasa Melayu (Malay)' },
+      { code: 'id', label: 'Bahasa Indonesia (Indonesian)' },
+      { code: 'de', label: 'Deutsch (German)' },
+      { code: 'ru', label: 'Русский (Russian)' },
+      { code: 'lo', label: 'ພາສາລາວ (Lao)' },
+      { code: 'ko', label: '한국어 (Korean)' },
+      { code: 'fr', label: 'Français (French)' },
+    ],
     defaultLocale: 'th',
     fallback: true,
+    filterAvailableLocales: async ({ locales, req }) => {
+      try {
+        // Cast through `unknown` — LanguageSettings' generated type has one
+        // concrete property per locale code (en, ja, zh, ...), not an index
+        // signature, but we need to look one up dynamically by whatever
+        // code we're currently checking.
+        const settings = (await req.payload.findGlobal({ slug: 'language-settings' })) as unknown as Record<
+          string,
+          { cmsEditable?: boolean } | undefined
+        >
+        return locales.filter((locale) => locale.code === 'th' || settings?.[locale.code]?.cmsEditable)
+      } catch {
+        return locales.filter((locale) => locale.code === 'th' || locale.code === 'en')
+      }
+    },
   },
 
   // Adds a persistent toolbar (bold/italic/headings/lists/link/etc.) above
