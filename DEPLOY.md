@@ -76,8 +76,13 @@ DATABASE_URI=postgresql://phivara:<รหัสผ่านที่ตั้ง
 PAYLOAD_SECRET=<generate ใหม่ — อย่าใช้ค่า dev เดิม>
 PAYLOAD_CONFIG_PATH=cms/payload.config.ts
 NEXT_PUBLIC_SERVER_URL=https://phivara.com   # โดเมนจริง
+
+# Analytics — ไม่บังคับ เว้นว่างไว้ได้ถ้ายังไม่มี ID จริง (ดู .env.example)
+NEXT_PUBLIC_GA4_MEASUREMENT_ID=
+NEXT_PUBLIC_META_PIXEL_ID=
 ```
 generate secret ใหม่: `openssl rand -base64 32`
+รายการฟิลด์ทั้งหมดอ้างอิงจาก `.env.example` ที่ root โปรเจกต์เสมอ — ถ้ามีการเพิ่มตัวแปรใหม่ในอนาคต ให้เช็กไฟล์นั้นเทียบกับ block ด้านบนอีกที
 
 ```bash
 npm ci
