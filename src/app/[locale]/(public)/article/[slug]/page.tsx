@@ -1,0 +1,323 @@
+import { notFound } from 'next/navigation'
+import Script from 'next/script'
+import type { ReactNode } from 'react'
+
+import { getArticleDetail, getOtherArticles, getPopularArticles } from '@/lib/articlesData'
+import SiteFooter from '@/components/SiteFooter'
+import SiteHeader from '@/components/SiteHeader'
+import { getHomeData } from '@/lib/homeData'
+import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { getPubliclyLiveLocales } from '@/lib/i18n-server'
+import type { LocaleCode } from '@/lib/i18n'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale: rawLocale, slug } = await params
+  const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
+  const article = await getArticleDetail(slug, locale)
+  if (!article) return {}
+
+  const title = article.seo.title || `${article.titleEn} | PHIVARA Journal`
+  const description = article.seo.description || article.summaryEn || article.summaryTh || undefined
+  const ogImage = article.seo.ogImage || article.image
+
+  return {
+    title,
+    description,
+    robots: article.seo.noIndex ? { index: false, follow: true } : undefined,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  }
+}
+
+// Rebuilt from phivara-design-html/article_detail.html, which was a single
+// static page hand-built for one article (blue-ocean-pathway). Differences
+// from the original, made deliberately to prefer real data where it exists:
+// - RELATED PROGRAMS stays static/generic (article_detail.html's own CTAs
+//   were never tied to real program data, and Articles has no
+//   `relatedPrograms` relationship field), so it's kept as a faithful copy.
+// - MEDICAL TEAM is now driven by the real `relatedDoctors` relationship
+//   (only dr02 in the real seed data) instead of the original's 3 hardcoded
+//   entries, one of which reused dr02's photo under two different names.
+// - MOST READ uses the real `popular` boolean field instead of 3 hardcoded
+//   links.
+// - "CONTINUE READING" pulls the next few real articles instead of 3
+//   hardcoded cards.
+export const revalidate = 60
+
+export default async function ArticleDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>
+}) {
+  const { locale: rawLocale, slug } = await params
+  const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
+  const t = translator(locale)
+  const [article, homeData, liveLocales] = await Promise.all([
+    getArticleDetail(slug, locale),
+    getHomeData(locale),
+    getPubliclyLiveLocales(),
+  ])
+  if (!article) notFound()
+
+  const [popularArticles, otherArticles] = await Promise.all([
+    getPopularArticles(locale, article.slug, 3),
+    getOtherArticles(locale, article.slug, article.category, 3),
+  ])
+
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+
+  // article.authorNameTh/En store the full byline phrase ("บทความโดย ..." /
+  // "By ..." — see cms/seed/data/articles.ts authorName), which is what the
+  // story-meta byline needs verbatim. The author-box further down needs just
+  // the bare name, so strip the leading phrase here.
+  const authorBareNameTh = article.authorNameTh.replace(/^บทความโดย\s+/, '')
+  const authorBareNameEn = article.authorNameEn.replace(/^By\s+/, '')
+
+  return (
+    <>
+      <link rel="stylesheet" href="/css/main.css" />
+      <link rel="stylesheet" href="/css/journal-card.css" />
+      <link rel="stylesheet" href="/css/article-detail.css" />
+      <link rel="stylesheet" href="/css/vip-modal.css" />
+
+      <Script id="phivara-article-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
+
+      <div id="preloader">
+        <svg viewBox="0 0 100 100">
+          <path d="M50 8 C60 28 78 40 92 50 C78 60 60 72 50 92 C40 72 22 60 8 50 C22 40 40 28 50 8Z" />
+        </svg>
+        <div className="pre-word">PHIVARA</div>
+      </div>
+      <div className="reading-progress" id="readingProgress"></div>
+
+      <SiteHeader page="article" topbar={homeData.topbar} locale={locale} localePath={`/article/${slug}`} liveLocales={liveLocales} />
+
+      <div className="breadcrumb-subbar">
+        <div className="wrap">
+          <div className="doc-breadcrumb">
+            <a href={localizedHref(locale, '/')}>{t('หน้าแรก', 'Home')}</a>
+            <span className="sep">/</span>
+            <a href={localizedHref(locale, '/article')}>{t('คลังความรู้', 'Journal')}</a>
+            <span className="sep">/</span>
+            <span className="current">{t(article.titleTh, article.titleEn)}</span>
+          </div>
+        </div>
+      </div>
+
+      <main>
+        <div className="main-content-grid">
+          <div className="article-primary">
+            <section className="story-hero">
+              <div className="wrap story-head">
+                <div className="story-category">{t(article.categoryLabelTh, article.categoryLabelEn)}</div>
+                <h1>{t(article.titleTh, article.titleEn)}</h1>
+                <div className="story-meta">
+                  <span className="story-author">
+                    <img src={article.authorImage} alt="" />
+                    {/* author.name already stores the full "บทความโดย ..." / "By ..." phrase (see cms/seed/data/articles.ts authorName), not just the bare name */}
+                    <span>{t(article.authorNameTh, article.authorNameEn)}</span>
+                  </span>
+                  <span className="dot"></span>
+                  <time>{t(article.dateTh, article.dateEn)}</time>
+                  <span className="dot"></span>
+                  <span>{t(`อ่าน ${article.readTimeMinutes} นาที`, `${article.readTimeMinutes} min read`)}</span>
+                </div>
+              </div>
+            </section>
+            <div className="cover-wrap"><figure className="story-cover"><img src={article.image} alt={article.titleTh} /></figure></div>
+
+            <div className="article-shell">
+              <aside className="toc" aria-label="สารบัญ">
+                <span className="toc-label">{t('ในบทความนี้', 'In this article')}</span>
+                {article.toc.map((entry) => (
+                  <a key={entry.id} href={`#${entry.id}`}>{t(entry.th, entry.en)}</a>
+                ))}
+              </aside>
+
+              <article className="prose" id="articleBody">
+                {article.bodyBlocks.map((block, i) => {
+                  const showNoteBox = article.noteBox && block.type === 'heading' && block.insightStepsAfter
+                  const nodes: ReactNode[] = []
+                  if (showNoteBox && article.noteBox) {
+                    nodes.push(
+                      <div className="note-box" key={`note-${i}`}>
+                        <strong>{t(article.noteBox.headingTh, article.noteBox.headingEn)}</strong>
+                        <p>{t(article.noteBox.textTh, article.noteBox.textEn)}</p>
+                      </div>
+                    )
+                  }
+                  if (block.type === 'heading') {
+                    const Tag = block.tag === 'h3' ? 'h3' : 'h2'
+                    nodes.push(
+                      <Tag key={i} id={block.id}>{t(block.textTh, block.textEn)}</Tag>
+                    )
+                    if (block.insightStepsAfter && article.insightSteps.length > 0) {
+                      nodes.push(
+                        <div className="insight-grid" key={`insight-${i}`}>
+                          {article.insightSteps.map((step, si) => (
+                            <div className="insight-card" key={si}>
+                              <span className="insight-no">{String(si + 1).padStart(2, '0')}</span>
+                              <h3>{t(step.titleTh, step.titleEn)}</h3>
+                              <p>{t(step.descriptionTh, step.descriptionEn)}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    }
+                  } else if (block.type === 'quote') {
+                    nodes.push(
+                      <blockquote key={i}>{t(block.textTh, block.textEn)}</blockquote>
+                    )
+                  } else if (block.type === 'list') {
+                    const ListTag = block.listType === 'number' ? 'ol' : 'ul'
+                    nodes.push(
+                      <ListTag key={i}>
+                        {(block.items || []).map((item, li) => (
+                          <li key={li}>{t(item.textTh, item.textEn)}</li>
+                        ))}
+                      </ListTag>
+                    )
+                  } else {
+                    nodes.push(
+                      <p key={i} className={block.isLead ? 'lead' : undefined}>{t(block.textTh, block.textEn)}</p>
+                    )
+                  }
+                  return nodes
+                })}
+
+                {article.tags.length > 0 && (
+                  <div className="article-tags">
+                    {article.tags.map((tag) => <span key={tag}>#{tag}</span>)}
+                  </div>
+                )}
+
+                <div className="author-box">
+                  <img src={article.authorImage} alt={authorBareNameTh} />
+                  <div>
+                    <small>MEDICAL REVIEW</small>
+                    <h3>{t(authorBareNameTh, authorBareNameEn)}</h3>
+                    <p>
+                      {t(
+                        'ดูแลสุขภาพแบบองค์รวมด้วยข้อมูลทางการแพทย์ และออกแบบแนวทางที่เหมาะกับเป้าหมายเฉพาะบุคคล',
+                        "Holistic, evidence-informed care designed around each person's individual health goals.",
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </article>
+
+              <aside className="share-rail" aria-label="Share article">
+                <span className="share-label">{t('แบ่งปัน', 'SHARE')}</span>
+                <button className="share-btn" type="button" data-share="facebook" aria-label="Share on Facebook">f</button>
+                <button className="share-btn" type="button" data-share="line" aria-label="Share on LINE">LINE</button>
+                <button className="share-btn" type="button" data-share="copy" aria-label="Copy link">↗</button>
+              </aside>
+            </div>
+          </div>
+
+          <aside className="article-sidebar" aria-label="ข้อมูลที่เกี่ยวข้อง">
+            <section className="sidebar-card">
+              <div className="sidebar-card-head"><small>RELATED PROGRAMS</small><h2>{t('โปรแกรมตรวจที่เกี่ยวข้อง', 'Related Health Programs')}</h2></div>
+              <div className="program-list">
+                <a className="program-item vip-trigger" href="#vipModalOverlay"><small>LONGEVITY</small><strong>{t('ตรวจสุขภาพเชิงลึกเฉพาะบุคคล', 'Personalized In-depth Health Screening')}</strong><span>{t('ประเมินความเสี่ยงและตัวชี้วัดสุขภาพสำคัญตามช่วงวัย', 'Assess age-specific risks and key health indicators.')}</span></a>
+                <a className="program-item vip-trigger" href="#vipModalOverlay"><small>HORMONE</small><strong>{t('โปรแกรมตรวจสมดุลฮอร์โมน', 'Hormone Balance Assessment')}</strong><span>{t('สำหรับผู้ที่มีความเหนื่อยล้า นอนหลับไม่ดี หรือน้ำหนักเปลี่ยนแปลง', 'For fatigue, poor sleep or unexplained weight changes.')}</span></a>
+                <a className="program-item vip-trigger" href="#vipModalOverlay"><small>METABOLIC</small><strong>{t('ตรวจสุขภาพระบบเผาผลาญ', 'Metabolic Health Screening')}</strong><span>{t('วิเคราะห์น้ำตาล ไขมัน องค์ประกอบร่างกาย และความเสี่ยงระยะยาว', 'Review glucose, lipids, body composition and long-term risks.')}</span></a>
+                <a className="program-item vip-trigger" href="#vipModalOverlay"><small>VITAMIN &amp; MINERAL</small><strong>{t('ตรวจวิตามินและสารอาหาร', 'Vitamin & Nutrient Profile')}</strong><span>{t('ค้นหาภาวะขาดสารอาหารที่อาจกระทบพลังงานและภูมิคุ้มกัน', 'Identify nutrient gaps that may affect energy and immunity.')}</span></a>
+              </div>
+            </section>
+
+            {article.relatedDoctors.length > 0 && (
+              <section className="sidebar-card">
+                <div className="sidebar-card-head"><small>MEDICAL TEAM</small><h2>{t('ปรึกษาแพทย์ผู้เชี่ยวชาญ', 'Consult a Specialist')}</h2></div>
+                {article.relatedDoctors.map((doctor) => (
+                  <div className="sidebar-doctor" key={doctor.slug}>
+                    <img src={doctor.image} alt={doctor.nameTh} />
+                    <div>
+                      <small>{t(doctor.noteTh, doctor.noteEn)}</small>
+                      <h3>{t(doctor.nameTh, doctor.nameEn)}</h3>
+                      <a href={localizedHref(locale, `/doctor/${doctor.slug}`)}>{t('ดูข้อมูลแพทย์ →', 'View doctor profile →')}</a>
+                    </div>
+                  </div>
+                ))}
+              </section>
+            )}
+
+            {popularArticles.length > 0 && (
+              <section className="sidebar-card">
+                <div className="sidebar-card-head"><small>MOST READ</small><h2>{t('บทความยอดนิยม', 'Popular Articles')}</h2></div>
+                <div className="popular-list">
+                  {popularArticles.map((popular) => (
+                    <a className="popular-item" href={localizedHref(locale, `/article/${popular.slug}`)} key={popular.slug}>
+                      <strong>{t(popular.titleTh, popular.titleEn)}</strong>
+                      <span>{t(`อ่าน ${popular.readTimeMinutes} นาที`, `${popular.readTimeMinutes} min read`)}</span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <section className="sidebar-cta">
+              <h2>{t('ไม่แน่ใจว่าควรเริ่มตรวจจากโปรแกรมไหน?', 'Not sure which program is right for you?')}</h2>
+              <p>{t('พูดคุยกับทีม PHIVARA เพื่อช่วยประเมินเบื้องต้นและเลือกโปรแกรมที่เหมาะกับเป้าหมายของคุณ', 'Talk with PHIVARA for an initial assessment and a program matched to your goals.')}</p>
+              <button type="button" className="vip-trigger">{t('นัดหมายปรึกษา', 'Book a Consultation')}</button>
+            </section>
+          </aside>
+        </div>
+
+        {otherArticles.length > 0 && (
+          <section className="related">
+            <div className="wrap">
+              <div className="related-head">
+                <div>
+                  <div className="eyebrow">CONTINUE READING</div>
+                  <h2>{t('บทความที่คุณอาจสนใจ', 'You may also be interested in')}</h2>
+                </div>
+                <a href={localizedHref(locale, '/article')}>{t('ดูบทความทั้งหมด →', 'View all articles →')}</a>
+              </div>
+
+              <div className="journal-grid stagger in" id="journalGrid">
+                {otherArticles.map((other) => (
+                  <article className="journal-card s-item" key={other.slug}>
+                    <a className="journal-card__media" href={localizedHref(locale, `/article/${other.slug}`)}>
+                      <img className="journal-card__image" src={other.image} alt={other.titleTh} loading="lazy" decoding="async" />
+                    </a>
+                    <div className="journal-card__body">
+                      <span className="journal-card__tag">{t(other.categoryLabelTh, other.categoryLabelEn)}</span>
+                      <h3><a href={localizedHref(locale, `/article/${other.slug}`)}>{t(other.titleTh, other.titleEn)}</a></h3>
+                      <p>{t(other.summaryTh, other.summaryEn)}</p>
+                      <div className="journal-card__footer">
+                        <div className="journal-card__meta">
+                          <span>{t(other.dateTh, other.dateEn)}</span>
+                          <span className="dot"></span>
+                          <span>{t(other.readTimeTh, other.readTimeEn)}</span>
+                        </div>
+                        <a className="journal-card__link" href={localizedHref(locale, `/article/${other.slug}`)}>{t('อ่านต่อ →', 'Read More →')}</a>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
+
+      <SiteFooter branches={homeData.branches} footer={homeData.footer} locale={locale} />
+      <div className="copy-toast" id="copyToast">{t('คัดลอกลิงก์แล้ว', 'Link copied')}</div>
+
+      <Script src="/js/site-runtime.js" strategy="afterInteractive" />
+      <Script src="/js/article-detail.js" strategy="afterInteractive" />
+      <Script src="/js/vip-modal.js" strategy="afterInteractive" />
+    </>
+  )
+}

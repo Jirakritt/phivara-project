@@ -41,6 +41,13 @@ export const Branches: CollectionConfig = {
             },
             { name: 'nameTh', type: 'text', required: true },
             { name: 'nameEn', type: 'text', required: true },
+            // Per-locale name — see Doctors.ts's `name` field comment for
+            // the full rationale (same additive-migration pattern).
+            // Deliberately NOT required — same reason as Doctors.ts's
+            // `name`: an empty value in a given locale is how an editor
+            // marks that locale as "not translated yet" for this branch,
+            // and `required: true` would block saving that locale at all.
+            { name: 'name', type: 'text', localized: true },
             {
               name: 'tagline',
               type: 'text',

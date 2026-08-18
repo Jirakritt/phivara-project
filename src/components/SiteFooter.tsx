@@ -10,15 +10,30 @@
 // src/lib/homeData.ts's getFooterContent()) instead of being hardcoded —
 // editable in /admin. The "สาขา" column stays wired directly to the
 // Branches collection (the `branches` prop), same as before.
+//
+// i18n rewrite (Phase 2): text now resolves server-side via t() instead of
+// data-th/data-en + client JS, and internal links carry the current
+// locale prefix (localizedHref) so footer navigation stays on the same
+// language the visitor is reading.
 import type { HomeFooter } from '@/lib/homeData'
+import type { LocaleCode } from '@/lib/i18n'
+import { localizedHref, translator } from '@/lib/i18n'
 
 export default function SiteFooter({
   branches,
   footer,
+  // Optional + defaults to 'th' so the still-live, not-yet-migrated flat
+  // routes (everything outside the new [locale]/ tree — see SiteHeader.tsx's
+  // matching comment) keep compiling and rendering unchanged while both
+  // route trees temporarily coexist during the rollout.
+  locale = 'th' as LocaleCode,
 }: {
   branches: Array<{ nameEn: string }>
   footer: HomeFooter
+  locale?: LocaleCode
 }) {
+  const t = translator(locale)
+
   return (
     <footer className="site-footer">
       <div className="wrap">
@@ -28,38 +43,32 @@ export default function SiteFooter({
               <img src="/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
               <span className="word">PHIVARA</span>
             </div>
-            <p data-th={footer.taglineTh} data-en={footer.taglineEn}>
-              {footer.taglineTh}
-            </p>
+            <p>{t(footer.taglineTh, footer.taglineEn)}</p>
           </div>
           {footer.linkGroups.map((group, i) => (
             <div className="foot-col" key={`${group.headingTh}-${i}`}>
-              <h4 data-th={group.headingTh} data-en={group.headingEn}>
-                {group.headingTh}
-              </h4>
+              <h4>{t(group.headingTh, group.headingEn)}</h4>
               {group.links.map((link, j) => (
-                <a key={`${link.url}-${j}`} href={link.url} data-th={link.labelTh} data-en={link.labelEn}>
-                  {link.labelTh}
+                <a key={`${link.url}-${j}`} href={localizedHref(locale, link.url)}>
+                  {t(link.labelTh, link.labelEn)}
                 </a>
               ))}
             </div>
           ))}
           <div className="foot-col" id="footerLocations">
-            <h4 data-th="สาขา" data-en="Locations">สาขา</h4>
+            <h4>{t('สาขา', 'Locations')}</h4>
             {branches.map((branch) => (
               <span key={branch.nameEn}>PHIVARA {branch.nameEn}</span>
             ))}
           </div>
         </div>
         <div className="foot-bottom">
-          <p data-th={footer.copyrightTh} data-en={footer.copyrightEn}>
-            {footer.copyrightTh}
-          </p>
+          <p>{t(footer.copyrightTh, footer.copyrightEn)}</p>
           <div className="foot-legal">
-            <a href="/privacy-policy" data-th="นโยบายความเป็นส่วนตัว" data-en="Privacy Policy">นโยบายความเป็นส่วนตัว</a>
+            <a href={localizedHref(locale, '/privacy-policy')}>{t('นโยบายความเป็นส่วนตัว', 'Privacy Policy')}</a>
             {/* Reopens the PDPA consent banner (public/js/consent-banner.js) so
                 a visitor can change their earlier accept/decline choice. */}
-            <a href="#" id="cookieSettingsLink" data-th="ตั้งค่าคุกกี้" data-en="Cookie Settings">ตั้งค่าคุกกี้</a>
+            <a href="#" id="cookieSettingsLink">{t('ตั้งค่าคุกกี้', 'Cookie Settings')}</a>
           </div>
           <div className="foot-social">
             {footer.social.instagram && (

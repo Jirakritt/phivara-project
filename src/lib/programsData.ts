@@ -1,6 +1,8 @@
+import type { LocaleCode } from './i18n'
+import { translator } from './i18n'
 import type { SeoData } from './payload'
 
-import { findBothLocales, mapSeo, mediaUrl } from './payload'
+import { findLocalized, hasLocaleContent, mapSeo, mediaUrl } from './payload'
 
 // Card-level fields shown on /program and reused as the base of the detail
 // page. Note: program.html's own client-side JS stripped the 2-bullet
@@ -10,6 +12,23 @@ import { findBothLocales, mapSeo, mediaUrl } from './payload'
 // with the price — so `highlights`/`cardNote` are captured in the CMS but
 // intentionally not rendered on the card here, to match what the original
 // page actually displayed.
+//
+// Per-locale filtering (see src/lib/payload.ts's findLocalized/
+// hasLocaleContent): every getX() below takes a `locale` and only returns
+// programs that actually have a `title` filled in for that exact locale —
+// a program translated into th+en only will simply not appear when
+// browsing /ja, rather than silently showing English or Thai text. The
+// `xxxTh`/`xxxEn` fields on the returned objects both hold the SAME
+// already-resolved-for-`locale` value (not real th/en text once locale is
+// neither th nor en) — this is deliberate so every existing page.tsx call
+// site's `t(item.xxxTh, item.xxxEn)` (see src/lib/i18n.ts's pickText)
+// keeps working unmodified for every locale: pickText returns th for
+// locale==='th', en for locale==='en', and falls back to the en slot for
+// every other locale when its UI_DICTIONARY lookup misses (which it always
+// will here, since these are per-record CMS strings, not static UI copy) —
+// and since both slots already hold the correct resolved text, that
+// fallback lands on the right value anyway. Do not "fix" this into a real
+// th/en pair — it would break every non-th/en locale silently.
 export interface ProgramCard {
   slug: string
   code: string
@@ -61,34 +80,42 @@ export interface ProgramHighlightCard extends ProgramCard {
   shortDescriptionTh: string
 }
 
-function mapProgramCard(th: any, en: any): ProgramCard {
-  const branch = th.branch && typeof th.branch === 'object' ? th.branch : null
+function mapProgramCard(doc: any, locale: LocaleCode): ProgramCard {
+  const t = translator(locale)
+  const branch = doc.branch && typeof doc.branch === 'object' ? doc.branch : null
+  const title = doc.title || ''
+  const shortDescription = doc.shortDescription || ''
+  // branch.name is the new per-locale field (see cms/collections/Branches.ts)
+  // — if the linked branch itself hasn't been translated into `locale` yet,
+  // fall back to the "all locations" microcopy rather than hiding the whole
+  // program over a missing branch name specifically.
+  const branchName = branch?.name || t('ทุกสาขา', 'All locations')
   return {
-    slug: th.slug,
-    code: th.code || '',
-    category: th.category,
-    titleTh: th.title,
-    titleEn: en?.title || th.title,
-    shortDescriptionTh: th.shortDescription || '',
-    shortDescriptionEn: en?.shortDescription || th.shortDescription || '',
-    image: mediaUrl(th.heroImage) || '/assets/images/treatments/expertise-longevity.jpg',
-    price: th.price,
+    slug: doc.slug,
+    code: doc.code || '',
+    category: doc.category,
+    titleTh: title,
+    titleEn: title,
+    shortDescriptionTh: shortDescription,
+    shortDescriptionEn: shortDescription,
+    image: mediaUrl(doc.heroImage) || '/assets/images/treatments/expertise-longevity.jpg',
+    price: doc.price,
     branchSlug: branch?.slug || '',
-    branchTh: branch?.nameTh || 'ทุกสาขา',
-    branchEn: branch?.nameEn || 'All locations',
-    searchKeywords: th.searchKeywords || '',
+    branchTh: branchName,
+    branchEn: branchName,
+    searchKeywords: doc.searchKeywords || '',
   }
 }
 
-// /program catalog grid — every published program, card-level fields only.
-export async function getProgramsListing(): Promise<ProgramCard[]> {
-  const pairs = await findBothLocales<any>('programs', {
+// /program catalog grid — every published program with a title in `locale`.
+export async function getProgramsListing(locale: LocaleCode): Promise<ProgramCard[]> {
+  const docs = await findLocalized<any>('programs', locale, {
     limit: 200,
     depth: 1,
     sort: 'slug',
     where: { _status: { equals: 'published' } },
   })
-  return pairs.map(({ th, en }) => mapProgramCard(th, en))
+  return docs.filter((d) => hasLocaleContent(d.title)).map((d) => mapProgramCard(d, locale))
 }
 
 // "Signature Programs" on a doctor's detail page. The original
@@ -99,27 +126,27 @@ export async function getProgramsListing(): Promise<ProgramCard[]> {
 // doctor sees longevity programs, a dermatology doctor sees dermatology
 // programs, etc. — same category-first approach as getOtherArticles()'s
 // "CONTINUE READING" matching on the article detail page.
-export async function getDoctorSignaturePrograms(specialty: string, limit = 4): Promise<ProgramCard[]> {
+export async function getDoctorSignaturePrograms(specialty: string, locale: LocaleCode, limit = 4): Promise<ProgramCard[]> {
   if (!specialty) return []
-  const pairs = await findBothLocales<any>('programs', {
+  const docs = await findLocalized<any>('programs', locale, {
     limit,
     depth: 1,
     sort: 'slug',
     where: { _status: { equals: 'published' }, category: { equals: specialty } },
   })
-  return pairs.map(({ th, en }) => mapProgramCard(th, en))
+  return docs.filter((d) => hasLocaleContent(d.title)).map((d) => mapProgramCard(d, locale))
 }
 
 // Highlight carousel at the top of /program — program.html hardcoded
 // exactly pv01/pv02/pv03/pv06 here; that's now the `featured` checkbox.
-export async function getFeaturedPrograms(): Promise<ProgramHighlightCard[]> {
-  const pairs = await findBothLocales<any>('programs', {
+export async function getFeaturedPrograms(locale: LocaleCode): Promise<ProgramHighlightCard[]> {
+  const docs = await findLocalized<any>('programs', locale, {
     limit: 10,
     depth: 1,
     sort: 'slug',
     where: { _status: { equals: 'published' }, featured: { equals: true } },
   })
-  return pairs.map(({ th, en }) => mapProgramCard(th, en))
+  return docs.filter((d) => hasLocaleContent(d.title)).map((d) => mapProgramCard(d, locale))
 }
 
 // Rough Lexical richText -> plain paragraph text (same approach as
@@ -139,48 +166,47 @@ function lexicalToPlainText(doc: any): string {
   return lines.join('').trim()
 }
 
-export async function getProgramDetail(slug: string): Promise<ProgramDetail | null> {
-  const pairs = await findBothLocales<any>('programs', {
+export async function getProgramDetail(slug: string, locale: LocaleCode): Promise<ProgramDetail | null> {
+  const docs = await findLocalized<any>('programs', locale, {
     limit: 1,
     depth: 2,
     where: { slug: { equals: slug }, _status: { equals: 'published' } },
   })
-  if (!pairs.length) return null
-  const { th, en } = pairs[0]
-  const card = mapProgramCard(th, en)
+  const doc = docs[0]
+  // No title in this locale = treated as "doesn't exist here" — same 404
+  // the page already shows for a genuinely missing slug (see
+  // src/app/[locale]/(public)/program/[slug]/page.tsx's `if (!program)
+  // notFound()`), no extra code needed there.
+  if (!doc || !hasLocaleContent(doc.title)) return null
+  const card = mapProgramCard(doc, locale)
+  const aboutProgram = lexicalToPlainText(doc.aboutProgram)
 
   return {
     ...card,
-    heroImage: mediaUrl(th.heroImage) || card.image,
-    aboutProgramTh: lexicalToPlainText(th.aboutProgram),
-    aboutProgramEn: lexicalToPlainText(en?.aboutProgram) || lexicalToPlainText(th.aboutProgram),
-    purposeList: (th.purposeList || []).map((item: any, i: number) => ({
-      th: item.text || '',
-      en: en?.purposeList?.[i]?.text || item.text || '',
-    })),
-    audienceList: (th.audienceList || []).map((item: any, i: number) => ({
-      th: item.text || '',
-      en: en?.audienceList?.[i]?.text || item.text || '',
-    })),
-    checkupItems: (th.checkupItems || []).map((item: any, i: number) => ({
+    heroImage: mediaUrl(doc.heroImage) || card.image,
+    aboutProgramTh: aboutProgram,
+    aboutProgramEn: aboutProgram,
+    purposeList: (doc.purposeList || []).map((item: any) => ({ th: item.text || '', en: item.text || '' })),
+    audienceList: (doc.audienceList || []).map((item: any) => ({ th: item.text || '', en: item.text || '' })),
+    checkupItems: (doc.checkupItems || []).map((item: any) => ({
       group: item.group || 'all',
       nameTh: item.name || '',
-      nameEn: en?.checkupItems?.[i]?.name || item.name || '',
+      nameEn: item.name || '',
       descriptionTh: item.description || undefined,
-      descriptionEn: en?.checkupItems?.[i]?.description || item.description || undefined,
+      descriptionEn: item.description || undefined,
     })),
-    termsOfService: (th.termsOfService || []).map((term: any, i: number) => ({
+    termsOfService: (doc.termsOfService || []).map((term: any) => ({
       titleTh: term.title || undefined,
-      titleEn: en?.termsOfService?.[i]?.title || term.title || undefined,
+      titleEn: term.title || undefined,
       descriptionTh: term.description || '',
-      descriptionEn: en?.termsOfService?.[i]?.description || term.description || '',
+      descriptionEn: term.description || '',
     })),
-    contactLocationTh: th.contactOverride?.location,
-    contactLocationEn: en?.contactOverride?.location || th.contactOverride?.location,
-    contactHoursTh: th.contactOverride?.hours,
-    contactHoursEn: en?.contactOverride?.hours || th.contactOverride?.hours,
-    contactPhone: th.contactOverride?.phone,
-    seo: mapSeo(th.seo),
+    contactLocationTh: doc.contactOverride?.location,
+    contactLocationEn: doc.contactOverride?.location,
+    contactHoursTh: doc.contactOverride?.hours,
+    contactHoursEn: doc.contactOverride?.hours,
+    contactPhone: doc.contactOverride?.phone,
+    seo: mapSeo(doc.seo),
   }
 }
 

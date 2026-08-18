@@ -98,13 +98,19 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('th' | 'en') | ('th' | 'en')[];
+  fallbackLocale:
+    | ('false' | 'none' | 'null')
+    | false
+    | null
+    | ('th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr')
+    | ('th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr')[];
   globals: {
     membership: Membership;
     ecosystem: Ecosystem;
     'home-hero': HomeHero;
     footer: Footer;
     topbar: Topbar;
+    'language-settings': LanguageSetting;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
@@ -112,8 +118,9 @@ export interface Config {
     'home-hero': HomeHeroSelect<false> | HomeHeroSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     topbar: TopbarSelect<false> | TopbarSelect<true>;
+    'language-settings': LanguageSettingsSelect<false> | LanguageSettingsSelect<true>;
   };
-  locale: 'th' | 'en';
+  locale: 'th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -184,6 +191,7 @@ export interface Branch {
   slug: string;
   nameTh: string;
   nameEn: string;
+  name?: string | null;
   /**
    * e.g. "Hospital-Grade Plastic Surgery Center"
    */
@@ -292,6 +300,7 @@ export interface Doctor {
   slug?: string | null;
   nameTh: string;
   nameEn: string;
+  name?: string | null;
   branch: number | Branch;
   /**
    * Filter key used on doctor.html (matches the 4 Beaugevity pillars)
@@ -894,6 +903,7 @@ export interface BranchesSelect<T extends boolean = true> {
   slug?: T;
   nameTh?: T;
   nameEn?: T;
+  name?: T;
   tagline?: T;
   description?: T;
   address?: T;
@@ -929,6 +939,7 @@ export interface DoctorsSelect<T extends boolean = true> {
   slug?: T;
   nameTh?: T;
   nameEn?: T;
+  name?: T;
   branch?: T;
   specialty?: T;
   specialtyLabel?: T;
@@ -1365,6 +1376,146 @@ export interface Topbar {
   createdAt?: string | null;
 }
 /**
+ * ควบคุมว่าภาษาไหนแก้ไขได้ใน CMS และภาษาไหนเผยแพร่บนหน้าเว็บจริง — ไทยเป็นภาษาหลัก เปิดใช้งานเสมอ ไม่มีสวิตช์ปิด
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "language-settings".
+ */
+export interface LanguageSetting {
+  id: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  en?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  ja?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  zh?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  vi?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  km?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  ar?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  ms?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  de?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  ru?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  lo?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  ko?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  fr?: {
+    /**
+     * เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง
+     */
+    cmsEditable?: boolean | null;
+    /**
+     * เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+     */
+    publiclyLive?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
@@ -1526,6 +1677,93 @@ export interface TopbarSelect<T extends boolean = true> {
   tagline?: T;
   hotlineText?: T;
   lineText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "language-settings_select".
+ */
+export interface LanguageSettingsSelect<T extends boolean = true> {
+  en?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  ja?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  zh?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  vi?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  km?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  ar?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  ms?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  id?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  de?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  ru?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  lo?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  ko?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
+  fr?:
+    | T
+    | {
+        cmsEditable?: T;
+        publiclyLive?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

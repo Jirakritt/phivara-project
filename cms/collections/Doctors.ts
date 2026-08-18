@@ -61,6 +61,21 @@ export const Doctors: CollectionConfig = {
             },
             { name: 'nameTh', type: 'text', required: true },
             { name: 'nameEn', type: 'text', required: true },
+            // Per-locale name — supersedes nameTh/nameEn for anything beyond
+            // th/en. Those two fields stay in place (not migrated away) so
+            // existing th/en data and any code still reading them keeps
+            // working; the frontend now reads `name` for every locale
+            // including th/en once seeded.
+            //
+            // Deliberately NOT required: the whole point of this field is
+            // per-locale filtering (src/lib/payload.ts's hasLocaleContent,
+            // used throughout src/lib/doctorsData.ts) — a doctor with no
+            // `name` in, say, ja is how an editor says "don't show this
+            // doctor on the Japanese site yet". Marking it required would
+            // make Payload's admin block saving/publishing that locale
+            // entirely with an empty name, making it impossible to leave a
+            // locale intentionally untranslated.
+            { name: 'name', type: 'text', localized: true },
             {
               name: 'branch',
               type: 'relationship',

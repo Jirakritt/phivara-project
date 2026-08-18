@@ -131,7 +131,12 @@ function initDoctorPage() {
     const button = event.target.closest('.btn-doc-detail');
     if (!button) return;
     const doctorId = button.dataset.docId || 'dr01';
-    window.location.href = `/doctor/${doctorId}`;
+    // i18n Phase 2: every page URL now carries a /th|en/ locale prefix
+    // (see src/middleware.ts) — document.documentElement.lang holds the
+    // current one (set server-side per request), so stay on it instead of
+    // dropping back to a bare, locale-less path.
+    const lang = document.documentElement.lang || 'th';
+    window.location.href = `/${lang}/doctor/${doctorId}`;
   });
 
   // Pre-fill VIP Concierge Modal when clicking "จองปรึกษา"

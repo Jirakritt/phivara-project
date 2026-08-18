@@ -1,8 +1,18 @@
+import type { LocaleCode } from './i18n'
+import { DEFAULT_LOCALE } from './i18n'
 import { getPayloadClient, mediaUrl } from './payload'
 
 // Source: cms/globals/Membership.ts (a Payload Global, not a collection —
 // membership.html is a single landing page, so staff edit one record
 // instead of managing a list). Already fully seeded by cms/seed/seed.ts.
+//
+// Same deliberate fallback-to-en(-then-th) exception as ecosystemData.ts/
+// homeData.ts's chrome helpers — see homeData.ts's resolve() comment for
+// the full rationale (fixed marketing sections, not an open-ended catalog
+// of records, so nothing here gets hidden for an untranslated locale; en
+// rather than th so an untranslated visitor sees English, not Thai).
+const EN_LOCALE: LocaleCode = 'en'
+
 export interface MembershipContent {
   hero: { kickerTh: string; kickerEn: string; headlineTh: string; headlineEn: string; leadTh: string; leadEn: string }
   intro: { overlineTh: string; overlineEn: string; headingTh: string; headingEn: string; bodyTh: string; bodyEn: string }
@@ -13,65 +23,69 @@ export interface MembershipContent {
   finalCta: { overlineTh: string; overlineEn: string; headingTh: string; headingEn: string; bodyTh: string; bodyEn: string; buttonLabelTh: string; buttonLabelEn: string }
 }
 
-export async function getMembershipContent(): Promise<MembershipContent> {
+export async function getMembershipContent(locale: LocaleCode): Promise<MembershipContent> {
   const payload = await getPayloadClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [th, en] = (await Promise.all([
-    payload.findGlobal({ slug: 'membership', locale: 'th' }),
-    payload.findGlobal({ slug: 'membership', locale: 'en' }),
-  ])) as [any, any]
+  const [target, en, th] = (await Promise.all([
+    payload.findGlobal({ slug: 'membership', locale, fallbackLocale: false }),
+    payload.findGlobal({ slug: 'membership', locale: EN_LOCALE, fallbackLocale: false }),
+    payload.findGlobal({ slug: 'membership', locale: DEFAULT_LOCALE }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ])) as [any, any, any]
+
+  const kicker = target?.hero?.kicker || en?.hero?.kicker || th.hero?.kicker || ''
+  const headline = target?.hero?.headline || en?.hero?.headline || th.hero?.headline || ''
+  const lead = target?.hero?.lead || en?.hero?.lead || th.hero?.lead || ''
+  const introOverline = target?.intro?.overline || en?.intro?.overline || th.intro?.overline || ''
+  const introHeading = target?.intro?.heading || en?.intro?.heading || th.intro?.heading || ''
+  const introBody = target?.intro?.body || en?.intro?.body || th.intro?.body || ''
+  const promiseQuote = target?.promise?.quote || en?.promise?.quote || th.promise?.quote || ''
+  const promiseBody = target?.promise?.body || en?.promise?.body || th.promise?.body || ''
+  const finalOverline = target?.finalCta?.overline || en?.finalCta?.overline || th.finalCta?.overline || ''
+  const finalHeading = target?.finalCta?.heading || en?.finalCta?.heading || th.finalCta?.heading || ''
+  const finalBody = target?.finalCta?.body || en?.finalCta?.body || th.finalCta?.body || ''
+  const finalButtonLabel = target?.finalCta?.buttonLabel || en?.finalCta?.buttonLabel || th.finalCta?.buttonLabel || ''
 
   return {
-    hero: {
-      kickerTh: th.hero?.kicker || '',
-      kickerEn: en?.hero?.kicker || th.hero?.kicker || '',
-      headlineTh: th.hero?.headline || '',
-      headlineEn: en?.hero?.headline || th.hero?.headline || '',
-      leadTh: th.hero?.lead || '',
-      leadEn: en?.hero?.lead || th.hero?.lead || '',
-    },
+    hero: { kickerTh: kicker, kickerEn: kicker, headlineTh: headline, headlineEn: headline, leadTh: lead, leadEn: lead },
     intro: {
-      overlineTh: th.intro?.overline || '',
-      overlineEn: en?.intro?.overline || th.intro?.overline || '',
-      headingTh: th.intro?.heading || '',
-      headingEn: en?.intro?.heading || th.intro?.heading || '',
-      bodyTh: th.intro?.body || '',
-      bodyEn: en?.intro?.body || th.intro?.body || '',
+      overlineTh: introOverline,
+      overlineEn: introOverline,
+      headingTh: introHeading,
+      headingEn: introHeading,
+      bodyTh: introBody,
+      bodyEn: introBody,
     },
-    privileges: (th.privileges || []).map((p: any, i: number) => ({
-      titleTh: p.title || '',
-      titleEn: en?.privileges?.[i]?.title || p.title || '',
-      descriptionTh: p.description || '',
-      descriptionEn: en?.privileges?.[i]?.description || p.description || '',
-    })),
+    privileges: (th.privileges || []).map((p: any, i: number) => {
+      const title = target?.privileges?.[i]?.title || en?.privileges?.[i]?.title || p.title || ''
+      const description = target?.privileges?.[i]?.description || en?.privileges?.[i]?.description || p.description || ''
+      return { titleTh: title, titleEn: title, descriptionTh: description, descriptionEn: description }
+    }),
     promise: {
       image: mediaUrl(th.promise?.image) || '/assets/images/brand/about-lounge.jpg',
-      quoteTh: th.promise?.quote || '',
-      quoteEn: en?.promise?.quote || th.promise?.quote || '',
-      bodyTh: th.promise?.body || '',
-      bodyEn: en?.promise?.body || th.promise?.body || '',
+      quoteTh: promiseQuote,
+      quoteEn: promiseQuote,
+      bodyTh: promiseBody,
+      bodyEn: promiseBody,
     },
-    journeySteps: (th.journeySteps || []).map((s: any, i: number) => ({
-      titleTh: s.title || '',
-      titleEn: en?.journeySteps?.[i]?.title || s.title || '',
-      descriptionTh: s.description || '',
-      descriptionEn: en?.journeySteps?.[i]?.description || s.description || '',
-    })),
-    faq: (th.faq || []).map((f: any, i: number) => ({
-      questionTh: f.question || '',
-      questionEn: en?.faq?.[i]?.question || f.question || '',
-      answerTh: f.answer || '',
-      answerEn: en?.faq?.[i]?.answer || f.answer || '',
-    })),
+    journeySteps: (th.journeySteps || []).map((s: any, i: number) => {
+      const title = target?.journeySteps?.[i]?.title || en?.journeySteps?.[i]?.title || s.title || ''
+      const description = target?.journeySteps?.[i]?.description || en?.journeySteps?.[i]?.description || s.description || ''
+      return { titleTh: title, titleEn: title, descriptionTh: description, descriptionEn: description }
+    }),
+    faq: (th.faq || []).map((f: any, i: number) => {
+      const question = target?.faq?.[i]?.question || en?.faq?.[i]?.question || f.question || ''
+      const answer = target?.faq?.[i]?.answer || en?.faq?.[i]?.answer || f.answer || ''
+      return { questionTh: question, questionEn: question, answerTh: answer, answerEn: answer }
+    }),
     finalCta: {
-      overlineTh: th.finalCta?.overline || '',
-      overlineEn: en?.finalCta?.overline || th.finalCta?.overline || '',
-      headingTh: th.finalCta?.heading || '',
-      headingEn: en?.finalCta?.heading || th.finalCta?.heading || '',
-      bodyTh: th.finalCta?.body || '',
-      bodyEn: en?.finalCta?.body || th.finalCta?.body || '',
-      buttonLabelTh: th.finalCta?.buttonLabel || '',
-      buttonLabelEn: en?.finalCta?.buttonLabel || th.finalCta?.buttonLabel || '',
+      overlineTh: finalOverline,
+      overlineEn: finalOverline,
+      headingTh: finalHeading,
+      headingEn: finalHeading,
+      bodyTh: finalBody,
+      bodyEn: finalBody,
+      buttonLabelTh: finalButtonLabel,
+      buttonLabelEn: finalButtonLabel,
     },
   }
 }

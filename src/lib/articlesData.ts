@@ -1,6 +1,7 @@
+import type { LocaleCode } from './i18n'
 import type { SeoData } from './payload'
 
-import { findBothLocales, mapSeo, mediaUrl } from './payload'
+import { findLocalized, hasLocaleContent, mapSeo, mediaUrl } from './payload'
 
 export interface ArticleCard {
   slug: string
@@ -20,19 +21,19 @@ export interface ArticleCard {
 }
 
 export interface ArticleBodyBlock {
-  type: 'paragraph' | 'heading' | 'quote'
+  type: 'paragraph' | 'heading' | 'quote' | 'list'
   tag?: 'h2' | 'h3'
   id?: string
   textTh: string
   textEn: string
   isLead?: boolean
-  // program_detail-style content gap: the seed data leaves a heading with no
-  // paragraph under it when that section's real content lives in a separate
-  // field instead (see insightSteps below) — e.g. "กระบวนการ 4 ขั้นตอน" is
-  // immediately followed by the next h2 in the raw body. Detected here so
-  // the page can render the insight-grid in the right spot without a
-  // dedicated "insert after section X" field in the schema.
   insightStepsAfter?: boolean
+  // Only set when type === 'list' — Lexical's `list` node (bullet/number)
+  // and its `listitem` children never carried a flat .text value, so the
+  // old parseBodyBlocks fell through to the generic paragraph case and
+  // rendered an empty <p>, silently dropping every list in an article body.
+  listType?: 'bullet' | 'number'
+  items?: Array<{ textTh: string; textEn: string }>
 }
 
 export interface ArticleTocEntry {
@@ -64,9 +65,7 @@ export interface ArticleDetail extends ArticleCard {
 }
 
 // Shown next to the byline and in the "MEDICAL REVIEW" box when an
-// article's author.avatar (Articles.ts) is left blank — see
-// public/assets/images/authors/default-author.png for how it's built (a
-// tinted crop of the site's own emblem on a soft brand-gradient circle).
+// article's author.avatar (Articles.ts) is left blank.
 const DEFAULT_AUTHOR_IMAGE = '/assets/images/authors/default-author.png'
 
 const THAI_MONTHS = [
@@ -90,72 +89,77 @@ function slugifyHeading(text: string): string {
     .slice(0, 60) || 'section'
 }
 
-function mapArticleCard(th: any, en: any): ArticleCard {
+// Per-locale filtering (see src/lib/payload.ts's findLocalized/
+// hasLocaleContent, and programsData.ts's file comment for the full
+// rationale): every getX() below only returns articles that have a
+// `title` filled in for the exact `locale` requested. `xxxTh`/`xxxEn`
+// fields on the returned objects both hold the SAME already-resolved
+// value — see programsData.ts's comment for why that's deliberate and
+// keeps every existing page.tsx `t(item.xxxTh, item.xxxEn)` call site
+// working unmodified for every locale.
+function mapArticleCard(doc: any): ArticleCard {
+  const title = doc.title
+  const summary = doc.summary || ''
+  const categoryLabel = doc.categoryLabel || ''
   return {
-    slug: th.slug,
-    category: th.category,
-    categoryLabelTh: th.categoryLabel || '',
-    categoryLabelEn: en?.categoryLabel || th.categoryLabel || '',
-    titleTh: th.title,
-    titleEn: en?.title || th.title,
-    summaryTh: th.summary || '',
-    summaryEn: en?.summary || th.summary || '',
-    image: mediaUrl(th.coverImage) || '/assets/images/doctors/jr-02.png',
-    dateTh: formatThaiDate(th.publishedDate),
-    dateEn: formatEnDate(th.publishedDate),
-    readTimeMinutes: th.readTimeMinutes,
-    readTimeTh: `${th.readTimeMinutes} นาที`,
-    readTimeEn: `${th.readTimeMinutes} min`,
+    slug: doc.slug,
+    category: doc.category,
+    categoryLabelTh: categoryLabel,
+    categoryLabelEn: categoryLabel,
+    titleTh: title,
+    titleEn: title,
+    summaryTh: summary,
+    summaryEn: summary,
+    image: mediaUrl(doc.coverImage) || '/assets/images/doctors/jr-02.png',
+    dateTh: formatThaiDate(doc.publishedDate),
+    dateEn: formatEnDate(doc.publishedDate),
+    readTimeMinutes: doc.readTimeMinutes,
+    readTimeTh: `${doc.readTimeMinutes} นาที`,
+    readTimeEn: `${doc.readTimeMinutes} min`,
   }
 }
 
-// /article catalog grid — every published article, card-level fields only.
-// depth:1 (not 0) is required here even though these are "card-level"
-// queries — mapArticleCard() reads coverImage.url via mediaUrl(), which
-// only exists once the upload relationship is populated one level deep. At
-// depth:0 coverImage comes back as a bare ID, mediaUrl() silently returns
-// undefined, and every card falls through to the hardcoded placeholder
-// photo regardless of what was actually uploaded.
-export async function getArticlesListing(): Promise<ArticleCard[]> {
-  const pairs = await findBothLocales<any>('articles', {
+// /article catalog grid — every published article with a title in `locale`.
+export async function getArticlesListing(locale: LocaleCode): Promise<ArticleCard[]> {
+  const docs = await findLocalized<any>('articles', locale, {
     limit: 200,
     depth: 1,
     sort: '-publishedDate',
     where: { _status: { equals: 'published' } },
   })
-  return pairs.map(({ th, en }) => mapArticleCard(th, en))
+  return docs.filter((d) => hasLocaleContent(d.title)).map(mapArticleCard)
 }
 
 // "MOST READ" sidebar + related-articles style lookups.
-export async function getPopularArticles(excludeSlug?: string, limit = 3): Promise<ArticleCard[]> {
-  const pairs = await findBothLocales<any>('articles', {
+export async function getPopularArticles(locale: LocaleCode, excludeSlug?: string, limit = 3): Promise<ArticleCard[]> {
+  const docs = await findLocalized<any>('articles', locale, {
     limit: limit + 1,
     depth: 1,
     sort: '-publishedDate',
     where: { _status: { equals: 'published' }, popular: { equals: true } },
   })
-  return pairs.map(({ th, en }) => mapArticleCard(th, en)).filter((a) => a.slug !== excludeSlug).slice(0, limit)
+  return docs.filter((d) => hasLocaleContent(d.title)).map(mapArticleCard).filter((a) => a.slug !== excludeSlug).slice(0, limit)
 }
 
-// "CONTINUE READING" — same-category articles first (most relevant to what
-// the reader is on), then backfills with the latest published articles
-// overall if the category doesn't have enough to fill `limit`. Both passes
-// dedupe against the current article and against each other so the
-// fallback never repeats a card already picked from the category pass.
-export async function getOtherArticles(excludeSlug: string, category?: string, limit = 3): Promise<ArticleCard[]> {
+// "CONTINUE READING" — same-category articles first, then backfills with
+// the latest published articles overall if the category doesn't have
+// enough to fill `limit`. Both passes only ever consider articles that
+// have content in `locale`.
+export async function getOtherArticles(locale: LocaleCode, excludeSlug: string, category?: string, limit = 3): Promise<ArticleCard[]> {
   const collected: ArticleCard[] = []
   const seenSlugs = new Set([excludeSlug])
 
   if (category) {
-    const categoryPairs = await findBothLocales<any>('articles', {
+    const categoryDocs = await findLocalized<any>('articles', locale, {
       limit: limit + 1,
       depth: 1,
       sort: '-publishedDate',
       where: { _status: { equals: 'published' }, category: { equals: category } },
     })
-    for (const { th, en } of categoryPairs) {
+    for (const doc of categoryDocs) {
       if (collected.length >= limit) break
-      const card = mapArticleCard(th, en)
+      if (!hasLocaleContent(doc.title)) continue
+      const card = mapArticleCard(doc)
       if (seenSlugs.has(card.slug)) continue
       collected.push(card)
       seenSlugs.add(card.slug)
@@ -163,15 +167,16 @@ export async function getOtherArticles(excludeSlug: string, category?: string, l
   }
 
   if (collected.length < limit) {
-    const fallbackPairs = await findBothLocales<any>('articles', {
+    const fallbackDocs = await findLocalized<any>('articles', locale, {
       limit: limit + seenSlugs.size,
       depth: 1,
       sort: '-publishedDate',
       where: { _status: { equals: 'published' } },
     })
-    for (const { th, en } of fallbackPairs) {
+    for (const doc of fallbackDocs) {
       if (collected.length >= limit) break
-      const card = mapArticleCard(th, en)
+      if (!hasLocaleContent(doc.title)) continue
+      const card = mapArticleCard(doc)
       if (seenSlugs.has(card.slug)) continue
       collected.push(card)
       seenSlugs.add(card.slug)
@@ -181,88 +186,104 @@ export async function getOtherArticles(excludeSlug: string, category?: string, l
   return collected
 }
 
-// Walks a Lexical root and pairs up TH/EN nodes positionally (both locales
-// were built from the same bodyTh block list in seed.ts, so they're always
-// the same length/shape — see cms/seed/data/articles.ts).
-function parseBodyBlocks(thDoc: any, enDoc: any): ArticleBodyBlock[] {
-  const thNodes: any[] = thDoc?.root?.children || []
-  const enNodes: any[] = enDoc?.root?.children || []
+// Walks a Lexical root and pulls the plain text back out.
+function parseBodyBlocks(doc: any): ArticleBodyBlock[] {
+  const nodes: any[] = doc?.root?.children || []
   const getText = (node: any) => (node?.children || []).map((c: any) => c.text || '').join('')
 
   let sawFirstParagraph = false
-  return thNodes.map((node, i) => {
-    const enNode = enNodes[i]
-    const textTh = getText(node)
-    const textEn = enNode ? getText(enNode) : textTh
-    const nextNode = thNodes[i + 1]
+  return nodes.map((node, i) => {
+    const text = getText(node)
+    const nextNode = nodes[i + 1]
 
     if (node.type === 'heading') {
-      const id = slugifyHeading(textTh)
+      const id = slugifyHeading(text)
       const insightStepsAfter = nextNode?.type === 'heading'
-      return { type: 'heading' as const, tag: node.tag, id, textTh, textEn, insightStepsAfter }
+      return { type: 'heading' as const, tag: node.tag, id, textTh: text, textEn: text, insightStepsAfter }
     }
     if (node.type === 'quote') {
-      return { type: 'quote' as const, textTh, textEn }
+      return { type: 'quote' as const, textTh: text, textEn: text }
+    }
+    if (node.type === 'list') {
+      // A `list` node's children are `listitem` nodes, not text nodes, so
+      // the shallow getText() above returns '' for it — that's what made
+      // lists disappear. Each listitem's own text lives directly on ITS
+      // children though (one level down), except when a listitem itself
+      // wraps a nested sub-list — skip those grandchild `list` nodes here
+      // so a nested list isn't flattened into its parent item's label.
+      const items = (node.children || [])
+        .filter((li: any) => li.type === 'listitem')
+        .map((li: any) => {
+          const itemText = (li.children || [])
+            .filter((c: any) => c.type !== 'list')
+            .map((c: any) => c.text || '')
+            .join('')
+          return { textTh: itemText, textEn: itemText }
+        })
+      const listType = node.listType === 'number' ? 'number' as const : 'bullet' as const
+      return { type: 'list' as const, listType, items, textTh: '', textEn: '' }
     }
     const isLead = !sawFirstParagraph
     sawFirstParagraph = true
-    return { type: 'paragraph' as const, textTh, textEn, isLead }
+    return { type: 'paragraph' as const, textTh: text, textEn: text, isLead }
   })
 }
 
-export async function getArticleDetail(slug: string): Promise<ArticleDetail | null> {
-  const pairs = await findBothLocales<any>('articles', {
+export async function getArticleDetail(slug: string, locale: LocaleCode): Promise<ArticleDetail | null> {
+  const docs = await findLocalized<any>('articles', locale, {
     limit: 1,
     depth: 2,
     where: { slug: { equals: slug }, _status: { equals: 'published' } },
   })
-  if (!pairs.length) return null
-  const { th, en } = pairs[0]
-  const card = mapArticleCard(th, en)
+  const doc = docs[0]
+  if (!doc || !hasLocaleContent(doc.title)) return null
+  const card = mapArticleCard(doc)
 
-  const bodyBlocks = parseBodyBlocks(th.body, en?.body)
+  const bodyBlocks = parseBodyBlocks(doc.body)
   const toc: ArticleTocEntry[] = bodyBlocks
     .filter((b): b is ArticleBodyBlock & { id: string; tag: 'h2' } => b.type === 'heading' && b.tag === 'h2')
     .map((b) => ({ id: b.id!, th: b.textTh, en: b.textEn }))
 
-  const relatedDoctors: ArticleDoctorRef[] = (th.relatedDoctors || [])
+  const relatedDoctors: ArticleDoctorRef[] = (doc.relatedDoctors || [])
     .filter((d: any) => d && typeof d === 'object')
-    .map((d: any, i: number) => {
-      const enDoctor = en?.relatedDoctors?.[i]
+    .map((d: any) => {
+      const name = d.name || d.nameTh || ''
+      const note = d.specialtyLabel || ''
       return {
         slug: d.slug,
-        nameTh: d.nameTh,
-        nameEn: (typeof enDoctor === 'object' && enDoctor?.nameEn) || d.nameEn,
-        noteTh: d.specialtyLabel || '',
-        noteEn: (typeof enDoctor === 'object' && enDoctor?.specialtyLabel) || d.specialtyLabel || '',
+        nameTh: name,
+        nameEn: name,
+        noteTh: note,
+        noteEn: note,
         image: mediaUrl(d.cardPhoto) || mediaUrl(d.portrait) || '/assets/images/doctors/dr01.png',
       }
     })
 
+  const authorName = doc.author?.name || 'ทีมแพทย์ PHIVARA'
+
   return {
     ...card,
-    authorNameTh: th.author?.name || 'ทีมแพทย์ PHIVARA',
-    authorNameEn: en?.author?.name || th.author?.name || 'PHIVARA Medical Team',
-    authorImage: mediaUrl(th.author?.avatar) || DEFAULT_AUTHOR_IMAGE,
+    authorNameTh: authorName,
+    authorNameEn: authorName,
+    authorImage: mediaUrl(doc.author?.avatar) || DEFAULT_AUTHOR_IMAGE,
     bodyBlocks,
     toc,
-    insightSteps: (th.insightSteps || []).map((step: any, i: number) => ({
-      titleTh: step.title || '',
-      titleEn: en?.insightSteps?.[i]?.title || step.title || '',
-      descriptionTh: step.description || '',
-      descriptionEn: en?.insightSteps?.[i]?.description || step.description || '',
-    })),
-    noteBox: th.noteBox?.text
+    insightSteps: (doc.insightSteps || []).map((step: any) => {
+      const title = step.title || ''
+      const description = step.description || ''
+      return { titleTh: title, titleEn: title, descriptionTh: description, descriptionEn: description }
+    }),
+    noteBox: doc.noteBox?.text
       ? {
-          headingTh: th.noteBox.heading || '',
-          headingEn: en?.noteBox?.heading || th.noteBox.heading || '',
-          textTh: th.noteBox.text,
-          textEn: en?.noteBox?.text || th.noteBox.text,
+          headingTh: doc.noteBox.heading || '',
+          headingEn: doc.noteBox.heading || '',
+          textTh: doc.noteBox.text,
+          textEn: doc.noteBox.text,
         }
       : null,
-    tags: (th.tags || []).map((t: any) => t.text),
+    tags: (doc.tags || []).map((t: any) => t.text),
     relatedDoctors,
-    seo: mapSeo(th.seo),
+    seo: mapSeo(doc.seo),
   }
 }
 

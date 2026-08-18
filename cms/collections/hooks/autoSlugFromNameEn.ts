@@ -22,9 +22,17 @@ export const autoSlugFromNameEn: CollectionBeforeValidateHook = async ({
   collection,
 }) => {
   if (!data) return data
-  const nameEn = (data.nameEn ?? originalDoc?.nameEn) as string | undefined
   const hasSlug = typeof data.slug === 'string' && data.slug.trim().length > 0
-  if (hasSlug || !nameEn) return data
+  if (hasSlug) return data
+
+  // `nameEn` (flat, non-localized) still exists and is required, so it stays
+  // the simplest source for the slug. If an editor is filling in a
+  // non-en/th locale for the first time on a brand new (unsaved) doc,
+  // `data.nameEn` won't exist yet either — in that case there's nothing
+  // sensible to slugify from, so the field is just left for the editor to
+  // fill in manually once they switch to the th/en tab.
+  const nameEn = (data.nameEn ?? originalDoc?.nameEn) as string | undefined
+  if (!nameEn) return data
 
   const base = slugify(nameEn) || 'doctor'
   let candidate = base

@@ -40,6 +40,14 @@
 .prose strong{font-weight:500;color:var(--olive-dark)}
 .prose blockquote{position:relative;margin:38px 0;padding:25px 28px;border-left:3px solid var(--gold);background:var(--cream-deep);font-family:var(--serif-en),var(--serif);font-size:clamp(21px,2.5vw,27px);line-height:1.65;color:var(--olive-dark);text-align:left}
 .prose blockquote:before{display:none}
+.prose ul,.prose ol{margin:0 0 26px;padding-left:22px}
+.prose ul{list-style:none}
+.prose ul li{position:relative;padding-left:20px}
+.prose ul li:before{content:"";position:absolute;left:0;top:.85em;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.prose ol{list-style:decimal;padding-left:24px}
+.prose ol li{padding-left:6px}
+.prose li{margin-bottom:10px}
+.prose li:last-child{margin-bottom:0}
 
 .insight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:28px 0 34px}
 .insight-card{padding:24px;border:1px solid var(--line);border-radius:var(--radius-card);background:var(--cream-card)}

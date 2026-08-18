@@ -9,6 +9,106 @@
   --shell-ease: cubic-bezier(.16, 1, .3, 1);
 }
 
+/* Phase 4: per-locale font overrides. 'Sukhumvit Set'/'Prompt'/'Lora'
+   (loaded in [locale]/layout.tsx's <head>) only cover Thai + Latin (+
+   Vietnamese, which 'Prompt' also has a subset for) — every other script
+   below gets its actual Google Fonts family loaded conditionally per
+   locale (see src/lib/fonts.ts) and wired in here.
+
+   Uses an `html[lang="…"]` attribute selector on purpose, not another
+   `:root{...}` rule: main.css/main1.css/main2.css (loaded per-page, after
+   this file in the DOM once React hoists their <link> tags into <head>)
+   each define their OWN plain `:root{--sans:...}` rule, which would win
+   on source order alone and silently undo a same-specificity override
+   placed here. `html[lang="ja"]` has one extra attribute-selector's worth
+   of specificity over a bare `:root`, so it wins regardless of which
+   stylesheet loads last. Both this file's own --shell-* vars (used by the
+   header/footer/topbar right below) and main.css's --sans/--serif (used
+   by everything else) are overridden together so the whole page — not
+   just the shell — gets the right typeface. */
+html[lang="ja"] {
+  --shell-sans: 'Noto Sans JP', sans-serif;
+  --shell-serif: 'Noto Serif JP', 'Noto Sans JP', serif;
+  --sans: 'Noto Sans JP', sans-serif;
+  --serif: 'Noto Serif JP', 'Noto Sans JP', serif;
+}
+html[lang="zh"] {
+  --shell-sans: 'Noto Sans SC', sans-serif;
+  --shell-serif: 'Noto Serif SC', 'Noto Sans SC', serif;
+  --sans: 'Noto Sans SC', sans-serif;
+  --serif: 'Noto Serif SC', 'Noto Sans SC', serif;
+}
+html[lang="ko"] {
+  --shell-sans: 'Noto Sans KR', sans-serif;
+  --shell-serif: 'Noto Serif KR', 'Noto Sans KR', serif;
+  --sans: 'Noto Sans KR', sans-serif;
+  --serif: 'Noto Serif KR', 'Noto Sans KR', serif;
+}
+html[lang="km"] {
+  --shell-sans: 'Noto Sans Khmer', sans-serif;
+  --shell-serif: 'Noto Sans Khmer', sans-serif;
+  --sans: 'Noto Sans Khmer', sans-serif;
+  --serif: 'Noto Sans Khmer', sans-serif;
+}
+html[lang="lo"] {
+  --shell-sans: 'Noto Sans Lao', sans-serif;
+  --shell-serif: 'Noto Sans Lao', sans-serif;
+  --sans: 'Noto Sans Lao', sans-serif;
+  --serif: 'Noto Sans Lao', sans-serif;
+}
+html[lang="ar"] {
+  --shell-sans: 'Noto Sans Arabic', sans-serif;
+  --shell-serif: 'Noto Naskh Arabic', 'Noto Sans Arabic', serif;
+  --sans: 'Noto Sans Arabic', sans-serif;
+  --serif: 'Noto Naskh Arabic', 'Noto Sans Arabic', serif;
+}
+html[lang="ru"] {
+  --shell-sans: 'Noto Sans', sans-serif;
+  --shell-serif: 'Noto Serif', 'Noto Sans', serif;
+  --sans: 'Noto Sans', sans-serif;
+  --serif: 'Noto Serif', 'Noto Sans', serif;
+}
+
+/* RTL foundation (Phase 4) — Arabic ('ar') is the only RTL locale
+   (src/lib/i18n.ts's RTL_LOCALES), set via [locale]/layout.tsx's
+   `<html dir={isRtl(locale) ? 'rtl' : 'ltr'}>`. Arabic isn't publiclyLive
+   yet (no UI dictionary entries for it either — see src/lib/dictionary.ts,
+   Phase 3 only covered ja/zh/vi), so this intentionally only covers the
+   shared shell (topbar/header/mobile-menu) that renders on every page,
+   not a full page-by-page audit of every detail page's CSS. Most of this
+   site's layout already mirrors for free under `dir="rtl"` — flexbox and
+   grid's inline axis both follow direction automatically, so
+   `justify-content`, `grid-template-columns`, etc. need no extra rules.
+   What's here are the handful of spots that use a *physical* left/right
+   or a directional animation that flexbox/grid can't auto-mirror. Extend
+   this block page-by-page once Arabic content and translations actually
+   exist and there's real content to test mirroring against. */
+[dir="rtl"] .topbar .lang-dropdown-menu {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .topbar .lang-dropdown-item {
+  text-align: right;
+}
+
+[dir="rtl"] header.site nav.main-nav a::after {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] nav.mobile-menu {
+  transform: translateX(-100%);
+}
+
+[dir="rtl"] nav.mobile-menu.open {
+  transform: translateX(0);
+}
+
+[dir="rtl"] .program-branch {
+  text-align: right;
+}
+
 /* Shared typography scale */
 html body small:not(#phivara-type-size-override):not(.phivara-type-size-override) {
   font-size: 13px;
@@ -124,6 +224,95 @@ footer.site-footer > .wrap {
   color: var(--shell-ink);
   background: var(--shell-gold-light);
   opacity: 1;
+}
+
+/* Language dropdown (Phase 2 i18n) — replaces .lang-toggle's fixed th/en
+   pill pair now that more locales can go live from the CMS at once. Kept
+   as its own component/classNames (not reusing .lang-toggle) since the
+   interaction model is different: click-to-open menu instead of two
+   always-visible options. */
+.topbar .lang-select-box {
+  position: relative;
+}
+
+.topbar .lang-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 20px;
+  background: transparent;
+  color: #fff;
+  font: 500 11.5px var(--shell-sans);
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: border-color .25s ease, background .25s ease;
+}
+
+.topbar .lang-select-btn:hover {
+  border-color: rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .08);
+}
+
+.topbar .lang-select-btn .icon-arrow {
+  width: 12px;
+  height: 12px;
+  transition: transform .25s ease;
+}
+
+.topbar .lang-select-box.open .lang-select-btn .icon-arrow {
+  transform: rotate(180deg);
+}
+
+.topbar .lang-dropdown-menu {
+  position: absolute;
+  z-index: 200;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--shell-gold-light);
+  border-radius: 12px;
+  background: var(--shell-cream);
+  box-shadow: 0 16px 40px rgba(48, 46, 42, .18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity .25s var(--shell-ease), transform .25s var(--shell-ease), visibility .25s;
+}
+
+.topbar .lang-select-box.open .lang-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.topbar .lang-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--shell-ink);
+  font: 400 13px var(--shell-sans);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+
+.topbar .lang-dropdown-item:hover {
+  background: rgba(184, 149, 96, .12);
+}
+
+.topbar .lang-dropdown-item.active {
+  background: var(--shell-gold);
+  color: #fff;
+  font-weight: 500;
 }
 
 header.site {

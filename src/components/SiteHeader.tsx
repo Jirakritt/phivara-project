@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react'
 
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 import type { HomeTopBar } from '@/lib/homeData'
+import type { LocaleCode } from '@/lib/i18n'
+import { localizedHref, pickText, translator } from '@/lib/i18n'
 
 // Ported 1:1 from phivara-design-html/js/site-shell.js's <phivara-header>
 // custom element (same markup/classNames/ids so the existing CSS and
-// public/js/main.js — which wires up #langToggle, #burgerBtn, #mobileMenu,
-// #siteHeader — keep working unmodified).
+// public/js/main.js — which wires up #burgerBtn, #mobileMenu, #siteHeader —
+// keep working unmodified).
 //
 // Rendered as a real React component instead of a custom element so it
 // participates in Next.js hydration cleanly (a custom element that
@@ -14,13 +17,22 @@ import type { HomeTopBar } from '@/lib/homeData'
 //
 // Internal nav links are plain <a> tags on purpose, not next/link. Every
 // page loads its own copy of the legacy public/js/*.js files (preloader,
-// reveal animations, mobile menu, language toggle — see site-runtime.js)
-// via next/script, and Next.js only executes a given script src once per
-// document. A next/link client-side transition to another page reuses the
-// existing document, so those scripts never re-run for the new page and
-// things like the preloader silently never hide. Forcing a full page load
-// on every internal nav click keeps every page's legacy JS behaving
-// exactly like it did on the original static multi-page site.
+// reveal animations, mobile menu, hero animations — see site-runtime.js/
+// main.js) via next/script, and Next.js only executes a given script src
+// once per document. A next/link client-side transition to another page
+// reuses the existing document, so those scripts never re-run for the new
+// page and things like the preloader silently never hide. Forcing a full
+// page load on every internal nav click keeps every page's legacy JS
+// behaving exactly like it did on the original static multi-page site.
+//
+// i18n rewrite (Phase 2): every href that points at another page on this
+// site now needs the current locale prefix (localizedHref) so links stay
+// on the same language the visitor is reading. The old #langToggle —
+// which swapped text client-side via data-th/data-en with no URL change —
+// is replaced below with real links to the equivalent page in each
+// currently publiclyLive locale (see src/lib/i18n.ts's
+// getPubliclyLiveLocales()), so switching language is a real navigation
+// Google can crawl and index, not a JS-only text swap.
 
 // 'membership' and 'notFound' aren't among the 6 real nav items below
 // (membership.html never had its own top-nav entry on the original site
@@ -86,7 +98,7 @@ const NAV_ICONS: Record<NavKey, ReactNode> = {
   notFound: null,
 }
 
-function NavLinks({ page }: { page: NavKey }) {
+function NavLinks({ page, locale }: { page: NavKey; locale: LocaleCode }) {
   return (
     <>
       {NAVIGATION.map((item) => {
@@ -96,7 +108,8 @@ function NavLinks({ page }: { page: NavKey }) {
         // "หน้าแรก" just jumped to the top of the current page instead of
         // navigating home — same fix as the logo link right below already
         // has for this exact case.
-        const href = item.key === 'home' && page !== 'home' ? '/' : item.href
+        const rawHref = item.key === 'home' && page !== 'home' ? '/' : item.href
+        const href = localizedHref(locale, rawHref)
         return (
           <a
             key={item.key}
@@ -106,13 +119,7 @@ function NavLinks({ page }: { page: NavKey }) {
             <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
               {NAV_ICONS[item.key]}
             </svg>
-            {/* data-th/data-en go on this inner span, not the <a> itself —
-                site-runtime.js's language toggle does
-                element.textContent = element.getAttribute('data-th'|'data-en')
-                on every [data-th]/[data-en] match, which would wipe out the
-                svg icon sibling above if it lived on the same element (same
-                pattern already used for .prog-detail-link below). */}
-            <span data-th={item.th} data-en={item.en}>{item.th}</span>
+            <span>{pickText(locale, item.th, item.en)}</span>
           </a>
         )
       })}
@@ -120,27 +127,45 @@ function NavLinks({ page }: { page: NavKey }) {
   )
 }
 
-export default function SiteHeader({ page = 'home' as NavKey, topbar }: { page?: NavKey; topbar: HomeTopBar }) {
+export default function SiteHeader({
+  page = 'home' as NavKey,
+  topbar,
+  // Defaults below match this component's pre-Phase-2 behavior (Thai only,
+  // no locale prefix) — kept optional so the still-live, not-yet-migrated
+  // flat routes under src/app/(frontend)/*.tsx (everything outside the new
+  // [locale]/ tree) keep compiling and rendering exactly as before while
+  // both route trees temporarily coexist during the rollout. Every page
+  // under [locale]/ passes its real values explicitly.
+  locale = 'th' as LocaleCode,
+  localePath = '/',
+  liveLocales = ['th'] as LocaleCode[],
+}: {
+  page?: NavKey
+  topbar: HomeTopBar
+  /** Current request locale — drives every string and link on this component. */
+  locale?: LocaleCode
+  /** Current page's path with no locale prefix, e.g. '/', '/doctor', '/doctor/some-slug' — used to build the language switcher's links to the equivalent page in another locale. */
+  localePath?: string
+  /** Locales an Admin has actually turned on for real visitors right now (see getPubliclyLiveLocales()) — the switcher only ever offers these, never the full 14 provisioned codes. */
+  liveLocales?: LocaleCode[]
+}) {
+  const t = translator(locale)
+
   return (
     <>
       <div className="topbar">
         <div className="wrap">
-          <div className="tb-left" data-th={topbar.taglineTh} data-en={topbar.taglineEn}>
-            {topbar.taglineTh}
-          </div>
+          <div className="tb-left">{t(topbar.taglineTh, topbar.taglineEn)}</div>
           <div className="tb-right">
-            <span data-th={topbar.hotlineTextTh} data-en={topbar.hotlineTextEn}>{topbar.hotlineTextTh}</span>
-            <span data-th={topbar.lineTextTh} data-en={topbar.lineTextEn}>{topbar.lineTextTh}</span>
-            <div className="lang-toggle" id="langToggle" aria-label="Language">
-              <span className="active" data-val="th">TH</span>
-              <span data-val="en">EN</span>
-            </div>
+            <span>{t(topbar.hotlineTextTh, topbar.hotlineTextEn)}</span>
+            <span>{t(topbar.lineTextTh, topbar.lineTextEn)}</span>
+            <LanguageSwitcher locale={locale} localePath={localePath} liveLocales={liveLocales} />
           </div>
         </div>
       </div>
       <header className="site" id="siteHeader">
         <div className="wrap">
-          <a href={page === 'home' ? '#top' : '/'} className="logo-lockup">
+          <a href={page === 'home' ? '#top' : localizedHref(locale, '/')} className="logo-lockup">
             <img src="/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
             <span className="word">
               PHIVARA
@@ -148,11 +173,11 @@ export default function SiteHeader({ page = 'home' as NavKey, topbar }: { page?:
             </span>
           </a>
           <nav className="main-nav" id="mainNav" aria-label="Primary navigation">
-            <NavLinks page={page} />
+            <NavLinks page={page} locale={locale} />
           </nav>
           <div className="header-cta">
-            <a href="#vipModalOverlay" className="btn btn-outline-dark btn-txt vip-trigger" data-th="จองปรึกษาส่วนตัว" data-en="Book a Private Consultation">
-              จองปรึกษาส่วนตัว
+            <a href="#vipModalOverlay" className="btn btn-outline-dark btn-txt vip-trigger">
+              {t('จองปรึกษาส่วนตัว', 'Book a Private Consultation')}
             </a>
             <button type="button" className="burger" id="burgerBtn" aria-label="Open navigation" aria-controls="mobileMenu" aria-expanded="false">
               <span></span>
@@ -163,7 +188,7 @@ export default function SiteHeader({ page = 'home' as NavKey, topbar }: { page?:
         </div>
       </header>
       <nav className="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
-        <NavLinks page={page} />
+        <NavLinks page={page} locale={locale} />
       </nav>
     </>
   )

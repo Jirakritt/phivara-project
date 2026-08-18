@@ -1,8 +1,21 @@
+import type { LocaleCode } from './i18n'
+import { DEFAULT_LOCALE } from './i18n'
 import { getPayloadClient, mediaUrl } from './payload'
 
 // Source: cms/globals/Ecosystem.ts (a Payload Global, not a collection —
 // same reasoning as membershipData.ts: ecosystem.html is a single landing
 // page, so staff edit one record instead of managing a list).
+//
+// Unlike the catalog listings in programsData.ts/articlesData.ts/
+// doctorsData.ts/branchesData.ts, this page's content is a small set of
+// fixed, structural sections (one hero, exactly 4 discipline cards tied to
+// DISCIPLINE_META below, one closing CTA) rather than an open-ended list of
+// CMS records — hiding one of the 4 discipline cards for an untranslated
+// locale would leave the ring/anchor-link UI (built assuming all 4 exist)
+// broken, not just "shorter". So this keeps a `th` fallback per-field
+// (same deliberate exception as homeData.ts's site-wide chrome helpers)
+// instead of the strict per-record "no data = don't show" rule used for
+// programs/articles/doctors/branches.
 export interface EcosystemDiscipline {
   // Structural fields, not stored in the CMS — see DISCIPLINE_META below.
   id: string
@@ -89,65 +102,83 @@ const DISCIPLINE_META = [
   },
 ] as const
 
-export async function getEcosystemContent(): Promise<EcosystemContent> {
+// EN_LOCALE / fallback-to-en-then-th rationale: see homeData.ts's
+// resolve() comment (same deliberate exception, same reasoning).
+const EN_LOCALE: LocaleCode = 'en'
+
+export async function getEcosystemContent(locale: LocaleCode): Promise<EcosystemContent> {
   const payload = await getPayloadClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [th, en] = (await Promise.all([
-    payload.findGlobal({ slug: 'ecosystem', locale: 'th' }),
-    payload.findGlobal({ slug: 'ecosystem', locale: 'en' }),
-  ])) as [any, any]
+  const [target, en, th] = (await Promise.all([
+    payload.findGlobal({ slug: 'ecosystem', locale, fallbackLocale: false }),
+    payload.findGlobal({ slug: 'ecosystem', locale: EN_LOCALE, fallbackLocale: false }),
+    payload.findGlobal({ slug: 'ecosystem', locale: DEFAULT_LOCALE }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ])) as [any, any, any]
+
+  const heroEyebrow = target?.hero?.eyebrow || en?.hero?.eyebrow || th.hero?.eyebrow || ''
+  const headlineLine1 = target?.hero?.headlineLine1 || en?.hero?.headlineLine1 || th.hero?.headlineLine1 || ''
+  const headlineLine2 = target?.hero?.headlineLine2 || en?.hero?.headlineLine2 || th.hero?.headlineLine2 || ''
+  const lead = target?.hero?.lead || en?.hero?.lead || th.hero?.lead || ''
 
   return {
     hero: {
-      eyebrowTh: th.hero?.eyebrow || '',
-      eyebrowEn: en?.hero?.eyebrow || th.hero?.eyebrow || '',
-      headlineLine1Th: th.hero?.headlineLine1 || '',
-      headlineLine1En: en?.hero?.headlineLine1 || th.hero?.headlineLine1 || '',
-      headlineLine2Th: th.hero?.headlineLine2 || '',
-      headlineLine2En: en?.hero?.headlineLine2 || th.hero?.headlineLine2 || '',
-      leadTh: th.hero?.lead || '',
-      leadEn: en?.hero?.lead || th.hero?.lead || '',
+      eyebrowTh: heroEyebrow,
+      eyebrowEn: heroEyebrow,
+      headlineLine1Th: headlineLine1,
+      headlineLine1En: headlineLine1,
+      headlineLine2Th: headlineLine2,
+      headlineLine2En: headlineLine2,
+      leadTh: lead,
+      leadEn: lead,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     disciplines: (th.disciplines || []).map((d: any, i: number) => {
+      const targetD = target?.disciplines?.[i]
       const enD = en?.disciplines?.[i]
       const meta = DISCIPLINE_META[i] ?? DISCIPLINE_META[0]
+      const eyebrow = targetD?.eyebrow || enD?.eyebrow || d.eyebrow || ''
+      const title = targetD?.title || enD?.title || d.title || ''
+      const subtitle = targetD?.subtitle || enD?.subtitle || d.subtitle || ''
+      const description = targetD?.description || enD?.description || d.description || ''
+      const doctorLinkLabel = targetD?.doctorLinkLabel || enD?.doctorLinkLabel || d.doctorLinkLabel || ''
+      const programLinkLabel = targetD?.programLinkLabel || enD?.programLinkLabel || d.programLinkLabel || ''
+      const articleLinkLabel = targetD?.articleLinkLabel || enD?.articleLinkLabel || d.articleLinkLabel || ''
       return {
         id: meta.id,
         filterValue: meta.filterValue,
         tone: meta.tone,
         reverse: meta.reverse,
-        eyebrowTh: d.eyebrow || '',
-        eyebrowEn: enD?.eyebrow || d.eyebrow || '',
-        titleTh: d.title || '',
-        titleEn: enD?.title || d.title || '',
-        subtitleTh: d.subtitle || '',
-        subtitleEn: enD?.subtitle || d.subtitle || '',
-        descriptionTh: d.description || '',
-        descriptionEn: enD?.description || d.description || '',
+        eyebrowTh: eyebrow,
+        eyebrowEn: eyebrow,
+        titleTh: title,
+        titleEn: title,
+        subtitleTh: subtitle,
+        subtitleEn: subtitle,
+        descriptionTh: description,
+        descriptionEn: description,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        chips: (d.chips || []).map((c: any, j: number) => ({
-          th: c.label || '',
-          en: enD?.chips?.[j]?.label || c.label || '',
-        })),
-        doctorLinkLabelTh: d.doctorLinkLabel || '',
-        doctorLinkLabelEn: enD?.doctorLinkLabel || d.doctorLinkLabel || '',
-        programLinkLabelTh: d.programLinkLabel || '',
-        programLinkLabelEn: enD?.programLinkLabel || d.programLinkLabel || '',
-        articleLinkLabelTh: d.articleLinkLabel || '',
-        articleLinkLabelEn: enD?.articleLinkLabel || d.articleLinkLabel || '',
+        chips: (d.chips || []).map((c: any, j: number) => {
+          const label = targetD?.chips?.[j]?.label || enD?.chips?.[j]?.label || c.label || ''
+          return { th: label, en: label }
+        }),
+        doctorLinkLabelTh: doctorLinkLabel,
+        doctorLinkLabelEn: doctorLinkLabel,
+        programLinkLabelTh: programLinkLabel,
+        programLinkLabelEn: programLinkLabel,
+        articleLinkLabelTh: articleLinkLabel,
+        articleLinkLabelEn: articleLinkLabel,
         image: mediaUrl(d.image) || meta.defaultImage,
       }
     }),
     closingCta: {
-      eyebrowTh: th.closingCta?.eyebrow || '',
-      eyebrowEn: en?.closingCta?.eyebrow || th.closingCta?.eyebrow || '',
-      headingTh: th.closingCta?.heading || '',
-      headingEn: en?.closingCta?.heading || th.closingCta?.heading || '',
-      bodyTh: th.closingCta?.body || '',
-      bodyEn: en?.closingCta?.body || th.closingCta?.body || '',
-      buttonLabelTh: th.closingCta?.buttonLabel || '',
-      buttonLabelEn: en?.closingCta?.buttonLabel || th.closingCta?.buttonLabel || '',
+      eyebrowTh: target?.closingCta?.eyebrow || en?.closingCta?.eyebrow || th.closingCta?.eyebrow || '',
+      eyebrowEn: target?.closingCta?.eyebrow || en?.closingCta?.eyebrow || th.closingCta?.eyebrow || '',
+      headingTh: target?.closingCta?.heading || en?.closingCta?.heading || th.closingCta?.heading || '',
+      headingEn: target?.closingCta?.heading || en?.closingCta?.heading || th.closingCta?.heading || '',
+      bodyTh: target?.closingCta?.body || en?.closingCta?.body || th.closingCta?.body || '',
+      bodyEn: target?.closingCta?.body || en?.closingCta?.body || th.closingCta?.body || '',
+      buttonLabelTh: target?.closingCta?.buttonLabel || en?.closingCta?.buttonLabel || th.closingCta?.buttonLabel || '',
+      buttonLabelEn: target?.closingCta?.buttonLabel || en?.closingCta?.buttonLabel || th.closingCta?.buttonLabel || '',
     },
   }
 }

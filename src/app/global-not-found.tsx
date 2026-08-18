@@ -4,15 +4,20 @@ import NotFoundContent from '@/components/NotFoundContent'
 
 // Experimental Next.js 15.4+ convention (enabled via experimental.globalNotFound
 // in next.config.mjs) for URLs that don't match any route at all. This app
-// has two root layouts — (frontend)/layout.tsx for the public site and
+// has two root layouts — [locale]/layout.tsx for the public site and
 // (payload)/layout.tsx for the Payload admin panel — so there's no single
 // shared root layout Next.js can compose a normal root not-found.tsx from
 // for a completely unmatched URL (e.g. a typo'd or deleted link). This file
 // bypasses layout rendering entirely, so — unlike every other page in this
 // app — it has to bring its own <html>/<body>, fonts, stylesheets, and the
-// PDPA consent banner (normally (frontend)/layout.tsx's job) itself.
-// See src/app/(frontend)/not-found.tsx for the counterpart that handles
+// PDPA consent banner (normally each root layout's own job) itself.
+// See src/app/[locale]/not-found.tsx for the counterpart that handles
 // notFound() thrown from a *matched* route (missing doctor/article/etc. slug).
+//
+// (The old flat, non-[locale] page tree — which used to be a third root
+// layout here — was retired during the Phase 2 i18n cutover; its source
+// lives at _archive/frontend-flat-pages-pre-i18n/ for rollback, outside
+// src/app/ so Next.js no longer builds it.)
 export const metadata = {
   title: 'PHIVARA | ไม่พบหน้าที่คุณค้นหา',
 }

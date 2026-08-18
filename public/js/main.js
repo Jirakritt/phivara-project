@@ -4,6 +4,27 @@
   // component). Falls back to an empty shape so this file never throws if
   // a page forgets to inject it.
   const cmsData = window.__PHIVARA_DATA__ || {};
+  // Strings for the handful of hardcoded microcopy/category-title bits
+  // below that aren't part of window.__PHIVARA_DATA__ — injected by
+  // page.tsx via t()/UI_DICTIONARY, same mechanism as vip-modal.js's
+  // window.__PHIVARA_VIP_MODAL__ (see that file's comment for why this
+  // exists — the old data-th/data-en swap here never actually ran).
+  // FALLBACK (Thai) only used if that global is somehow missing.
+  const mainStrings = Object.assign({
+    viewAllPrograms: 'ดูโปรแกรมทั้งหมด',
+    programDetails: 'รายละเอียด →',
+    noPrograms: 'ยังไม่มีโปรแกรมในหมวดนี้ในขณะนี้',
+    readMore: 'อ่านต่อ →',
+    readBranchDetails: 'อ่านข้อมูลสาขา',
+    viewProfile: 'ดูประวัติแพทย์',
+    book: 'จองปรึกษา →',
+    categoryTitles: {
+      plastic: 'ศิลปะการจัดแต่งสัดส่วน',
+      longevity: 'ศิลปะแห่งกาลเวลา',
+      dermatology: 'ศิลปะแห่งผิวเปล่งประกาย',
+      wellness: 'ศิลปะแห่งความสมดุล',
+    },
+  }, window.__PHIVARA_MAIN_STRINGS__ || {});
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const luxuryPalette = {
     themeColor: '#927448',
@@ -82,14 +103,25 @@
     }
   })();
 
-  /* Hero headline word-mask build */
+  /* Hero headline word-mask build.
+     lang now defaults to document.documentElement.lang, which the server
+     sets correctly per-request via <html lang={locale}> (see
+     src/app/(frontend)/[locale]/layout.tsx) — previously this was
+     hardcoded to 'th' on every page load regardless of language, and only
+     ever corrected itself if a visitor manually clicked the old JS
+     #langToggle (removed — see SiteHeader.tsx). Falls back to the
+     server-rendered text already sitting in #heroHeadline (see
+     page.tsx's t(data.hero.headlineTh, data.hero.headlineEn)) if somehow
+     neither data-th nor data-en is present, instead of leaving it blank. */
   function buildHeroHeadline(lang = document.documentElement.lang || 'th'){
     const el = document.getElementById('heroHeadline');
-    const text = el.getAttribute('data-' + lang);
+    if (!el) return;
+    const text = el.getAttribute('data-' + lang) || el.textContent || '';
+    if (!text) return;
     const words = text.split(' ');
     el.innerHTML = words.map((w,i) => `<span class="word-mask"><span class="word" style="animation-delay:${reduceMotion ? 0 : 0.35 + i*0.075}s">${w}</span></span>`).join(' ');
   }
-  buildHeroHeadline('th');
+  buildHeroHeadline();
 
   /* Sticky header shrink + progress bar */
   const header = document.getElementById('siteHeader');
@@ -117,24 +149,11 @@
     document.body.style.overflow = '';
   }));
 
-  /* Language toggle */
-  const langToggle = document.getElementById('langToggle');
-  function setLang(lang){
-    document.querySelectorAll('[data-th]').forEach(el => {
-      if(el.id === 'heroHeadline') return;
-      if(el.children.length > 0) return;
-      const translation = el.getAttribute('data-' + lang);
-      if(translation !== null) el.textContent = translation;
-    });
-    document.querySelectorAll('[data-placeholder-th]').forEach(el => {
-      const placeholder = el.getAttribute('data-placeholder-' + lang);
-      if(placeholder !== null) el.setAttribute('placeholder', placeholder);
-    });
-    langToggle.querySelectorAll('span').forEach(s => s.classList.toggle('active', s.dataset.val === lang));
-    document.documentElement.lang = lang;
-    buildHeroHeadline(lang);
-  }
-  langToggle.addEventListener('click', (e) => { const val = e.target.dataset.val; if(val) setLang(val); });
+  /* Language toggle removed (i18n Phase 2) — language is now a real URL
+     segment (/th/..., /en/...) picked via real <a> links in SiteHeader.tsx's
+     .lang-toggle, not a client-side text swap. buildHeroHeadline() above
+     already reads the correct language from document.documentElement.lang,
+     which the server sets per-request — no client-side re-run needed. */
 
   /* Reveal + stagger observer */
   const revealObserver = new IntersectionObserver((entries) => {
@@ -149,10 +168,10 @@
      `key` maps each pillar to the matching Programs.category value in
      Payload so the card grid below can filter real programs per tab. */
   const expertiseCategories = [
-    { key:'plastic', label:'Plastic Surgery', tag:'The Art of Form', titleTh:'ศิลปะการจัดแต่งสัดส่วน', titleEn:'The Art of Form' },
-    { key:'longevity', label:'Anti-Aging & Longevity', tag:'The Art of Time', titleTh:'ศิลปะแห่งกาลเวลา', titleEn:'The Art of Time' },
-    { key:'dermatology', label:'Dermatology', tag:'The Art of Glow', titleTh:'ศิลปะแห่งผิวเปล่งประกาย', titleEn:'The Art of Glow' },
-    { key:'wellness', label:'Aesthetic Wellness', tag:'The Art of Balance', titleTh:'ศิลปะแห่งความสมดุล', titleEn:'The Art of Balance' }
+    { key:'plastic', label:'Plastic Surgery', tag:'The Art of Form', title: mainStrings.categoryTitles.plastic },
+    { key:'longevity', label:'Anti-Aging & Longevity', tag:'The Art of Time', title: mainStrings.categoryTitles.longevity },
+    { key:'dermatology', label:'Dermatology', tag:'The Art of Glow', title: mainStrings.categoryTitles.dermatology },
+    { key:'wellness', label:'Aesthetic Wellness', tag:'The Art of Balance', title: mainStrings.categoryTitles.wellness }
   ];
   const expNav = document.getElementById('expTabNav');
   const expTabPanels = document.getElementById('expTabPanels');
@@ -167,10 +186,10 @@
         <div class="exp-panel-intro">
           <div class="epi-title">
             <span class="tag">${category.tag}</span>
-            <h3 data-th="${category.titleTh}" data-en="${category.titleEn}">${category.titleTh}</h3>
+            <h3>${category.title}</h3>
           </div>
           <a href="/program?category=${category.key}" class="arrow-link go more">
-            <span data-th="ดูโปรแกรมทั้งหมด" data-en="View All Programs">ดูโปรแกรมทั้งหมด</span>
+            <span>${mainStrings.viewAllPrograms}</span>
             <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M1 5H13M13 5L9 1M13 5L9 9" stroke="currentColor" stroke-width="1.3"/></svg>
           </a>
         </div>
@@ -258,8 +277,8 @@
         <h4><a class="card-title-link" href="${href}" data-th="${titleTh}" data-en="${titleEn}">${titleTh}</a></h4>
         <p data-th="${descriptionTh}" data-en="${descriptionEn}">${descriptionTh}</p>
         <div class="card-foot">
-          <span data-th="${formattedPrice}" data-en="${formattedPrice}">${formattedPrice}</span>
-          <a class="card-link" href="${href}" data-th="รายละเอียด →" data-en="Details →">รายละเอียด →</a>
+          <span>${formattedPrice}</span>
+          <a class="card-link" href="${href}">${mainStrings.programDetails}</a>
         </div>
       </div>
     </div>`;
@@ -273,7 +292,7 @@
     if(!matching.length){
       // No programs published under this pillar yet — show a placeholder
       // instead of a blank panel until staff add some via /admin.
-      grid.innerHTML = `<p class="exp-empty" data-th="ยังไม่มีโปรแกรมในหมวดนี้ในขณะนี้" data-en="No programs published in this category yet.">ยังไม่มีโปรแกรมในหมวดนี้ในขณะนี้</p>`;
+      grid.innerHTML = `<p class="exp-empty">${mainStrings.noPrograms}</p>`;
       return;
     }
     grid.innerHTML = matching
@@ -300,7 +319,7 @@
             <span class="dot"></span>
             <span data-th="${article.readTimeTh}" data-en="${article.readTimeEn}">${article.readTimeTh}</span>
           </div>
-          <a class="journal-card__link" href="${href}" data-th="อ่านต่อ →" data-en="Read More →">อ่านต่อ →</a>
+          <a class="journal-card__link" href="${href}">${mainStrings.readMore}</a>
         </div>
       </div>
     </article>`;
@@ -414,7 +433,7 @@
           <h3 data-th="${branch.titleTh}" data-en="${branch.titleEn}">${branch.titleTh}</h3>
           <p data-th="${branch.descriptionTh}" data-en="${branch.descriptionEn}">${branch.descriptionTh}</p>
           <a href="/branch/${branch.id}" class="arrow-link flagship-link">
-            <span data-th="อ่านข้อมูลสาขา" data-en="Read branch details">อ่านข้อมูลสาขา</span>
+            <span>${mainStrings.readBranchDetails}</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
@@ -508,8 +527,8 @@
         <p class="note" data-th="${profile.noteTh}" data-en="${profile.noteEn}">${profile.noteTh}</p>
         <div class="spec-subnote" data-th="${profile.subTh}" data-en="${profile.subEn}">${profile.subTh}</div>
         <div class="card-actions">
-          <a class="btn-doc-detail" href="${profileHref}" data-th="ดูประวัติแพทย์" data-en="View Profile">ดูประวัติแพทย์</a>
-          <a href="#contact" class="go vip-trigger" data-doc-name="${profile.nameTh}" data-th="จองปรึกษา →" data-en="Book →">จองปรึกษา →</a>
+          <a class="btn-doc-detail" href="${profileHref}">${mainStrings.viewProfile}</a>
+          <a href="#contact" class="go vip-trigger" data-doc-name="${profile.nameTh}">${mainStrings.book}</a>
         </div>
       </div>`;
     }
