@@ -27,10 +27,11 @@ import { HomeHero } from './globals/HomeHero'
 import { Footer } from './globals/Footer'
 import { TopBar } from './globals/TopBar'
 import { LanguageSettings } from './globals/LanguageSettings'
+import { PrivacyPolicy } from './globals/PrivacyPolicy'
 
 export default buildConfig({
   collections: [Users, Media, Branches, Doctors, Programs, Articles, Awards, Leads],
-  globals: [Membership, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings],
+  globals: [Membership, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings, PrivacyPolicy],
 
   // TH is the source language and the site's permanent default/fallback.
   // 13 more locales are pre-provisioned here so an Admin can turn each one

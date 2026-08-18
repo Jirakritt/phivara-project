@@ -160,6 +160,17 @@ const settingsItems: NavItem[] = [
       </>,
     ),
   },
+  {
+    slug: 'privacy-policy',
+    label: 'นโยบายความเป็นส่วนตัว',
+    type: 'global',
+    icon: icon(
+      <>
+        <path d="M12 3l8 3v6c0 4.5-3 8.2-8 9-5-.8-8-4.5-8-9V6z" />
+        <path d="M9 12l2 2 4-4" />
+      </>,
+    ),
+  },
 ]
 
 export function Nav() {

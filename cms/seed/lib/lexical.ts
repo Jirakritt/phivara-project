@@ -43,6 +43,33 @@ export const quote = (text: string): LexicalNode => ({
   version: 1,
 })
 
+export const listItem = (text: string, value: number): LexicalNode => ({
+  type: 'listitem',
+  children: [textNode(text)],
+  direction: 'ltr',
+  format: '',
+  indent: 0,
+  version: 1,
+  value,
+})
+
+// Lexical's ListNode — children are `listitem` nodes (each holding its own
+// text one level down), never text nodes directly. See src/lib/richText.ts's
+// parseRichTextBlocks()/articlesData.ts's parseBodyBlocks() for the reader
+// side of this same shape, and DEPLOY.md for the bug that shape caused
+// before those readers accounted for it.
+export const list = (listType: 'bullet' | 'number', items: string[]): LexicalNode => ({
+  type: 'list',
+  listType,
+  tag: listType === 'number' ? 'ol' : 'ul',
+  start: 1,
+  children: items.map((text, i) => listItem(text, i + 1)),
+  direction: 'ltr',
+  format: '',
+  indent: 0,
+  version: 1,
+})
+
 export const lexicalDoc = (nodes: LexicalNode[]) => ({
   root: {
     type: 'root',

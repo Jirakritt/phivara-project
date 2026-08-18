@@ -111,6 +111,7 @@ export interface Config {
     footer: Footer;
     topbar: Topbar;
     'language-settings': LanguageSetting;
+    'privacy-policy': PrivacyPolicy;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
@@ -119,6 +120,7 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
     topbar: TopbarSelect<false> | TopbarSelect<true>;
     'language-settings': LanguageSettingsSelect<false> | LanguageSettingsSelect<true>;
+    'privacy-policy': PrivacyPolicySelect<false> | PrivacyPolicySelect<true>;
   };
   locale: 'th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr';
   widgets: {
@@ -1517,6 +1519,33 @@ export interface LanguageSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "privacy-policy".
+ */
+export interface PrivacyPolicy {
+  id: number;
+  /**
+   * เนื้อหานโยบายความเป็นส่วนตัวทั้งหมด (หัวข้อ ย่อหน้า และ list) แก้ไขได้อิสระต่อภาษา — ยังคงมีข้อความ [...] เป็น placeholder ที่ต้องรอทีมกฎหมายกรอกก่อนเผยแพร่จริง หากภาษาใดยังไม่มีเนื้อหา หน้าเว็บจะแสดงฉบับอังกฤษแทน (หรือไทย หากอังกฤษก็ยังไม่มี)
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
 export interface MembershipSelect<T extends boolean = true> {
@@ -1764,6 +1793,16 @@ export interface LanguageSettingsSelect<T extends boolean = true> {
         cmsEditable?: T;
         publiclyLive?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "privacy-policy_select".
+ */
+export interface PrivacyPolicySelect<T extends boolean = true> {
+  body?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
