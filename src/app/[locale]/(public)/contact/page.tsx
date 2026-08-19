@@ -99,12 +99,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 return (
                   <article key={branch.slug} className="branch-card">
                     <div className="branch-card__media">
-                      <img src={branch.image} alt={`PHIVARA ${branch.nameEn}`} loading="lazy" decoding="async" />
+                      {/* "PHIVARA " is part of the CMS branch `name` field itself now
+                          (per team decision) — not concatenated here. */}
+                      <img src={branch.image} alt={branch.nameEn} loading="lazy" decoding="async" />
                       <span className="branch-card__number">{`LOCATION ${numStr}`}</span>
                     </div>
                     <div className="branch-card__body">
                       <p className="eyebrow">{`PHIVARA LOCATION ${numStr}`}</p>
-                      <h3>{t(`PHIVARA ${branch.nameTh}`, `PHIVARA ${branch.nameEn}`)}</h3>
+                      <h3>{t(branch.nameTh, branch.nameEn)}</h3>
                       <p className="branch-card__service">{t(branch.taglineTh, branch.taglineEn)}</p>
                       <p className="branch-card__description">{t(branch.descriptionTh, branch.descriptionEn)}</p>
                       <div className="branch-card__address">

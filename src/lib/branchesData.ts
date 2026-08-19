@@ -46,7 +46,9 @@ function mapBranchCard(doc: any): BranchCard {
   const description = doc.description || ''
   const address = doc.address || ''
   const hours = doc.hours || ''
-  const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(doc.address || doc.nameEn || doc.name)}`
+  // doc.nameEn (the old flat field) used to be a fallback here — removed
+  // along with the field itself; doc.name (localized) covers the same case.
+  const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(doc.address || doc.name)}`
   return {
     slug: doc.slug,
     nameTh: name,

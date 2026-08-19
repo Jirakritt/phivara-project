@@ -2,7 +2,7 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { BRANCH_FILTER_OPTIONS, getDoctorsListing, SPECIALTY_FILTER_OPTIONS } from '@/lib/doctorsData'
+import { getDoctorsListing, SPECIALTY_FILTER_OPTIONS } from '@/lib/doctorsData'
 import { getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
@@ -153,9 +153,16 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                 </button>
                 <div className="custom-dropdown-menu" id="branchMenu">
                   <button type="button" className="dropdown-item active" data-branch="all">{t('ทุกสาขา PHIVARA', 'All Locations')}</button>
-                  {BRANCH_FILTER_OPTIONS.map((opt) => (
-                    <button key={opt.value} type="button" className="dropdown-item" data-branch={opt.value}>
-                      {t(opt.th, opt.en)}
+                  {/* Sourced from homeData.branches (same CMS-backed list used by
+                      SiteFooter below) — previously a hardcoded BRANCH_FILTER_OPTIONS
+                      list that went stale against the CMS, same bug as on the
+                      Programs page. Per team decision, the "PHIVARA " brand prefix is
+                      now part of the CMS `name` field itself (edited directly in
+                      /admin), not concatenated in code — keep it that way here and
+                      in SiteFooter. */}
+                  {homeData.branches.map((branch) => (
+                    <button key={branch.formValue} type="button" className="dropdown-item" data-branch={branch.formValue}>
+                      {t(branch.nameTh, branch.nameEn)}
                     </button>
                   ))}
                 </div>

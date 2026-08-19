@@ -15,8 +15,11 @@ import { autoSlugFromNameEn } from './hooks/autoSlugFromNameEn'
 export const Doctors: CollectionConfig = {
   slug: 'doctors',
   admin: {
-    useAsTitle: 'nameEn',
-    defaultColumns: ['nameEn', 'specialty', 'branch', '_status'],
+    // nameEn (flat field) removed — slug is the only field guaranteed to be
+    // present and unique, so it's the safest useAsTitle now that `name`
+    // (localized) is optional per-locale.
+    useAsTitle: 'slug',
+    defaultColumns: ['slug', 'name', 'specialty', 'branch', '_status'],
   },
   // Credentials/bio are medical claims — require a draft to be reviewed
   // before it goes live, instead of publishing on save.
@@ -59,13 +62,11 @@ export const Doctors: CollectionConfig = {
                   'URL for the doctor page, e.g. /doctor/dr-punnawit-sirimetha. Leave blank to auto-generate from Name En, or type your own custom URL.',
               },
             },
-            { name: 'nameTh', type: 'text', required: true },
-            { name: 'nameEn', type: 'text', required: true },
-            // Per-locale name — supersedes nameTh/nameEn for anything beyond
-            // th/en. Those two fields stay in place (not migrated away) so
-            // existing th/en data and any code still reading them keeps
-            // working; the frontend now reads `name` for every locale
-            // including th/en once seeded.
+            // Per-locale name. The old flat nameTh/nameEn fields (kept
+            // during the original additive migration so existing data and
+            // any code still reading them wouldn't break) have now been
+            // removed — every read path (including autoSlugFromNameEn) uses
+            // this field for every locale including th/en.
             //
             // Deliberately NOT required: the whole point of this field is
             // per-locale filtering (src/lib/payload.ts's hasLocaleContent,

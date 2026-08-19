@@ -8,8 +8,11 @@ import { branchScopedOwnRecord, isAdmin } from '../access/roles'
 export const Branches: CollectionConfig = {
   slug: 'branches',
   admin: {
-    useAsTitle: 'nameEn',
-    defaultColumns: ['nameEn', 'nameTh', 'phone'],
+    // nameEn (flat field) removed — slug is the only field guaranteed to be
+    // present, required, and unique, so it's the safest useAsTitle now that
+    // `name` (localized) is optional per-locale.
+    useAsTitle: 'slug',
+    defaultColumns: ['slug', 'name', 'phone'],
   },
   access: {
     read: () => true,
@@ -39,12 +42,11 @@ export const Branches: CollectionConfig = {
               unique: true,
               admin: { description: 'e.g. sanampao, phaholyothin, sriayudhaya, sriracha, petchakasem' },
             },
-            { name: 'nameTh', type: 'text', required: true },
-            { name: 'nameEn', type: 'text', required: true },
-            // Per-locale name — see Doctors.ts's `name` field comment for
-            // the full rationale (same additive-migration pattern).
-            // Deliberately NOT required — same reason as Doctors.ts's
-            // `name`: an empty value in a given locale is how an editor
+            // Per-locale name — the old flat nameTh/nameEn fields (from the
+            // original additive migration, see Doctors.ts's `name` field
+            // comment for the full rationale) have been removed now that
+            // every read path uses this field instead. Deliberately NOT
+            // required: an empty value in a given locale is how an editor
             // marks that locale as "not translated yet" for this branch,
             // and `required: true` would block saving that locale at all.
             { name: 'name', type: 'text', localized: true },

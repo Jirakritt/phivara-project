@@ -218,10 +218,6 @@ export const PROGRAM_CATEGORY_OPTIONS = [
   { value: 'wellness', th: 'สุขภาวะเชิงความงาม', en: 'Aesthetic Wellness' },
 ]
 
-export const PROGRAM_BRANCH_OPTIONS = [
-  { value: 'sanampao', th: 'PHIVARA สนามเป้า', en: 'PHIVARA Sanampao' },
-  { value: 'phaholyothin', th: 'PHIVARA พหลโยธิน', en: 'PHIVARA Phaholyothin' },
-  { value: 'sriayudhaya', th: 'PHIVARA ศรีอยุธยา', en: 'PHIVARA Sri Ayudhaya' },
-  { value: 'petchakasem', th: 'PHIVARA เพชรเกษม 19', en: 'PHIVARA Petchakasem 19' },
-  { value: 'sriracha', th: 'PHIVARA ศรีราชา', en: 'PHIVARA Sriracha' },
-]
+// Branch filter options used to live here as a static list (PROGRAM_BRANCH_OPTIONS)
+// that could go stale against the CMS. The Programs page now sources branches
+// directly from homeData.branches (same CMS-backed list SiteFooter uses) instead.

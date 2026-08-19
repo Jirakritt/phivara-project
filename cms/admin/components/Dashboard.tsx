@@ -231,7 +231,10 @@ async function fetchRecentlyUpdated(
 ): Promise<RecentDoc[]> {
   const sources: Array<{ slug: 'doctors' | 'programs' | 'articles'; label: string; titleField: string }> = [
     { slug: 'programs', label: 'โปรแกรมตรวจ', titleField: 'title' },
-    { slug: 'doctors', label: 'แพทย์ผู้เชี่ยวชาญ', titleField: 'nameTh' },
+    // 'name' (localized) replaced the old flat nameTh/nameEn — this fetch
+    // has no explicit `locale`, so it resolves to payload.config.ts's
+    // defaultLocale ('th'), matching what nameTh used to always show.
+    { slug: 'doctors', label: 'แพทย์ผู้เชี่ยวชาญ', titleField: 'name' },
     { slug: 'articles', label: 'บทความ', titleField: 'title' },
   ]
 

@@ -57,8 +57,12 @@ export default function SiteFooter({
           ))}
           <div className="foot-col" id="footerLocations">
             <h4>{t('สาขา', 'Locations')}</h4>
+            {/* Per team decision, "PHIVARA " is now part of the CMS branch `name`
+                field itself (edited directly in /admin), not concatenated here —
+                keep in sync with the same choice in program/page.tsx and
+                doctor/page.tsx's branch filter dropdowns. */}
             {branches.map((branch) => (
-              <span key={branch.nameEn}>PHIVARA {branch.nameEn}</span>
+              <span key={branch.nameEn}>{branch.nameEn}</span>
             ))}
           </div>
         </div>

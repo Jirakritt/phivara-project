@@ -50,9 +50,11 @@
   // hold the SAME already-resolved-for-the-current-locale value (see
   // homeData.ts's file comment), so either one is already correct text for
   // any locale — no per-locale branching needed here.
+  // "PHIVARA " is part of the CMS branch `name` field itself now (per team
+  // decision) — not concatenated here.
   const branches = ((window.__PHIVARA_DATA__ && window.__PHIVARA_DATA__.branches) || []).map((branch) => [
     branch.formValue,
-    `PHIVARA ${branch.nameTh}`,
+    branch.nameTh,
   ]);
 
   function isBookingControl(element){

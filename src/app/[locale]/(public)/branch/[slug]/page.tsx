@@ -14,7 +14,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const branch = await getBranchDetail(slug, locale)
   if (!branch) return {}
-  return { title: `PHIVARA ${branch.nameEn} | PHIVARA` }
+  // "PHIVARA " is part of the CMS branch `name` field itself now (per team
+  // decision) — not concatenated here or elsewhere on this page.
+  return { title: `${branch.nameEn} | PHIVARA` }
 }
 
 // Rebuilt from phivara-design-html/branch-*.html (5 nearly-identical pages)
@@ -87,19 +89,19 @@ export default async function BranchDetailPage({
             <span aria-hidden="true">/</span>
             <a href={localizedHref(locale, '/contact')}>{t('ติดต่อและสาขา', 'Locations')}</a>
             <span aria-hidden="true">/</span>
-            <span>{t(`PHIVARA ${branch.nameTh}`, `PHIVARA ${branch.nameEn}`)}</span>
+            <span>{t(branch.nameTh, branch.nameEn)}</span>
           </div>
         </div>
 
         <section className="branch-detail-hero">
           <div className="wrap branch-detail-layout">
             <div className="branch-detail-media">
-              <img src={branch.image} alt={`PHIVARA ${branch.nameTh}`} />
+              <img src={branch.image} alt={branch.nameTh} />
               <span className="branch-detail-number">{`LOCATION ${numStr}`}</span>
             </div>
             <div className="branch-detail-content">
               <p className="eyebrow">{`PHIVARA LOCATION ${numStr}`}</p>
-              <h1>{t(`PHIVARA ${branch.nameTh}`, `PHIVARA ${branch.nameEn}`)}</h1>
+              <h1>{t(branch.nameTh, branch.nameEn)}</h1>
               <p className="branch-detail-service">{t(branch.taglineTh, branch.taglineEn)}</p>
               <p className="branch-detail-description">{t(branch.descriptionTh, branch.descriptionEn)}</p>
 

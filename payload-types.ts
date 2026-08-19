@@ -191,8 +191,6 @@ export interface Branch {
    * e.g. sanampao, phaholyothin, sriayudhaya, sriracha, petchakasem
    */
   slug: string;
-  nameTh: string;
-  nameEn: string;
   name?: string | null;
   /**
    * e.g. "Hospital-Grade Plastic Surgery Center"
@@ -300,8 +298,6 @@ export interface Doctor {
    * URL for the doctor page, e.g. /doctor/dr-punnawit-sirimetha. Leave blank to auto-generate from Name En, or type your own custom URL.
    */
   slug?: string | null;
-  nameTh: string;
-  nameEn: string;
   name?: string | null;
   branch: number | Branch;
   /**
@@ -903,8 +899,6 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface BranchesSelect<T extends boolean = true> {
   slug?: T;
-  nameTh?: T;
-  nameEn?: T;
   name?: T;
   tagline?: T;
   description?: T;
@@ -939,8 +933,6 @@ export interface BranchesSelect<T extends boolean = true> {
  */
 export interface DoctorsSelect<T extends boolean = true> {
   slug?: T;
-  nameTh?: T;
-  nameEn?: T;
   name?: T;
   branch?: T;
   specialty?: T;

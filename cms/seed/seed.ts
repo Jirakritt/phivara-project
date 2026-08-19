@@ -117,8 +117,7 @@ async function run() {
       'branches',
       {
         slug: b.slug,
-        nameTh: b.nameTh,
-        nameEn: b.nameEn,
+        name: b.nameTh,
         tagline: b.tagline.th,
         description: b.description.th,
         address: b.address.th,
@@ -130,6 +129,7 @@ async function run() {
         directions: b.directions.th,
       },
       {
+        name: b.nameEn,
         tagline: b.tagline.en,
         description: b.description.en,
         address: b.address.en,
@@ -151,8 +151,7 @@ async function run() {
 
     const thData: Record<string, unknown> = {
       slug: d.slug,
-      nameTh: d.nameTh,
-      nameEn: d.nameEn,
+      name: d.nameTh,
       branch: branchIds[d.branch],
       specialty: d.specialty,
       specialtyLabel: d.specialtyLabel.th,
@@ -160,6 +159,7 @@ async function run() {
       cardPhoto,
     }
     const enData: Record<string, unknown> = {
+      name: d.nameEn,
       specialtyLabel: d.specialtyLabel.en,
       subNote: d.subNote.en,
     }

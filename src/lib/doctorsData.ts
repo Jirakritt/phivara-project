@@ -223,15 +223,10 @@ export async function getDoctorJournalArticles(doctorId: string | number, locale
     })
 }
 
-// Static — matches the original doctor.html branch dropdown exactly (5
-// fixed PHIVARA locations, rarely changes).
-export const BRANCH_FILTER_OPTIONS = [
-  { value: 'sanampao', th: 'PHIVARA สนามเป้า', en: 'PHIVARA Sanampao' },
-  { value: 'phaholyothin', th: 'PHIVARA พหลโยธิน', en: 'PHIVARA Phaholyothin' },
-  { value: 'sriayudhaya', th: 'PHIVARA ศรีอยุธยา', en: 'PHIVARA Sri Ayudhaya' },
-  { value: 'petchakasem', th: 'PHIVARA เพชรเกษม 19', en: 'PHIVARA Petchakasem 19' },
-  { value: 'sriracha', th: 'PHIVARA ศรีราชา', en: 'PHIVARA Sriracha' },
-]
+// Branch filter options used to live here as a static list (BRANCH_FILTER_OPTIONS)
+// that could go stale against the CMS. The Doctor page now sources branches
+// directly from homeData.branches (same CMS-backed list SiteFooter uses) instead —
+// same fix applied to PROGRAM_BRANCH_OPTIONS in programsData.ts.
 
 export const SPECIALTY_FILTER_OPTIONS = [
   { value: 'plastic', th: 'ศัลยกรรมตกแต่ง', en: 'Plastic Surgery' },

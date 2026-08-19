@@ -404,7 +404,9 @@
   })();
 
   /* Branch content comes from Payload's `branches` collection (injected
-     server-side), same shape the site's footer/header used to share. */
+     server-side), same shape the site's footer/header used to share.
+     "PHIVARA " is part of the CMS branch `name` field itself now (per team
+     decision) — not concatenated here. */
   const branches = cmsData.branches || [];
   const flagshipRail = document.getElementById('flagshipRail');
   const flagshipSlides = document.getElementById('flagshipSlides');
@@ -413,7 +415,7 @@
     <button class="flagship-nav-btn${index === 0 ? ' active' : ''}" type="button" role="tab"
       id="flagshipTab${index}" aria-controls="flagshipPanel${index}" aria-selected="${index === 0}" data-slide="${index}">
       <span class="flagship-nav-index">${String(index + 1).padStart(2, '0')}</span>
-      <span data-th="PHIVARA ${branch.nameTh}" data-en="PHIVARA ${branch.nameEn}">PHIVARA ${branch.nameTh}</span>
+      <span data-th="${branch.nameTh}" data-en="${branch.nameEn}">${branch.nameTh}</span>
     </button>
   `).join('');
 
@@ -422,14 +424,14 @@
       role="tabpanel" aria-labelledby="flagshipTab${index}" aria-hidden="${index !== 0}" data-slide="${index}">
       <div class="flagship-body">
         <div class="flagship-media">
-          <img src="${branch.image}" alt="PHIVARA ${branch.nameEn} — ${branch.titleEn}">
+          <img src="${branch.image}" alt="${branch.nameEn} — ${branch.titleEn}">
           <div class="flagship-image-label" aria-hidden="true">
             <span>${String(index + 1).padStart(2, '0')}</span>
-            <span>PHIVARA ${branch.nameEn}</span>
+            <span>${branch.nameEn}</span>
           </div>
         </div>
         <div class="flagship-text">
-          <div class="flagship-location" data-th="PHIVARA ${branch.nameTh}" data-en="PHIVARA ${branch.nameEn}">PHIVARA ${branch.nameTh}</div>
+          <div class="flagship-location" data-th="${branch.nameTh}" data-en="${branch.nameEn}">${branch.nameTh}</div>
           <h3 data-th="${branch.titleTh}" data-en="${branch.titleEn}">${branch.titleTh}</h3>
           <p data-th="${branch.descriptionTh}" data-en="${branch.descriptionEn}">${branch.descriptionTh}</p>
           <a href="/branch/${branch.id}" class="arrow-link flagship-link">

@@ -1,12 +1,10 @@
-// One-off backfill: copies the existing flat `nameTh`/`nameEn` fields on
-// Doctors and Branches into the new localized `name` field (added
-// alongside them — see Doctors.ts/Branches.ts's `name` field comment) so
-// every existing record has th/en values under the new field without
-// re-running the full destructive seed script.
-//
-// Safe to re-run: only ever writes name.th = nameTh and name.en = nameEn,
-// never touches nameTh/nameEn themselves or any other field. Doesn't
-// delete or recreate anything, unlike `npm run seed`.
+// HISTORICAL / OBSOLETE — already run. Originally a one-off backfill that
+// copied the flat `nameTh`/`nameEn` fields on Doctors and Branches into the
+// new localized `name` field. Those flat fields have since been removed
+// from Doctors.ts/Branches.ts entirely (name is now the only source), so
+// re-running this script today is a no-op (it'll find nameTh/nameEn
+// undefined on every doc and skip them) — kept only for history, not part
+// of any current workflow.
 //
 // Run with: npx tsx cms/scripts/backfillLocalizedNames.ts
 // (requires your local Postgres — same DATABASE_URI your dev server uses —

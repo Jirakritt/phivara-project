@@ -8,7 +8,7 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-// Auto-fills `slug` from `nameEn` (e.g. "Dr. Punnawit Sirimetha" ->
+// Auto-fills `slug` from `name` (e.g. "Dr. Punnawit Sirimetha" ->
 // "dr-punnawit-sirimetha") whenever the editor leaves the slug field blank,
 // so editors no longer have to invent sequential ids like "dr30" by hand.
 // Editors can still type their own slug — this only kicks in when the field
@@ -25,16 +25,36 @@ export const autoSlugFromNameEn: CollectionBeforeValidateHook = async ({
   const hasSlug = typeof data.slug === 'string' && data.slug.trim().length > 0
   if (hasSlug) return data
 
-  // `nameEn` (flat, non-localized) still exists and is required, so it stays
-  // the simplest source for the slug. If an editor is filling in a
-  // non-en/th locale for the first time on a brand new (unsaved) doc,
-  // `data.nameEn` won't exist yet either — in that case there's nothing
-  // sensible to slugify from, so the field is just left for the editor to
-  // fill in manually once they switch to the th/en tab.
-  const nameEn = (data.nameEn ?? originalDoc?.nameEn) as string | undefined
-  if (!nameEn) return data
+  // `name` is localized, so unlike the old flat `nameEn` it isn't
+  // guaranteed to hold Latin text — only usable if the locale currently
+  // being saved happens to slugify to something non-empty (i.e. it's the
+  // en tab, or any locale typed in Latin characters).
+  const currentName = typeof data.name === 'string' ? data.name : undefined
+  let source = currentName && slugify(currentName) ? currentName : undefined
 
-  const base = slugify(nameEn) || 'doctor'
+  // Otherwise (e.g. an editor is filling in the th tab first on a brand-new
+  // doctor, or switching locales on an existing one), explicitly fetch the
+  // doc's own en-locale name — the one locale guaranteed to produce a
+  // usable Latin slug once it's been saved at all.
+  if (!source && originalDoc?.id) {
+    const enDoc = await req.payload.findByID({
+      collection: collection.slug as 'doctors',
+      id: originalDoc.id,
+      locale: 'en',
+      depth: 0,
+    })
+    const enName = typeof (enDoc as unknown as Record<string, unknown>)?.name === 'string'
+      ? ((enDoc as unknown as Record<string, unknown>).name as string)
+      : undefined
+    source = enName && slugify(enName) ? enName : undefined
+  }
+
+  // Nothing sensible to slugify from yet (brand-new doc, non-Latin locale
+  // being filled in first) — leave blank for the editor to fill in manually
+  // once they switch to a Latin-text locale.
+  if (!source) return data
+
+  const base = slugify(source) || 'doctor'
   let candidate = base
   let suffix = 2
 

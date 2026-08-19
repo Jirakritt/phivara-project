@@ -6,7 +6,7 @@ import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 import { getHomeData } from '@/lib/homeData'
-import { getFeaturedPrograms, getProgramsListing, PROGRAM_BRANCH_OPTIONS, PROGRAM_CATEGORY_OPTIONS } from '@/lib/programsData'
+import { getFeaturedPrograms, getProgramsListing, PROGRAM_CATEGORY_OPTIONS } from '@/lib/programsData'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params
@@ -169,8 +169,15 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                     </button>
                     <div className="custom-dropdown-menu" id="branchMenu">
                       <button type="button" className="dropdown-item active" data-branch="all">{t('ทุกสาขา PHIVARA', 'All PHIVARA Locations')}</button>
-                      {PROGRAM_BRANCH_OPTIONS.map((opt) => (
-                        <button key={opt.value} type="button" className="dropdown-item" data-branch={opt.value}>{t(opt.th, opt.en)}</button>
+                      {/* Sourced from the same CMS-backed homeData.branches used by
+                          SiteFooter below — previously a hardcoded PROGRAM_BRANCH_OPTIONS
+                          list that silently went stale when a branch was renamed/added
+                          in the CMS. Per team decision, the "PHIVARA " brand prefix is
+                          now part of the CMS `name` field itself (edited directly in
+                          /admin), not concatenated in code — keep it that way here and
+                          in SiteFooter. */}
+                      {homeData.branches.map((branch) => (
+                        <button key={branch.formValue} type="button" className="dropdown-item" data-branch={branch.formValue}>{t(branch.nameTh, branch.nameEn)}</button>
                       ))}
                     </div>
                   </div>

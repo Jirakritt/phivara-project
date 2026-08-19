@@ -345,14 +345,16 @@ export default async function DoctorDetailPage({
         <div className="wrap">
           <div className="contact-grid">
             <div className="contact-visual">
-              <img src="/assets/images/brand/about-lounge.jpg" alt={`PHIVARA ${doctor.branchEn}`} loading="lazy" decoding="async" />
+              {/* "PHIVARA " is part of the CMS branch `name` field itself now
+                  (per team decision) — not concatenated here or below. */}
+              <img src="/assets/images/brand/about-lounge.jpg" alt={doctor.branchEn} loading="lazy" decoding="async" />
               <div className="contact-visual-content">
                 <div className="eyebrow">VIP PRIVATE APPOINTMENT</div>
                 <h2 id="contact-heading">{t('นัดหมายปรึกษาแบบส่วนตัว', 'Book a Private Consultation')}</h2>
                 <p>
                   {t(
-                    rich?.contactIntroTh || `รับคำปรึกษาอย่างเป็นส่วนตัว ณ PHIVARA ${doctor.branchTh} พร้อมทีม VIP Concierge ดูแลทุกขั้นตอนของการนัดหมาย`,
-                    rich?.contactIntroEn || `Enjoy a private consultation at PHIVARA ${doctor.branchEn}, with our VIP Concierge team supporting every step of your appointment.`,
+                    rich?.contactIntroTh || `รับคำปรึกษาอย่างเป็นส่วนตัว ณ ${doctor.branchTh} พร้อมทีม VIP Concierge ดูแลทุกขั้นตอนของการนัดหมาย`,
+                    rich?.contactIntroEn || `Enjoy a private consultation at ${doctor.branchEn}, with our VIP Concierge team supporting every step of your appointment.`,
                   )}
                 </p>
                 <div className="contact-facts">
@@ -362,7 +364,7 @@ export default async function DoctorDetailPage({
                       <circle cx="12" cy="10" r="2.5" />
                     </svg>
                     <span>
-                      {t(rich?.contactFactTh || `PHIVARA ${doctor.branchTh}`, rich?.contactFactEn || `PHIVARA ${doctor.branchEn}`)}
+                      {t(rich?.contactFactTh || doctor.branchTh, rich?.contactFactEn || doctor.branchEn)}
                     </span>
                   </div>
                 </div>
