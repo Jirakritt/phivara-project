@@ -182,14 +182,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Prompt:wght@200;300;400;500;600&display=swap"
-          rel="stylesheet"
-        />
         {localeFont && (
-          <link href={`https://fonts.googleapis.com/css2?${localeFont.googleFontsQuery}&display=swap`} rel="stylesheet" />
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link href={`https://fonts.googleapis.com/css2?${localeFont.googleFontsQuery}&display=swap`} rel="stylesheet" />
+          </>
         )}
         <link rel="stylesheet" href="/css/main_gpt.css" />
         <link rel="stylesheet" href="/css/site-shell.css" />

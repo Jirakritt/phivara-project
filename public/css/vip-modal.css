@@ -11,8 +11,8 @@
   --vip-gold:#C7A76B;
   --vip-gold-line:rgba(199,167,107,.34);
   --vip-terracotta:#A67A59;
-  --vip-serif:"Cormorant Garamond","Lora",Georgia,serif;
-  --vip-sans:"Sukhumvit Set","Prompt",sans-serif;
+  --vip-serif:var(--serif);
+  --vip-sans:var(--sans);
   --vip-ease:cubic-bezier(.2,.75,.25,1);
   position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center;
   padding:24px; overflow-y:auto; background:rgba(37,31,23,.62);
@@ -148,7 +148,7 @@
   border:1px solid var(--vip-gold); border-radius:999px;
   background:var(--vip-gold); color:#fff;
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  font:500 13px/1.4 "Sukhumvit Set","Sukhumvit",var(--vip-sans),sans-serif; letter-spacing:.08em;
+  font:500 13px/1.4 var(--vip-sans); letter-spacing:.08em;
   box-shadow:0 8px 22px rgba(184,149,96,.18);
   transition:background .3s,border-color .3s,color .3s,transform .3s var(--vip-ease);
 }

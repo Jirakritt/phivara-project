@@ -4,16 +4,15 @@
   --shell-ink: #302e2a;
   --shell-ink-soft: #6d6962;
   --shell-cream: #faf5ec;
-  --shell-serif: "Sukhumvit Set", "Prompt", sans-serif;
-  --shell-sans: "Sukhumvit Set", "Prompt", sans-serif;
+  --shell-serif: "Noto Sans Thai", sans-serif;
+  --shell-sans: "Noto Sans Thai", sans-serif;
   --shell-ease: cubic-bezier(.16, 1, .3, 1);
 }
 
-/* Phase 4: per-locale font overrides. 'Sukhumvit Set'/'Prompt'/'Lora'
-   (loaded in [locale]/layout.tsx's <head>) only cover Thai + Latin (+
-   Vietnamese, which 'Prompt' also has a subset for) — every other script
-   below gets its actual Google Fonts family loaded conditionally per
-   locale (see src/lib/fonts.ts) and wired in here.
+/* Per-locale font overrides. 'Noto Sans Thai'/'Grappa Variable'/
+   'Montserrat' (loaded in main_gpt.css/main.css) only cover Thai + Latin —
+   every other script below gets its actual Google Fonts family loaded
+   conditionally per locale (see src/lib/fonts.ts) and wired in here.
 
    Uses an `html[lang="…"]` attribute selector on purpose, not another
    `:root{...}` rule: main.css/main1.css/main2.css (loaded per-page, after
@@ -25,7 +24,23 @@
    stylesheet loads last. Both this file's own --shell-* vars (used by the
    header/footer/topbar right below) and main.css's --sans/--serif (used
    by everything else) are overridden together so the whole page — not
-   just the shell — gets the right typeface. */
+   just the shell — gets the right typeface.
+
+   `html[lang="en"]` is the new (non-Phase-4) entry here: unlike every
+   other locale below, English isn't an "extra" script needing a Google
+   Fonts fetch — Grappa Variable (headlines) and Montserrat (body) are
+   already self-hosted in main_gpt.css/main.css. This is what makes
+   English typography diverge from Thai's Noto Sans Thai on /en pages;
+   --serif-en (always-English brand/UI copy, e.g. the tagline under the
+   logo) already resolves to Grappa Variable unconditionally via
+   main_gpt.css/main.css's :root, on /th pages too, so it needs no entry
+   here. */
+html[lang="en"] {
+  --shell-sans: 'Montserrat', sans-serif;
+  --shell-serif: 'Grappa Variable', 'Montserrat', sans-serif;
+  --sans: 'Montserrat', sans-serif;
+  --serif: 'Grappa Variable', 'Montserrat', sans-serif;
+}
 html[lang="ja"] {
   --shell-sans: 'Noto Sans JP', sans-serif;
   --shell-serif: 'Noto Serif JP', 'Noto Sans JP', serif;
@@ -152,7 +167,7 @@ html body :is(p, a, strong):not(#phivara-type-size-override):not(.phivara-type-s
 
 .program-branch__brand {
   color: inherit;
-  font-family: "Lora", serif;
+  font-family: var(--serif-en);
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
@@ -161,7 +176,7 @@ html body :is(p, a, strong):not(#phivara-type-size-override):not(.phivara-type-s
 
 .program-branch__name {
   color: inherit;
-  font-family: "Sukhumvit Set", "Prompt", sans-serif;
+  font-family: var(--sans);
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
@@ -378,7 +393,7 @@ header.site .logo-lockup .word {
 header.site .logo-lockup .word small {
   display: block;
   color: var(--shell-ink-soft);
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: var(--serif-en);
   font-size: 10px;
   font-style: italic;
   font-weight: 400;
@@ -711,6 +726,6 @@ footer.site-footer .foot-social a:hover {
 .eyebrow,
 [class*="-eyebrow"],
 [class^="eyebrow-"] {
-  font-family: "Lora", Georgia, serif !important;
+  font-family: var(--serif-en) !important;
   font-size: 13px !important;
 }

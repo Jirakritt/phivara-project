@@ -9,8 +9,8 @@
   --aum-line: rgba(184, 149, 96, .28);
   --aum-ink: #302e2a;
   --aum-muted: #756f66;
-  --aum-serif: "Cormorant Garamond", "Lora", Georgia, serif;
-  --aum-sans: "Sukhumvit Set", "Prompt", sans-serif;
+  --aum-serif: var(--serif);
+  --aum-sans: var(--sans);
   --aum-ease: cubic-bezier(.16, 1, .3, 1);
 }
 

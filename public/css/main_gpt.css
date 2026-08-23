@@ -1,9 +1,41 @@
-@font-face{ font-family:'Sukhumvit Set'; src:url('../assets/fonts/sukhumvit-set/SukhumvitSet-Thin.ttf') format('truetype'); font-weight:100; font-style:normal; font-display:swap; }
-  @font-face{ font-family:'Sukhumvit Set'; src:url('../assets/fonts/sukhumvit-set/SukhumvitSet-Light.ttf') format('truetype'); font-weight:300; font-style:normal; font-display:swap; }
-  @font-face{ font-family:'Sukhumvit Set'; src:url('../assets/fonts/sukhumvit-set/SukhumvitSet-Text.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
-  @font-face{ font-family:'Sukhumvit Set'; src:url('../assets/fonts/sukhumvit-set/SukhumvitSet-Medium.ttf') format('truetype'); font-weight:500; font-style:normal; font-display:swap; }
-  @font-face{ font-family:'Sukhumvit Set'; src:url('../assets/fonts/sukhumvit-set/SukhumvitSet-SemiBold.ttf') format('truetype'); font-weight:600; font-style:normal; font-display:swap; }
-  @font-face{ font-family:'Sukhumvit Set'; src:url('../assets/fonts/sukhumvit-set/SukhumvitSet-Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+/* Font system (replaces Sukhumvit Set/Prompt/Lora/Cormorant Garamond):
+   - Thai copy (headings + body): Noto Sans Thai, self-hosted, 8 weights.
+   - English headlines: Grappa Variable (self-hosted, purchased self-host
+     license from Sudtipos — see phivara-design-html/New-Fonts), a true
+     variable font covering weight 100-900 from a single file.
+   - English body copy: Montserrat, self-hosted, OFL-licensed, 7 weights +
+     italics.
+   Which one applies where is driven by the --serif/--sans/--serif-en CSS
+   variables below, not by hardcoding font names per selector — --serif/
+   --sans switch from Noto Sans Thai to Grappa/Montserrat on English pages
+   via the html[lang="en"] override in site-shell.css (same mechanism this
+   file already used for ja/zh/ko). --serif-en stays Grappa unconditionally
+   since it marks elements that are always-English brand/UI copy (tagline,
+   eyebrows, watermarks) even when they appear on a /th page. */
+@font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-Thin.woff') format('woff'); font-weight:100; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-ExtraLight.woff') format('woff'); font-weight:200; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-Light.woff') format('woff'); font-weight:300; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-Regular.woff') format('woff'); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-Medium.woff') format('woff'); font-weight:500; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-SemiBold.woff') format('woff'); font-weight:600; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-Bold.woff') format('woff'); font-weight:700; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-ExtraBold.woff') format('woff'); font-weight:800; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Noto Sans Thai'; src:url('../assets/fonts/noto-sans-thai/NotoSansThai-Black.woff') format('woff'); font-weight:900; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Grappa Variable'; src:url('../assets/fonts/grappa-variable/GrappaVariable.woff') format('woff'); font-weight:100 900; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-Light.woff') format('woff'); font-weight:300; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-LightItalic.woff') format('woff'); font-weight:300; font-style:italic; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-Regular.woff') format('woff'); font-weight:400; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-Italic.woff') format('woff'); font-weight:400; font-style:italic; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-Medium.woff') format('woff'); font-weight:500; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-MediumItalic.woff') format('woff'); font-weight:500; font-style:italic; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-SemiBold.woff') format('woff'); font-weight:600; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-SemiBoldItalic.woff') format('woff'); font-weight:600; font-style:italic; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-Bold.woff') format('woff'); font-weight:700; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-BoldItalic.woff') format('woff'); font-weight:700; font-style:italic; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-ExtraBold.woff') format('woff'); font-weight:800; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-ExtraBoldItalic.woff') format('woff'); font-weight:800; font-style:italic; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-Black.woff') format('woff'); font-weight:900; font-style:normal; font-display:swap; }
+  @font-face{ font-family:'Montserrat'; src:url('../assets/fonts/montserrat/Montserrat-BlackItalic.woff') format('woff'); font-weight:900; font-style:italic; font-display:swap; }
   :root{
     --cream:#F8F4EC;
     --cream-deep:#EFE7D8;
@@ -30,9 +62,10 @@
       linear-gradient(145deg,#EFE6D8 0%,#F6F0E6 100%);
     --section-divider:rgba(139,109,67,.18);
     --maxw:1280px;
-    --serif:'Sukhumvit Set', 'Prompt', sans-serif;
-    --serif-en:'Lora', serif;
-    --sans:'Sukhumvit Set', 'Prompt', sans-serif;
+    --serif:'Noto Sans Thai', sans-serif;
+    --serif-en:'Grappa Variable', 'Montserrat', sans-serif;
+    --sans:'Noto Sans Thai', sans-serif;
+    --sans-en:'Montserrat', sans-serif;
     --ease:cubic-bezier(.22,.68,.24,1);
     --radius-card:10px;
     --radius-card-inner:8px;
@@ -299,7 +332,7 @@
   }
   .exp-tab-btn{
     background:transparent; border:none; cursor:pointer; appearance:none; -webkit-appearance:none;
-    font-family:"Lora",serif; font-size:14px; font-weight:400; color:#5C4F41;
+    font-family:var(--serif-en); font-size:14px; font-weight:400; color:#5C4F41;
     padding:12px 26px; border-radius:40px; position:relative; z-index:1; letter-spacing:.03em; overflow:hidden; isolation:isolate;
     text-align:center; display:inline-flex; align-items:center; justify-content:center; width:auto;
     transition:color .35s var(--ease), background .35s var(--ease), box-shadow .35s var(--ease); white-space:nowrap;
@@ -375,7 +408,7 @@
   .exp-card-grid .card-body .card-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; margin-top:auto; padding-top:16px; border-top:1px solid var(--line); }
   .exp-card-grid .card-body .card-foot>span{ color:var(--terracotta); font-size:18px; font-weight:600; letter-spacing:.015em; white-space:nowrap; }
   .exp-card-grid .card-body .card-foot>span::after{ content:" THB"; font-size:12px; }
-  .exp-card-grid .card-link{ border:0; background:none; padding:0; color:var(--gold); font-family:"Sukhumvit Set","Sukhumvit",var(--sans),sans-serif; font-size:13px; font-weight:600; line-height:1.4; letter-spacing:.06em; white-space:nowrap; transition:color .3s ease; }
+  .exp-card-grid .card-link{ border:0; background:none; padding:0; color:var(--gold); font-family:var(--sans); font-size:13px; font-weight:600; line-height:1.4; letter-spacing:.06em; white-space:nowrap; transition:color .3s ease; }
   .exp-card-grid .card-link:hover{ color:var(--olive-dark); }
 
   .exp-panel .go.more{ font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
@@ -501,9 +534,9 @@
     margin-bottom:8px; color:#937244; font-family:var(--serif-en);
     font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
   }
-  .flagship-text h3{ color:#342A21; font-size:clamp(23px,2.25vw,31px); margin:0 0 14px; line-height:1.28; font-weight:300; }
+  .flagship-text h3{ color:#342A21; font-size:clamp(25px,2.25vw,33px); margin:0 0 14px; line-height:1.28; font-weight:300; }
   .flagship-text p{
-    color:#645749; font-weight:300; font-size:13px; line-height:1.7;
+    color:#645749; font-weight:300; font-size:15px; line-height:1.7;
     margin-bottom:20px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
   }
   .flagship-link{

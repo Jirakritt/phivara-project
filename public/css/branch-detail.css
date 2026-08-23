@@ -951,7 +951,7 @@ body[data-branch-id="sanampao"] .branch-doctor-featured__quote p {
   border-radius: 999px;
   color: #FFFFFF !important;
   background: linear-gradient(130deg, #B89560, #967543);
-  font-family: 'Sukhumvit Set', var(--sans);
+  font-family: var(--sans);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: .04em;
@@ -1098,7 +1098,7 @@ body[data-branch-id="sanampao"] .branch-doctor-featured__quote p {
 
 .branch-program-grid .card-title-link {
   color: inherit;
-  font-family: "Sukhumvit Set", "Sukhumvit", var(--sans), sans-serif;
+  font-family: var(--sans);
   font-size: inherit;
 }
 
@@ -1149,7 +1149,7 @@ body[data-branch-id="sanampao"] .branch-doctor-featured__quote p {
   border: 0;
   color: var(--gold);
   background: none;
-  font-family: "Sukhumvit Set", "Sukhumvit", var(--sans), sans-serif;
+  font-family: var(--sans);
   font-size: 13px;
   font-weight: 600;
   line-height: 1.4;

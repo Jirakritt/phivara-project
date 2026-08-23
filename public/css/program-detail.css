@@ -107,15 +107,15 @@
     .detail-visual{order:2;padding:0}
     .detail-visual::before{display:none}
     .detail-visual::after{display:none}
-    .visual-price-tag{position:absolute;z-index:3;right:18px;bottom:-25px;display:grid;grid-template-columns:auto auto;grid-template-areas:"label label" "price unit";align-items:end;column-gap:3px;min-width:210px;padding:17px 23px 18px 26px;overflow:hidden;border:0;border-radius:3px 18px 3px 18px;background:linear-gradient(135deg,#fff5dd 0%,#ead09b 48%,#c69b51 100%);color:#352d20;font-family:"Lora",Georgia,serif;font-style:normal;box-shadow:0 18px 42px rgba(7,12,9,.3),0 4px 12px rgba(7,12,9,.2),inset 0 1px 0 rgba(255,255,255,.72);animation:priceFloat 3.4s ease-in-out infinite}
+    .visual-price-tag{position:absolute;z-index:3;right:18px;bottom:-25px;display:grid;grid-template-columns:auto auto;grid-template-areas:"label label" "price unit";align-items:end;column-gap:3px;min-width:210px;padding:17px 23px 18px 26px;overflow:hidden;border:0;border-radius:3px 18px 3px 18px;background:linear-gradient(135deg,#fff5dd 0%,#ead09b 48%,#c69b51 100%);color:#352d20;font-family:var(--serif-en);font-style:normal;box-shadow:0 18px 42px rgba(7,12,9,.3),0 4px 12px rgba(7,12,9,.2),inset 0 1px 0 rgba(255,255,255,.72);animation:priceFloat 3.4s ease-in-out infinite}
     .visual-price-tag::before{content:"";position:absolute;inset:0 auto 0 0;display:block;width:5px;background:linear-gradient(180deg,#6d552e,#a77e3f);box-shadow:1px 0 0 rgba(255,255,255,.3)}
     .visual-price-tag::after{content:"";position:absolute;top:-45%;bottom:-45%;left:-55%;width:34%;display:block;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-18deg);animation:priceShimmer 3.8s ease-in-out infinite;pointer-events:none}
     @keyframes priceShimmer{0%,55%{left:-55%}82%,100%{left:125%}}
     @keyframes priceFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
     @media(prefers-reduced-motion:reduce){.visual-price-tag{animation:none}.visual-price-tag::after{animation:none;display:none}}
     .visual-price-tag small{grid-area:label;margin-bottom:4px;color:#765c31;font-size:11px;font-weight:600;line-height:1;letter-spacing:.18em;opacity:.9}
-    .visual-price-tag strong{grid-area:price;color:#2f291f;font-family:"Lora",Georgia,serif;font-size:30px;font-weight:500;line-height:.95;letter-spacing:-.035em}
-    .visual-price-tag span{grid-area:unit;padding-bottom:1px;color:#644d29;font-family:"Sukhumvit Set","Prompt",sans-serif;font-size:13px;font-weight:600;line-height:1;letter-spacing:.04em}
+    .visual-price-tag strong{grid-area:price;color:#2f291f;font-family:var(--serif-en);font-size:30px;font-weight:500;line-height:.95;letter-spacing:-.035em}
+    .visual-price-tag span{grid-area:unit;padding-bottom:1px;color:#644d29;font-family:var(--sans);font-size:13px;font-weight:600;line-height:1;letter-spacing:.04em}
     .detail-visual img{border:1px solid rgba(230,211,170,.45);border-radius:var(--radius-card);box-shadow:0 35px 85px rgba(12,15,11,.36)}
     .detail-copy{order:1;padding:8px 0}
     .detail-copy .eyebrow{gap:14px;color:var(--gold-light);font-family:var(--serif-en);font-size:10px;font-weight:500;letter-spacing:.24em}
