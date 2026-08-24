@@ -176,12 +176,18 @@ function resolve(target: any, en: any, th: any, field: string): string {
 
 async function getHomeHero(locale: LocaleCode): Promise<HomeHero> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'home-hero', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'home-hero', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'home-hero', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // The th visitor IS the default locale — a field left blank here was
+  // deliberately cleared by an admin, not "not yet translated", so it must
+  // never leak en's leftover text. Aliasing en/th to target collapses every
+  // `target || en || th` fallback below to just `target` for this locale.
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   return {
     eyebrowTh: resolve(target, en, th, 'eyebrow'),
@@ -203,12 +209,15 @@ async function getHomeHero(locale: LocaleCode): Promise<HomeHero> {
 // `membership` Global that already powers the full /membership page.
 async function getMembershipTeaser(locale: LocaleCode): Promise<HomeMembershipTeaser> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'membership', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'membership', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'membership', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // See getHomeHero's comment above — same fix, same reason.
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   const kicker = target?.hero?.kicker || en?.hero?.kicker || th?.hero?.kicker || ''
   const headline = target?.hero?.headline || en?.hero?.headline || th?.hero?.headline || ''
@@ -234,12 +243,15 @@ async function getMembershipTeaser(locale: LocaleCode): Promise<HomeMembershipTe
 // copyright/social links.
 async function getFooterContent(locale: LocaleCode): Promise<HomeFooter> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'footer', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'footer', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'footer', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // See getHomeHero's comment above — same fix, same reason.
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const linkGroups: HomeFooterGroup[] = (th.linkGroups || []).map((group: any, i: number) => {
@@ -280,12 +292,17 @@ async function getFooterContent(locale: LocaleCode): Promise<HomeFooter> {
 // main header, shown on every page.
 async function getTopBarContent(locale: LocaleCode): Promise<HomeTopBar> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'topbar', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'topbar', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'topbar', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // See getHomeHero's comment above — same fix, same reason. This is the
+  // specific bug reported 2026-08-23: clearing Topbar > Hotline Text (TH)
+  // in the CMS still showed the leftover EN placeholder on /th pages.
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   const tagline = target?.tagline || en?.tagline || th.tagline || ''
   const hotlineText = target?.hotlineText || en?.hotlineText || th.hotlineText || ''

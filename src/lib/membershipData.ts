@@ -25,12 +25,20 @@ export interface MembershipContent {
 
 export async function getMembershipContent(locale: LocaleCode): Promise<MembershipContent> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'membership', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'membership', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'membership', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // th is the default locale — a field left blank here was deliberately
+  // cleared by an admin, not "not yet translated", so it must never leak
+  // en's leftover text. Aliasing en/th to target collapses every
+  // `target || en || th` fallback below to just `target` for this locale.
+  // Same fix as homeData.ts's getHomeHero() (see that comment for the
+  // full 2026-08-23 bug writeup).
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   const kicker = target?.hero?.kicker || en?.hero?.kicker || th.hero?.kicker || ''
   const headline = target?.hero?.headline || en?.hero?.headline || th.hero?.headline || ''

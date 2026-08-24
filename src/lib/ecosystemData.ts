@@ -108,12 +108,16 @@ const EN_LOCALE: LocaleCode = 'en'
 
 export async function getEcosystemContent(locale: LocaleCode): Promise<EcosystemContent> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'ecosystem', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'ecosystem', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'ecosystem', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // See homeData.ts's getHomeHero() comment — same fix, same reason
+  // (2026-08-23 bug: th field cleared in CMS still leaked en's text).
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   const heroEyebrow = target?.hero?.eyebrow || en?.hero?.eyebrow || th.hero?.eyebrow || ''
   const headlineLine1 = target?.hero?.headlineLine1 || en?.hero?.headlineLine1 || th.hero?.headlineLine1 || ''

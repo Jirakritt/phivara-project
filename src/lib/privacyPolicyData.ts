@@ -52,12 +52,16 @@ function hasRichTextContent(doc: any): boolean {
 
 export async function getPrivacyPolicyContent(locale: LocaleCode): Promise<PrivacyPolicyContent> {
   const payload = await getPayloadClient()
-  const [target, en, th] = (await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let [target, en, th] = (await Promise.all([
     payload.findGlobal({ slug: 'privacy-policy', locale, fallbackLocale: false }),
     payload.findGlobal({ slug: 'privacy-policy', locale: EN_LOCALE, fallbackLocale: false }),
     payload.findGlobal({ slug: 'privacy-policy', locale: DEFAULT_LOCALE }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ])) as [any, any, any]
+  // See homeData.ts's getHomeHero() comment — same fix, same reason
+  // (2026-08-23 bug: th field cleared in CMS still leaked en's text).
+  if (locale === DEFAULT_LOCALE) { en = target; th = target }
 
   const source = hasRichTextContent(target) ? target : hasRichTextContent(en) ? en : th
   const blocks = parseRichTextBlocks(source?.body)
