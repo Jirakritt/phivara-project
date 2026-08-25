@@ -2,8 +2,8 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { ARTICLE_CATEGORY_OPTIONS, getArticlesListing } from '@/lib/articlesData'
-import { getHomeData } from '@/lib/homeData'
+import { getArticlesListing } from '@/lib/articlesData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -40,6 +40,9 @@ export default async function ArticleListPage({ params }: { params: Promise<{ lo
   ])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
   const searchPlaceholder = t('ค้นหาชื่อบทความ, หัวข้อที่สนใจ...', 'Search articles, topics...')
+  // Same 4 categories + order as the homepage "INTEGRATED EXPERTISE" tabs
+  // — see homeData.ts's getExpertiseCategoryOptions comment.
+  const categoryOptions = getExpertiseCategoryOptions(homeData.hero)
 
   return (
     <>
@@ -110,8 +113,8 @@ export default async function ArticleListPage({ params }: { params: Promise<{ lo
                   </button>
                   <div className="custom-dropdown-menu" id="articleCategoryMenu">
                     <button type="button" className="dropdown-item active" data-category="all">{t('บทความทั้งหมด', 'All Articles')}</button>
-                    {ARTICLE_CATEGORY_OPTIONS.map((opt) => (
-                      <button key={opt.value} type="button" className="dropdown-item" data-category={opt.value}>{t(opt.th, opt.en)}</button>
+                    {categoryOptions.map((opt) => (
+                      <button key={opt.value} type="button" className="dropdown-item" data-category={opt.value}>{t(opt.labelTh, opt.labelEn)}</button>
                     ))}
                   </div>
                 </div>

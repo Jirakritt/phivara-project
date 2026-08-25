@@ -58,10 +58,12 @@ export const HomeHero: GlobalConfig = {
       // page.tsx's <section className="expertise" id="expertise">) — the
       // 4 tabs' key (plastic/longevity/dermatology/wellness) stay
       // hardcoded in code since they must match Programs.category's select
-      // options exactly (see cms/collections/Programs.ts), but every piece
-      // of display text is now editable. Read by both page.tsx (server-
-      // rendered eyebrow/heading) and public/js/main.js (client-built tab
-      // bar + panel headers, via window.__PHIVARA_MAIN_STRINGS__).
+      // options exactly (see cms/collections/Programs.ts). Display text AND
+      // display order (each subgroup's "...Order" number field) are
+      // editable. Read by both page.tsx (server-rendered eyebrow/heading)
+      // and public/js/main.js (client-built tab bar + panel headers, via
+      // window.__PHIVARA_MAIN_STRINGS__ — main.js sorts the 4 tabs by
+      // categoryOrder before rendering).
       type: 'collapsible',
       label: 'หมวดความเชี่ยวชาญ (Integrated Expertise)',
       fields: [
@@ -74,9 +76,14 @@ export const HomeHero: GlobalConfig = {
             {
               type: 'row',
               fields: [
-                { name: 'expertisePlasticLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
-                { name: 'expertisePlasticTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
-                { name: 'expertisePlasticTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+                { name: 'expertisePlasticLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '25%' } },
+                { name: 'expertisePlasticTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '25%' } },
+                { name: 'expertisePlasticTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '25%' } },
+                // Not localized — a single display-order number applies
+                // across every locale (the 4 tabs should appear in the
+                // same order for th/en/etc). Sorted ascending in
+                // public/js/main.js before the tab bar is built.
+                { name: 'expertisePlasticOrder', type: 'number', defaultValue: 1, admin: { description: 'ลำดับ tab (เลขน้อยแสดงก่อน)', width: '25%' } },
               ],
             },
           ],
@@ -88,9 +95,10 @@ export const HomeHero: GlobalConfig = {
             {
               type: 'row',
               fields: [
-                { name: 'expertiseLongevityLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
-                { name: 'expertiseLongevityTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
-                { name: 'expertiseLongevityTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+                { name: 'expertiseLongevityLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '25%' } },
+                { name: 'expertiseLongevityTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '25%' } },
+                { name: 'expertiseLongevityTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '25%' } },
+                { name: 'expertiseLongevityOrder', type: 'number', defaultValue: 2, admin: { description: 'ลำดับ tab (เลขน้อยแสดงก่อน)', width: '25%' } },
               ],
             },
           ],
@@ -102,9 +110,10 @@ export const HomeHero: GlobalConfig = {
             {
               type: 'row',
               fields: [
-                { name: 'expertiseDermatologyLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
-                { name: 'expertiseDermatologyTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
-                { name: 'expertiseDermatologyTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+                { name: 'expertiseDermatologyLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '25%' } },
+                { name: 'expertiseDermatologyTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '25%' } },
+                { name: 'expertiseDermatologyTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '25%' } },
+                { name: 'expertiseDermatologyOrder', type: 'number', defaultValue: 3, admin: { description: 'ลำดับ tab (เลขน้อยแสดงก่อน)', width: '25%' } },
               ],
             },
           ],
@@ -116,9 +125,10 @@ export const HomeHero: GlobalConfig = {
             {
               type: 'row',
               fields: [
-                { name: 'expertiseWellnessLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
-                { name: 'expertiseWellnessTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
-                { name: 'expertiseWellnessTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+                { name: 'expertiseWellnessLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '25%' } },
+                { name: 'expertiseWellnessTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '25%' } },
+                { name: 'expertiseWellnessTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '25%' } },
+                { name: 'expertiseWellnessOrder', type: 'number', defaultValue: 4, admin: { description: 'ลำดับ tab (เลขน้อยแสดงก่อน)', width: '25%' } },
               ],
             },
           ],

@@ -228,9 +228,10 @@ export async function getDoctorJournalArticles(doctorId: string | number, locale
 // directly from homeData.branches (same CMS-backed list SiteFooter uses) instead —
 // same fix applied to PROGRAM_BRANCH_OPTIONS in programsData.ts.
 
-export const SPECIALTY_FILTER_OPTIONS = [
-  { value: 'plastic', th: 'ศัลยกรรมตกแต่ง', en: 'Plastic Surgery' },
-  { value: 'longevity', th: 'เวชศาสตร์อายุยืนยาว', en: 'Anti-Aging & Longevity' },
-  { value: 'dermatology', th: 'ผิวหนังและเลเซอร์', en: 'Dermatology' },
-  { value: 'wellness', th: 'สุขภาวะเชิงความงาม', en: 'Aesthetic Wellness' },
-]
+// The specialty dropdown's options (and the hero "spec-pill" row) used to
+// live here as a static list (SPECIALTY_FILTER_OPTIONS) that could never
+// be edited from the CMS and had drifted out of sync both with the
+// homepage's own copy of the same 4 labels AND with each other on this
+// same page. Both now come from a single source — see homeData.ts's
+// getExpertiseCategoryOptions (reads cms/globals/HomeHero.ts's
+// "หมวดความเชี่ยวชาญ" group, same fields the homepage tabs use).

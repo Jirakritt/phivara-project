@@ -178,13 +178,21 @@
 
   /* Shared expertise category data and panel template.
      `key` maps each pillar to the matching Programs.category value in
-     Payload so the card grid below can filter real programs per tab. */
+     Payload so the card grid below can filter real programs per tab.
+     Sorted by `order` (editable per-category in the CMS — home-hero
+     Global's "หมวดความเชี่ยวชาญ" group, `categoryOrder` in
+     window.__PHIVARA_MAIN_STRINGS__) so editors control tab order without
+     touching code. Falls back to the original hardcoded order (plastic,
+     longevity, dermatology, wellness) if categoryOrder is missing/equal —
+     `mainStrings.categoryOrder || {}` covers pages that haven't been
+     rebuilt against the new field yet. */
+  const categoryOrder = mainStrings.categoryOrder || {};
   const expertiseCategories = [
-    { key:'plastic', label: mainStrings.categoryLabels.plastic, tag: mainStrings.categoryTags.plastic, title: mainStrings.categoryTitles.plastic },
-    { key:'longevity', label: mainStrings.categoryLabels.longevity, tag: mainStrings.categoryTags.longevity, title: mainStrings.categoryTitles.longevity },
-    { key:'dermatology', label: mainStrings.categoryLabels.dermatology, tag: mainStrings.categoryTags.dermatology, title: mainStrings.categoryTitles.dermatology },
-    { key:'wellness', label: mainStrings.categoryLabels.wellness, tag: mainStrings.categoryTags.wellness, title: mainStrings.categoryTitles.wellness }
-  ];
+    { key:'plastic', label: mainStrings.categoryLabels.plastic, tag: mainStrings.categoryTags.plastic, title: mainStrings.categoryTitles.plastic, order: categoryOrder.plastic ?? 1 },
+    { key:'longevity', label: mainStrings.categoryLabels.longevity, tag: mainStrings.categoryTags.longevity, title: mainStrings.categoryTitles.longevity, order: categoryOrder.longevity ?? 2 },
+    { key:'dermatology', label: mainStrings.categoryLabels.dermatology, tag: mainStrings.categoryTags.dermatology, title: mainStrings.categoryTitles.dermatology, order: categoryOrder.dermatology ?? 3 },
+    { key:'wellness', label: mainStrings.categoryLabels.wellness, tag: mainStrings.categoryTags.wellness, title: mainStrings.categoryTitles.wellness, order: categoryOrder.wellness ?? 4 }
+  ].sort((a, b) => a.order - b.order);
   const expNav = document.getElementById('expTabNav');
   const expTabPanels = document.getElementById('expTabPanels');
   if(expNav && expTabPanels){

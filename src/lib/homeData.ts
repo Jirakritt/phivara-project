@@ -124,24 +124,31 @@ export interface HomeHero {
   expertisePlasticTagEn: string
   expertisePlasticTitleTh: string
   expertisePlasticTitleEn: string
+  // Not localized — same order across every locale. Defaults preserve the
+  // original hardcoded array order (plastic/longevity/dermatology/wellness)
+  // until an editor changes them in the CMS.
+  expertisePlasticOrder: number
   expertiseLongevityLabelTh: string
   expertiseLongevityLabelEn: string
   expertiseLongevityTagTh: string
   expertiseLongevityTagEn: string
   expertiseLongevityTitleTh: string
   expertiseLongevityTitleEn: string
+  expertiseLongevityOrder: number
   expertiseDermatologyLabelTh: string
   expertiseDermatologyLabelEn: string
   expertiseDermatologyTagTh: string
   expertiseDermatologyTagEn: string
   expertiseDermatologyTitleTh: string
   expertiseDermatologyTitleEn: string
+  expertiseDermatologyOrder: number
   expertiseWellnessLabelTh: string
   expertiseWellnessLabelEn: string
   expertiseWellnessTagTh: string
   expertiseWellnessTagEn: string
   expertiseWellnessTitleTh: string
   expertiseWellnessTitleEn: string
+  expertiseWellnessOrder: number
   // "PHIVARA DESTINATIONS" section eyebrow/heading — branch cards
   // themselves come from HomeData.branches (the `branches` collection).
   destinationsEyebrowTh: string
@@ -170,6 +177,39 @@ export interface HomeHero {
   awardsEyebrowEn: string
   awardsHeadlineTh: string
   awardsHeadlineEn: string
+}
+
+export interface ExpertiseCategoryOption {
+  // Matches Programs.category / Doctors.specialty / Articles.category's
+  // select options exactly — stays hardcoded here since changing these 4
+  // values would mean a data migration across 3 other collections, not
+  // just a CMS text edit.
+  value: 'plastic' | 'longevity' | 'dermatology' | 'wellness'
+  labelTh: string
+  labelEn: string
+}
+
+// Single source of truth for the "4 category" label + display order used
+// on the homepage's "INTEGRATED EXPERTISE" tabs AND every other page that
+// filters/labels by the same 4 categories (/program, /doctor, /article) —
+// see cms/globals/HomeHero.ts's "หมวดความเชี่ยวชาญ" group. Before this,
+// program/page.tsx, doctor/page.tsx, and article/page.tsx each kept their
+// own hardcoded copy of the same 4 labels (PROGRAM_CATEGORY_OPTIONS /
+// SPECIALTY_FILTER_OPTIONS / ARTICLE_CATEGORY_OPTIONS) that could never be
+// edited from the CMS and had already drifted out of sync with each other
+// and with the homepage tabs' wording. Reusing expertiseXLabel here (the
+// same field the homepage tabs use) means editing it in one place now
+// updates every one of these pages at once.
+export function getExpertiseCategoryOptions(hero: HomeHero): ExpertiseCategoryOption[] {
+  const withOrder: (ExpertiseCategoryOption & { order: number })[] = [
+    { value: 'plastic', labelTh: hero.expertisePlasticLabelTh, labelEn: hero.expertisePlasticLabelEn, order: hero.expertisePlasticOrder },
+    { value: 'longevity', labelTh: hero.expertiseLongevityLabelTh, labelEn: hero.expertiseLongevityLabelEn, order: hero.expertiseLongevityOrder },
+    { value: 'dermatology', labelTh: hero.expertiseDermatologyLabelTh, labelEn: hero.expertiseDermatologyLabelEn, order: hero.expertiseDermatologyOrder },
+    { value: 'wellness', labelTh: hero.expertiseWellnessLabelTh, labelEn: hero.expertiseWellnessLabelEn, order: hero.expertiseWellnessOrder },
+  ]
+  return withOrder
+    .sort((a, b) => a.order - b.order)
+    .map(({ value, labelTh, labelEn }) => ({ value, labelTh, labelEn }))
 }
 
 export interface HomeAward {
@@ -310,24 +350,31 @@ async function getHomeHero(locale: LocaleCode): Promise<HomeHero> {
     expertisePlasticTagEn: resolve(target, en, th, 'expertisePlasticTag'),
     expertisePlasticTitleTh: resolve(target, en, th, 'expertisePlasticTitle'),
     expertisePlasticTitleEn: resolve(target, en, th, 'expertisePlasticTitle'),
+    // Not localized — read straight off th (same value regardless of which
+    // locale's row it's read from; th just happens to always be populated
+    // thanks to fallbackLocale being on for that query above).
+    expertisePlasticOrder: th?.expertisePlasticOrder ?? 1,
     expertiseLongevityLabelTh: resolve(target, en, th, 'expertiseLongevityLabel'),
     expertiseLongevityLabelEn: resolve(target, en, th, 'expertiseLongevityLabel'),
     expertiseLongevityTagTh: resolve(target, en, th, 'expertiseLongevityTag'),
     expertiseLongevityTagEn: resolve(target, en, th, 'expertiseLongevityTag'),
     expertiseLongevityTitleTh: resolve(target, en, th, 'expertiseLongevityTitle'),
     expertiseLongevityTitleEn: resolve(target, en, th, 'expertiseLongevityTitle'),
+    expertiseLongevityOrder: th?.expertiseLongevityOrder ?? 2,
     expertiseDermatologyLabelTh: resolve(target, en, th, 'expertiseDermatologyLabel'),
     expertiseDermatologyLabelEn: resolve(target, en, th, 'expertiseDermatologyLabel'),
     expertiseDermatologyTagTh: resolve(target, en, th, 'expertiseDermatologyTag'),
     expertiseDermatologyTagEn: resolve(target, en, th, 'expertiseDermatologyTag'),
     expertiseDermatologyTitleTh: resolve(target, en, th, 'expertiseDermatologyTitle'),
     expertiseDermatologyTitleEn: resolve(target, en, th, 'expertiseDermatologyTitle'),
+    expertiseDermatologyOrder: th?.expertiseDermatologyOrder ?? 3,
     expertiseWellnessLabelTh: resolve(target, en, th, 'expertiseWellnessLabel'),
     expertiseWellnessLabelEn: resolve(target, en, th, 'expertiseWellnessLabel'),
     expertiseWellnessTagTh: resolve(target, en, th, 'expertiseWellnessTag'),
     expertiseWellnessTagEn: resolve(target, en, th, 'expertiseWellnessTag'),
     expertiseWellnessTitleTh: resolve(target, en, th, 'expertiseWellnessTitle'),
     expertiseWellnessTitleEn: resolve(target, en, th, 'expertiseWellnessTitle'),
+    expertiseWellnessOrder: th?.expertiseWellnessOrder ?? 4,
     destinationsEyebrowTh: resolve(target, en, th, 'destinationsEyebrow'),
     destinationsEyebrowEn: resolve(target, en, th, 'destinationsEyebrow'),
     destinationsHeadlineTh: resolve(target, en, th, 'destinationsHeadline'),

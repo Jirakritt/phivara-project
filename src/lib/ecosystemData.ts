@@ -68,9 +68,12 @@ export interface EcosystemContent {
 // layout direction — fixed routing & layout plumbing, not editable copy, so
 // it lives in code rather than the CMS. Order must match
 // cms/seed/data/ecosystem.ts's `disciplines` array exactly (Longevity,
-// Dermatology, Wellness, Plastic Surgery). filterValue matches the same
-// specialty/category slugs already used by SPECIALTY_FILTER_OPTIONS /
-// CATEGORY_FILTER_OPTIONS in doctorsData.ts / programsData.ts / articlesData.ts.
+// Dermatology, Wellness, Plastic Surgery) — deliberately NOT wired to
+// getExpertiseCategoryOptions()'s CMS-editable order (homeData.ts) since
+// changing that would silently break this page's fixed alternating
+// left-right layout. filterValue matches the same specialty/category slugs
+// used by getExpertiseCategoryOptions() in doctorsData.ts / programsData.ts
+// / articlesData.ts's now-unified category dropdowns.
 const DISCIPLINE_META = [
   {
     id: 'longevity',

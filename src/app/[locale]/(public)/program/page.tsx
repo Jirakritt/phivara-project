@@ -5,8 +5,8 @@ import SiteHeader from '@/components/SiteHeader'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
-import { getHomeData } from '@/lib/homeData'
-import { getFeaturedPrograms, getProgramsListing, PROGRAM_CATEGORY_OPTIONS } from '@/lib/programsData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
+import { getFeaturedPrograms, getProgramsListing } from '@/lib/programsData'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params
@@ -41,6 +41,9 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
   ])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
   const searchPlaceholder = t('ค้นหาชื่อโปรแกรม หรือความต้องการ...', 'Search program or health concern...')
+  // Same 4 categories + order as the homepage "INTEGRATED EXPERTISE" tabs
+  // — see homeData.ts's getExpertiseCategoryOptions comment.
+  const categoryOptions = getExpertiseCategoryOptions(homeData.hero)
 
   return (
     <>
@@ -156,8 +159,8 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                     </button>
                     <div className="custom-dropdown-menu" id="categoryMenu">
                       <button type="button" className="dropdown-item active" data-category="all">{t('ทุกหมวดโปรแกรม', 'All Program Categories')}</button>
-                      {PROGRAM_CATEGORY_OPTIONS.map((opt) => (
-                        <button key={opt.value} type="button" className="dropdown-item" data-category={opt.value}>{t(opt.th, opt.en)}</button>
+                      {categoryOptions.map((opt) => (
+                        <button key={opt.value} type="button" className="dropdown-item" data-category={opt.value}>{t(opt.labelTh, opt.labelEn)}</button>
                       ))}
                     </div>
                   </div>

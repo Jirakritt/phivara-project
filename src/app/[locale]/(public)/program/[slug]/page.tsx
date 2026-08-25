@@ -3,11 +3,11 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
-import { getProgramDetail, PROGRAM_CATEGORY_OPTIONS } from '@/lib/programsData'
+import { getProgramDetail } from '@/lib/programsData'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: rawLocale, slug } = await params
@@ -66,7 +66,9 @@ export default async function ProgramDetailPage({
   if (!program) notFound()
 
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
-  const categoryLabel = PROGRAM_CATEGORY_OPTIONS.find((c) => c.value === program.category)
+  // Same 4 categories as the homepage "INTEGRATED EXPERTISE" tabs — see
+  // homeData.ts's getExpertiseCategoryOptions comment.
+  const categoryLabel = getExpertiseCategoryOptions(homeData.hero).find((c) => c.value === program.category)
   const hasGenderGroups = program.checkupItems.some((item) => item.group === 'male' || item.group === 'female')
   const maleItems = program.checkupItems.filter((item) => item.group === 'male')
   const femaleItems = program.checkupItems.filter((item) => item.group === 'female')
@@ -121,7 +123,7 @@ export default async function ProgramDetailPage({
                       <span className="meta-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2.2-5 4 10 2.3-5H21" /><circle cx="12" cy="12" r="10" /></svg></span>
                       <small>{t('หมวดหมู่', 'CATEGORY')}</small>
                     </span>
-                    <strong>{t(categoryLabel?.th || program.category, categoryLabel?.en || program.category)}</strong>
+                    <strong>{t(categoryLabel?.labelTh || program.category, categoryLabel?.labelEn || program.category)}</strong>
                   </span>
                 </div>
                 <div>

@@ -24,7 +24,7 @@ const DAY_LABELS: Record<string, { th: string; en: string }> = {
 }
 
 // Doctors.specialty ('plastic' | 'longevity' | 'dermatology' | 'wellness',
-// see SPECIALTY_FILTER_OPTIONS in doctorsData.ts) uses different value
+// see getExpertiseCategoryOptions in homeData.ts) uses different value
 // strings than Leads.service ('plastic-surgery' | 'longevity' |
 // 'dermatology' | 'wellness' | 'membership') — this form has no service
 // picker of its own (unlike the VIP modal), so the doctor's own specialty

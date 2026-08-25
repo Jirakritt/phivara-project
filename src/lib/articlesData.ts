@@ -287,10 +287,9 @@ export async function getArticleDetail(slug: string, locale: LocaleCode): Promis
   }
 }
 
-// Static — matches article.html's category dropdown exactly.
-export const ARTICLE_CATEGORY_OPTIONS = [
-  { value: 'plastic', th: 'ศัลยกรรมตกแต่ง', en: 'Plastic Surgery' },
-  { value: 'longevity', th: 'เวชศาสตร์อายุยืนยาว', en: 'Anti-Aging & Longevity' },
-  { value: 'dermatology', th: 'ผิวหนังและเลเซอร์', en: 'Dermatology' },
-  { value: 'wellness', th: 'สุขภาวะเชิงความงาม', en: 'Aesthetic Wellness' },
-]
+// The category dropdown's options used to live here as a static list
+// (ARTICLE_CATEGORY_OPTIONS) that could never be edited from the CMS and
+// had drifted out of sync with the homepage's own copy of the same 4
+// labels. Both now come from a single source — see homeData.ts's
+// getExpertiseCategoryOptions (reads cms/globals/HomeHero.ts's
+// "หมวดความเชี่ยวชาญ" group, same fields the homepage tabs use).

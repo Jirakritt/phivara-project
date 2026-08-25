@@ -76,6 +76,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       dermatology: t(data.hero.expertiseDermatologyTitleTh, data.hero.expertiseDermatologyTitleEn),
       wellness: t(data.hero.expertiseWellnessTitleTh, data.hero.expertiseWellnessTitleEn),
     },
+    // Tab display order — editable per-category in the CMS (home-hero
+    // Global's "หมวดความเชี่ยวชาญ" group). main.js sorts by this before
+    // building the tab bar/panels.
+    categoryOrder: {
+      plastic: data.hero.expertisePlasticOrder,
+      longevity: data.hero.expertiseLongevityOrder,
+      dermatology: data.hero.expertiseDermatologyOrder,
+      wellness: data.hero.expertiseWellnessOrder,
+    },
   }).replace(/</g, '\\u003c')};`
 
   return (

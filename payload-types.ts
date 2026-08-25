@@ -1551,6 +1551,10 @@ export interface HomeHero {
    */
   expertisePlasticTitle?: string | null;
   /**
+   * ลำดับ tab (เลขน้อยแสดงก่อน)
+   */
+  expertisePlasticOrder?: number | null;
+  /**
    * ชื่อ tab
    */
   expertiseLongevityLabel?: string | null;
@@ -1562,6 +1566,10 @@ export interface HomeHero {
    * หัวข้อในแผงเนื้อหา
    */
   expertiseLongevityTitle?: string | null;
+  /**
+   * ลำดับ tab (เลขน้อยแสดงก่อน)
+   */
+  expertiseLongevityOrder?: number | null;
   /**
    * ชื่อ tab
    */
@@ -1575,6 +1583,10 @@ export interface HomeHero {
    */
   expertiseDermatologyTitle?: string | null;
   /**
+   * ลำดับ tab (เลขน้อยแสดงก่อน)
+   */
+  expertiseDermatologyOrder?: number | null;
+  /**
    * ชื่อ tab
    */
   expertiseWellnessLabel?: string | null;
@@ -1586,6 +1598,10 @@ export interface HomeHero {
    * หัวข้อในแผงเนื้อหา
    */
   expertiseWellnessTitle?: string | null;
+  /**
+   * ลำดับ tab (เลขน้อยแสดงก่อน)
+   */
+  expertiseWellnessOrder?: number | null;
   destinationsEyebrow?: string | null;
   destinationsHeadline: string;
   specialistsEyebrow?: string | null;
@@ -1919,15 +1935,19 @@ export interface HomeHeroSelect<T extends boolean = true> {
   expertisePlasticLabel?: T;
   expertisePlasticTag?: T;
   expertisePlasticTitle?: T;
+  expertisePlasticOrder?: T;
   expertiseLongevityLabel?: T;
   expertiseLongevityTag?: T;
   expertiseLongevityTitle?: T;
+  expertiseLongevityOrder?: T;
   expertiseDermatologyLabel?: T;
   expertiseDermatologyTag?: T;
   expertiseDermatologyTitle?: T;
+  expertiseDermatologyOrder?: T;
   expertiseWellnessLabel?: T;
   expertiseWellnessTag?: T;
   expertiseWellnessTitle?: T;
+  expertiseWellnessOrder?: T;
   destinationsEyebrow?: T;
   destinationsHeadline?: T;
   specialistsEyebrow?: T;

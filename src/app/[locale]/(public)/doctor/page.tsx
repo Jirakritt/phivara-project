@@ -2,8 +2,8 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getDoctorsListing, SPECIALTY_FILTER_OPTIONS } from '@/lib/doctorsData'
-import { getHomeData } from '@/lib/homeData'
+import { getDoctorsListing } from '@/lib/doctorsData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -35,6 +35,10 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
   ])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
   const searchPlaceholder = t('ค้นหารายชื่อแพทย์, ความเชี่ยวชาญ...', 'Search doctor, specialty...')
+  // Same 4 categories + order as the homepage "INTEGRATED EXPERTISE" tabs
+  // — see homeData.ts's getExpertiseCategoryOptions comment. Drives both
+  // the hero specialty pills and the "All Specialties" dropdown below.
+  const categoryOptions = getExpertiseCategoryOptions(homeData.hero)
 
   return (
     <>
@@ -86,10 +90,9 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
           </div>
 
           <div className="doc-hero-specialties-row">
-            <span className="spec-pill">{t('ศัลยกรรมตกแต่ง', 'Plastic Surgery')}</span>
-            <span className="spec-pill">{t('เวชศาสตร์ชะลอวัย', 'Anti-Aging Medicine')}</span>
-            <span className="spec-pill">{t('ผิวหนัง & เลเซอร์', 'Dermatology & Lasers')}</span>
-            <span className="spec-pill">{t('สุขภาวะความงาม', 'Aesthetic Wellness')}</span>
+            {categoryOptions.map((opt) => (
+              <span key={opt.value} className="spec-pill">{t(opt.labelTh, opt.labelEn)}</span>
+            ))}
           </div>
         </div>
       </section>
@@ -132,9 +135,9 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                 </button>
                 <div className="custom-dropdown-menu" id="specialtyMenu">
                   <button type="button" className="dropdown-item active" data-specialty="all">{t('ทุกสาขาความเชี่ยวชาญ', 'All Specialties')}</button>
-                  {SPECIALTY_FILTER_OPTIONS.map((opt) => (
+                  {categoryOptions.map((opt) => (
                     <button key={opt.value} type="button" className="dropdown-item" data-specialty={opt.value}>
-                      {t(opt.th, opt.en)}
+                      {t(opt.labelTh, opt.labelEn)}
                     </button>
                   ))}
                 </div>
