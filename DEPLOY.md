@@ -212,6 +212,8 @@ git diff HEAD..origin/master --stat
 ```
 เช็คว่ารายชื่อไฟล์ตรงกับที่คาดไว้ ไม่มีอะไรแปลกปลอม โดยเฉพาะถ้า diff มี `cms/migrations/*.ts` ใหม่ ให้เปิดอ่านเนื้อหาไฟล์นั้นก่อน (ทาง local หรือ `cat` บน server หลัง pull) ว่าเป็น `ALTER TABLE ... ADD COLUMN` แบบ additive เท่านั้น ไม่มี `DROP`/เปลี่ยน type ข้อมูลเดิม — ถ้าเจอ `DROP`/`ALTER ... TYPE` ให้หยุดและตรวจสอบให้ละเอียดก่อน ห้ามรันต่อ
 
+> **ข้อยกเว้นที่ตรวจสอบแล้ว (2026-08-24)**: `cms/migrations/20260824_162948.ts` มีทั้ง `DROP TABLE`/`ALTER ... TYPE`/`DROP TYPE` จริง — เป็น migration ที่ generate จาก `payload migrate:create` เพื่อรวม schema drift ที่ dev-mode auto-push เคยดันไว้ (ตาราง `member_privileges_cards_tiers` เป็นชื่อตารางที่เดาผิดตอนแรก ตอนนี้ทดแทนด้วย `member_privileges_rels` ที่ถูกต้อง) ตรวจสอบเทียบกับ live schema แล้วว่าปลอดภัย ทุก statement ถูกแก้ให้มี `IF EXISTS`/`IF NOT EXISTS`/exception guard ครบแล้ว รันได้ตามปกติ ไม่ต้องหยุด — แต่ยังแนะนำให้ backup ก่อนตามขั้นตอนปกติเสมอ
+
 ### ขั้นที่ 4 — Pull + install
 
 ```bash
@@ -245,6 +247,15 @@ npm run migrate
 npx tsx cms/scripts/ชื่อสคริปต์.ts
 ```
 เช็คจำนวน record ที่ update ให้ตรงกับจำนวนจริงใน DB (`SELECT count(*) FROM ตาราง;`)
+
+**สำหรับ deploy รอบ membership feature (2026-08-24)** — migration เองไม่ได้ seed ข้อมูล tier/privilege ให้ (ตั้งใจแยกออก เพื่อไม่ทับข้อมูลที่แก้ผ่าน CMS ไปแล้ว) ถ้านี่เป็นการ deploy feature นี้ครั้งแรกบน production (ยังไม่เคยมี tier ไหนเลย) ให้รันเพิ่ม:
+```bash
+npm run seed:membership-tiers    # สร้าง Silver/Gold/Diamond ถ้ายังไม่มี — safe ที่จะรันซ้ำ (skip อัตโนมัติถ้ามีอยู่แล้ว)
+npm run seed:member-privileges   # ใส่การ์ดสิทธิพิเศษ 6 ใบตั้งต้น
+```
+ถ้า production เคยมี tier/privilege data อยู่แล้ว (เช่น deploy ซ้ำ หรือกรอกผ่าน CMS ไปแล้วจริง) **ข้ามสองคำสั่งนี้ไปได้เลย** — `seed:member-privileges` เป็นการ overwrite ทั้งก้อน ไม่ใช่ merge จะทับข้อมูลที่แก้ไว้ใน CMS กลับไปเป็นค่าเริ่มต้น
+
+`cms/seed/debugFooter.ts` และ `cms/seed/fixFooterThaiText.ts` เป็น script วินิจฉัย/ซ่อมเฉพาะกรณีที่เจอใน local dev DB วันนี้ (ข้อความ footer ภาษาไทยหายจาก dev-mode auto-push) — ไม่จำเป็นต้องรันบน production เว้นแต่เจออาการเดียวกันจริง (footer แสดงข้อความว่างเฉพาะภาษาไทย)
 
 ### ขั้นที่ 9 — Build + restart
 
