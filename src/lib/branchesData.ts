@@ -69,14 +69,19 @@ function mapBranchCard(doc: any): BranchCard {
 }
 
 // /contact branch grid — all locations with a `name` in `locale`. Sorted by
-// `id` (creation order), not slug — matches homeData.ts's branch query so
-// "LOCATION 01" numbering here, in the footer, and on /branch/[slug] all
-// agree with each other.
+// `displayOrder` (editable in CMS, falls back to `id`/creation order for
+// ties) — matches homeData.ts's branch query so "LOCATION 01" numbering
+// here, in the footer, and on /branch/[slug] all agree with each other.
 export async function getBranchesListing(locale: LocaleCode): Promise<BranchCard[]> {
   const docs = await findLocalized<any>('branches', locale, {
     limit: 20,
     depth: 1,
-    sort: 'id',
+    // Local API sort does NOT split comma-delineated strings the way the
+    // REST API's `?sort=a,b` query param does — a plain string here would
+    // silently fail to resolve as a field, get swallowed by an internal
+    // try/catch, and fall back to Payload's default sort (`-createdAt`).
+    // Multi-field sort in the Local API needs an array instead.
+    sort: ['displayOrder', 'id'],
   })
   return docs.filter((d) => hasLocaleContent(d.name)).map(mapBranchCard)
 }

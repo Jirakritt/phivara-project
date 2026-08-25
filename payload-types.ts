@@ -218,6 +218,10 @@ export interface Branch {
    * e.g. sanampao, phaholyothin, sriayudhaya, sriracha, petchakasem
    */
   slug: string;
+  /**
+   * ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้าแรก, หน้าติดต่อ, footer และฟอร์มสมัครสมาชิก
+   */
+  displayOrder?: number | null;
   name?: string | null;
   /**
    * e.g. "Hospital-Grade Plastic Surgery Center"
@@ -1082,6 +1086,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface BranchesSelect<T extends boolean = true> {
   slug?: T;
+  displayOrder?: T;
   name?: T;
   tagline?: T;
   description?: T;

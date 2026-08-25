@@ -481,7 +481,14 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
     getMembershipTeaser(locale),
     getFooterContent(locale),
     getTopBarContent(locale),
-    findLocalized<any>('branches', locale, { limit: 10, depth: 1, sort: 'id' }),
+    // Sort MUST be an array for multi-field sort via the Local API — a
+    // comma-string like 'displayOrder,id' only gets split into separate
+    // fields by the REST route's query-string parser, not by
+    // payload.find() itself. Passing the comma-string form here silently
+    // fails (the invalid "field" throws internally, gets swallowed, and
+    // Payload falls back to its default `-createdAt` sort) — see
+    // branchesData.ts's matching comment for the same gotcha.
+    findLocalized<any>('branches', locale, { limit: 10, depth: 1, sort: ['displayOrder', 'id'] }),
     findLocalized<any>('doctors', locale, {
       limit: 12,
       depth: 1,

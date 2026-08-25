@@ -12,8 +12,14 @@ export const Branches: CollectionConfig = {
     // present, required, and unique, so it's the safest useAsTitle now that
     // `name` (localized) is optional per-locale.
     useAsTitle: 'slug',
-    defaultColumns: ['slug', 'name', 'phone'],
+    defaultColumns: ['displayOrder', 'slug', 'name', 'phone'],
   },
+  // List view defaults to the same order the public site uses (see
+  // src/lib/homeData.ts / src/lib/branchesData.ts, both `sort:
+  // 'displayOrder,id'`) so what an editor sees here matches what visitors
+  // see on the homepage/contact page without needing to click the column
+  // header first.
+  defaultSort: 'displayOrder',
   access: {
     read: () => true,
     // Address/hours/phone are operational facts, not marketing copy — new
@@ -41,6 +47,22 @@ export const Branches: CollectionConfig = {
               required: true,
               unique: true,
               admin: { description: 'e.g. sanampao, phaholyothin, sriayudhaya, sriracha, petchakasem' },
+            },
+            {
+              // Controls display order everywhere this collection is listed
+              // (homepage "PHIVARA DESTINATIONS" cards, /contact grid, footer,
+              // register/basic-info "preferred branch" dropdown — see
+              // homeData.ts and branchesData.ts, both sort by this field now
+              // instead of creation order). Lower numbers show first; ties
+              // fall back to creation order. Not required — new branches
+              // default to 0 and can be sorted into place after saving.
+              name: 'displayOrder',
+              type: 'number',
+              defaultValue: 0,
+              admin: {
+                description: 'ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้าแรก, หน้าติดต่อ, footer และฟอร์มสมัครสมาชิก',
+                position: 'sidebar',
+              },
             },
             // Per-locale name — the old flat nameTh/nameEn fields (from the
             // original additive migration, see Doctors.ts's `name` field
