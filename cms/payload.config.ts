@@ -20,9 +20,14 @@ import { Programs } from './collections/Programs'
 import { Articles } from './collections/Articles'
 import { Awards } from './collections/Awards'
 import { Leads } from './collections/Leads'
+import { Members } from './collections/Members'
+import { MembershipTiers } from './collections/MembershipTiers'
 import { Users } from './collections/Users'
+import { switchableEmailAdapter } from './email/adapter'
 import { Membership } from './globals/Membership'
+import { MemberPrivileges } from './globals/MemberPrivileges'
 import { Ecosystem } from './globals/Ecosystem'
+import { EmailSettings } from './globals/EmailSettings'
 import { HomeHero } from './globals/HomeHero'
 import { Footer } from './globals/Footer'
 import { TopBar } from './globals/TopBar'
@@ -30,8 +35,20 @@ import { LanguageSettings } from './globals/LanguageSettings'
 import { PrivacyPolicy } from './globals/PrivacyPolicy'
 
 export default buildConfig({
-  collections: [Users, Media, Branches, Doctors, Programs, Articles, Awards, Leads],
-  globals: [Membership, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings, PrivacyPolicy],
+  collections: [Users, Members, MembershipTiers, Media, Branches, Doctors, Programs, Articles, Awards, Leads],
+  globals: [Membership, MemberPrivileges, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings, PrivacyPolicy, EmailSettings],
+
+  // Sends member-account emails (verify/forgot-password — see
+  // cms/collections/Members.ts's `auth` config) via whichever provider is
+  // selected in the email-settings Global, switching at send time with no
+  // restart needed. Cast through `as any` — Payload's own `email:` field is
+  // typed against nodemailer's `SendMailOptions`, but this adapter talks
+  // straight to the Gmail/Microsoft Graph REST APIs over `fetch` and never
+  // installs nodemailer as a dependency (see cms/email/types.ts). The
+  // runtime shape returned by switchableEmailAdapter() matches exactly what
+  // Payload expects; only the type import is being sidestepped here.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  email: switchableEmailAdapter() as any,
 
   // TH is the source language and the site's permanent default/fallback.
   // 13 more locales are pre-provisioned here so an Admin can turn each one

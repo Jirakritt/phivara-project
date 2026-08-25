@@ -55,11 +55,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     readBranchDetails: t('อ่านข้อมูลสาขา', 'Read branch details'),
     viewProfile: t('ดูประวัติแพทย์', 'View Profile'),
     book: t('จองปรึกษา →', 'Book →'),
+    // Integrated Expertise tab bar (tab label / small tag / panel heading)
+    // — now sourced from the home-hero Global's "หมวดความเชี่ยวชาญ" group
+    // instead of being hardcoded here and again in public/js/main.js.
+    categoryLabels: {
+      plastic: t(data.hero.expertisePlasticLabelTh, data.hero.expertisePlasticLabelEn),
+      longevity: t(data.hero.expertiseLongevityLabelTh, data.hero.expertiseLongevityLabelEn),
+      dermatology: t(data.hero.expertiseDermatologyLabelTh, data.hero.expertiseDermatologyLabelEn),
+      wellness: t(data.hero.expertiseWellnessLabelTh, data.hero.expertiseWellnessLabelEn),
+    },
+    categoryTags: {
+      plastic: t(data.hero.expertisePlasticTagTh, data.hero.expertisePlasticTagEn),
+      longevity: t(data.hero.expertiseLongevityTagTh, data.hero.expertiseLongevityTagEn),
+      dermatology: t(data.hero.expertiseDermatologyTagTh, data.hero.expertiseDermatologyTagEn),
+      wellness: t(data.hero.expertiseWellnessTagTh, data.hero.expertiseWellnessTagEn),
+    },
     categoryTitles: {
-      plastic: t('ศิลปะการจัดแต่งสัดส่วน', 'The Art of Form'),
-      longevity: t('ศิลปะแห่งกาลเวลา', 'The Art of Time'),
-      dermatology: t('ศิลปะแห่งผิวเปล่งประกาย', 'The Art of Glow'),
-      wellness: t('ศิลปะแห่งความสมดุล', 'The Art of Balance'),
+      plastic: t(data.hero.expertisePlasticTitleTh, data.hero.expertisePlasticTitleEn),
+      longevity: t(data.hero.expertiseLongevityTitleTh, data.hero.expertiseLongevityTitleEn),
+      dermatology: t(data.hero.expertiseDermatologyTitleTh, data.hero.expertiseDermatologyTitleEn),
+      wellness: t(data.hero.expertiseWellnessTitleTh, data.hero.expertiseWellnessTitleEn),
     },
   }).replace(/</g, '\\u003c')};`
 
@@ -138,44 +153,29 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="diagram-tags stagger">
                   <div className="diagram-tag tag-tl s-item">
                     <span className="tag-dot"></span>
-                    <span>{t('เวชศาสตร์อายุยืนยาว', 'Anti-Aging & Longevity')}</span>
+                    <span>{t(data.hero.diagramLabelTlTh, data.hero.diagramLabelTlEn)}</span>
                   </div>
                   <div className="diagram-tag tag-tr s-item">
                     <span className="tag-dot"></span>
-                    <span>{t('ผิวหนัง', 'Dermatology')}</span>
+                    <span>{t(data.hero.diagramLabelTrTh, data.hero.diagramLabelTrEn)}</span>
                   </div>
                   <div className="diagram-tag tag-bl s-item">
                     <span className="tag-dot"></span>
-                    <span>{t('สุขภาวะเชิงความงาม', 'Aesthetic Wellness')}</span>
+                    <span>{t(data.hero.diagramLabelBlTh, data.hero.diagramLabelBlEn)}</span>
                   </div>
                   <div className="diagram-tag tag-br s-item">
                     <span className="tag-dot"></span>
-                    <span>{t('ศัลยกรรมตกแต่ง', 'Plastic Surgery')}</span>
+                    <span>{t(data.hero.diagramLabelBrTh, data.hero.diagramLabelBrEn)}</span>
                   </div>
                 </div>
               </div>
             </div>
             <div className="reveal">
-              <div className="eyebrow">WHY PHIVARA EXISTS</div>
-              <blockquote>
-                {t(
-                  '“ความงามที่แท้จริง เริ่มต้นจากสุขภาพที่ดีจากภายใน ไม่ใช่การไล่ตามความเยาว์วัย”',
-                  '“True beauty begins with good health from within — not the pursuit of youth.”',
-                )}
-              </blockquote>
-              <p className="body">
-                {t(
-                  'Beaugevity คือแก่นความเชื่อของ PHIVARA ที่หลอมรวมศาสตร์ความงามและเวชศาสตร์อายุยืนยาวเข้าไว้ด้วยกันบนพื้นฐานทางการแพทย์ ทุกการดูแลเริ่มต้นจากการตรวจวินิจฉัยและประเมินสุขภาพเชิงลึกโดยแพทย์เฉพาะทาง ก่อนออกแบบแผนการดูแลเฉพาะบุคคลที่ผสานศัลยกรรมตกแต่ง ผิวหนัง และเวชศาสตร์ชะลอวัยไว้ในทีมเดียว',
-                  'Beaugevity is the core belief behind PHIVARA — the fusion of beauty and longevity medicine, grounded in clinical practice. Every treatment begins with in-depth diagnostics and health assessment by specialist physicians, followed by a personalized care plan that integrates plastic surgery, dermatology, and longevity medicine under one team.',
-                )}
-              </p>
-              <p className="body">
-                {t(
-                  'ดำเนินการภายใต้มาตรฐานความปลอดภัยระดับโรงพยาบาล และทีมสหสาขาวิชาชีพที่ติดตามผลลัพธ์อย่างต่อเนื่อง เพื่อผลลัพธ์ที่ปลอดภัย แม่นยำ และยั่งยืน',
-                  'Delivered under hospital-grade safety standards, with a multidisciplinary team monitoring outcomes at every step — for results that are safe, precise, and built to last.',
-                )}
-              </p>
-              <div className="sig">— The Art of Beaugevity</div>
+              <div className="eyebrow">{t(data.hero.introEyebrowTh, data.hero.introEyebrowEn)}</div>
+              <blockquote>{t(data.hero.introQuoteTh, data.hero.introQuoteEn)}</blockquote>
+              <p className="body">{t(data.hero.introBody1Th, data.hero.introBody1En)}</p>
+              <p className="body">{t(data.hero.introBody2Th, data.hero.introBody2En)}</p>
+              <div className="sig">{t(data.hero.introTaglineTh, data.hero.introTaglineEn)}</div>
             </div>
           </div>
         </div>
@@ -185,8 +185,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="expertise" id="expertise">
         <div className="wrap">
           <div className="section-head reveal">
-            <div className="eyebrow center">INTEGRATED EXPERTISE</div>
-            <h2>{t('หนึ่งทีม หนึ่งเส้นทาง เพื่อคุณโดยเฉพาะ', 'One Team, One Journey — Built Around You')}</h2>
+            <div className="eyebrow center">{t(data.hero.expertiseEyebrowTh, data.hero.expertiseEyebrowEn)}</div>
+            <h2>{t(data.hero.expertiseHeadlineTh, data.hero.expertiseHeadlineEn)}</h2>
           </div>
           <div className="exp-tabs reveal">
             <div className="exp-tab-nav" id="expTabNav" role="tablist"></div>
@@ -199,8 +199,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="flagship" id="flagship">
         <div className="wrap flagship-heading">
           <div>
-            <div className="eyebrow">PHIVARA DESTINATIONS</div>
-            <h2>{t('พื้นที่ดูแลที่ออกแบบมาเพื่อทุกเส้นทางของคุณ', 'Distinctive spaces, designed around your journey')}</h2>
+            <div className="eyebrow">{t(data.hero.destinationsEyebrowTh, data.hero.destinationsEyebrowEn)}</div>
+            <h2>{t(data.hero.destinationsHeadlineTh, data.hero.destinationsHeadlineEn)}</h2>
           </div>
         </div>
         <div className="wrap flagship-stage">
@@ -213,11 +213,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="specialists" id="specialists">
         <div className="wrap">
           <div className="section-head reveal">
-            <div className="eyebrow center">OUR SPECIALISTS</div>
-            <h2>{t('พบแพทย์และผู้เชี่ยวชาญของ PHIVARA', 'Meet Our Specialists')}</h2>
-            <p>{t('ทุกท่านยึดหลักฐานเชิงประจักษ์ มีคุณวุฒิรับรอง และทุ่มเทให้กับเส้นทางของคุณเป็นการส่วนตัว', 'Evidence-based, credentialed, and personally invested in your journey.')}</p>
+            <div className="eyebrow center">{t(data.hero.specialistsEyebrowTh, data.hero.specialistsEyebrowEn)}</div>
+            <h2>{t(data.hero.specialistsHeadlineTh, data.hero.specialistsHeadlineEn)}</h2>
+            <p>{t(data.hero.specialistsLeadTh, data.hero.specialistsLeadEn)}</p>
             <a href={localizedHref(locale, '/doctor')} className="arrow-link spec-all-link">
-              <span>{t('ดูรายชื่อทีมแพทย์และผู้เชี่ยวชาญทั้งหมด', 'View All Medical Specialists')}</span>
+              <span>{t(data.hero.specialistsLinkLabelTh, data.hero.specialistsLinkLabelEn)}</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
@@ -246,8 +246,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="journal" id="journal">
         <div className="wrap">
           <div className="section-head reveal">
-            <div className="eyebrow center">THE JOURNAL</div>
-            <h2>{t('สาระความงามจากผู้เชี่ยวชาญ', 'Insights From Our Specialists')}</h2>
+            <div className="eyebrow center">{t(data.hero.journalEyebrowTh, data.hero.journalEyebrowEn)}</div>
+            <h2>{t(data.hero.journalHeadlineTh, data.hero.journalHeadlineEn)}</h2>
           </div>
           <div className="journal-grid stagger" id="journalGrid"></div>
         </div>
@@ -257,8 +257,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="awards">
         <div className="wrap">
           <div className="section-head reveal">
-            <div className="eyebrow center">AWARDS &amp; RECOGNITION</div>
-            <h2>{t('ความไว้วางใจที่สั่งสมมาอย่างยาวนาน', 'A Legacy of Trust and Recognition')}</h2>
+            <div className="eyebrow center">{t(data.hero.awardsEyebrowTh, data.hero.awardsEyebrowEn)}</div>
+            <h2>{t(data.hero.awardsHeadlineTh, data.hero.awardsHeadlineEn)}</h2>
           </div>
           <div className="award-carousel reveal">
             <button className="carousel-nav award-nav prev" id="awardPrev" aria-label="Previous">

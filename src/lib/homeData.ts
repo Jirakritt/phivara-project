@@ -90,6 +90,86 @@ export interface HomeHero {
   ctaLabelTh: string
   ctaLabelEn: string
   backgroundImages: string[]
+  // "WHY PHIVARA EXISTS" section — see cms/globals/HomeHero.ts's collapsible
+  // group for the field definitions.
+  introEyebrowTh: string
+  introEyebrowEn: string
+  introQuoteTh: string
+  introQuoteEn: string
+  introBody1Th: string
+  introBody1En: string
+  introBody2Th: string
+  introBody2En: string
+  introTaglineTh: string
+  introTaglineEn: string
+  diagramLabelTlTh: string
+  diagramLabelTlEn: string
+  diagramLabelTrTh: string
+  diagramLabelTrEn: string
+  diagramLabelBlTh: string
+  diagramLabelBlEn: string
+  diagramLabelBrTh: string
+  diagramLabelBrEn: string
+  // "INTEGRATED EXPERTISE" tabbed section — see cms/globals/HomeHero.ts's
+  // second collapsible group. Category keys (plastic/longevity/dermatology/
+  // wellness) stay hardcoded in code since they must match
+  // Programs.category's select options; only their display text is here.
+  expertiseEyebrowTh: string
+  expertiseEyebrowEn: string
+  expertiseHeadlineTh: string
+  expertiseHeadlineEn: string
+  expertisePlasticLabelTh: string
+  expertisePlasticLabelEn: string
+  expertisePlasticTagTh: string
+  expertisePlasticTagEn: string
+  expertisePlasticTitleTh: string
+  expertisePlasticTitleEn: string
+  expertiseLongevityLabelTh: string
+  expertiseLongevityLabelEn: string
+  expertiseLongevityTagTh: string
+  expertiseLongevityTagEn: string
+  expertiseLongevityTitleTh: string
+  expertiseLongevityTitleEn: string
+  expertiseDermatologyLabelTh: string
+  expertiseDermatologyLabelEn: string
+  expertiseDermatologyTagTh: string
+  expertiseDermatologyTagEn: string
+  expertiseDermatologyTitleTh: string
+  expertiseDermatologyTitleEn: string
+  expertiseWellnessLabelTh: string
+  expertiseWellnessLabelEn: string
+  expertiseWellnessTagTh: string
+  expertiseWellnessTagEn: string
+  expertiseWellnessTitleTh: string
+  expertiseWellnessTitleEn: string
+  // "PHIVARA DESTINATIONS" section eyebrow/heading — branch cards
+  // themselves come from HomeData.branches (the `branches` collection).
+  destinationsEyebrowTh: string
+  destinationsEyebrowEn: string
+  destinationsHeadlineTh: string
+  destinationsHeadlineEn: string
+  // "OUR SPECIALISTS" section copy — doctor cards themselves come from
+  // HomeData.doctors (the `doctors` collection).
+  specialistsEyebrowTh: string
+  specialistsEyebrowEn: string
+  specialistsHeadlineTh: string
+  specialistsHeadlineEn: string
+  specialistsLeadTh: string
+  specialistsLeadEn: string
+  specialistsLinkLabelTh: string
+  specialistsLinkLabelEn: string
+  // "THE JOURNAL" section eyebrow/heading — article cards themselves come
+  // from HomeData.articles (the `articles` collection).
+  journalEyebrowTh: string
+  journalEyebrowEn: string
+  journalHeadlineTh: string
+  journalHeadlineEn: string
+  // "AWARDS & RECOGNITION" section eyebrow/heading — award cards themselves
+  // come from HomeData.awards (the `awards` collection).
+  awardsEyebrowTh: string
+  awardsEyebrowEn: string
+  awardsHeadlineTh: string
+  awardsHeadlineEn: string
 }
 
 export interface HomeAward {
@@ -202,6 +282,72 @@ async function getHomeHero(locale: LocaleCode): Promise<HomeHero> {
     backgroundImages: ((th.backgroundImages || []) as any[])
       .map((row: any) => mediaUrl(row.image))
       .filter((url: string | undefined): url is string => Boolean(url)),
+    introEyebrowTh: resolve(target, en, th, 'introEyebrow'),
+    introEyebrowEn: resolve(target, en, th, 'introEyebrow'),
+    introQuoteTh: resolve(target, en, th, 'introQuote'),
+    introQuoteEn: resolve(target, en, th, 'introQuote'),
+    introBody1Th: resolve(target, en, th, 'introBody1'),
+    introBody1En: resolve(target, en, th, 'introBody1'),
+    introBody2Th: resolve(target, en, th, 'introBody2'),
+    introBody2En: resolve(target, en, th, 'introBody2'),
+    introTaglineTh: resolve(target, en, th, 'introTagline'),
+    introTaglineEn: resolve(target, en, th, 'introTagline'),
+    diagramLabelTlTh: resolve(target, en, th, 'diagramLabelTl'),
+    diagramLabelTlEn: resolve(target, en, th, 'diagramLabelTl'),
+    diagramLabelTrTh: resolve(target, en, th, 'diagramLabelTr'),
+    diagramLabelTrEn: resolve(target, en, th, 'diagramLabelTr'),
+    diagramLabelBlTh: resolve(target, en, th, 'diagramLabelBl'),
+    diagramLabelBlEn: resolve(target, en, th, 'diagramLabelBl'),
+    diagramLabelBrTh: resolve(target, en, th, 'diagramLabelBr'),
+    diagramLabelBrEn: resolve(target, en, th, 'diagramLabelBr'),
+    expertiseEyebrowTh: resolve(target, en, th, 'expertiseEyebrow'),
+    expertiseEyebrowEn: resolve(target, en, th, 'expertiseEyebrow'),
+    expertiseHeadlineTh: resolve(target, en, th, 'expertiseHeadline'),
+    expertiseHeadlineEn: resolve(target, en, th, 'expertiseHeadline'),
+    expertisePlasticLabelTh: resolve(target, en, th, 'expertisePlasticLabel'),
+    expertisePlasticLabelEn: resolve(target, en, th, 'expertisePlasticLabel'),
+    expertisePlasticTagTh: resolve(target, en, th, 'expertisePlasticTag'),
+    expertisePlasticTagEn: resolve(target, en, th, 'expertisePlasticTag'),
+    expertisePlasticTitleTh: resolve(target, en, th, 'expertisePlasticTitle'),
+    expertisePlasticTitleEn: resolve(target, en, th, 'expertisePlasticTitle'),
+    expertiseLongevityLabelTh: resolve(target, en, th, 'expertiseLongevityLabel'),
+    expertiseLongevityLabelEn: resolve(target, en, th, 'expertiseLongevityLabel'),
+    expertiseLongevityTagTh: resolve(target, en, th, 'expertiseLongevityTag'),
+    expertiseLongevityTagEn: resolve(target, en, th, 'expertiseLongevityTag'),
+    expertiseLongevityTitleTh: resolve(target, en, th, 'expertiseLongevityTitle'),
+    expertiseLongevityTitleEn: resolve(target, en, th, 'expertiseLongevityTitle'),
+    expertiseDermatologyLabelTh: resolve(target, en, th, 'expertiseDermatologyLabel'),
+    expertiseDermatologyLabelEn: resolve(target, en, th, 'expertiseDermatologyLabel'),
+    expertiseDermatologyTagTh: resolve(target, en, th, 'expertiseDermatologyTag'),
+    expertiseDermatologyTagEn: resolve(target, en, th, 'expertiseDermatologyTag'),
+    expertiseDermatologyTitleTh: resolve(target, en, th, 'expertiseDermatologyTitle'),
+    expertiseDermatologyTitleEn: resolve(target, en, th, 'expertiseDermatologyTitle'),
+    expertiseWellnessLabelTh: resolve(target, en, th, 'expertiseWellnessLabel'),
+    expertiseWellnessLabelEn: resolve(target, en, th, 'expertiseWellnessLabel'),
+    expertiseWellnessTagTh: resolve(target, en, th, 'expertiseWellnessTag'),
+    expertiseWellnessTagEn: resolve(target, en, th, 'expertiseWellnessTag'),
+    expertiseWellnessTitleTh: resolve(target, en, th, 'expertiseWellnessTitle'),
+    expertiseWellnessTitleEn: resolve(target, en, th, 'expertiseWellnessTitle'),
+    destinationsEyebrowTh: resolve(target, en, th, 'destinationsEyebrow'),
+    destinationsEyebrowEn: resolve(target, en, th, 'destinationsEyebrow'),
+    destinationsHeadlineTh: resolve(target, en, th, 'destinationsHeadline'),
+    destinationsHeadlineEn: resolve(target, en, th, 'destinationsHeadline'),
+    specialistsEyebrowTh: resolve(target, en, th, 'specialistsEyebrow'),
+    specialistsEyebrowEn: resolve(target, en, th, 'specialistsEyebrow'),
+    specialistsHeadlineTh: resolve(target, en, th, 'specialistsHeadline'),
+    specialistsHeadlineEn: resolve(target, en, th, 'specialistsHeadline'),
+    specialistsLeadTh: resolve(target, en, th, 'specialistsLead'),
+    specialistsLeadEn: resolve(target, en, th, 'specialistsLead'),
+    specialistsLinkLabelTh: resolve(target, en, th, 'specialistsLinkLabel'),
+    specialistsLinkLabelEn: resolve(target, en, th, 'specialistsLinkLabel'),
+    journalEyebrowTh: resolve(target, en, th, 'journalEyebrow'),
+    journalEyebrowEn: resolve(target, en, th, 'journalEyebrow'),
+    journalHeadlineTh: resolve(target, en, th, 'journalHeadline'),
+    journalHeadlineEn: resolve(target, en, th, 'journalHeadline'),
+    awardsEyebrowTh: resolve(target, en, th, 'awardsEyebrow'),
+    awardsEyebrowEn: resolve(target, en, th, 'awardsEyebrow'),
+    awardsHeadlineTh: resolve(target, en, th, 'awardsHeadline'),
+    awardsHeadlineEn: resolve(target, en, th, 'awardsHeadline'),
   }
 }
 

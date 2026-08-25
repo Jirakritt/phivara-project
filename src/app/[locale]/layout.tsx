@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import React from 'react'
 
+import PreloaderController from '@/components/PreloaderController'
 import { LOCALE_GOOGLE_FONTS } from '@/lib/fonts'
 import { DEFAULT_LOCALE, isLocaleCode, isRtl, translator } from '@/lib/i18n'
 import type { LocaleCode } from '@/lib/i18n'
@@ -196,6 +197,7 @@ export default async function LocaleLayout({
         <Script id="phivara-vip-modal-strings" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: vipModalScript }} />
       </head>
       <body>
+        <PreloaderController />
         {children}
 
         <div id="consentBanner" role="region" aria-label="Cookie consent" hidden>

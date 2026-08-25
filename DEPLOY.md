@@ -94,6 +94,31 @@ NEXT_PUBLIC_SERVER_URL=https://www.phivara.site   # โดเมนจริง
 # Analytics — ไม่บังคับ เว้นว่างไว้ได้ถ้ายังไม่มี ID จริง (เว็บทำงานปกติ แค่ไม่ยิง tracking)
 NEXT_PUBLIC_GA4_MEASUREMENT_ID=
 NEXT_PUBLIC_META_PIXEL_ID=
+
+# Member-account transactional email (verify-account / forgot-password —
+# cms/collections/Members.ts). Admin picks the active provider in CMS >
+# Email Settings; only fill in the env vars for whichever provider(s) are
+# actually in use. See cms/email/gmail.ts and cms/email/microsoftGraph.ts
+# for exactly how each is used.
+EMAIL_FROM_ADDRESS=no-reply@phivara.site
+EMAIL_FROM_NAME=PHIVARA
+
+# Gmail (OAuth2 via Gmail API — not SMTP): create an OAuth client (type
+# "Desktop app") in a Google Cloud project, then generate a refresh token
+# once via https://developers.google.com/oauthplayground authorizing scope
+# https://www.googleapis.com/auth/gmail.send against the sending mailbox.
+GMAIL_CLIENT_ID=
+GMAIL_CLIENT_SECRET=
+GMAIL_REFRESH_TOKEN=
+GMAIL_SENDER_EMAIL=
+
+# Microsoft Graph (app-only / client-credentials — Azure AD App
+# Registration with the *application* permission Mail.Send, admin-consented,
+# scoped to the sending mailbox).
+MSGRAPH_TENANT_ID=
+MSGRAPH_CLIENT_ID=
+MSGRAPH_CLIENT_SECRET=
+MSGRAPH_SENDER_UPN=
 ```
 generate secret ใหม่: `openssl rand -base64 32`
 

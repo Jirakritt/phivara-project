@@ -18,6 +18,18 @@
     readBranchDetails: 'อ่านข้อมูลสาขา',
     viewProfile: 'ดูประวัติแพทย์',
     book: 'จองปรึกษา →',
+    categoryLabels: {
+      plastic: 'Plastic Surgery',
+      longevity: 'Anti-Aging & Longevity',
+      dermatology: 'Dermatology',
+      wellness: 'Aesthetic Wellness',
+    },
+    categoryTags: {
+      plastic: 'The Art of Form',
+      longevity: 'The Art of Time',
+      dermatology: 'The Art of Glow',
+      wellness: 'The Art of Balance',
+    },
     categoryTitles: {
       plastic: 'ศิลปะการจัดแต่งสัดส่วน',
       longevity: 'ศิลปะแห่งกาลเวลา',
@@ -168,10 +180,10 @@
      `key` maps each pillar to the matching Programs.category value in
      Payload so the card grid below can filter real programs per tab. */
   const expertiseCategories = [
-    { key:'plastic', label:'Plastic Surgery', tag:'The Art of Form', title: mainStrings.categoryTitles.plastic },
-    { key:'longevity', label:'Anti-Aging & Longevity', tag:'The Art of Time', title: mainStrings.categoryTitles.longevity },
-    { key:'dermatology', label:'Dermatology', tag:'The Art of Glow', title: mainStrings.categoryTitles.dermatology },
-    { key:'wellness', label:'Aesthetic Wellness', tag:'The Art of Balance', title: mainStrings.categoryTitles.wellness }
+    { key:'plastic', label: mainStrings.categoryLabels.plastic, tag: mainStrings.categoryTags.plastic, title: mainStrings.categoryTitles.plastic },
+    { key:'longevity', label: mainStrings.categoryLabels.longevity, tag: mainStrings.categoryTags.longevity, title: mainStrings.categoryTitles.longevity },
+    { key:'dermatology', label: mainStrings.categoryLabels.dermatology, tag: mainStrings.categoryTags.dermatology, title: mainStrings.categoryTitles.dermatology },
+    { key:'wellness', label: mainStrings.categoryLabels.wellness, tag: mainStrings.categoryTags.wellness, title: mainStrings.categoryTitles.wellness }
   ];
   const expNav = document.getElementById('expTabNav');
   const expTabPanels = document.getElementById('expTabPanels');

@@ -1,28 +1,18 @@
 (function () {
   'use strict';
 
-  function initPreloader() {
-    const preloader = document.getElementById('preloader');
-    if (!preloader) return;
-
-    let hidden = false;
-    const hidePreloader = () => {
-      if (hidden) return;
-      hidden = true;
-      preloader.classList.add('done');
-    };
-    const scheduleHide = () => window.setTimeout(hidePreloader, 500);
-
-    if (document.readyState === 'complete') {
-      scheduleHide();
-    } else {
-      window.addEventListener('load', scheduleHide, { once: true });
-      // Safety net: some resource (e.g. a slow/blocked image) can delay or
-      // suppress the 'load' event entirely. Never leave the preloader
-      // stuck covering the page indefinitely.
-      window.setTimeout(hidePreloader, 4000);
-    }
-  }
+  // Preloader dismissal used to live here (a one-shot initPreloader() run
+  // by the <Script strategy="afterInteractive"> tag that loads this file).
+  // It worked on a page's first full load but never re-ran on client-side
+  // navigations, leaving every subsequently-mounted `#preloader` div stuck
+  // on screen forever — most visibly right after a login/register redirect.
+  // Moved to src/components/PreloaderController.tsx, which re-runs on every
+  // route change (see that file's comment for the full story). global-
+  // not-found.tsx is the one page still outside that component's reach
+  // (it owns its own standalone <html>, outside [locale]/layout.tsx) — that
+  // page is only ever reached via a full page load, where this removal
+  // doesn't affect anything since PreloaderController already re-runs the
+  // same logic for the [locale] tree covering the rest of the site.
 
   function initScrollState() {
     const header = document.getElementById('siteHeader');
@@ -110,7 +100,6 @@
     });
   }
 
-  initPreloader();
   initScrollState();
   initMobileMenu();
   initLanguageToggle();

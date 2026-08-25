@@ -64,10 +64,13 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    members: MemberAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
+    members: Member;
+    'membership-tiers': MembershipTier;
     media: Media;
     branches: Branch;
     doctors: Doctor;
@@ -83,6 +86,8 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    members: MembersSelect<false> | MembersSelect<true>;
+    'membership-tiers': MembershipTiersSelect<false> | MembershipTiersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     branches: BranchesSelect<false> | BranchesSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
@@ -106,33 +111,55 @@ export interface Config {
     | ('th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr')[];
   globals: {
     membership: Membership;
+    'member-privileges': MemberPrivilege;
     ecosystem: Ecosystem;
     'home-hero': HomeHero;
     footer: Footer;
     topbar: Topbar;
     'language-settings': LanguageSetting;
     'privacy-policy': PrivacyPolicy;
+    'email-settings': EmailSetting;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
+    'member-privileges': MemberPrivilegesSelect<false> | MemberPrivilegesSelect<true>;
     ecosystem: EcosystemSelect<false> | EcosystemSelect<true>;
     'home-hero': HomeHeroSelect<false> | HomeHeroSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     topbar: TopbarSelect<false> | TopbarSelect<true>;
     'language-settings': LanguageSettingsSelect<false> | LanguageSettingsSelect<true>;
     'privacy-policy': PrivacyPolicySelect<false> | PrivacyPolicySelect<true>;
+    'email-settings': EmailSettingsSelect<false> | EmailSettingsSelect<true>;
   };
   locale: 'th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr';
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: User | Member;
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface MemberAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -555,6 +582,97 @@ export interface Program {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * บัญชีสมาชิก PHIVARA Private Membership ที่ลูกค้าสมัครเองผ่านหน้าเว็บ (คนละระบบกับ Users ซึ่งเป็นบัญชีพนักงาน)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members".
+ */
+export interface Member {
+  id: number;
+  /**
+   * สร้างอัตโนมัติหลังสมัครสมาชิก ใช้ค้นหาได้จากช่องค้นหาด้านบน
+   */
+  memberNumber?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  /**
+   * วันเกิด — บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูล เพราะบัญชีถูกสร้างตั้งแต่ขั้นตอนที่ 1 (แค่อีเมล+รหัสผ่าน) ก่อนจะมีข้อมูลนี้
+   */
+  dob?: string | null;
+  /**
+   * Branch slug ที่สมาชิกเลือกไว้ตอนสมัคร — บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูลด้วยเหตุผลเดียวกับ dob ด้านบน — ไม่ใช่ relationship ด้วยเหตุผลเดียวกับ Leads.branch
+   */
+  preferredBranch?: string | null;
+  /**
+   * กำหนดโดยแอดมินเท่านั้น — ระบบยังไม่มีการซื้อขาย/คำนวณระดับสมาชิกอัตโนมัติ (จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)")
+   */
+  membershipTier?: (number | null) | MembershipTier;
+  /**
+   * รับข่าวสาร สิทธิพิเศษ และโปรโมชั่นทางอีเมล
+   */
+  emailOptIn?: boolean | null;
+  /**
+   * ภาษาที่สมาชิกใช้งานตอนสมัคร เช่น 'th', 'en' — ใช้เลือกภาษาของอีเมลยืนยัน/รีเซ็ตรหัสผ่านเท่านั้น
+   */
+  preferredLocale?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  _verified?: boolean | null;
+  _verificationToken?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'members';
+}
+/**
+ * ระดับสมาชิก PHIVARA — เพิ่ม/ลบ/แก้ไข/จัดลำดับได้อิสระ ใช้กำหนดหน้าบัตรสมาชิก (สี) และผูกกับการ์ดสิทธิพิเศษ (member-privileges)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "membership-tiers".
+ */
+export interface MembershipTier {
+  id: number;
+  /**
+   * ชื่อ tier ที่แสดงให้สมาชิกเห็น เช่น "Diamond"
+   */
+  label: string;
+  /**
+   * รหัสภายในของ tier นี้ (ห้ามซ้ำ, ห้ามมีช่องว่าง) เช่น "diamond" — ไม่แสดงให้สมาชิกเห็น
+   */
+  slug: string;
+  /**
+   * ลำดับการแสดงผล (เลขน้อยไปมาก) — ใช้เรียงตารางเปรียบเทียบ tier ในหน้าโปรไฟล์สมาชิก
+   */
+  order: number;
+  /**
+   * สีเริ่มต้น (hex เช่น #2C2313)
+   */
+  gradientStart: string;
+  /**
+   * สีกลาง (hex)
+   */
+  gradientMid: string;
+  /**
+   * สีปลาย (hex)
+   */
+  gradientEnd: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles".
  */
@@ -736,6 +854,14 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'members';
+        value: number | Member;
+      } | null)
+    | ({
+        relationTo: 'membership-tiers';
+        value: number | MembershipTier;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -764,10 +890,15 @@ export interface PayloadLockedDocument {
         value: number | Lead;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'members';
+        value: number | Member;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -777,10 +908,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'members';
+        value: number | Member;
+      };
   key?: string | null;
   value?:
     | {
@@ -829,6 +965,53 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members_select".
+ */
+export interface MembersSelect<T extends boolean = true> {
+  memberNumber?: T;
+  firstName?: T;
+  lastName?: T;
+  phone?: T;
+  dob?: T;
+  preferredBranch?: T;
+  membershipTier?: T;
+  emailOptIn?: T;
+  preferredLocale?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  _verified?: T;
+  _verificationToken?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "membership-tiers_select".
+ */
+export interface MembershipTiersSelect<T extends boolean = true> {
+  label?: T;
+  slug?: T;
+  order?: T;
+  gradientStart?: T;
+  gradientMid?: T;
+  gradientEnd?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1240,6 +1423,32 @@ export interface Membership {
   createdAt?: string | null;
 }
 /**
+ * การ์ดสิทธิพิเศษที่สมาชิกเห็นในแท็บ "สิทธิพิเศษ" หน้าบัญชีของฉัน (คนละส่วนกับหน้า /membership สาธารณะ)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "member-privileges".
+ */
+export interface MemberPrivilege {
+  id: number;
+  /**
+   * เพิ่ม/ลบ/จัดลำดับการ์ดได้อิสระ — แต่ละการ์ดเลือกได้ว่าจะโชว์ให้ระดับสมาชิกไหนเห็นบ้าง (เลือกได้มากกว่า 1 ระดับ)
+   */
+  cards?:
+    | {
+        title: string;
+        description: string;
+        icon: 'discount' | 'priority' | 'doctor' | 'gift' | 'star' | 'heart' | 'diamond' | 'badge';
+        /**
+         * แสดงการ์ดนี้ให้สมาชิกระดับที่เลือกเห็นเท่านั้น (เลือกได้หลายระดับ) — จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)"
+         */
+        tiers: (number | MembershipTier)[];
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ecosystem".
  */
@@ -1301,6 +1510,87 @@ export interface HomeHero {
         id?: string | null;
       }[]
     | null;
+  introEyebrow?: string | null;
+  introQuote: string;
+  introBody1?: string | null;
+  introBody2?: string | null;
+  introTagline?: string | null;
+  /**
+   * จุดบนซ้าย
+   */
+  diagramLabelTl?: string | null;
+  /**
+   * จุดบนขวา
+   */
+  diagramLabelTr?: string | null;
+  /**
+   * จุดล่างซ้าย
+   */
+  diagramLabelBl?: string | null;
+  /**
+   * จุดล่างขวา
+   */
+  diagramLabelBr?: string | null;
+  expertiseEyebrow?: string | null;
+  expertiseHeadline: string;
+  /**
+   * ชื่อ tab
+   */
+  expertisePlasticLabel?: string | null;
+  /**
+   * แท็กเล็กเหนือหัวข้อ
+   */
+  expertisePlasticTag?: string | null;
+  /**
+   * หัวข้อในแผงเนื้อหา
+   */
+  expertisePlasticTitle?: string | null;
+  /**
+   * ชื่อ tab
+   */
+  expertiseLongevityLabel?: string | null;
+  /**
+   * แท็กเล็กเหนือหัวข้อ
+   */
+  expertiseLongevityTag?: string | null;
+  /**
+   * หัวข้อในแผงเนื้อหา
+   */
+  expertiseLongevityTitle?: string | null;
+  /**
+   * ชื่อ tab
+   */
+  expertiseDermatologyLabel?: string | null;
+  /**
+   * แท็กเล็กเหนือหัวข้อ
+   */
+  expertiseDermatologyTag?: string | null;
+  /**
+   * หัวข้อในแผงเนื้อหา
+   */
+  expertiseDermatologyTitle?: string | null;
+  /**
+   * ชื่อ tab
+   */
+  expertiseWellnessLabel?: string | null;
+  /**
+   * แท็กเล็กเหนือหัวข้อ
+   */
+  expertiseWellnessTag?: string | null;
+  /**
+   * หัวข้อในแผงเนื้อหา
+   */
+  expertiseWellnessTitle?: string | null;
+  destinationsEyebrow?: string | null;
+  destinationsHeadline: string;
+  specialistsEyebrow?: string | null;
+  specialistsHeadline: string;
+  specialistsLead?: string | null;
+  specialistsLinkLabel?: string | null;
+  journalEyebrow?: string | null;
+  journalHeadline: string;
+  awardsEyebrow?: string | null;
+  awardsHeadline: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1459,6 +1749,21 @@ export interface PrivacyPolicy {
   createdAt?: string | null;
 }
 /**
+ * เลือกผู้ให้บริการส่งอีเมลระบบ (ยืนยันบัญชี / รีเซ็ตรหัสผ่าน) — ค่า credentials ตั้งค่าแยกที่ .env บน server เท่านั้น ไม่ใส่ในหน้านี้
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-settings".
+ */
+export interface EmailSetting {
+  id: number;
+  /**
+   * ระบบจะส่งอีเมล (ยืนยันบัญชี, ลืมรหัสผ่าน) ผ่านผู้ให้บริการที่เลือกไว้นี้
+   */
+  provider: 'gmail' | 'microsoft-graph';
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
@@ -1513,6 +1818,24 @@ export interface MembershipSelect<T extends boolean = true> {
         heading?: T;
         body?: T;
         buttonLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "member-privileges_select".
+ */
+export interface MemberPrivilegesSelect<T extends boolean = true> {
+  cards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        icon?: T;
+        tiers?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1577,6 +1900,39 @@ export interface HomeHeroSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  introEyebrow?: T;
+  introQuote?: T;
+  introBody1?: T;
+  introBody2?: T;
+  introTagline?: T;
+  diagramLabelTl?: T;
+  diagramLabelTr?: T;
+  diagramLabelBl?: T;
+  diagramLabelBr?: T;
+  expertiseEyebrow?: T;
+  expertiseHeadline?: T;
+  expertisePlasticLabel?: T;
+  expertisePlasticTag?: T;
+  expertisePlasticTitle?: T;
+  expertiseLongevityLabel?: T;
+  expertiseLongevityTag?: T;
+  expertiseLongevityTitle?: T;
+  expertiseDermatologyLabel?: T;
+  expertiseDermatologyTag?: T;
+  expertiseDermatologyTitle?: T;
+  expertiseWellnessLabel?: T;
+  expertiseWellnessTag?: T;
+  expertiseWellnessTitle?: T;
+  destinationsEyebrow?: T;
+  destinationsHeadline?: T;
+  specialistsEyebrow?: T;
+  specialistsHeadline?: T;
+  specialistsLead?: T;
+  specialistsLinkLabel?: T;
+  journalEyebrow?: T;
+  journalHeadline?: T;
+  awardsEyebrow?: T;
+  awardsHeadline?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1717,6 +2073,16 @@ export interface LanguageSettingsSelect<T extends boolean = true> {
  */
 export interface PrivacyPolicySelect<T extends boolean = true> {
   body?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-settings_select".
+ */
+export interface EmailSettingsSelect<T extends boolean = true> {
+  provider?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -90,6 +90,35 @@ const contentItems: NavItem[] = [
     ),
   },
   {
+    // The `members` collection = actual PHIVARA Private Membership
+    // customer accounts (login, tier, profile — see cms/collections/
+    // Members.ts). Deliberately labeled differently from the
+    // `membership` GLOBAL below ("สมาชิก (Membership)", the public
+    // /membership marketing page's copy) — same-sounding Thai words for
+    // two very different things, so this spells out "บัญชี" (accounts)
+    // to keep them from being confused in the sidebar.
+    slug: 'members',
+    label: 'บัญชีสมาชิก (Members)',
+    type: 'collection',
+    icon: icon(
+      <>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </>,
+    ),
+  },
+  {
+    // Fully staff-managed tier set (see cms/collections/MembershipTiers.ts)
+    // — Members.membershipTier and MemberPrivileges.cards.tiers both
+    // reference this collection now, so an admin can add/remove/reorder
+    // tiers here without touching code.
+    slug: 'membership-tiers',
+    label: 'ระดับสมาชิก (Tiers)',
+    type: 'collection',
+    icon: icon(<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" />),
+  },
+  {
     slug: 'media',
     label: 'คลังรูปภาพ',
     type: 'collection',
@@ -139,6 +168,20 @@ const settingsItems: NavItem[] = [
     icon: icon(<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" />),
   },
   {
+    // Per-tier privilege cards shown on a logged-in member's own profile
+    // page (tab === 'privilege' — see cms/globals/MemberPrivileges.ts).
+    // Distinct from `membership` above, which is the public /membership
+    // marketing page's own separate "AUM Privileges" list.
+    slug: 'member-privileges',
+    label: 'สิทธิพิเศษสมาชิก (Privileges)',
+    type: 'global',
+    icon: icon(
+      <>
+        <path d="M20 6L9 17l-5-5" />
+      </>,
+    ),
+  },
+  {
     slug: 'footer',
     label: 'ท้ายหน้าเว็บ (Footer)',
     type: 'global',
@@ -171,6 +214,21 @@ const settingsItems: NavItem[] = [
       </>,
     ),
   },
+  {
+    // Which transactional-email provider (Gmail / Microsoft Graph) member
+    // verification + password-reset emails send through — see
+    // cms/globals/EmailSettings.ts. Credentials themselves stay in .env,
+    // never entered here.
+    slug: 'email-settings',
+    label: 'ตั้งค่าอีเมลระบบ (Email Settings)',
+    type: 'global',
+    icon: icon(
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="M3 7l9 6 9-6" />
+      </>,
+    ),
+  },
 ]
 
 export function Nav() {
@@ -187,7 +245,14 @@ export function Nav() {
       path: `/${item.type === 'collection' ? 'collections' : 'globals'}/${item.slug}`,
     })
 
-  const isActive = (item: NavItem) => pathname?.startsWith(href(item))
+  // Plain startsWith would wrongly mark "members" active while on
+  // "membership-tiers" (its path is a literal string-prefix of
+  // "membership-tiers"'s path) — require an exact match or a "/" boundary
+  // right after so one slug can't prefix-match another.
+  const isActive = (item: NavItem) => {
+    const base = href(item)
+    return pathname === base || pathname?.startsWith(`${base}/`)
+  }
 
   const visible = (item: NavItem) =>
     item.type === 'collection'

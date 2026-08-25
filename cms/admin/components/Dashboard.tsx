@@ -34,7 +34,15 @@ function mergeWhere(...clauses: Array<Where | undefined>): Where | undefined {
 // itself belongs here.
 export async function Dashboard({ initPageResult }: AdminViewServerProps) {
   const { req } = initPageResult
-  const { payload, user } = req
+  const { payload } = req
+  // The admin panel only ever authenticates via the `users` collection
+  // (see payload.config.ts's `admin.user: 'users'`) — `members` (site
+  // visitors, see cms/collections/Members.ts) never reach this view. The
+  // generated `req.user` type is a `User | Member` union project-wide
+  // though, since both are auth-enabled collections, so narrow it here
+  // once rather than checking `.collection === 'users'` at every call site
+  // below.
+  const user = req.user?.collection === 'users' ? req.user : null
 
   // A Content Editor / Medical Reviewer scoped to specific branches
   // (Users.assignedBranches) should only see counts for their own branch's
@@ -59,6 +67,7 @@ export async function Dashboard({ initPageResult }: AdminViewServerProps) {
     branchesCount,
     mediaCount,
     leadsToday,
+    membersCount,
     homeHero,
     ecosystem,
     membership,
@@ -75,6 +84,11 @@ export async function Dashboard({ initPageResult }: AdminViewServerProps) {
       collection: 'leads',
       where: mergeWhere(leadsWhere, { createdAt: { greater_than_equal: startOfToday().toISOString() } }),
     }),
+    // Not branch-scoped — members aren't tied to a branch (see Members.ts's
+    // preferredBranch comment), and any staff member can already read the
+    // full member directory (Members.access.read), so every role sees the
+    // same total here.
+    payload.count({ collection: 'members' }),
     payload.findGlobal({ slug: 'home-hero' }),
     payload.findGlobal({ slug: 'ecosystem' }),
     payload.findGlobal({ slug: 'membership' }),
@@ -116,6 +130,12 @@ export async function Dashboard({ initPageResult }: AdminViewServerProps) {
       label: 'รายชื่อผู้สนใจ (Leads)',
       stat: `${leadsToday.totalDocs} รายการใหม่วันนี้`,
       icon: icons.leads,
+    },
+    {
+      href: '/collections/members',
+      label: 'บัญชีสมาชิก (Members)',
+      stat: `${membersCount.totalDocs} บัญชี`,
+      icon: icons.members,
     },
     {
       href: '/collections/media',
@@ -311,6 +331,13 @@ const icons = {
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <circle cx="8.5" cy="8.5" r="1.5" />
       <path d="M21 15l-5-5L5 21" />
+    </>,
+  ),
+  members: iconWrap(
+    <>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
     </>,
   ),
   hero: iconWrap(<path d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" />),

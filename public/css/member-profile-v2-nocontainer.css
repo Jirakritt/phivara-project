@@ -1,0 +1,146 @@
+/* ==========================================================================
+   PHIVARA Membership — Member Profile v2 "Membership Card + Dashboard".
+   COMPARISON COPY: background hairline applied full-bleed to the page
+   (.member-dash) instead of contained inside a bordered panel. Saved on
+   request alongside member-profile-v2-nocontainer.html so the two
+   background treatments can be reviewed side by side. The current/adopted
+   version lives in member-profile-v2.css — keep both in sync only if this
+   comparison copy is still needed; otherwise it's fine to let it go stale.
+
+   Loaded ALONGSIDE member-profile.css (reuses .info-grid / .privilege-grid /
+   .tier-compare / .security-row / .consent-row / .member-switch / .btn-pill
+   from that file). This file only adds: the physical membership-card visual,
+   the two-column dashboard shell, and the tab system that replaces the
+   scrolling section layout from v1.
+   ========================================================================== */
+
+/* Background: "Diagonal Hairline" (option 2 of 4 reviewed in
+   member-bg-options.html) — thin olive hairlines, same visual language as
+   the diagonal foil texture on the membership card (.mcard::before), applied
+   full-bleed across the whole page rather than contained in a panel. */
+.member-dash{
+  padding:44px 0 90px;
+  background:
+    repeating-linear-gradient(115deg, rgba(110,101,48,.055) 0 1px, transparent 1px 9px),
+    linear-gradient(180deg,#F8F4EC 0%,#F3ECDC 100%);
+}
+.member-dash .wrap{ max-width:1160px; }
+
+.member-dash__wrap{
+  display:grid; grid-template-columns:320px 1fr; gap:32px; align-items:start;
+}
+
+/* ---------- Sidebar ---------- */
+.member-dash__side{ position:sticky; top:90px; display:flex; flex-direction:column; gap:18px; }
+
+/* Physical membership card */
+.mcard{
+  position:relative; overflow:hidden; border-radius:18px; padding:26px 26px 22px;
+  min-height:196px; display:flex; flex-direction:column; justify-content:space-between;
+  color:#fff; isolation:isolate;
+  box-shadow:0 24px 48px -12px rgba(37,31,15,.42), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.mcard--gold{ background:linear-gradient(150deg,#2C2313 0%,#5C4826 26%,#C7A76B 56%,#8a6a2f 78%,#2C2313 100%); }
+.mcard--silver{ background:linear-gradient(150deg,#26282B 0%,#585D60 26%,#C7C9C6 56%,#71736E 78%,#26282B 100%); }
+.mcard--diamond{ background:linear-gradient(150deg,#152233 0%,#2C4360 26%,#8FB0CC 56%,#425A72 78%,#152233 100%); }
+
+.mcard::before{
+  /* fine diagonal foil texture */
+  content:""; position:absolute; inset:0; z-index:0; opacity:.35; mix-blend-mode:overlay;
+  background:repeating-linear-gradient(115deg, rgba(255,255,255,.5) 0 1px, transparent 1px 6px);
+}
+.mcard::after{
+  /* soft light sweep */
+  content:""; position:absolute; top:-60%; left:-20%; width:70%; height:220%; z-index:0;
+  background:linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.28) 48%, rgba(255,255,255,0) 100%);
+  transform:rotate(8deg); transition:transform .6s ease;
+}
+.mcard:hover::after{ transform:rotate(8deg) translateX(40px); }
+
+.mcard__top{ position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; }
+.mcard__logo{ font-family:var(--serif); font-size:16px; letter-spacing:.08em; font-weight:500; }
+.mcard__chip{ width:34px; height:26px; border-radius:5px; background:linear-gradient(135deg,#F4E6C4,#C7A76B); position:relative; box-shadow:inset 0 0 0 1px rgba(0,0,0,.15); }
+.mcard__chip::before{ content:""; position:absolute; inset:5px; border:1px solid rgba(90,70,30,.5); border-radius:2px; }
+
+.mcard__tier{ position:relative; z-index:1; font-size:11px; letter-spacing:.16em; font-weight:600; opacity:.92; margin-top:4px; }
+.mcard__number{ position:relative; z-index:1; font-family:var(--serif-en); font-size:17px; letter-spacing:.14em; margin-top:2px; }
+
+.mcard__bottom{ position:relative; z-index:1; display:flex; align-items:flex-end; justify-content:space-between; gap:14px; }
+.mcard__bottom .mcard__label{ display:block; font-size:8.5px; letter-spacing:.14em; opacity:.75; margin-bottom:3px; }
+.mcard__bottom .mcard__value{ display:block; font-size:12.5px; font-weight:500; }
+.mcard__bottom > div:last-child{ text-align:right; }
+.mcard__mark{ position:absolute; z-index:1; right:22px; bottom:20px; width:26px; height:26px; opacity:.9; }
+
+/* Progress card under the membership card */
+.side-progress{
+  background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 20px;
+}
+.side-progress__row{ display:flex; justify-content:space-between; font-size:11px; font-weight:600; letter-spacing:.03em; color:var(--ink-soft); margin-bottom:8px; }
+.side-progress .bar{ height:6px; border-radius:999px; background:var(--cream-deep,#EFE7D8); overflow:hidden; margin-bottom:8px; }
+.side-progress .bar > span{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#8a6a2f,var(--gold)); }
+.side-progress p{ font-size:11.5px; color:var(--ink-soft); }
+
+.side-actions{ display:flex; flex-direction:column; gap:10px; }
+.side-actions .btn-pill{ width:100%; justify-content:center; }
+.btn-pill-ghost{ background:transparent; border-color:transparent; color:var(--olive); text-align:center; }
+.btn-pill-ghost:hover{ text-decoration:underline; }
+
+/* ---------- Main dashboard pane ---------- */
+/* Reset: main.css has a global `section{padding:100px 0}` rule for marketing
+   pages. .member-dash__main is a <section>, so it inherits that and sits
+   ~100px lower than the sidebar (an <aside>, unaffected) — that was the gap. */
+.member-dash__main{ min-width:0; padding:0; }
+.dash-head{ display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+.dash-head h1{ font-size:clamp(21px,2.4vw,26px); margin-bottom:4px; }
+.dash-head p{ font-size:12.5px; color:var(--ink-soft); }
+
+/* Default profile avatar — pure line-art mark on a tier-tinted circle, see HTML comment */
+.dash-avatar{
+  position:relative; width:60px; height:60px; border-radius:50%; flex:0 0 auto; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 3px #fff, 0 10px 20px -8px rgba(68,62,28,.25);
+}
+.dash-avatar--silver{ background:rgba(185,180,168,.2); box-shadow:0 0 0 3px #fff, 0 0 0 4px rgba(185,180,168,.55), 0 10px 20px -8px rgba(68,62,28,.2); color:#8D897E; }
+.dash-avatar--gold{ background:rgba(199,167,107,.18); box-shadow:0 0 0 3px #fff, 0 0 0 4px var(--gold-line), 0 10px 20px -8px rgba(184,149,96,.35); color:#8a6a2f; }
+.dash-avatar--diamond{ background:rgba(124,151,179,.18); box-shadow:0 0 0 3px #fff, 0 0 0 4px rgba(124,151,179,.5), 0 10px 20px -8px rgba(66,90,114,.3); color:#425A72; }
+.dash-avatar__mark{ position:relative; z-index:1; width:32px; height:32px; }
+.dash-avatar__edit{
+  position:absolute; z-index:2; right:-1px; bottom:-1px; width:22px; height:22px; border-radius:50%;
+  background:#fff; border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; padding:0; box-shadow:0 3px 8px rgba(0,0,0,.16); transition:.2s;
+}
+.dash-avatar__edit svg{ width:11px; height:11px; color:var(--ink-soft); }
+.dash-avatar__edit:hover{ border-color:var(--gold-line); }
+.dash-avatar__edit:hover svg{ color:var(--olive); }
+
+.dash-tabs{
+  display:flex; gap:6px; background:#fff; border:1px solid var(--line); border-radius:12px;
+  padding:6px; margin-bottom:22px; overflow-x:auto;
+}
+.dash-tab{
+  flex:1 1 auto; white-space:nowrap; padding:11px 16px; border-radius:9px; border:0; background:transparent;
+  font:500 12.5px/1 var(--sans); color:var(--ink-soft); cursor:pointer; transition:.2s;
+}
+.dash-tab:hover{ color:var(--ink); }
+.dash-tab.active{ background:var(--olive-dark); color:#fff; box-shadow:0 6px 16px rgba(68,62,28,.22); }
+
+.dash-panel{ animation:dashFade .35s ease; }
+.dash-panel[hidden]{ display:none; }
+@keyframes dashFade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+
+.dash-panel .profile-section__head{ margin-bottom:18px; }
+.dash-panel .profile-card{ margin-bottom:0; }
+
+@media (max-width:980px){
+  .member-dash__wrap{ grid-template-columns:1fr; }
+  .member-dash__side{ position:static; flex-direction:row; flex-wrap:wrap; }
+  .mcard{ flex:1 1 260px; }
+  .side-progress{ flex:1 1 260px; }
+  .side-actions{ flex-direction:row; flex:1 1 100%; }
+}
+@media (max-width:560px){
+  .member-dash__side{ flex-direction:column; }
+  .side-actions{ flex-direction:column; }
+  .dash-tabs{ gap:4px; }
+  .dash-tab{ padding:10px 12px; font-size:11.5px; }
+}

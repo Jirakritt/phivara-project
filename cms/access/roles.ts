@@ -3,19 +3,26 @@ import type { Access, FieldAccess, Where } from 'payload'
 // Shared access helpers, wired into each collection below.
 // Roles come from Users.role: 'admin' | 'editor' | 'medical-reviewer'.
 
-export const isAdmin: Access = ({ req: { user } }) => Boolean(user && user.role === 'admin')
+// `req.user` can now be a `User` (staff) or a `Member` (site visitor) —
+// two independent auth-enabled collections (see cms/collections/Members.ts).
+// Only `User` carries `role`, so every role check below first narrows on
+// `collection === 'users'`; a logged-in member simply has no role and never
+// satisfies any of these, which is exactly the desired behavior (members
+// are never staff).
+export const isAdmin: Access = ({ req: { user } }) => Boolean(user && user.collection === 'users' && user.role === 'admin')
 
-export const isStaff: Access = ({ req: { user } }) => Boolean(user)
+export const isStaff: Access = ({ req: { user } }) => Boolean(user && user.collection === 'users')
 
 export const hasAnyRole =
   (...roles: Array<'admin' | 'editor' | 'medical-reviewer'>): Access =>
   ({ req: { user } }) =>
-    Boolean(user && roles.includes(user.role))
+    Boolean(user && user.collection === 'users' && roles.includes(user.role))
 
-// Public visitors only ever see published content; any logged-in staff
-// member can see drafts too (needed to review before publish).
+// Public visitors (and logged-in members — a member account grants no
+// special content access) only ever see published content; any logged-in
+// staff member can see drafts too (needed to review before publish).
 export const publishedOrStaff: Access = ({ req: { user } }) => {
-  if (user) return true
+  if (user && user.collection === 'users') return true
   return {
     _status: {
       equals: 'published',
@@ -23,7 +30,7 @@ export const publishedOrStaff: Access = ({ req: { user } }) => {
   }
 }
 
-export const isAdminField: FieldAccess = ({ req: { user } }) => Boolean(user && user.role === 'admin')
+export const isAdminField: FieldAccess = ({ req: { user } }) => Boolean(user && user.collection === 'users' && user.role === 'admin')
 
 // ---------------------------------------------------------------------
 // Branch scoping — Content Editors and Medical Reviewers can be assigned

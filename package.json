@@ -17,7 +17,10 @@
     "seed:awards": "tsx cms/seed/seedAwards.ts",
     "seed:footer": "tsx cms/seed/seedFooter.ts",
     "seed:topbar": "tsx cms/seed/seedTopbar.ts",
-    "seed:privacy-policy": "tsx cms/seed/seedPrivacyPolicy.ts"
+    "seed:privacy-policy": "tsx cms/seed/seedPrivacyPolicy.ts",
+    "seed:member-privileges": "tsx cms/seed/seedMemberPrivileges.ts",
+    "seed:membership-tiers": "tsx cms/seed/seedMembershipTiers.ts",
+    "add:footer-links": "tsx cms/seed/addFooterLinks.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.87.0",

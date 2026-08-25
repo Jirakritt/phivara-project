@@ -28,5 +28,153 @@ export const HomeHero: GlobalConfig = {
       admin: { description: 'Rotating hero background slideshow (public/js/main.js cross-fades between these every 7s).' },
       fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
     },
+    {
+      // "WHY PHIVARA EXISTS" section right below the hero (src/app/[locale]/
+      // (public)/page.tsx's <section className="intro" id="about">) — used
+      // to be hardcoded brand copy, now editable here. UI-only grouping
+      // (collapsible doesn't nest the stored data, so homeData.ts's flat
+      // resolve() helper keeps working unchanged).
+      type: 'collapsible',
+      label: 'ทำไมต้อง PHIVARA (Why Phivara Exists)',
+      fields: [
+        { name: 'introEyebrow', type: 'text', localized: true, defaultValue: 'WHY PHIVARA EXISTS' },
+        { name: 'introQuote', type: 'textarea', localized: true, required: true },
+        { name: 'introBody1', type: 'textarea', localized: true },
+        { name: 'introBody2', type: 'textarea', localized: true },
+        { name: 'introTagline', type: 'text', localized: true, defaultValue: '— The Art of Beaugevity' },
+        {
+          type: 'row',
+          fields: [
+            { name: 'diagramLabelTl', type: 'text', localized: true, admin: { description: 'จุดบนซ้าย', width: '25%' } },
+            { name: 'diagramLabelTr', type: 'text', localized: true, admin: { description: 'จุดบนขวา', width: '25%' } },
+            { name: 'diagramLabelBl', type: 'text', localized: true, admin: { description: 'จุดล่างซ้าย', width: '25%' } },
+            { name: 'diagramLabelBr', type: 'text', localized: true, admin: { description: 'จุดล่างขวา', width: '25%' } },
+          ],
+        },
+      ],
+    },
+    {
+      // "INTEGRATED EXPERTISE" tabbed section (src/app/[locale]/(public)/
+      // page.tsx's <section className="expertise" id="expertise">) — the
+      // 4 tabs' key (plastic/longevity/dermatology/wellness) stay
+      // hardcoded in code since they must match Programs.category's select
+      // options exactly (see cms/collections/Programs.ts), but every piece
+      // of display text is now editable. Read by both page.tsx (server-
+      // rendered eyebrow/heading) and public/js/main.js (client-built tab
+      // bar + panel headers, via window.__PHIVARA_MAIN_STRINGS__).
+      type: 'collapsible',
+      label: 'หมวดความเชี่ยวชาญ (Integrated Expertise)',
+      fields: [
+        { name: 'expertiseEyebrow', type: 'text', localized: true, defaultValue: 'INTEGRATED EXPERTISE' },
+        { name: 'expertiseHeadline', type: 'text', localized: true, required: true },
+        {
+          type: 'collapsible',
+          label: 'Plastic Surgery (ศัลยกรรมตกแต่ง)',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'expertisePlasticLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
+                { name: 'expertisePlasticTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
+                { name: 'expertisePlasticTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'collapsible',
+          label: 'Anti-Aging & Longevity (เวชศาสตร์อายุยืนยาว)',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'expertiseLongevityLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
+                { name: 'expertiseLongevityTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
+                { name: 'expertiseLongevityTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'collapsible',
+          label: 'Dermatology (ผิวหนัง)',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'expertiseDermatologyLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
+                { name: 'expertiseDermatologyTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
+                { name: 'expertiseDermatologyTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'collapsible',
+          label: 'Aesthetic Wellness (สุขภาวะเชิงความงาม)',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'expertiseWellnessLabel', type: 'text', localized: true, admin: { description: 'ชื่อ tab', width: '33%' } },
+                { name: 'expertiseWellnessTag', type: 'text', localized: true, admin: { description: 'แท็กเล็กเหนือหัวข้อ', width: '33%' } },
+                { name: 'expertiseWellnessTitle', type: 'text', localized: true, admin: { description: 'หัวข้อในแผงเนื้อหา', width: '33%' } },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      // "PHIVARA DESTINATIONS" branch-highlight section (src/app/[locale]/
+      // (public)/page.tsx's <section className="flagship" id="flagship">).
+      // Just the section eyebrow/heading — the branch cards themselves
+      // already come from the `branches` collection (see cms/collections/
+      // Branches.ts, "สาขา" in the CMS nav), nothing to duplicate here.
+      type: 'collapsible',
+      label: 'สาขา (Destinations)',
+      fields: [
+        { name: 'destinationsEyebrow', type: 'text', localized: true, defaultValue: 'PHIVARA DESTINATIONS' },
+        { name: 'destinationsHeadline', type: 'text', localized: true, required: true },
+      ],
+    },
+    {
+      // "OUR SPECIALISTS" doctor-carousel section (src/app/[locale]/
+      // (public)/page.tsx's <section className="specialists" id="specialists">).
+      // Just the section copy — the doctor cards themselves already come
+      // from the `doctors` collection ("แพทย์ผู้เชี่ยวชาญ" in the CMS nav).
+      type: 'collapsible',
+      label: 'แพทย์ผู้เชี่ยวชาญ (Specialists)',
+      fields: [
+        { name: 'specialistsEyebrow', type: 'text', localized: true, defaultValue: 'OUR SPECIALISTS' },
+        { name: 'specialistsHeadline', type: 'text', localized: true, required: true },
+        { name: 'specialistsLead', type: 'textarea', localized: true },
+        { name: 'specialistsLinkLabel', type: 'text', localized: true },
+      ],
+    },
+    {
+      // "THE JOURNAL" article-grid section (src/app/[locale]/(public)/
+      // page.tsx's <section className="journal" id="journal">). Just the
+      // section eyebrow/heading — the article cards themselves already come
+      // from the `articles` collection ("บทความ" in the CMS nav).
+      type: 'collapsible',
+      label: 'บทความ (Journal)',
+      fields: [
+        { name: 'journalEyebrow', type: 'text', localized: true, defaultValue: 'THE JOURNAL' },
+        { name: 'journalHeadline', type: 'text', localized: true, required: true },
+      ],
+    },
+    {
+      // "AWARDS & RECOGNITION" carousel section (src/app/[locale]/(public)/
+      // page.tsx's <section className="awards">). Just the section eyebrow/
+      // heading — the award cards themselves already come from the
+      // `awards` collection ("รางวัลและการรับรอง" in the CMS nav).
+      type: 'collapsible',
+      label: 'รางวัล (Awards)',
+      fields: [
+        { name: 'awardsEyebrow', type: 'text', localized: true, defaultValue: 'AWARDS & RECOGNITION' },
+        { name: 'awardsHeadline', type: 'text', localized: true, required: true },
+      ],
+    },
   ],
 }
