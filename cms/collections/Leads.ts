@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { isAdmin, leadsBranchScopedAccess } from '../access/roles'
+import { exportLeadsHandler } from '../lib/leadsExport'
 
 // Captures every submission from the site-wide VIP Concierge booking modal
 // (public/js/vip-modal.js's #vipForm — the single shared form behind every
@@ -17,7 +18,21 @@ export const Leads: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'phone', 'branch', 'service', 'preferredDate', 'status', 'createdAt'],
     description: 'Booking requests submitted through the VIP Concierge modal and doctor appointment forms across the site.',
+    // "Export to Excel" item inside the "⋮" menu next to Columns/Filters —
+    // see cms/admin/components/ExportLeadsButton.tsx.
+    components: {
+      listMenuItems: ['/cms/admin/components/ExportLeadsButton#ExportLeadsButton'],
+    },
   },
+  // GET /api/leads/export-xlsx — see cms/lib/leadsExport.ts for the
+  // handler; respects leadsBranchScopedAccess via user/overrideAccess:false.
+  endpoints: [
+    {
+      path: '/export-xlsx',
+      method: 'get',
+      handler: exportLeadsHandler,
+    },
+  ],
   access: {
     // Public form submissions — anyone can create a lead, nobody outside
     // staff can read/list/modify other people's contact info. A
