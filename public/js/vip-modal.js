@@ -20,7 +20,7 @@
     modalTitle: 'นัดหมายปรึกษาเฉพาะบุคคล',
     modalLead: 'ฝากข้อมูลไว้ แล้วทีม Concierge จะติดต่อกลับเพื่อจัดเวลาที่เหมาะกับคุณ',
     fieldName: 'ชื่อ - นามสกุล',
-    namePlaceholder: 'คุณสมชาย ใจดี',
+    namePlaceholder: 'ชื่อ-นามสกุล ของคุณ',
     fieldPhone: 'เบอร์โทรศัพท์',
     phonePlaceholder: '081-XXX-XXXX',
     phoneError: 'กรุณากรอกเบอร์โทร 9–10 หลัก หรือรูปแบบ +66',
@@ -28,10 +28,6 @@
     selectBranchPlaceholder: 'เลือกสาขาที่สะดวก',
     fieldService: 'บริการที่สนใจ',
     selectServicePlaceholder: 'เลือกบริการที่สนใจ',
-    servicePlasticSurgery: 'Plastic Surgery (ศัลยกรรมตกแต่ง)',
-    serviceLongevity: 'Anti-Aging & Longevity (เวชศาสตร์อายุยืนยาว)',
-    serviceDermatology: 'Dermatology (ผิวหนัง)',
-    serviceWellness: 'Aesthetic Wellness (สุขภาวะเชิงความงาม)',
     serviceMembership: 'สมาชิก PHIVARA AUM',
     fieldNotes: 'ข้อความเพิ่มเติม / เวลาที่สะดวก',
     notesPlaceholder: 'ระบุเรื่องที่ต้องการปรึกษาหรือเวลาที่สะดวก',
@@ -57,6 +53,29 @@
     branch.nameTh,
   ]);
 
+  // "บริการที่สนใจ" options — same 4 categories, same order, same labels as
+  // the homepage "INTEGRATED EXPERTISE" tabs (src/lib/homeData.ts's
+  // getExpertiseCategoryOptions, injected as window.__PHIVARA_DATA__.categories
+  // by every page — see each page.tsx's dataScript). `value` here
+  // (plastic/longevity/dermatology/wellness) matches Doctors.specialty /
+  // Programs.category, but this form submits to the Leads collection,
+  // whose `service` enum uses `plastic-surgery` instead of `plastic` — see
+  // the same mismatch called out in doctor/[slug]/page.tsx's
+  // SPECIALTY_TO_LEAD_SERVICE map. FALLBACK_CATEGORIES only kicks in if a
+  // page hasn't been rebuilt against the new field yet (mirrors
+  // FALLBACK_T's role above).
+  const SERVICE_VALUE_MAP = { plastic: 'plastic-surgery' };
+  const FALLBACK_CATEGORIES = [
+    { value: 'plastic', labelTh: 'Plastic Surgery (ศัลยกรรมตกแต่ง)' },
+    { value: 'longevity', labelTh: 'Anti-Aging & Longevity (เวชศาสตร์อายุยืนยาว)' },
+    { value: 'dermatology', labelTh: 'Dermatology (ผิวหนัง)' },
+    { value: 'wellness', labelTh: 'Aesthetic Wellness (สุขภาวะเชิงความงาม)' },
+  ];
+  const categories = ((window.__PHIVARA_DATA__ && window.__PHIVARA_DATA__.categories) || FALLBACK_CATEGORIES).map((c) => [
+    SERVICE_VALUE_MAP[c.value] || c.value,
+    c.labelTh,
+  ]);
+
   function isBookingControl(element){
     if(!element || !element.matches('a, button')) return false;
     if(element.matches('.branch-modal__booking')) return false;
@@ -74,6 +93,9 @@
 
   function modalMarkup(){
     const branchOptions = branches.map(([value,label]) =>
+      `<option value="${value}">${label}</option>`
+    ).join('');
+    const serviceOptions = categories.map(([value,label]) =>
       `<option value="${value}">${label}</option>`
     ).join('');
 
@@ -118,10 +140,7 @@
                 <span>${T.fieldService}</span>
                 <select name="service" required>
                   <option value="">${T.selectServicePlaceholder}</option>
-                  <option value="plastic-surgery">${T.servicePlasticSurgery}</option>
-                  <option value="longevity">${T.serviceLongevity}</option>
-                  <option value="dermatology">${T.serviceDermatology}</option>
-                  <option value="wellness">${T.serviceWellness}</option>
+                  ${serviceOptions}
                   <option value="membership">${T.serviceMembership}</option>
                 </select>
               </label>

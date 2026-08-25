@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { getArticleDetail, getOtherArticles, getPopularArticles } from '@/lib/articlesData'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -74,7 +74,7 @@ export default async function ArticleDetailPage({
     getOtherArticles(locale, article.slug, article.category, 3),
   ])
 
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
 
   // article.authorNameTh/En store the full byline phrase ("บทความโดย ..." /
   // "By ..." — see cms/seed/data/articles.ts authorName), which is what the

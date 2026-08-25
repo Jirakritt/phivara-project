@@ -140,12 +140,12 @@
   transition: color .3s ease;
 }
 
-body[data-branch-id="sanampao"] .branch-top-hero__pills .spec-pill::before {
+body[data-branch-id="pt2"] .branch-top-hero__pills .spec-pill::before {
   content: "✦";
   color: var(--gold);
 }
 
-body[data-branch-id="sanampao"] .branch-top-hero__pills .spec-pill:hover::before {
+body[data-branch-id="pt2"] .branch-top-hero__pills .spec-pill:hover::before {
   color: #fff;
 }
 
@@ -691,7 +691,7 @@ body[data-branch-id="sanampao"] .branch-top-hero__pills .spec-pill:hover::before
 }
 
 .branch-doctor-featured__quote p,
-body[data-branch-id="sanampao"] .branch-doctor-featured__quote p {
+body[data-branch-id="pt2"] .branch-doctor-featured__quote p {
   margin: 0;
   font-size: 18px !important;
   font-style: italic;
@@ -1588,7 +1588,7 @@ body.branch-gallery-lightbox-open {
 
 /* Sanampao: redesigned floating director profile panel */
 /* Sanampao: redesigned floating director profile panel */
-body[data-branch-id="sanampao"] .branch-doctor-featured__body {
+body[data-branch-id="pt2"] .branch-doctor-featured__body {
   width: min(52%, 560px);
   max-width: 560px;
   padding: 38px 40px 32px 42px;
@@ -1601,19 +1601,19 @@ body[data-branch-id="sanampao"] .branch-doctor-featured__body {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-body[data-branch-id="sanampao"] .branch-doctor-featured__body::before {
+body[data-branch-id="pt2"] .branch-doctor-featured__body::before {
   display: none !important;
 }
 
 @media (max-width: 1050px) {
-  body[data-branch-id="sanampao"] .branch-doctor-featured__body {
+  body[data-branch-id="pt2"] .branch-doctor-featured__body {
     width: 58%;
     padding: 32px 30px 28px 34px;
   }
 }
 
 @media (max-width: 900px) {
-  body[data-branch-id="sanampao"] .branch-doctor-featured {
+  body[data-branch-id="pt2"] .branch-doctor-featured {
     display: block;
     min-height: 0;
     padding: clamp(320px, 52vw, 430px) 24px 24px;
@@ -1622,7 +1622,7 @@ body[data-branch-id="sanampao"] .branch-doctor-featured__body::before {
     background-repeat: no-repeat;
   }
 
-  body[data-branch-id="sanampao"] .branch-doctor-featured__body {
+  body[data-branch-id="pt2"] .branch-doctor-featured__body {
     width: 100%;
     max-width: 100%;
     margin-top: 0;
@@ -1630,70 +1630,70 @@ body[data-branch-id="sanampao"] .branch-doctor-featured__body::before {
 }
 
 @media (max-width: 640px) {
-  body[data-branch-id="sanampao"] .branch-doctor-featured {
+  body[data-branch-id="pt2"] .branch-doctor-featured {
     padding: 320px 14px 14px;
     background-position: 30% top !important;
     background-size: auto 350px;
   }
 
-  body[data-branch-id="sanampao"] .branch-doctor-featured__body {
+  body[data-branch-id="pt2"] .branch-doctor-featured__body {
     margin-top: 0;
     padding: 26px 20px 22px 24px;
     border-radius: 15px;
   }
 
-  body[data-branch-id="sanampao"] .branch-doctor-featured__specs-card,
-  body[data-branch-id="sanampao"] .branch-doctor-featured__highlights,
-  body[data-branch-id="sanampao"] .branch-doctor-featured__actions {
+  body[data-branch-id="pt2"] .branch-doctor-featured__specs-card,
+  body[data-branch-id="pt2"] .branch-doctor-featured__highlights,
+  body[data-branch-id="pt2"] .branch-doctor-featured__actions {
     grid-template-columns: 1fr;
   }
 
-  body[data-branch-id="sanampao"] .branch-doctor-featured__btn-profile,
-  body[data-branch-id="sanampao"] .branch-doctor-featured__btn-book {
+  body[data-branch-id="pt2"] .branch-doctor-featured__btn-profile,
+  body[data-branch-id="pt2"] .branch-doctor-featured__btn-book {
     width: 100%;
   }
 }
 
 /* Match the specialist-card responsive rhythm used on index.html. */
 @media (min-width: 1101px) and (max-width: 1200px) {
-  body[data-branch-id="sanampao"] .branch-doctor-grid {
+  body[data-branch-id="pt2"] .branch-doctor-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 1100px) {
-  body[data-branch-id="sanampao"] .branch-doctor-grid {
+  body[data-branch-id="pt2"] .branch-doctor-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
-  body[data-branch-id="sanampao"] .branch-doctor-grid {
+  body[data-branch-id="pt2"] .branch-doctor-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 560px) {
-  body[data-branch-id="sanampao"] .branch-doctor-grid {
+  body[data-branch-id="pt2"] .branch-doctor-grid {
     grid-template-columns: 1fr;
   }
 }
 
 /* Match the four-column program grid and breakpoints used on program.html. */
 @media (min-width: 1001px) and (max-width: 1200px) {
-  body[data-branch-id="sanampao"] .branch-program-grid {
+  body[data-branch-id="pt2"] .branch-program-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 1000px) {
-  body[data-branch-id="sanampao"] .branch-program-grid {
+  body[data-branch-id="pt2"] .branch-program-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 700px) {
-  body[data-branch-id="sanampao"] .branch-program-grid {
+  body[data-branch-id="pt2"] .branch-program-grid {
     grid-template-columns: 1fr;
   }
 }

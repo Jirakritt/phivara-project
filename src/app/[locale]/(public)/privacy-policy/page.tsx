@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import { getPrivacyPolicyContent } from '@/lib/privacyPolicyData'
@@ -36,7 +36,7 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<{ 
     getPubliclyLiveLocales(),
     getPrivacyPolicyContent(locale),
   ])
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
   const updatedAtLabel =
     policy.updatedAtTh && policy.updatedAtEn ? t(policy.updatedAtTh, policy.updatedAtEn) : t('[วันที่ประกาศใช้]', '[effective date]')
 

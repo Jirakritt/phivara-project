@@ -7,7 +7,7 @@ import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 import { getFeaturedPrograms } from '@/lib/programsData'
 import { getPopularArticles } from '@/lib/articlesData'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 
 // Shared body for both 404 entry points this app needs:
 //   - src/app/[locale]/not-found.tsx — renders when a *matched* route
@@ -51,7 +51,7 @@ export default async function NotFoundContent({
   // page.tsx, but this shared 404 body previously didn't, so the dropdown
   // silently rendered empty on both 404 entry points. Same pattern as
   // article/page.tsx etc.
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
 
   return (
     <>

@@ -65,7 +65,7 @@ export default async function ProgramDetailPage({
   ])
   if (!program) notFound()
 
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
   // Same 4 categories as the homepage "INTEGRATED EXPERTISE" tabs — see
   // homeData.ts's getExpertiseCategoryOptions comment.
   const categoryLabel = getExpertiseCategoryOptions(homeData.hero).find((c) => c.value === program.category)

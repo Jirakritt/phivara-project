@@ -13,7 +13,7 @@
   const branchIndex = branches.findIndex((item) => item.id === branchId);
 
   const branchDataMap = {
-    sanampao: {
+    pt2: {
       doctors: [
         {
           id: 'dr13',
@@ -232,7 +232,7 @@
       directionsTh: 'เดินทางสะดวกด้วย รถไฟฟ้า BTS ลงสถานีสนามเป้า (ทางออก 1) เชื่อมตรงเข้าสู่โรงพยาบาลพญาไท 2 ชั้น 8 อาคาร A มีอาคารจอดรถกว้างขวางรองรับกว่า 500 คัน พร้อมบริการ Valet Parking',
       directionsEn: 'Direct BTS SkyTrain access via Sanampao Station (Exit 1) into Phyathai 2 Hospital, 8th Floor Building A. Spacious parking building for 500+ cars with complimentary Valet Parking.'
     },
-    phaholyothin: {
+    ptp: {
       doctors: [
         {
           id: 'dr14',
@@ -358,7 +358,7 @@
       directionsTh: 'ตั้งอยู่บนถนนพหลโยธิน ซอยพหลโยธิน 2 (BTS อารีย์ หรือ BTS สนามเป้า) อาคาร PHIVARA Medical Center ชั้น 6 มีที่จอดรถในอาคารกว่า 150 คัน พร้อมบริการล้างรถและ Valet Service',
       directionsEn: 'Located on Phaholyothin Road (BTS Ari or BTS Sanampao), PHIVARA Medical Center 6th Floor. Covered parking for 150+ cars with Valet Service.'
     },
-    sriayudhaya: {
+    pt1: {
       doctors: [
         {
           id: 'dr15',
@@ -484,7 +484,7 @@
       directionsTh: 'ตั้งอยู่บนถนนศรีอยุธยา (ใกล้แยกพญาไท และ BTS พญาไท / Airport Rail Link พญาไท) ชั้น 5 อาคาร PHIVARA Medical Center เดินทางสะดวก มีที่จอดรถใต้ดินกว่า 200 คัน',
       directionsEn: 'Located on Sri Ayudhaya Road (Near Phaya Thai Intersection, BTS/ARL Phaya Thai), 5th Floor PHIVARA Medical Center. Underground parking for 200+ vehicles.'
     },
-    petchakasem: {
+    pt3: {
       doctors: [
         {
           id: 'dr16',
@@ -610,7 +610,7 @@
       directionsTh: 'ตั้งอยู่ที่ ซอยเพชรเกษม 19 (ใกล้ MRT บางไผ่ เพียง 300 เมตร) อาคาร PHIVARA Wellness Center ชั้น 4 บรรยากาศเงียบสงบสไตล์รีสอร์ต พร้อมลานจอดรถส่วนตัวรองรับ 100 คัน',
       directionsEn: 'Located on Petchakasem Soi 19 (Only 300 meters from MRT Bang Phai Station), PHIVARA Wellness Center 4th Floor. Private resort-style parking for 100+ cars.'
     },
-    sriracha: {
+    pts: {
       doctors: [
         {
           id: 'dr17',
@@ -753,7 +753,7 @@
     const numStr = String(branchIndex + 1).padStart(2, '0');
     const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(branch.addressTh)}`;
     const image = document.getElementById('branchDetailImage');
-    const extra = branchDataMap[branchId] || branchDataMap.sanampao;
+    const extra = branchDataMap[branchId] || branchDataMap.pt2;
 
     document.title = `${fullName} | PHIVARA`;
 
@@ -864,7 +864,7 @@
         `;
       }
 
-      const isSanampao = branch.id === 'sanampao';
+      const isSanampao = branch.id === 'pt2';
       const initialPageSize = isSanampao ? 4 : otherDoctors.length;
       const visibleDoctors = otherDoctors.slice(0, initialPageSize);
 

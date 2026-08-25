@@ -12,7 +12,9 @@ export const Branches: CollectionConfig = {
     // present, required, and unique, so it's the safest useAsTitle now that
     // `name` (localized) is optional per-locale.
     useAsTitle: 'slug',
-    defaultColumns: ['displayOrder', 'slug', 'name', 'phone'],
+    // `name` first so it's both the leftmost column and the clickable link
+    // (Payload's admin list links whichever column is first in this array).
+    defaultColumns: ['name', 'displayOrder', 'slug', 'phone'],
   },
   // List view defaults to the same order the public site uses (see
   // src/lib/homeData.ts / src/lib/branchesData.ts, both `sort:
@@ -46,7 +48,7 @@ export const Branches: CollectionConfig = {
               type: 'text',
               required: true,
               unique: true,
-              admin: { description: 'e.g. sanampao, phaholyothin, sriayudhaya, sriracha, petchakasem' },
+              admin: { description: 'e.g. pt2, ptp, pt1, pts, pt3' },
             },
             {
               // Controls display order everywhere this collection is listed

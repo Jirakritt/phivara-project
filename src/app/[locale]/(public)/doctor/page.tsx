@@ -33,7 +33,7 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
     getHomeData(locale),
     getPubliclyLiveLocales(),
   ])
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
   const searchPlaceholder = t('ค้นหารายชื่อแพทย์, ความเชี่ยวชาญ...', 'Search doctor, specialty...')
   // Same 4 categories + order as the homepage "INTEGRATED EXPERTISE" tabs
   // — see homeData.ts's getExpertiseCategoryOptions comment. Drives both

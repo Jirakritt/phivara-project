@@ -4,7 +4,7 @@ import Script from 'next/script'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getBranchDetail } from '@/lib/branchesData'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -60,7 +60,7 @@ export default async function BranchDetailPage({
 
   const branchIndex = homeData.branches.findIndex((b) => b.formValue === slug)
   const numStr = String(branchIndex >= 0 ? branchIndex + 1 : 1).padStart(2, '0')
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
 
   return (
     <>

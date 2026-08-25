@@ -215,7 +215,7 @@ export interface User {
 export interface Branch {
   id: number;
   /**
-   * e.g. sanampao, phaholyothin, sriayudhaya, sriracha, petchakasem
+   * e.g. pt2, ptp, pt1, pts, pt3
    */
   slug: string;
   /**
@@ -806,10 +806,10 @@ export interface Lead {
   name: string;
   phone: string;
   /**
-   * Branch slug selected in the modal, e.g. "sanampao" (not a relationship — see field comment)
+   * Branch slug selected in the modal, e.g. "pt2" (not a relationship — see field comment)
    */
   branch: string;
-  service: 'plastic-surgery' | 'longevity' | 'dermatology' | 'wellness' | 'membership';
+  service: 'wellness' | 'longevity' | 'plastic-surgery' | 'dermatology' | 'membership';
   /**
    * Free-text notes/preferred time. Pre-filled with doctor/program context when the modal was opened from a specific card (see triggerContext() in vip-modal.js).
    */

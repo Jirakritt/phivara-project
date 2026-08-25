@@ -62,17 +62,24 @@ export const Leads: CollectionConfig = {
       name: 'branch',
       type: 'text',
       required: true,
-      admin: { description: 'Branch slug selected in the modal, e.g. "sanampao" (not a relationship — see field comment)' },
+      admin: { description: 'Branch slug selected in the modal, e.g. "pt2" (not a relationship — see field comment)' },
     },
     {
       name: 'service',
       type: 'select',
       required: true,
+      // Labels/order manually synced to match the CMS-configurable
+      // "INTEGRATED EXPERTISE" tab bar (Home Hero global) — see
+      // getExpertiseCategoryOptions() in src/lib/homeData.ts. This is a
+      // static admin-only select, so it can't read the CMS live; re-sync
+      // here by hand if the tab labels/order are changed again. `value`s
+      // are intentionally left untouched since they're stored on existing
+      // Lead records.
       options: [
+        { label: 'Aesthetic', value: 'wellness' },
+        { label: 'Longevity', value: 'longevity' },
         { label: 'Plastic Surgery', value: 'plastic-surgery' },
-        { label: 'Anti-Aging & Longevity', value: 'longevity' },
         { label: 'Dermatology', value: 'dermatology' },
-        { label: 'Aesthetic Wellness', value: 'wellness' },
         { label: 'PHIVARA AUM Membership', value: 'membership' },
       ],
     },

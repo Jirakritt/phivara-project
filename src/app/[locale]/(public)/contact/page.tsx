@@ -3,7 +3,7 @@ import Script from 'next/script'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getBranchesListing } from '@/lib/branchesData'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -33,7 +33,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
     getHomeData(locale),
     getPubliclyLiveLocales(),
   ])
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
 
   return (
     <>

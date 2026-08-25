@@ -143,7 +143,7 @@ export default async function LocaleLayout({
         'Share your details and our Concierge team will arrange a time that suits you.',
       ),
       fieldName: t('ชื่อ - นามสกุล', 'Full Name'),
-      namePlaceholder: t('คุณสมชาย ใจดี', 'Your full name'),
+      namePlaceholder: t('ชื่อ-นามสกุล ของคุณ', 'Your full name'),
       fieldPhone: t('เบอร์โทรศัพท์', 'Phone Number'),
       phonePlaceholder: t('081-XXX-XXXX', 'Your phone number'),
       phoneError: t('กรุณากรอกเบอร์โทร 9–10 หลัก หรือรูปแบบ +66', 'Enter a 9–10 digit phone number or use the +66 format'),
@@ -151,10 +151,13 @@ export default async function LocaleLayout({
       selectBranchPlaceholder: t('เลือกสาขาที่สะดวก', 'Select a location'),
       fieldService: t('บริการที่สนใจ', 'Service of Interest'),
       selectServicePlaceholder: t('เลือกบริการที่สนใจ', 'Select a service'),
-      servicePlasticSurgery: t('Plastic Surgery (ศัลยกรรมตกแต่ง)', 'Plastic Surgery'),
-      serviceLongevity: t('Anti-Aging & Longevity (เวชศาสตร์อายุยืนยาว)', 'Anti-Aging & Longevity'),
-      serviceDermatology: t('Dermatology (ผิวหนัง)', 'Dermatology'),
-      serviceWellness: t('Aesthetic Wellness (สุขภาวะเชิงความงาม)', 'Aesthetic Wellness'),
+      // The 4 category options themselves (Plastic Surgery / Longevity /
+      // Dermatology / Wellness) are no longer hardcoded here — vip-modal.js
+      // builds them from window.__PHIVARA_DATA__.categories (same source as
+      // the homepage "INTEGRATED EXPERTISE" tabs, see homeData.ts's
+      // getExpertiseCategoryOptions), so editing that CMS field updates
+      // every page's VIP modal automatically. serviceMembership stays here
+      // since it's a fixed 5th option, not one of the 4 CMS categories.
       serviceMembership: t('สมาชิก PHIVARA AUM', 'PHIVARA AUM Membership'),
       fieldNotes: t('ข้อความเพิ่มเติม / เวลาที่สะดวก', 'Notes / Preferred Time'),
       notesPlaceholder: t(

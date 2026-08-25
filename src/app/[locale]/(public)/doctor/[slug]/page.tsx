@@ -4,7 +4,7 @@ import Script from 'next/script'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getDoctorDetail, getDoctorJournalArticles } from '@/lib/doctorsData'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -99,7 +99,7 @@ export default async function DoctorDetailPage({
 
   const journal = await getDoctorJournalArticles(doctor.id, locale)
   const signaturePrograms = await getDoctorSignaturePrograms(doctor.specialty, locale)
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches }).replace(/</g, '\\u003c')};`
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
   const rich = doctor.rich
 
   const notesDefaultTh = `นัดหมายขอปรึกษาแพทย์: ${doctor.nameTh}`
@@ -390,7 +390,7 @@ export default async function DoctorDetailPage({
               <div className="contact-name-row">
                 <div>
                   <label className="form-label" htmlFor="appointmentName">{t('ชื่อ-นามสกุล *', 'Full Name *')}</label>
-                  <input className="form-control" type="text" id="appointmentName" name="name" autoComplete="name" required placeholder={t('คุณสมชาย ใจดี', 'Your full name')} data-th-placeholder="คุณสมชาย ใจดี" data-en-placeholder="Your full name" />
+                  <input className="form-control" type="text" id="appointmentName" name="name" autoComplete="name" required placeholder={t('ชื่อ-นามสกุล ของคุณ', 'Your full name')} data-th-placeholder="ชื่อ-นามสกุล ของคุณ" data-en-placeholder="Your full name" />
                 </div>
                 <div>
                   <label className="form-label" htmlFor="appointmentPhone">{t('เบอร์โทรศัพท์ *', 'Phone Number *')}</label>

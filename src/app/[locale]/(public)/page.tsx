@@ -2,7 +2,7 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getHomeData } from '@/lib/homeData'
+import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
@@ -39,7 +39,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
   const [data, liveLocales] = await Promise.all([getHomeData(locale), getPubliclyLiveLocales()])
-  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify(data).replace(/</g, '\\u003c')};`
+  // categories: same 4-category list (order + label) the "INTEGRATED
+  // EXPERTISE" tabs below use — vip-modal.js reads this to build its
+  // "บริการที่สนใจ" dropdown so the VIP appointment modal's service list
+  // always matches this section, on every page (see homeData.ts's
+  // getExpertiseCategoryOptions comment).
+  const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ ...data, categories: getExpertiseCategoryOptions(data.hero) }).replace(/</g, '\\u003c')};`
 
   // public/js/main.js's own data-th/data-en swap only ever ran on a click
   // of the old #langToggle element (removed — see SiteHeader.tsx), so it

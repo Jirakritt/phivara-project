@@ -12,8 +12,8 @@
 
   const branches = [
     {
-      id: 'sanampao',
-      formValue: 'sanampao',
+      id: 'pt2',
+      formValue: 'pt2',
       nameTh: 'สนามเป้า',
       nameEn: 'SANAMPAO',
       titleTh: 'ศูนย์ศัลยกรรมตกแต่งระดับโรงพยาบาล',
@@ -29,8 +29,8 @@
       image: 'assets/images/brand/about-lounge.jpg'
     },
     {
-      id: 'phaholyothin',
-      formValue: 'phaholyothin',
+      id: 'ptp',
+      formValue: 'ptp',
       nameTh: 'พหลโยธิน',
       nameEn: 'PHAHOLYOTHIN',
       titleTh: 'ศูนย์เวชศาสตร์อายุยืนยาวและการฟื้นฟู',
@@ -46,8 +46,8 @@
       image: 'assets/images/treatments/expertise-plastic.jpg'
     },
     {
-      id: 'sriayudhaya',
-      formValue: 'sri-ayudhaya',
+      id: 'pt1',
+      formValue: 'pt1',
       nameTh: 'ศรีอยุธยา',
       nameEn: 'SRI AYUDHAYA',
       titleTh: 'ศูนย์ผิวหนังและเทคโนโลยีเลเซอร์ล้ำสมัย',
@@ -63,8 +63,8 @@
       image: 'assets/images/treatments/specialist-3.jpg'
     },
     {
-      id: 'petchakasem',
-      formValue: 'petchakasem-19',
+      id: 'pt3',
+      formValue: 'pt3',
       nameTh: 'เพชรเกษม 19',
       nameEn: 'PETCHAKASEM 19',
       titleTh: 'ศูนย์สุขภาวะเชิงความงามครบวงจร',
@@ -80,8 +80,8 @@
       image: 'assets/images/hero/herobg03.png'
     },
     {
-      id: 'sriracha',
-      formValue: 'sriracha',
+      id: 'pts',
+      formValue: 'pts',
       nameTh: 'ศรีราชา',
       nameEn: 'SRIRACHA',
       titleTh: 'ศูนย์สุขภาพและความงามฝั่งตะวันออก',
