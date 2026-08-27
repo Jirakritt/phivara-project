@@ -103,7 +103,14 @@
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(62,57,49,0.15);
   border: 1.5px solid rgba(184,149,96,0.4);
-  background: #FFFFFF;
+  background-color: #FFFFFF;
+  /* Doctor Display Settings' shared "room" background (a JPG) is set as an
+     inline style on this element — see branch/[slug]'s equivalent comment
+     for why the doctor photo itself is now a transparent PNG cutout
+     (Doctors.ts's portrait field) layered on top via .portrait-img-large
+     rather than baked into one photo. */
+  background-size: cover;
+  background-position: center;
 }
 
 .portrait-img-large {
@@ -113,6 +120,7 @@
   object-position: top center;
   display: block;
   transition: transform 0.6s ease;
+  position: relative;
 }
 
 .portrait-card-glow:hover .portrait-img-large {

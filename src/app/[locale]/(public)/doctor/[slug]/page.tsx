@@ -3,7 +3,7 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getDoctorDetail, getDoctorJournalArticles } from '@/lib/doctorsData'
+import { getDoctorDetail, getDoctorDisplayBackgrounds, getDoctorJournalArticles } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
@@ -90,10 +90,11 @@ export default async function DoctorDetailPage({
   const { locale: rawLocale, slug } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
-  const [doctor, homeData, liveLocales] = await Promise.all([
+  const [doctor, homeData, liveLocales, displayBackgrounds] = await Promise.all([
     getDoctorDetail(slug, locale),
     getHomeData(locale),
     getPubliclyLiveLocales(),
+    getDoctorDisplayBackgrounds(),
   ])
   if (!doctor) notFound()
 
@@ -141,7 +142,10 @@ export default async function DoctorDetailPage({
         <div className="wrap">
           <div className="doc-grid-stage">
             <div className="doc-portrait-stage">
-              <div className="portrait-card-glow">
+              <div
+                className="portrait-card-glow"
+                style={displayBackgrounds.profileBackground ? { backgroundImage: `url('${displayBackgrounds.profileBackground}')` } : undefined}
+              >
                 <img className="portrait-img-large" src={doctor.portraitImage} alt={doctor.nameTh} fetchPriority="high" decoding="async" />
               </div>
             </div>

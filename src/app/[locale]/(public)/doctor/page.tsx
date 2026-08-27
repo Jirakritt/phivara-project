@@ -2,7 +2,7 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getDoctorsListing } from '@/lib/doctorsData'
+import { getDoctorDisplayBackgrounds, getDoctorsListing } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
@@ -28,10 +28,11 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
-  const [doctors, homeData, liveLocales] = await Promise.all([
+  const [doctors, homeData, liveLocales, displayBackgrounds] = await Promise.all([
     getDoctorsListing(locale),
     getHomeData(locale),
     getPubliclyLiveLocales(),
+    getDoctorDisplayBackgrounds(),
   ])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
   const searchPlaceholder = t('ค้นหารายชื่อแพทย์, ความเชี่ยวชาญ...', 'Search doctor, specialty...')
@@ -189,7 +190,10 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
           <div className="doctor-grid" id="doctorGrid">
             {doctors.map((doc) => (
               <div key={doc.slug} className="spec-card s-item" data-branch={doc.branchSlug} data-specialty={doc.specialty} data-doc-id={doc.slug}>
-                <div className="photo-wrap">
+                <div
+                  className="photo-wrap"
+                  style={displayBackgrounds.profileBackground ? { backgroundImage: `url('${displayBackgrounds.profileBackground}')` } : undefined}
+                >
                   <img className="ph-photo" src={doc.image} alt={doc.nameTh} />
                 </div>
                 <span className="program-branch">

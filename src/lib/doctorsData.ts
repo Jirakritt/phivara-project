@@ -1,7 +1,7 @@
 import type { LocaleCode } from './i18n'
 import type { SeoData } from './payload'
 
-import { findLocalized, hasLocaleContent, mapSeo, mediaUrl } from './payload'
+import { findLocalized, getPayloadClient, hasLocaleContent, mapSeo, mediaUrl } from './payload'
 
 // Per-locale filtering (see src/lib/payload.ts's findLocalized/
 // hasLocaleContent, and programsData.ts's file comment for the full
@@ -217,6 +217,27 @@ export async function getDoctorDetail(slug: string, locale: LocaleCode): Promise
     portraitImage: mediaUrl(doc.portrait) || mediaUrl(doc.cardPhoto) || '/assets/images/doctors/dr01.png',
     rich,
     seo: mapSeo(doc.seo),
+  }
+}
+
+export interface DoctorDisplayBackgrounds {
+  profileBackground: string
+  featuredBackground: string
+}
+
+// Shared "room" backdrops composited behind every doctor cutout photo
+// site-wide (cms/globals/DoctorDisplaySettings.ts) — see the field comment
+// there and Doctors.ts's portrait/cardPhoto/featuredPhoto comments. Neither
+// field is localized, so a single un-scoped findGlobal call is enough —
+// none of homeData.ts's th/en/th fallback dance (that's only needed for
+// text fields, not media relationships).
+export async function getDoctorDisplayBackgrounds(): Promise<DoctorDisplayBackgrounds> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const settings = (await payload.findGlobal({ slug: 'doctor-display-settings' })) as any
+  return {
+    profileBackground: mediaUrl(settings?.profileBackground) || '',
+    featuredBackground: mediaUrl(settings?.featuredBackground) || '',
   }
 }
 

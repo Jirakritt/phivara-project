@@ -119,6 +119,7 @@ export interface Config {
     'language-settings': LanguageSetting;
     'privacy-policy': PrivacyPolicy;
     'email-settings': EmailSetting;
+    'doctor-display-settings': DoctorDisplaySetting;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
@@ -130,6 +131,7 @@ export interface Config {
     'language-settings': LanguageSettingsSelect<false> | LanguageSettingsSelect<true>;
     'privacy-policy': PrivacyPolicySelect<false> | PrivacyPolicySelect<true>;
     'email-settings': EmailSettingsSelect<false> | EmailSettingsSelect<true>;
+    'doctor-display-settings': DoctorDisplaySettingsSelect<false> | DoctorDisplaySettingsSelect<true>;
   };
   locale: 'th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr';
   widgets: {
@@ -348,11 +350,11 @@ export interface Doctor {
    */
   subNote?: string | null;
   /**
-   * Large portrait for doctor_detail hero
+   * รูปแพทย์สำหรับ hero หน้าโปรไฟล์ — ต้องเป็น PNG ตัดพื้นหลังโปร่งใส (เฉพาะตัวคน) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ
    */
   portrait?: (number | null) | Media;
   /**
-   * Thumbnail for listing/carousel cards
+   * รูปแพทย์สำหรับการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นกัน แนะนำสัดส่วนแนวตั้งประมาณ 4:5
    */
   cardPhoto?: (number | null) | Media;
   /**
@@ -430,7 +432,7 @@ export interface Doctor {
    */
   isBranchFeatured?: boolean | null;
   /**
-   * รูปพื้นหลังการ์ดแพทย์หลัก แนะนำอัตราส่วนแนวนอนกว้าง ~16:9 (เช่น 2752x1536px) — คนละรูปกับ Portrait/Card Photo เพราะสัดส่วนไม่เท่ากัน
+   * รูปแพทย์สำหรับการ์ดแพทย์หลัก — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นเดียวกับ Portrait/Card Photo แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องกว้างจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ
    */
   featuredPhoto?: (number | null) | Media;
   /**
@@ -1823,6 +1825,23 @@ export interface EmailSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doctor-display-settings".
+ */
+export interface DoctorDisplaySetting {
+  id: number;
+  /**
+   * พื้นหลังห้องที่ใช้ร่วมกันทั่วเว็บ สำหรับรูปแพทย์แบบ "โปรไฟล์" ทั้งหมด — hero ที่หน้า /doctor/[slug] และการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 ให้ใกล้เคียงกับรูปแพทย์ที่ตัดขอบไว้
+   */
+  profileBackground?: (number | null) | Media;
+  /**
+   * พื้นหลังห้องสำหรับการ์ด "แพทย์หลักประจำสาขา" (featured) เท่านั้น — ใช้ร่วมกันทุกสาขา แนะนำสัดส่วนแนวนอนกว้าง ~1.9:1 (เช่น 1200x630px)
+   */
+  featuredBackground?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
 export interface MembershipSelect<T extends boolean = true> {
@@ -2145,6 +2164,17 @@ export interface PrivacyPolicySelect<T extends boolean = true> {
  */
 export interface EmailSettingsSelect<T extends boolean = true> {
   provider?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doctor-display-settings_select".
+ */
+export interface DoctorDisplaySettingsSelect<T extends boolean = true> {
+  profileBackground?: T;
+  featuredBackground?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

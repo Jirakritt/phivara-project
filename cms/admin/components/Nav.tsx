@@ -229,6 +229,23 @@ const settingsItems: NavItem[] = [
       </>,
     ),
   },
+  {
+    // The two shared "room" backdrop photos composited behind every
+    // doctor's transparent PNG cutout site-wide — see
+    // cms/globals/DoctorDisplaySettings.ts. Was reachable only by typing
+    // /admin/globals/doctor-display-settings directly until this entry was
+    // added, since this sidebar is fully custom (not Payload's
+    // auto-generated one) and doesn't pick up new globals on its own.
+    slug: 'doctor-display-settings',
+    label: 'พื้นหลังห้องรูปแพทย์',
+    type: 'global',
+    icon: icon(
+      <>
+        <rect x="4" y="4" width="12" height="12" rx="2" />
+        <path d="M9 9h12v12H9z" />
+      </>,
+    ),
+  },
 ]
 
 export function Nav() {

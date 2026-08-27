@@ -5,6 +5,7 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getBranchDetail } from '@/lib/branchesData'
 import type { BranchDetail } from '@/lib/branchesData'
+import { getDoctorDisplayBackgrounds } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
@@ -61,10 +62,11 @@ export default async function BranchDetailPage({
   const { locale: rawLocale, slug } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
-  const [branch, homeData, liveLocales] = await Promise.all([
+  const [branch, homeData, liveLocales, displayBackgrounds] = await Promise.all([
     getBranchDetail(slug, locale),
     getHomeData(locale),
     getPubliclyLiveLocales(),
+    getDoctorDisplayBackgrounds(),
   ])
   if (!branch) notFound()
 
@@ -75,9 +77,24 @@ export default async function BranchDetailPage({
   // Markup mirrors the original hardcoded card in public/js/branch-detail.js
   // (lines ~790-863) 1:1, reusing the same (already-loaded, previously
   // unused) branch-detail.css classes — see the file comment above.
+  //
+  // The card background used to BE doc.featuredImage directly. Now that
+  // Doctors.ts's featuredPhoto is a transparent PNG cutout (see that
+  // field's comment), the card's background-image is the shared
+  // "featuredBackground" room shot from Doctor Display Settings instead,
+  // and the cutout renders as its own <img> floating on top
+  // (.branch-doctor-featured__photo) — see branch-detail.css for the
+  // desktop (left-aligned, full height) vs mobile (centered, shrunk into
+  // the shorter top strip) positioning.
   function renderFeaturedDoctorCard(doc: BranchDetail['featuredDoctors'][number]) {
     return (
-      <div className="branch-doctor-featured" style={{ backgroundImage: `url('${doc.featuredImage}')` }}>
+      <div
+        className="branch-doctor-featured"
+        style={displayBackgrounds.featuredBackground ? { backgroundImage: `url('${displayBackgrounds.featuredBackground}')` } : undefined}
+      >
+        {doc.featuredImage && (
+          <img className="branch-doctor-featured__photo" src={doc.featuredImage} alt={doc.nameTh} />
+        )}
         <div className="branch-doctor-featured__body">
           <div className="branch-doctor-featured__header">
             <h3 className="branch-doctor-featured__name">{t(doc.nameTh, doc.nameEn)}</h3>
@@ -139,7 +156,7 @@ export default async function BranchDetailPage({
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
             <a href="#vipModalOverlay" className="branch-doctor-featured__btn-book vip-trigger" data-doc-name={doc.nameTh}>
-              <span>{t('จองปรึกษาแพทย์ผู้อำนวยการ', 'Book Consultation')}</span>
+              <span>{t('จองปรึกษาแพทย์', 'Book Consultation')}</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
           </div>
@@ -269,7 +286,10 @@ export default async function BranchDetailPage({
                 <div className="branch-doctor-grid">
                   {branch.doctors.map((doc) => (
                   <div key={doc.slug} className="spec-card">
-                    <div className="photo-wrap">
+                    <div
+                      className="photo-wrap"
+                      style={displayBackgrounds.profileBackground ? { backgroundImage: `url('${displayBackgrounds.profileBackground}')` } : undefined}
+                    >
                       <a href={localizedHref(locale, `/doctor/${doc.slug}`)} aria-label={doc.nameTh}>
                         <img className="ph-photo" src={doc.image} alt={doc.nameTh} loading="lazy" />
                       </a>

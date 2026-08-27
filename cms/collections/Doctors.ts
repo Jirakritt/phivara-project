@@ -15,11 +15,14 @@ import { autoSlugFromNameEn } from './hooks/autoSlugFromNameEn'
 export const Doctors: CollectionConfig = {
   slug: 'doctors',
   admin: {
-    // nameEn (flat field) removed — slug is the only field guaranteed to be
-    // present and unique, so it's the safest useAsTitle now that `name`
-    // (localized) is optional per-locale.
-    useAsTitle: 'slug',
-    defaultColumns: ['slug', 'name', 'specialty', 'branch', '_status'],
+    // `name` (localized) is optional per-locale — an empty value here just
+    // falls back to Payload's default "Untitled" label/link in the admin
+    // list for that one row, which is an acceptable admin-only rough edge
+    // in exchange for the list being searchable/clickable by doctor name
+    // instead of the internal slug.
+    useAsTitle: 'name',
+    listSearchableFields: ['name'],
+    defaultColumns: ['name', 'specialty', 'branch', '_status'],
   },
   // Credentials/bio are medical claims — require a draft to be reviewed
   // before it goes live, instead of publishing on save.
@@ -60,6 +63,12 @@ export const Doctors: CollectionConfig = {
               admin: {
                 description:
                   'URL for the doctor page, e.g. /doctor/dr-punnawit-sirimetha. Leave blank to auto-generate from Name En, or type your own custom URL.',
+                // Internal/technical field — name is the one editors search
+                // and click into, so hide slug from the list table (and its
+                // Columns picker) entirely rather than just deprioritizing
+                // it. Still fully visible/editable on the doctor's own edit
+                // form, just not in the list view.
+                disableListColumn: true,
               },
             },
             // Per-locale name. The old flat nameTh/nameEn fields (kept
@@ -123,10 +132,37 @@ export const Doctors: CollectionConfig = {
           ],
         },
         {
+          // Both fields are now composited on top of a shared "room"
+          // background (cms/globals/DoctorDisplaySettings.ts's
+          // profileBackground) at every touchpoint — /doctor/[slug] hero,
+          // /doctor listing cards, and the branch page's doctor grid — so
+          // the uploaded file itself must be a transparent-background PNG
+          // cutout of just the doctor, not a full photo with its own
+          // background baked in. Media.ts's mimeTypes still allows
+          // jpeg/webp too (not hard-blocked), but those formats can't carry
+          // transparency, so uploading one here will show as an opaque
+          // rectangle over the room background instead of a floating
+          // cutout.
           label: 'รูปภาพโปรไฟล์',
           fields: [
-            { name: 'portrait', type: 'upload', relationTo: 'media', admin: { description: 'Large portrait for doctor_detail hero' } },
-            { name: 'cardPhoto', type: 'upload', relationTo: 'media', admin: { description: 'Thumbnail for listing/carousel cards' } },
+            {
+              name: 'portrait',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description:
+                  'รูปแพทย์สำหรับ hero หน้าโปรไฟล์ — ต้องเป็น PNG ตัดพื้นหลังโปร่งใส (เฉพาะตัวคน) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ',
+              },
+            },
+            {
+              name: 'cardPhoto',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description:
+                  'รูปแพทย์สำหรับการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นกัน แนะนำสัดส่วนแนวตั้งประมาณ 4:5',
+              },
+            },
           ],
         },
         {
@@ -213,8 +249,8 @@ export const Doctors: CollectionConfig = {
           // branch and the page renders them as a slide instead of a single
           // static card — see public/js/branch-doctor-featured-slider.js.
           // The card's "ความชำนาญ"/"ความชำนาญพิเศษเฉพาะทาง" facts reuse the
-          // existing specialtyLabel/boardCertification fields above rather
-          // than duplicating them here.
+          // existing specialtyLabel/subSpecialty fields above rather than
+          // duplicating them here.
           label: 'แพทย์หลักประจำสาขา',
           fields: [
             {
@@ -227,22 +263,24 @@ export const Doctors: CollectionConfig = {
               },
             },
             {
-              // Deliberately NOT reusing portrait/cardPhoto — this renders
-              // as a wide `background-image` behind the whole featured
-              // card, not inside a fixed square/portrait photo-frame, so it
-              // needs its own wide-format image (see the original design
-              // reference: public/assets/images/doctors/
-              // dr-highlight-sanampao.png, 2752x1536 / 16:9). Falls back to
-              // cardPhoto/portrait if left blank (see doctorsData.ts) so a
-              // doctor checked as featured without this filled in doesn't
-              // render with a broken image, but the fallback photo will
-              // look stretched/cropped since it wasn't shot for this frame.
+              // Deliberately NOT reusing portrait/cardPhoto, even though
+              // it's the same PNG-cutout format — a doctor's featured pose
+              // is usually its own separate shot (though re-uploading the
+              // same file to all 3 fields is fine if that's all that
+              // exists). Composited on top of the wide, shared
+              // "featuredBackground" room image (Doctor Display Settings
+              // global) inside the branch page's featured card — NOT a
+              // background-image by itself the way it originally was (see
+              // src/app/[locale]/(public)/branch/[slug]/page.tsx). Falls
+              // back to cardPhoto/portrait if left blank (see
+              // doctorsData.ts) so a doctor checked as featured without
+              // this filled in doesn't render with a broken image.
               name: 'featuredPhoto',
               type: 'upload',
               relationTo: 'media',
               admin: {
                 description:
-                  'รูปพื้นหลังการ์ดแพทย์หลัก แนะนำอัตราส่วนแนวนอนกว้าง ~16:9 (เช่น 2752x1536px) — คนละรูปกับ Portrait/Card Photo เพราะสัดส่วนไม่เท่ากัน',
+                  'รูปแพทย์สำหรับการ์ดแพทย์หลัก — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นเดียวกับ Portrait/Card Photo แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องกว้างจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ',
                 condition: (_, siblingData) => Boolean(siblingData?.isBranchFeatured),
               },
             },

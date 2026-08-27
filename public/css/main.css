@@ -499,8 +499,21 @@
   .spec-track-outer{ overflow:hidden; width:100%; border-radius:4px; padding:8px 0; }
   .spec-track{ display:flex; gap:20px; transition:transform 0.75s cubic-bezier(0.22, 0.68, 0.24, 1); width:100%; }
   .spec-card{ flex:0 0 calc(20% - 16px); text-align:center; min-width:0; opacity:1 !important; transform:none !important; }
-  .spec-card .photo-wrap{ overflow:hidden; border-radius:2px; margin-bottom:18px; }
-  .spec-card .ph-photo{ aspect-ratio:4/5; object-fit:cover; filter:saturate(.94); transition:transform .8s var(--ease); width:100%; display:block; }
+  /* background-image (Doctor Display Settings' shared "room" background)
+     is set inline per-card by the pages that render .spec-card (/doctor
+     list, branch detail's doctor grid) — .ph-photo is now expected to be a
+     transparent PNG cutout (Doctors.ts's cardPhoto field) layered on top,
+     not a full photo with its own background baked in. Plain cover/center
+     (same as the hero's .portrait-card-glow) is correct here — the box is
+     already close to the source photo's aspect ratio, so cover shows the
+     scene almost uncropped, same composition as the hero just smaller.
+     IMPORTANT: the global ".ph-photo{ background:linear-gradient(...) }"
+     placeholder rule further down this file must stay overridden to
+     `background:none` below — otherwise that opaque gradient paints behind
+     the transparent PNG and completely hides this room background (this
+     was the actual bug, not the crop position). */
+  .spec-card .photo-wrap{ overflow:hidden; border-radius:2px; margin-bottom:18px; background-size:cover; background-position:center; }
+  .spec-card .ph-photo{ aspect-ratio:4/5; object-fit:cover; filter:saturate(.94); transition:transform .8s var(--ease); width:100%; display:block; background:none; }
   .spec-card:hover .ph-photo{ transform:scale(1.06); }
   .spec-card h3{ font-size:17px; margin-bottom:5px; font-weight:500; }
   .spec-card h3 a{ color:inherit; font-size:17px; transition:color .3s ease; }

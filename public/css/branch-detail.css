@@ -500,6 +500,26 @@ body[data-branch-id="pt2"] .branch-top-hero__pills .spec-pill:hover::before {
   display: none !important;
 }
 
+/* Doctor cutout PNG (Doctors.ts's featuredPhoto — transparent background,
+   see that field's comment) floating in front of the shared room
+   background set above via inline style. Left-aligned + bottom-anchored,
+   matching where the doctor previously WAS the card's own background
+   image (background-position: left center above). Mobile override lives
+   in the @media (max-width: 900px) block below, next to that
+   breakpoint's other .branch-doctor-featured overrides. */
+.branch-doctor-featured__photo {
+  position: absolute;
+  left: 4%;
+  bottom: 0;
+  height: 100%;
+  width: auto;
+  max-width: 46%;
+  object-fit: contain;
+  object-position: bottom center;
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* Redesigned Luxury Featured Doctor Body Layout */
 .branch-doctor-featured__body {
   width: min(52%, 560px);
@@ -1557,6 +1577,21 @@ body.branch-gallery-lightbox-open {
 
   .branch-doctor-featured__overlay {
     background: linear-gradient(180deg, rgba(253, 251, 247, 0.1) 0%, rgba(253, 251, 247, 0.88) 45%, rgba(253, 251, 247, 0.98) 100%);
+  }
+
+  /* Desktop positions the cutout left-aligned + full card height, but the
+     card shrinks to 440px and the white body slides up to margin-top:180px
+     on mobile, leaving only a short strip up top — center the doctor
+     there instead of clipping them behind the body card. */
+  .branch-doctor-featured__photo {
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    top: 14px;
+    height: 175px;
+    max-width: 80%;
+    transform: translateX(-50%);
+    object-position: top center;
   }
 
   .branch-doctor-featured__body {
