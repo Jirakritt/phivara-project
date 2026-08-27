@@ -1,7 +1,24 @@
-import type { CollectionConfig } from 'payload'
+import { APIError } from 'payload'
+import type { CollectionBeforeValidateHook, CollectionConfig } from 'payload'
 
 import { isAdmin, leadsBranchScopedAccess } from '../access/roles'
 import { exportLeadsHandler } from '../lib/leadsExport'
+
+// Spam trap: `honeypot` is a real field so it survives Payload's
+// fields-level beforeValidate pass (an ad-hoc key not declared in `fields`
+// gets dropped before a collection-level hook ever sees it — verified
+// against payload/dist/collections/operations/create.js's hook order).
+// Real visitors never see or fill it (public/js/vip-modal.js and
+// doctor/[slug]/page.tsx's appointment form both render it visually
+// hidden, off-screen, with tabindex="-1" — not display:none, since some
+// spam bots skip fields hidden that way); bots that auto-fill every field
+// on a page trip it instead.
+const rejectHoneypot: CollectionBeforeValidateHook = ({ data }) => {
+  if (data?.honeypot) {
+    throw new APIError('Invalid submission', 400)
+  }
+  return data
+}
 
 // Captures every submission from the site-wide VIP Concierge booking modal
 // (public/js/vip-modal.js's #vipForm — the single shared form behind every
@@ -33,6 +50,9 @@ export const Leads: CollectionConfig = {
       handler: exportLeadsHandler,
     },
   ],
+  hooks: {
+    beforeValidate: [rejectHoneypot],
+  },
   access: {
     // Public form submissions — anyone can create a lead, nobody outside
     // staff can read/list/modify other people's contact info. A
@@ -128,6 +148,16 @@ export const Leads: CollectionConfig = {
         { label: 'Closed', value: 'closed' },
       ],
       admin: { description: 'Internal triage status — not visible to the visitor.' },
+    },
+    {
+      // Spam honeypot — see rejectHoneypot above. Hidden from the admin UI
+      // since it's never meant to hold a real value; a filled-in value
+      // means the beforeValidate hook already rejected the submission
+      // before it got this far, so this column should always read empty in
+      // practice.
+      name: 'honeypot',
+      type: 'text',
+      admin: { hidden: true },
     },
   ],
 }

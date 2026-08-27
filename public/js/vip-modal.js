@@ -120,6 +120,10 @@
           </div>
           <form class="vip-form" id="vipForm">
             <div class="vip-form-grid">
+              <label style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                <span>Website</span>
+                <input type="text" name="honeypot" tabindex="-1" autocomplete="off">
+              </label>
               <label>
                 <span>${T.fieldName}</span>
                 <input type="text" name="name" autocomplete="name" placeholder="${T.namePlaceholder}" required>
@@ -307,7 +311,8 @@
             branch: form.elements.branch.value,
             service: service.value,
             notes: notes.value.trim(),
-            sourcePath: window.location.pathname
+            sourcePath: window.location.pathname,
+            honeypot: form.elements.honeypot.value
           })
         });
 

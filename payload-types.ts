@@ -826,6 +826,7 @@ export interface Lead {
    * Internal triage status — not visible to the visitor.
    */
   status: 'new' | 'contacted' | 'booked' | 'closed';
+  honeypot?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1323,6 +1324,7 @@ export interface LeadsSelect<T extends boolean = true> {
   preferredDate?: T;
   sourcePath?: T;
   status?: T;
+  honeypot?: T;
   updatedAt?: T;
   createdAt?: T;
 }

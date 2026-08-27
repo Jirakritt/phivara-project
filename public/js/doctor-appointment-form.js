@@ -111,6 +111,7 @@
             notes: notesInput.value.trim(),
             preferredDate: form.elements.preferredAppointmentDate ? form.elements.preferredAppointmentDate.value : '',
             sourcePath: window.location.pathname,
+            honeypot: form.elements.honeypot ? form.elements.honeypot.value : '',
           }),
         });
 

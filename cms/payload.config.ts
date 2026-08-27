@@ -13,6 +13,13 @@ import sharp from 'sharp'
 // same reason.
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Fail loudly at startup rather than silently signing every session/auth
+// token with an empty string if this env var is ever missing (e.g. a
+// broken .env on a fresh deploy) — see the site's security review notes.
+if (!process.env.PAYLOAD_SECRET) {
+  throw new Error('PAYLOAD_SECRET environment variable is required but was not set.')
+}
+
 import { Media } from './collections/Media'
 import { Branches } from './collections/Branches'
 import { Doctors } from './collections/Doctors'
@@ -122,7 +129,7 @@ export default buildConfig({
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
 
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET,
 
   // Staff-facing admin panel — add role-based access control per
   // collection (access.read/update/create) once staff roles are defined

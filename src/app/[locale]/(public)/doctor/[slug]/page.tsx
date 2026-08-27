@@ -387,6 +387,15 @@ export default async function DoctorDetailPage({
                 <p>{t('กรอกข้อมูลด้านล่างเพื่อให้ทีมงานติดต่อกลับและยืนยันเวลาที่เหมาะสม', 'Share your details and our team will contact you to confirm a suitable time.')}</p>
               </div>
 
+              {/* Spam honeypot — real visitors never see this (off-screen,
+                  not display:none, so it still trips bots that skip hidden
+                  fields); checked server-side in Leads.ts's beforeValidate
+                  hook. See public/js/vip-modal.js for the same pattern. */}
+              <label style={{ position: 'absolute', left: '-9999px', top: '-9999px' }} aria-hidden="true">
+                <span>Website</span>
+                <input type="text" name="honeypot" tabIndex={-1} autoComplete="off" />
+              </label>
+
               <div className="contact-name-row">
                 <div>
                   <label className="form-label" htmlFor="appointmentName">{t('ชื่อ-นามสกุล *', 'Full Name *')}</label>

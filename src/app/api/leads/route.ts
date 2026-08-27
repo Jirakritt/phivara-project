@@ -63,23 +63,39 @@ export async function POST(request: Request) {
   const branch = branchResult.docs[0]
   if (!branch) return NextResponse.json({ error: 'Unknown branch' }, { status: 400 })
 
-  await payload.create({
-    collection: 'leads',
-    data: {
-      name,
-      phone,
-      branch: branchSlug,
-      service: service as 'plastic-surgery' | 'longevity' | 'dermatology' | 'wellness' | 'membership',
-      notes: notes || undefined,
-      sourcePath: sourcePath || undefined,
-      preferredDate: preferredDate || undefined,
-      status: 'new',
-    },
-    // The collection's own access already allows public create (`create:
-    // () => true`); overrideAccess just skips the redundant check since
-    // this route has already validated the payload above.
-    overrideAccess: true,
-  })
+  // Spam honeypot (see cms/collections/Leads.ts's `honeypot` field +
+  // rejectHoneypot hook) — this route builds `data` by hand rather than
+  // passing the raw request body straight through, so the honeypot value
+  // has to be explicitly forwarded here too, or the hook downstream never
+  // sees it and silently does nothing.
+  const honeypot = typeof body.honeypot === 'string' ? body.honeypot : undefined
+
+  try {
+    await payload.create({
+      collection: 'leads',
+      data: {
+        name,
+        phone,
+        branch: branchSlug,
+        service: service as 'plastic-surgery' | 'longevity' | 'dermatology' | 'wellness' | 'membership',
+        notes: notes || undefined,
+        sourcePath: sourcePath || undefined,
+        preferredDate: preferredDate || undefined,
+        status: 'new',
+        honeypot,
+      },
+      // The collection's own access already allows public create (`create:
+      // () => true`); overrideAccess just skips the redundant check since
+      // this route has already validated the payload above. Hooks (incl.
+      // the honeypot rejection) still run regardless of overrideAccess.
+      overrideAccess: true,
+    })
+  } catch {
+    // Covers the honeypot hook's rejection along with any other unexpected
+    // create failure — same generic 400 as the manual validation above, so
+    // a bot gets no signal about which check it tripped.
+    return NextResponse.json({ error: 'Unable to submit request' }, { status: 400 })
+  }
 
   return NextResponse.json({ success: true })
 }
