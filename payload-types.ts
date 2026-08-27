@@ -340,6 +340,10 @@ export interface Doctor {
    */
   specialtyLabel?: string | null;
   /**
+   * ความชำนาญพิเศษเฉพาะทาง — ใช้แสดงในการ์ดแพทย์หลักประจำสาขา เช่น "ตจวิทยา"
+   */
+  subSpecialty?: string | null;
+  /**
    * Small credential line under the specialty, e.g. "Board Certified Plastic Surgeon"
    */
   subNote?: string | null;
@@ -421,6 +425,27 @@ export interface Doctor {
    * e.g. "ศูนย์ศัลยกรรมตกแต่ง · โรงพยาบาลพญาไทศรีราชา"
    */
   contactFact?: string | null;
+  /**
+   * แสดงแพทย์คนนี้เป็นการ์ดใหญ่ (featured) ในหน้าโปรไฟล์ของสาขาตัวเอง ถ้ามีมากกว่า 1 คนต่อสาขาที่ติ๊กไว้ จะแสดงเป็น slide ให้เลื่อนดูทีละคนแทนการ์ดเดี่ยว
+   */
+  isBranchFeatured?: boolean | null;
+  /**
+   * รูปพื้นหลังการ์ดแพทย์หลัก แนะนำอัตราส่วนแนวนอนกว้าง ~16:9 (เช่น 2752x1536px) — คนละรูปกับ Portrait/Card Photo เพราะสัดส่วนไม่เท่ากัน
+   */
+  featuredPhoto?: (number | null) | Media;
+  /**
+   * คำคมที่แสดงในการ์ดแพทย์หลัก
+   */
+  quote?: string | null;
+  /**
+   * รายการ checklist ในการ์ดแพทย์หลัก เช่น "ประเมินสุขภาพเชิงลึก & ฟื้นฟูสมดุล" — ใส่กี่ข้อก็ได้
+   */
+  featuredHighlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   seo?: {
     /**
      * Browser tab title / Google search result title. Leave blank to use the page title.
@@ -1126,6 +1151,7 @@ export interface DoctorsSelect<T extends boolean = true> {
   branch?: T;
   specialty?: T;
   specialtyLabel?: T;
+  subSpecialty?: T;
   subNote?: T;
   portrait?: T;
   cardPhoto?: T;
@@ -1161,6 +1187,15 @@ export interface DoctorsSelect<T extends boolean = true> {
       };
   contactIntro?: T;
   contactFact?: T;
+  isBranchFeatured?: T;
+  featuredPhoto?: T;
+  quote?: T;
+  featuredHighlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
   seo?:
     | T
     | {

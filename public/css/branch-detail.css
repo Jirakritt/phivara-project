@@ -775,6 +775,33 @@ body[data-branch-id="pt2"] .branch-doctor-featured__quote p {
   box-shadow: 0 10px 28px rgba(184, 149, 96, 0.45);
 }
 
+/* >1 "แพทย์หลักประจำสาขา" doctor at a branch renders as a one-at-a-time
+   slide instead of a single static card — reuses the Awards carousel's
+   .award-carousel/.award-viewport/.award-track/.award-nav/.award-dots
+   classes (main.css) for the chrome, this just makes each slide take the
+   full track width instead of Awards' ~25%-per-card sizing. See
+   branch/[slug]/page.tsx and branch-doctor-featured-slider.js. */
+.branch-doctor-featured-track .branch-doctor-featured-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.branch-doctor-featured-track .branch-doctor-featured-slide .branch-doctor-featured {
+  margin-bottom: 0;
+}
+
+.branch-doctor-featured-carousel {
+  margin-bottom: 0;
+}
+
+/* Equal spacing above/below the dots, between the slide and the regular
+   doctor grid underneath — overrides .award-dots' asymmetric
+   margin-top-only spacing (main.css), scoped to this section only so the
+   Awards carousel elsewhere on the site is unaffected. */
+.branch-doctor-featured-dots {
+  margin: 24px 0;
+}
+
 .branch-doctor-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

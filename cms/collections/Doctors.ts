@@ -103,6 +103,18 @@ export const Doctors: CollectionConfig = {
               admin: { description: 'Display text on the card, e.g. "ศัลยกรรมตกแต่งรอบดวงตาและใบหน้า"' },
             },
             {
+              // Distinct from boardCertification (ประวัติและวุฒิบัตร tab,
+              // used on /doctor for credential text like "วุฒิบัตรสาขา...")
+              // — this is a plain profile field like specialtyLabel/subNote,
+              // currently only surfaced on the branch "แพทย์หลักประจำสาขา"
+              // featured card's "ความชำนาญพิเศษเฉพาะทาง" fact (see
+              // branch/[slug]/page.tsx).
+              name: 'subSpecialty',
+              type: 'text',
+              localized: true,
+              admin: { description: 'ความชำนาญพิเศษเฉพาะทาง — ใช้แสดงในการ์ดแพทย์หลักประจำสาขา เช่น "ตจวิทยา"' },
+            },
+            {
               name: 'subNote',
               type: 'text',
               localized: true,
@@ -188,6 +200,69 @@ export const Doctors: CollectionConfig = {
               type: 'text',
               localized: true,
               admin: { description: 'e.g. "ศูนย์ศัลยกรรมตกแต่ง · โรงพยาบาลพญาไทศรีราชา"' },
+            },
+          ],
+        },
+        {
+          // Powers the optional "featured lead doctor" hero card on the
+          // branch profile page (src/app/[locale]/(public)/branch/[slug]/
+          // page.tsx) — see that file's top comment for why this never had
+          // a schema home before now. Leave `isBranchFeatured` unchecked on
+          // every doctor at a branch and the section simply doesn't render
+          // (same as today). Check it on more than one doctor at the same
+          // branch and the page renders them as a slide instead of a single
+          // static card — see public/js/branch-doctor-featured-slider.js.
+          // The card's "ความชำนาญ"/"ความชำนาญพิเศษเฉพาะทาง" facts reuse the
+          // existing specialtyLabel/boardCertification fields above rather
+          // than duplicating them here.
+          label: 'แพทย์หลักประจำสาขา',
+          fields: [
+            {
+              name: 'isBranchFeatured',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: {
+                description:
+                  'แสดงแพทย์คนนี้เป็นการ์ดใหญ่ (featured) ในหน้าโปรไฟล์ของสาขาตัวเอง ถ้ามีมากกว่า 1 คนต่อสาขาที่ติ๊กไว้ จะแสดงเป็น slide ให้เลื่อนดูทีละคนแทนการ์ดเดี่ยว',
+              },
+            },
+            {
+              // Deliberately NOT reusing portrait/cardPhoto — this renders
+              // as a wide `background-image` behind the whole featured
+              // card, not inside a fixed square/portrait photo-frame, so it
+              // needs its own wide-format image (see the original design
+              // reference: public/assets/images/doctors/
+              // dr-highlight-sanampao.png, 2752x1536 / 16:9). Falls back to
+              // cardPhoto/portrait if left blank (see doctorsData.ts) so a
+              // doctor checked as featured without this filled in doesn't
+              // render with a broken image, but the fallback photo will
+              // look stretched/cropped since it wasn't shot for this frame.
+              name: 'featuredPhoto',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description:
+                  'รูปพื้นหลังการ์ดแพทย์หลัก แนะนำอัตราส่วนแนวนอนกว้าง ~16:9 (เช่น 2752x1536px) — คนละรูปกับ Portrait/Card Photo เพราะสัดส่วนไม่เท่ากัน',
+                condition: (_, siblingData) => Boolean(siblingData?.isBranchFeatured),
+              },
+            },
+            {
+              name: 'quote',
+              type: 'text',
+              localized: true,
+              admin: {
+                description: 'คำคมที่แสดงในการ์ดแพทย์หลัก',
+                condition: (_, siblingData) => Boolean(siblingData?.isBranchFeatured),
+              },
+            },
+            {
+              name: 'featuredHighlights',
+              type: 'array',
+              admin: {
+                description: 'รายการ checklist ในการ์ดแพทย์หลัก เช่น "ประเมินสุขภาพเชิงลึก & ฟื้นฟูสมดุล" — ใส่กี่ข้อก็ได้',
+                condition: (_, siblingData) => Boolean(siblingData?.isBranchFeatured),
+              },
+              fields: [{ name: 'text', type: 'text', localized: true, required: true }],
             },
           ],
         },

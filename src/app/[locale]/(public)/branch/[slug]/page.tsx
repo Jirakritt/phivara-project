@@ -4,6 +4,7 @@ import Script from 'next/script'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getBranchDetail } from '@/lib/branchesData'
+import type { BranchDetail } from '@/lib/branchesData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
@@ -36,11 +37,20 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // - Sanampao's one-off photo gallery section (present on only 1 of 5 branch
 //   pages in the source site) — standardized on the facilities-checklist
 //   layout used by the other 4 branches so all 5 pages are consistent.
-// - The "featured lead doctor" hero treatment (motivational quote,
-//   "Expertise"/"Specialty" labeled facts) — that copy was hardcoded per
-//   branch in branch-detail.js and has no home in the Doctor schema, so all
-//   of a branch's doctors render uniformly as the same spec-card used on
-//   /doctor instead.
+//
+// The "featured lead doctor" hero treatment (motivational quote,
+// "ความชำนาญ"/"ความชำนาญพิเศษเฉพาะทาง" facts, checklist highlights) WAS
+// dropped for the same reason above for a while — it had no home in the
+// Doctor schema. It's now restored via cms/collections/Doctors.ts's
+// "แพทย์หลักประจำสาขา" tab (isBranchFeatured/quote/featuredHighlights).
+// A branch with 0 doctors checked renders exactly as before (plain grid
+// only). 1 doctor checked renders a single static card
+// (renderFeaturedDoctorCard below). >1 renders a one-at-a-time slide
+// (public/js/branch-doctor-featured-slider.js, modeled on the Awards
+// carousel in main.js/main.css — reuses its .award-nav/.award-viewport/
+// .award-track/.award-dots classes). Featured doctors are excluded from
+// the plain grid below (see branchesData.ts's getBranchDetail) so nobody
+// appears twice.
 export const revalidate = 60
 
 export default async function BranchDetailPage({
@@ -61,6 +71,82 @@ export default async function BranchDetailPage({
   const branchIndex = homeData.branches.findIndex((b) => b.formValue === slug)
   const numStr = String(branchIndex >= 0 ? branchIndex + 1 : 1).padStart(2, '0')
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
+
+  // Markup mirrors the original hardcoded card in public/js/branch-detail.js
+  // (lines ~790-863) 1:1, reusing the same (already-loaded, previously
+  // unused) branch-detail.css classes — see the file comment above.
+  function renderFeaturedDoctorCard(doc: BranchDetail['featuredDoctors'][number]) {
+    return (
+      <div className="branch-doctor-featured" style={{ backgroundImage: `url('${doc.featuredImage}')` }}>
+        <div className="branch-doctor-featured__body">
+          <div className="branch-doctor-featured__header">
+            <h3 className="branch-doctor-featured__name">{t(doc.nameTh, doc.nameEn)}</h3>
+            {(doc.subTh || doc.subEn) && (
+              <div className="branch-doctor-featured__title-badge">{t(doc.subTh, doc.subEn)}</div>
+            )}
+          </div>
+
+          {(doc.quoteTh || doc.quoteEn) && (
+            <div className="branch-doctor-featured__quote">
+              <span className="quote-mark">&ldquo;</span>
+              <p>{t(doc.quoteTh, doc.quoteEn)}</p>
+            </div>
+          )}
+
+          {(doc.noteTh || doc.noteEn || doc.subSpecialtyTh || doc.subSpecialtyEn) && (
+            <div className="branch-doctor-featured__specs-card">
+              {(doc.noteTh || doc.noteEn) && (
+                <div className="spec-row">
+                  <div className="spec-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                  </div>
+                  <div className="spec-info">
+                    <span className="spec-badge">{t('ความชำนาญ', 'Expertise')}</span>
+                    <span className="spec-value">{t(doc.noteTh, doc.noteEn)}</span>
+                  </div>
+                </div>
+              )}
+              {(doc.subSpecialtyTh || doc.subSpecialtyEn) && (
+                <div className="spec-row">
+                  <div className="spec-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+                  </div>
+                  <div className="spec-info">
+                    <span className="spec-badge">{t('ความชำนาญพิเศษเฉพาะทาง', 'Specialty')}</span>
+                    <span className="spec-value">{t(doc.subSpecialtyTh, doc.subSpecialtyEn)}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {doc.featuredHighlights.length > 0 && (
+            <div className="branch-doctor-featured__highlights">
+              {doc.featuredHighlights.map((h, i) => (
+                <div className="branch-doctor-featured__highlight-item" key={i}>
+                  <span className="branch-doctor-featured__highlight-item-icon">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.8} aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
+                  </span>
+                  <span>{t(h.th, h.en)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="branch-doctor-featured__actions">
+            <a href={localizedHref(locale, `/doctor/${doc.slug}`)} className="branch-doctor-featured__btn-profile">
+              <span>{t('ดูประวัติแพทย์อย่างละเอียด', 'View Profile')}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+            <a href="#vipModalOverlay" className="branch-doctor-featured__btn-book vip-trigger" data-doc-name={doc.nameTh}>
+              <span>{t('จองปรึกษาแพทย์ผู้อำนวยการ', 'Book Consultation')}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -149,7 +235,7 @@ export default async function BranchDetailPage({
           </div>
         </section>
 
-        {branch.doctors.length > 0 && (
+        {(branch.featuredDoctors.length > 0 || branch.doctors.length > 0) && (
           <section className="branch-doctors-section">
             <div className="wrap">
               <div className="branch-section-head">
@@ -157,8 +243,31 @@ export default async function BranchDetailPage({
                 <h2>{t('ทีมแพทย์ผู้เชี่ยวชาญประจำสาขา', 'Specialists at This Location')}</h2>
                 <p>{t('การันตีด้วยวุฒิบัตรและทีมอาจารย์แพทย์ผู้เชี่ยวชาญ คอยให้คำปรึกษาและออกแบบการรักษาเฉพาะบุคคล', 'Our board-certified specialists and clinical leaders dedicated to personalized medical care.')}</p>
               </div>
-              <div className="branch-doctor-grid">
-                {branch.doctors.map((doc) => (
+
+              {branch.featuredDoctors.length > 0 && (
+                branch.featuredDoctors.length === 1 ? (
+                  renderFeaturedDoctorCard(branch.featuredDoctors[0])
+                ) : (
+                  <>
+                    <div className="branch-doctor-featured-carousel">
+                      <div className="award-viewport">
+                        <div className="award-track branch-doctor-featured-track" id="branchFeaturedTrack">
+                          {branch.featuredDoctors.map((doc) => (
+                            <div key={doc.slug} className="branch-doctor-featured-slide">
+                              {renderFeaturedDoctorCard(doc)}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="award-dots branch-doctor-featured-dots" id="branchFeaturedDots"></div>
+                  </>
+                )
+              )}
+
+              {branch.doctors.length > 0 && (
+                <div className="branch-doctor-grid">
+                  {branch.doctors.map((doc) => (
                   <div key={doc.slug} className="spec-card">
                     <div className="photo-wrap">
                       <a href={localizedHref(locale, `/doctor/${doc.slug}`)} aria-label={doc.nameTh}>
@@ -182,6 +291,7 @@ export default async function BranchDetailPage({
                   </div>
                 ))}
               </div>
+              )}
               <div className="branch-section-footer">
                 <a href={localizedHref(locale, '/doctor')} className="branch-view-all-btn">
                   <span>{t('ดูทีมแพทย์ PHIVARA ทั้งหมด →', 'View All PHIVARA Medical Specialists →')}</span>
@@ -289,6 +399,7 @@ export default async function BranchDetailPage({
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/vip-modal.js" strategy="afterInteractive" />
+      <Script src="/js/branch-doctor-featured-slider.js" strategy="afterInteractive" />
     </>
   )
 }

@@ -26,6 +26,25 @@ export interface DoctorCard {
   noteEn: string
   subTh: string
   subEn: string
+  // "แพทย์หลักประจำสาขา" fields (cms/collections/Doctors.ts) — only
+  // meaningful when isBranchFeatured is true.
+  isBranchFeatured: boolean
+  // Deliberately separate from `image` (cardPhoto/portrait) — the featured
+  // card uses this as a wide 16:9 background-image, not a square/portrait
+  // photo-frame, so the two are never interchangeable (see the
+  // `featuredPhoto` field comment on Doctors.ts). Falls back to `image`
+  // only so a doctor checked as featured without this filled in doesn't
+  // render with a missing image — see mapDoctorCard below.
+  featuredImage: string
+  quoteTh: string
+  quoteEn: string
+  // subSpecialty (not boardCertification — that's a different field, used
+  // on /doctor for credential text) powers the featured card's second spec
+  // row ("ความชำนาญพิเศษเฉพาะทาง"), alongside noteTh/noteEn
+  // (specialtyLabel) for the first ("ความชำนาญ").
+  subSpecialtyTh: string
+  subSpecialtyEn: string
+  featuredHighlights: Array<{ th: string; en: string }>
 }
 
 // Full profile — only populated for doctors that have the "rich" fields
@@ -90,10 +109,13 @@ function mapDoctorCard(doc: any): DoctorCard {
   const name = doc.name
   const note = doc.specialtyLabel || ''
   const sub = doc.subNote || ''
+  const quote = doc.quote || ''
+  const subSpecialty = doc.subSpecialty || ''
+  const image = mediaUrl(doc.cardPhoto) || mediaUrl(doc.portrait) || '/assets/images/doctors/dr01.png'
   return {
     id: doc.id,
     slug: doc.slug,
-    image: mediaUrl(doc.cardPhoto) || mediaUrl(doc.portrait) || '/assets/images/doctors/dr01.png',
+    image,
     branchSlug: branch?.slug || '',
     branchTh: branch?.name || '',
     branchEn: branch?.name || '',
@@ -104,6 +126,16 @@ function mapDoctorCard(doc: any): DoctorCard {
     noteEn: note,
     subTh: sub,
     subEn: sub,
+    isBranchFeatured: Boolean(doc.isBranchFeatured),
+    featuredImage: mediaUrl(doc.featuredPhoto) || image,
+    quoteTh: quote,
+    quoteEn: quote,
+    subSpecialtyTh: subSpecialty,
+    subSpecialtyEn: subSpecialty,
+    featuredHighlights: (doc.featuredHighlights || []).map((h: any) => {
+      const text = h.text || ''
+      return { th: text, en: text }
+    }),
   }
 }
 

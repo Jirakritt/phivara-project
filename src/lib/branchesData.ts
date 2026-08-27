@@ -36,7 +36,12 @@ export interface BranchDetail extends BranchCard {
   directionsEn: string
   // Not fetched from a `branch` relationship on Doctors/Programs directly —
   // reuses the existing listing functions and filters by branchSlug.
+  // `doctors` excludes anyone in `featuredDoctors` to avoid duplicating
+  // them in the plain grid below the featured card/slide (see
+  // cms/collections/Doctors.ts's "แพทย์หลักประจำสาขา" tab comment and
+  // branch/[slug]/page.tsx).
   doctors: DoctorCard[]
+  featuredDoctors: DoctorCard[]
   programs: ProgramCard[]
 }
 
@@ -99,13 +104,18 @@ export async function getBranchDetail(slug: string, locale: LocaleCode): Promise
   const facilities = (doc.facilities || []).map((f: any) => f.text)
   const directions = doc.directions || ''
 
+  const branchDoctors = doctors.filter((d) => d.branchSlug === slug)
+  const featuredDoctors = branchDoctors.filter((d) => d.isBranchFeatured)
+  const regularDoctors = branchDoctors.filter((d) => !d.isBranchFeatured)
+
   return {
     ...card,
     facilitiesTh: facilities,
     facilitiesEn: facilities,
     directionsTh: directions,
     directionsEn: directions,
-    doctors: doctors.filter((d) => d.branchSlug === slug),
+    doctors: regularDoctors,
+    featuredDoctors,
     programs: programs.filter((p) => p.branchSlug === slug),
   }
 }
