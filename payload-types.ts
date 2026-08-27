@@ -331,6 +331,10 @@ export interface Doctor {
    * URL for the doctor page, e.g. /doctor/dr-punnawit-sirimetha. Leave blank to auto-generate from Name En, or type your own custom URL.
    */
   slug?: string | null;
+  /**
+   * ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้ารายชื่อแพทย์และกริดแพทย์ประจำสาขา
+   */
+  displayOrder?: number | null;
   name?: string | null;
   branch: number | Branch;
   /**
@@ -1149,6 +1153,7 @@ export interface BranchesSelect<T extends boolean = true> {
  */
 export interface DoctorsSelect<T extends boolean = true> {
   slug?: T;
+  displayOrder?: T;
   name?: T;
   branch?: T;
   specialty?: T;

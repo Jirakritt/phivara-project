@@ -539,7 +539,7 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
     findLocalized<any>('doctors', locale, {
       limit: 12,
       depth: 1,
-      sort: 'slug',
+      sort: ['displayOrder', 'id'],
       where: { _status: { equals: 'published' } },
     }),
     findLocalized<any>('programs', locale, { limit: 100, depth: 1, where: { _status: { equals: 'published' } } }),

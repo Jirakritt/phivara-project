@@ -22,8 +22,14 @@ export const Doctors: CollectionConfig = {
     // instead of the internal slug.
     useAsTitle: 'name',
     listSearchableFields: ['name'],
-    defaultColumns: ['name', 'specialty', 'branch', '_status'],
+    defaultColumns: ['name', 'displayOrder', 'specialty', 'branch', '_status'],
   },
+  // List view defaults to the same order the public site uses (see
+  // src/lib/doctorsData.ts / src/lib/homeData.ts, both `sort:
+  // ['displayOrder', 'id']`) so what an editor sees here matches what
+  // visitors see on /doctor and the branch doctor grid without needing to
+  // click the column header first. Mirrors Branches.ts's identical pattern.
+  defaultSort: 'displayOrder',
   // Credentials/bio are medical claims — require a draft to be reviewed
   // before it goes live, instead of publishing on save.
   versions: {
@@ -69,6 +75,23 @@ export const Doctors: CollectionConfig = {
                 // it. Still fully visible/editable on the doctor's own edit
                 // form, just not in the list view.
                 disableListColumn: true,
+              },
+            },
+            {
+              // Controls display order everywhere doctors are listed
+              // (/doctor listing, the branch page's regular doctor grid —
+              // see doctorsData.ts / homeData.ts / branchesData.ts, which
+              // all sort by this field now instead of slug). Lower numbers
+              // show first; ties fall back to id. Not required — new
+              // doctors default to 0 and can be sorted into place after
+              // saving. Mirrors Branches.ts's identical displayOrder field.
+              name: 'displayOrder',
+              type: 'number',
+              defaultValue: 0,
+              admin: {
+                description:
+                  'ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้ารายชื่อแพทย์และกริดแพทย์ประจำสาขา',
+                position: 'sidebar',
               },
             },
             // Per-locale name. The old flat nameTh/nameEn fields (kept

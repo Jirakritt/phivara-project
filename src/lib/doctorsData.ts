@@ -144,7 +144,7 @@ export async function getDoctorsListing(locale: LocaleCode): Promise<DoctorCard[
   const docs = await findLocalized<any>('doctors', locale, {
     limit: 200,
     depth: 1,
-    sort: 'slug',
+    sort: ['displayOrder', 'id'],
     where: { _status: { equals: 'published' } },
   })
   return docs.filter((d) => hasLocaleContent(d.name)).map(mapDoctorCard)
