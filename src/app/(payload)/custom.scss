@@ -454,11 +454,25 @@ button {
 }
 
 .table-wrap table thead th {
-  background: var(--theme-elevation-50);
+  // Deeper/more saturated cream than the row background below (was
+  // --theme-elevation-50, nearly identical to the page bg the rows sit on,
+  // so the header barely read as a separate band) + a gold underline so the
+  // header clearly reads as its own row while staying inside the same
+  // cream/gold palette as the rest of the admin.
+  background: var(--color-base-150);
+  color: #443E1C; // --olive-dark, more contrast than the previous default gray
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-size: 10.5px;
-  font-weight: 500;
+  font-weight: 600;
+  border-bottom: 2px solid #C7A76B; // --gold
+}
+
+.table-wrap table tbody tr {
+  // Solid white rows (was transparent, letting the page's cream bg show
+  // through and wash out against the header) — gives the header real
+  // contrast without needing a darker/less-on-brand header color.
+  background: var(--theme-input-bg);
 }
 
 .table-wrap table tbody tr:hover {
