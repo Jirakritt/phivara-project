@@ -79,12 +79,12 @@ export default async function ArticleListPage({ params }: { params: Promise<{ lo
         <section className="article-hero">
           <div className="wrap article-hero-inner">
             <div className="eyebrow center">PHIVARA JOURNAL</div>
-            <h1>{t('ความรู้เพื่อความงามและสุขภาวะที่ยั่งยืน', 'Insights for Lasting Beauty & Wellbeing')}</h1>
+            <h1>{t('เรื่องราวของความงาม สุขภาพ และการดูแลตัวเอง', 'Stories on Beauty, Health, and Self-Care')}</h1>
             <div className="hero-gold-divider"><span className="line"></span><span className="diamond">◆</span><span className="line"></span></div>
             <p>
               {t(
-                'บทความจากทีมแพทย์ผู้เชี่ยวชาญที่ถ่ายทอดหลักการดูแลอย่างเข้าใจ ครอบคลุมผิวพรรณ ศัลยกรรมความงาม เวชศาสตร์ชะลอวัย และสุขภาพแบบองค์รวม',
-                'Expert-led perspectives on skin, aesthetic surgery, longevity medicine and holistic wellbeing, thoughtfully explained for informed decisions.',
+                'บทความจากทีม PHIVARA ที่ชวนมาทำความเข้าใจเรื่องความงาม สุขภาพผิว ศัลยกรรมตกแต่ง การดูแลสุขภาพเชิงป้องกัน และการใช้ชีวิตอย่างมีสุขภาวะในทุกวัน',
+                'Articles from the PHIVARA team exploring beauty, skin health, aesthetic surgery, preventive care, and everyday wellbeing.',
               )}
             </p>
           </div>

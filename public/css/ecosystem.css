@@ -69,6 +69,17 @@
 }
 @keyframes ecoTitleDrift{ 50%{ background-position:100% 50%; } }
 .eco-hero-head p{ font-size:16.5px; line-height:1.9; color:var(--ink-soft); font-weight:300; margin-bottom:34px; }
+/* Bulleted list inside the hero lead (richText field — see
+   src/lib/richText.ts / ecosystemData.ts). Matches the gold-dot bullet
+   style article-detail.css already uses for .prose ul, sized to sit
+   alongside .eco-hero-head p above. */
+.eco-hero-head .eco-hero-lead-list{ list-style:none; margin:0 0 34px; padding:0; font-size:16.5px; line-height:1.9; color:var(--ink-soft); font-weight:300; }
+.eco-hero-head .eco-hero-lead-list li{ position:relative; padding-left:20px; margin-bottom:8px; }
+.eco-hero-head .eco-hero-lead-list li:last-child{ margin-bottom:0; }
+.eco-hero-head .eco-hero-lead-list li:before{ content:""; position:absolute; left:0; top:.85em; width:6px; height:6px; border-radius:50%; background:var(--gold); }
+.eco-hero-head ol.eco-hero-lead-list{ list-style:decimal; padding-left:20px; }
+.eco-hero-head ol.eco-hero-lead-list li{ padding-left:6px; }
+.eco-hero-head ol.eco-hero-lead-list li:before{ content:none; }
 .eco-hero-head .cta-row{ display:flex; }
 .eco-hero .btn-outline-dark{
   min-width:190px;

@@ -47,7 +47,7 @@ const NAVIGATION: Array<{ key: NavKey; href: string; th: string; en: string }> =
   { key: 'home', href: '#top', th: 'หน้าแรก', en: 'Home' },
   { key: 'ecosystem', href: '/ecosystem', th: 'เกี่ยวกับเรา', en: 'About Us' },
   { key: 'program', href: '/program', th: 'โปรแกรมตรวจ', en: 'Programs' },
-  { key: 'doctor', href: '/doctor', th: 'แพทย์ผู้เชี่ยวชาญ', en: 'Doctors' },
+  { key: 'doctor', href: '/doctor', th: 'แพทย์เฉพาะทาง', en: 'Doctors' },
   { key: 'article', href: '/article', th: 'คลังความรู้', en: 'Journal' },
   { key: 'contact', href: '/contact', th: 'ติดต่อ', en: 'Contact' },
 ]

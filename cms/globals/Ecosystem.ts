@@ -34,7 +34,21 @@ export const Ecosystem: GlobalConfig = {
                 { name: 'eyebrow', type: 'text', localized: true, defaultValue: 'THE PHIVARA ECOSYSTEM' },
                 { name: 'headlineLine1', type: 'text', localized: true, required: true },
                 { name: 'headlineLine2', type: 'text', localized: true, required: true },
-                { name: 'lead', type: 'textarea', localized: true },
+                {
+                  // Was a plain `textarea` — staff typed line breaks intending
+                  // a lead paragraph followed by a bulleted list of the 4
+                  // disciplines, but a plain textarea has no way to carry
+                  // that structure through to the frontend: HTML collapses
+                  // newlines in a `<p>` by default, so it all rendered as one
+                  // run-on paragraph (reported 2026-08-27). richText gives
+                  // staff a real bullet-list button, and the frontend now
+                  // walks it with parseRichTextBlocks() (src/lib/richText.ts
+                  // — the same helper src/lib/privacyPolicyData.ts already
+                  // uses) instead of dumping the raw string into one <p>.
+                  name: 'lead',
+                  type: 'richText',
+                  localized: true,
+                },
               ],
             },
           ],

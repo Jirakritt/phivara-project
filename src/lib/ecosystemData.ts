@@ -1,6 +1,8 @@
 import type { LocaleCode } from './i18n'
 import { DEFAULT_LOCALE } from './i18n'
 import { getPayloadClient, mediaUrl } from './payload'
+import { parseRichTextBlocks } from './richText'
+import type { RichTextBlock } from './richText'
 
 // Source: cms/globals/Ecosystem.ts (a Payload Global, not a collection —
 // same reasoning as membershipData.ts: ecosystem.html is a single landing
@@ -48,8 +50,11 @@ export interface EcosystemContent {
     headlineLine1En: string
     headlineLine2Th: string
     headlineLine2En: string
-    leadTh: string
-    leadEn: string
+    // Was leadTh/leadEn (plain strings) — `lead` is now a `richText` field
+    // (cms/globals/Ecosystem.ts) so staff can format a real bullet list, so
+    // this carries the already-locale-resolved doc as parsed blocks instead.
+    // See src/app/[locale]/(public)/ecosystem/page.tsx for how these render.
+    leadBlocks: RichTextBlock[]
   }
   disciplines: EcosystemDiscipline[]
   closingCta: {
@@ -125,7 +130,7 @@ export async function getEcosystemContent(locale: LocaleCode): Promise<Ecosystem
   const heroEyebrow = target?.hero?.eyebrow || en?.hero?.eyebrow || th.hero?.eyebrow || ''
   const headlineLine1 = target?.hero?.headlineLine1 || en?.hero?.headlineLine1 || th.hero?.headlineLine1 || ''
   const headlineLine2 = target?.hero?.headlineLine2 || en?.hero?.headlineLine2 || th.hero?.headlineLine2 || ''
-  const lead = target?.hero?.lead || en?.hero?.lead || th.hero?.lead || ''
+  const leadDoc = target?.hero?.lead || en?.hero?.lead || th.hero?.lead || null
 
   return {
     hero: {
@@ -135,8 +140,7 @@ export async function getEcosystemContent(locale: LocaleCode): Promise<Ecosystem
       headlineLine1En: headlineLine1,
       headlineLine2Th: headlineLine2,
       headlineLine2En: headlineLine2,
-      leadTh: lead,
-      leadEn: lead,
+      leadBlocks: parseRichTextBlocks(leadDoc),
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     disciplines: (th.disciplines || []).map((d: any, i: number) => {

@@ -77,8 +77,8 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               </div>
               <p className="lead">
                 {t(
-                  'เลือกสาขาที่ใกล้คุณ พร้อมดูข้อมูลการเดินทาง เวลาเปิดให้บริการ และบริการเด่นของแต่ละสาขา',
-                  'Find your nearest location, with directions, opening hours, and each center’s signature services.',
+                  'เลือกสาขาที่ใกล้คุณ พร้อมทำความรู้จักบริการและรูปแบบการดูแลของเราในแต่ละสาขา',
+                  'Choose the location nearest you, and get to know the services and style of care at each branch.',
                 )}
               </p>
             </div>

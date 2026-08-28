@@ -313,7 +313,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 {t(data.membershipTeaser.ctaLabelTh, data.membershipTeaser.ctaLabelEn)}
               </a>
               <a href={localizedHref(locale, '/membership')} className="arrow-link">
-                <span>{t('ดูรายละเอียด', 'View Details')}</span>
+                <span>{t('ดูสิทธิพิเศษ', 'View Details')}</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>

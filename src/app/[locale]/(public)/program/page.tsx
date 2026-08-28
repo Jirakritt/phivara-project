@@ -70,7 +70,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
           <div className="doc-breadcrumb">
             <a href={localizedHref(locale, '/')}>{t('หน้าแรก', 'Home')}</a>
             <span className="sep">/</span>
-            <span className="current">{t('โปรแกรมตรวจเฉพาะทาง', 'Specialized Programs')}</span>
+            <span className="current">{t('รวมโปรแกรมการดูแลที่คัดสรรมาเพื่อคุณ', 'Curated Care Programs, Chosen for You')}</span>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             <div className="wrap">
               <div className="highlight-heading">
                 <span className="eyebrow-gold">{t('โปรแกรมแนะนำ · BY PHIVARA', 'Recommended · BY PHIVARA')}</span>
-                <h2 id="highlightTitle">{t('โปรแกรมเด่นที่เราแนะนำ', 'Our Highlighted Programs')}</h2>
+                <h2 id="highlightTitle">{t('ไฮไลท์โปรแกรมและบริการ', 'HIGHLIGHT PROGRAMS & SERVICES')}</h2>
               </div>
               <div className="highlight-carousel" id="highlightCarousel">
                 <div className="highlight-carousel-viewport">
@@ -140,7 +140,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             <div className="catalog-top">
               <div>
                 <span className="eyebrow-green">EXPLORE PROGRAMS</span>
-                <h2>{t('โปรแกรมตรวจเฉพาะทาง', 'Specialized programs')}</h2>
+                <h2>{t('รวมโปรแกรมการดูแลที่คัดสรรมาเพื่อคุณ', 'Curated Care Programs, Chosen for You')}</h2>
               </div>
             </div>
 
@@ -233,22 +233,28 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
         <section className="signature">
           <div className="wrap signature-grid">
             <div className="signature-copy">
-              <span className="eyebrow">PHIVARA SIGNATURE</span>
-              <h2>{t('ไม่แน่ใจว่าควรเริ่มจากโปรแกรมไหน?', 'Not sure where to begin?')}</h2>
+              <span className="eyebrow">PHIVARA PRIVÉ</span>
+              <h2>{t('ปรึกษาโปรแกรมการดูแลที่เหมาะกับคุณ', "Consult on the Program That's Right for You")}</h2>
               <p>
                 {t(
-                  'เริ่มต้นด้วยการพูดคุยกับ Health Concierge เพื่อช่วยทำความเข้าใจเป้าหมาย และประสานแพทย์ที่เหมาะสมกับคุณ โดยไม่มีค่าใช้จ่าย',
-                  'Begin with our Health Concierge, who will understand your goals and connect you with the right physician, at no charge.',
+                  'เพราะทุกคนมีเป้าหมาย ความต้องการ และจังหวะชีวิตที่แตกต่างกัน',
+                  'Because everyone has different goals, needs, and rhythms of life.',
+                )}
+              </p>
+              <p>
+                {t(
+                  "PHIVARA จึงเริ่มต้นด้วยการพูดคุย เพื่อทำความเข้าใจเป้าหมายของ 'คุณ' ก่อนคัดสรรโปรแกรมความงามและสุขภาพ รวมถึงแนะนำแพทย์ที่เหมาะสมกับคุณ โดยไม่มีค่าใช้จ่าย",
+                  "That's why PHIVARA begins with a conversation — to understand your goals before curating the right beauty and health programs, including recommending the physician best suited to you, at no charge.",
                 )}
               </p>
             </div>
             <div className="signature-panel">
-              <span className="label">PERSONAL HEALTH DISCOVERY</span>
-              <h3>Private Health Consultation</h3>
-              <p>{t('การพูดคุยเบื้องต้น 20 นาที เพื่อค้นหาโปรแกรมที่เหมาะกับคุณที่สุด', 'A 20-minute discovery conversation to find the program that fits you best.')}</p>
+              <span className="label">A CURATED HEALTH JOURNEY</span>
+              <h3>Private Health Concierge</h3>
+              <p>{t('รับคำปรึกษาเบื้องต้น เพื่อค้นหาโปรแกรมที่เหมาะกับคุณที่สุด', 'A complimentary consultation to help you find the program that fits you best.')}</p>
               <div className="signature-includes">
                 <div>{t('✓ ประเมินเป้าหมายสุขภาพ', '✓ Review health goals')}</div>
-                <div>{t('✓ แนะนำโปรแกรมที่เหมาะสม', '✓ Recommend suitable programs')}</div>
+                <div>{t('✓ แนะนำโปรแกรมการดูแล', '✓ Recommend care programs')}</div>
                 <div>{t('✓ เลือกแพทย์และสาขา', '✓ Select doctor & location')}</div>
                 <div>{t('✓ ไม่มีค่าใช้จ่าย', '✓ Complimentary')}</div>
               </div>

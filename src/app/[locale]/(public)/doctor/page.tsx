@@ -76,7 +76,7 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
         <div className="wrap">
           <div className="doc-hero-main">
             <div className="eyebrow center">MEDICAL TEAM</div>
-            <h1>{t('ทีมแพทย์ผู้เชี่ยวชาญเฉพาะทาง', 'Our Board-Certified Medical Specialists')}</h1>
+            <h1>{t('ทีมแพทย์เฉพาะทาง', 'Our Specialist Medical Team')}</h1>
             <div className="hero-gold-divider">
               <span className="line"></span>
               <span className="diamond">◆</span>
@@ -84,8 +84,8 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
             </div>
             <p className="lead">
               {t(
-                'รวมทีมแพทย์เฉพาะทางและผู้เชี่ยวชาญระดับอาจารย์แพทย์ที่ยึดมั่นในหลักการแพทย์เชิงประจักษ์ ออกแบบการดูแลเฉพาะบุคคลครอบคลุม ศัลยกรรมตกแต่ง เวชศาสตร์ชะลอวัย ผิวหนัง และสุขภาวะเชิงความงาม',
-                'Our distinguished team of board-certified specialists and clinical leaders, dedicated to evidence-based medicine and highly personalized care across Plastic Surgery, Longevity Medicine, Dermatology, and Aesthetic Wellness.',
+                'รวมทีมแพทย์เฉพาะทางจากหลากหลายสาขาการดูแล เพื่อร่วมวางแผนการดูแลที่สอดคล้องกับความต้องการและลักษณะเฉพาะของแต่ละบุคคล',
+                'Bringing together specialists across a range of disciplines to help plan care tailored to your individual needs and characteristics.',
               )}
             </p>
           </div>

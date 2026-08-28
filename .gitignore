@@ -28,3 +28,11 @@ phivara-design-html
 # CMS (e.g. the sample article cover image) — not part of the app, no
 # reason to keep in git history.
 sample-article
+
+# Internal/handoff documents (e.g. VPS spec for IT) — not part of the
+# app, no reason to keep in git history.
+Project Documents
+
+# Word/Excel lock files (created while a file is open on someone's
+# machine) — never meant to be committed.
+~$*

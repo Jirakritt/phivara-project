@@ -451,7 +451,12 @@ async function run() {
         eyebrow: ecosystemData.hero.eyebrow.th,
         headlineLine1: ecosystemData.hero.headlineLine1.th,
         headlineLine2: ecosystemData.hero.headlineLine2.th,
-        lead: ecosystemData.hero.lead.th,
+        // `lead` is now a richText field (see cms/globals/Ecosystem.ts) —
+        // same lexicalFromParagraphs() wrap already used for bio/aboutProgram
+        // above. ecosystemData.ts's seed source is still a plain string, so
+        // this stays a single paragraph — an editor can add a real bullet
+        // list afterwards straight in the CMS.
+        lead: lexicalFromParagraphs([ecosystemData.hero.lead.th]),
       },
       disciplines: ecosystemData.disciplines.map((d, i) => ({
         eyebrow: d.eyebrow.th,
@@ -480,7 +485,7 @@ async function run() {
         eyebrow: ecosystemData.hero.eyebrow.en,
         headlineLine1: ecosystemData.hero.headlineLine1.en,
         headlineLine2: ecosystemData.hero.headlineLine2.en,
-        lead: ecosystemData.hero.lead.en,
+        lead: lexicalFromParagraphs([ecosystemData.hero.lead.en]),
       },
       // Same wholesale-array-replace issue as the Membership global above —
       // reattach the row/sub-row ids the 'th' update just created so this

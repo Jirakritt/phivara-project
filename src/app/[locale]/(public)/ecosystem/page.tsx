@@ -1,4 +1,5 @@
 import Script from 'next/script'
+import type { ReactNode } from 'react'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
@@ -102,7 +103,19 @@ export default async function EcosystemPage({ params }: { params: Promise<{ loca
                 <span>{t(content.hero.headlineLine1Th, content.hero.headlineLine1En)}</span><br />
                 <span>{t(content.hero.headlineLine2Th, content.hero.headlineLine2En)}</span>
               </h1>
-              <p>{t(content.hero.leadTh, content.hero.leadEn)}</p>
+              {content.hero.leadBlocks.map((block, i): ReactNode => {
+                if (block.type === 'list') {
+                  const ListTag = block.listType === 'number' ? 'ol' : 'ul'
+                  return (
+                    <ListTag key={i} className="eco-hero-lead-list">
+                      {(block.items || []).map((item, li) => (
+                        <li key={li}>{item}</li>
+                      ))}
+                    </ListTag>
+                  )
+                }
+                return <p key={i}>{block.text}</p>
+              })}
               <div className="cta-row">
                 <a href="#vipModalOverlay" className="btn btn-outline-dark vip-trigger">{t('จองปรึกษาส่วนตัว', 'Book a Private Consultation')}</a>
               </div>

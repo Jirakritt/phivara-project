@@ -1507,7 +1507,21 @@ export interface Ecosystem {
     eyebrow?: string | null;
     headlineLine1: string;
     headlineLine2: string;
-    lead?: string | null;
+    lead?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
   };
   /**
    * Exactly 4 rows, in order: Longevity, Dermatology, Aesthetic Wellness, Plastic Surgery.
