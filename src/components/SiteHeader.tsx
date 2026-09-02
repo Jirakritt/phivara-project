@@ -166,11 +166,7 @@ export default function SiteHeader({
       <header className="site" id="siteHeader">
         <div className="wrap">
           <a href={page === 'home' ? '#top' : localizedHref(locale, '/')} className="logo-lockup">
-            <img src="/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
-            <span className="word">
-              PHIVARA
-              <small>The Art of Beaugevity</small>
-            </span>
+            <img src="/assets/images/brand/logo_color.svg" alt="PHIVARA emblem" />
           </a>
           <nav className="main-nav" id="mainNav" aria-label="Primary navigation">
             <NavLinks page={page} locale={locale} />

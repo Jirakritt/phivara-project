@@ -83,8 +83,7 @@ export default async function ProgramDetailPage({
       <Script id="phivara-program-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 
       <div id="preloader">
-        <img src="/assets/images/brand/emblem.png" alt="" style={{ width: 54 }} />
-        <div className="pre-word">PHIVARA</div>
+        <img src="/assets/images/brand/logo_color.svg" alt="" style={{ width: 54 }} />
       </div>
       <div id="progressBar"></div>
 

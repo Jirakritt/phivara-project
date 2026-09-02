@@ -369,12 +369,6 @@ header.site .logo-lockup img {
   width: auto;
   height: 36px;
   filter: drop-shadow(0 5px 10px rgba(113, 78, 57, .17));
-  transition: transform .6s var(--shell-ease), filter .6s ease;
-}
-
-header.site .logo-lockup:hover img {
-  transform: rotate(8deg) scale(1.06);
-  filter: drop-shadow(0 7px 14px rgba(160, 116, 82, .27));
 }
 
 header.site .logo-lockup .word {

@@ -40,8 +40,7 @@ export default function SiteFooter({
         <div className="foot-grid">
           <div className="foot-brand">
             <div className="logo-lockup">
-              <img src="/assets/images/brand/emblem.png" alt="PHIVARA emblem" />
-              <span className="word">PHIVARA</span>
+              <img src="/assets/images/brand/logo_white.svg" alt="PHIVARA emblem" />
             </div>
             <p>{t(footer.taglineTh, footer.taglineEn)}</p>
           </div>

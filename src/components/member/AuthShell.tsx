@@ -33,8 +33,7 @@ export default function AuthShell({
         <div className="auth-card">
           <div className="auth-brand">
             <div className="auth-brand__logo">
-              <img src="/assets/images/brand/emblem.png" alt="PHIVARA" />
-              <span className="word">PHIVARA<small>{t('Private Membership', 'Private Membership')}</small></span>
+              <img src="/assets/images/brand/logo_color.svg" alt="PHIVARA" />
             </div>
             <span className="auth-brand__eyebrow">PHIVARA PRIVATE MEMBERSHIP</span>
             <p className="auth-brand__quote">{t(quoteTh, quoteEn)}</p>
