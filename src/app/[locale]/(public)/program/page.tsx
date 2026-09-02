@@ -81,7 +81,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
             <div className="program-highlight-particles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
             <div className="wrap">
               <div className="highlight-heading">
-                <span className="eyebrow-gold">{t('โปรแกรมแนะนำ · BY PHIVARA', 'Recommended · BY PHIVARA')}</span>
+                <span className="eyebrow-gold">{t('ไฮไลท์โปรแกรมและบริการ', 'HIGHLIGHT PROGRAMS & SERVICES')}</span>
                 <h2 id="highlightTitle">{t('ไฮไลท์โปรแกรมและบริการ', 'HIGHLIGHT PROGRAMS & SERVICES')}</h2>
               </div>
               <div className="highlight-carousel" id="highlightCarousel">
