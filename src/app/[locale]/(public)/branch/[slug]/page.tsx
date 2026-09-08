@@ -7,7 +7,7 @@ import { getBranchDetail } from '@/lib/branchesData'
 import type { BranchDetail } from '@/lib/branchesData'
 import { getDoctorDisplayBackgrounds } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -18,7 +18,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!branch) return {}
   // "PHIVARA " is part of the CMS branch `name` field itself now (per team
   // decision) — not concatenated here or elsewhere on this page.
-  return { title: `${branch.nameEn} | PHIVARA` }
+  const title = `${branch.nameEn} | PHIVARA`
+  const description = branch.descriptionEn || branch.descriptionTh || undefined
+  const canonical = canonicalUrl(locale, `/branch/${slug}`)
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: canonical,
+      images: branch.image ? [{ url: branch.image, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: branch.image ? [branch.image] : undefined,
+    },
+  }
 }
 
 // Rebuilt from phivara-design-html/branch-*.html (5 nearly-identical pages)

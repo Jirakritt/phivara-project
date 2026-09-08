@@ -5,7 +5,7 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getEcosystemContent } from '@/lib/ecosystemData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -13,11 +13,20 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
+  const title = t(
+    'PHIVARA | ระบบนิเวศ Beaugevity — Anti-Aging, Dermatology, Wellness, Plastic Surgery',
+    'PHIVARA | The Beaugevity Ecosystem — Anti-Aging, Dermatology, Wellness, Plastic Surgery',
+  )
+  const canonical = canonicalUrl(locale, '/ecosystem')
   return {
-    title: t(
-      'PHIVARA | ระบบนิเวศ Beaugevity — Anti-Aging, Dermatology, Wellness, Plastic Surgery',
-      'PHIVARA | The Beaugevity Ecosystem — Anti-Aging, Dermatology, Wellness, Plastic Surgery',
-    ),
+    title,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      type: 'website',
+      url: canonical,
+      images: [{ url: '/logo/phivara_logo.jpg', width: 1200, height: 630 }],
+    },
   }
 }
 

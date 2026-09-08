@@ -4,7 +4,7 @@ import Script from 'next/script'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 import { getProgramDetail } from '@/lib/programsData'
@@ -18,15 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const title = program.seo.title || `PHIVARA | ${program.titleEn} — ${program.titleTh}`
   const description = program.seo.description || program.shortDescriptionEn || program.shortDescriptionTh || undefined
   const ogImage = program.seo.ogImage || program.image
+  const canonical = canonicalUrl(locale, `/program/${slug}`)
 
   return {
     title,
     description,
     robots: program.seo.noIndex ? { index: false, follow: true } : undefined,
+    alternates: { canonical },
     openGraph: {
       title,
       description,
       type: 'website',
+      url: canonical,
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
     },
     twitter: {

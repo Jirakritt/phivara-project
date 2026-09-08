@@ -4,7 +4,7 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getBranchesListing } from '@/lib/branchesData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -12,9 +12,20 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
+  const title = t('PHIVARA | ติดต่อทั้ง 5 สาขา', 'PHIVARA | Contact Our 5 Locations')
+  const description = t('ข้อมูลติดต่อและรายละเอียด PHIVARA ทั้ง 5 สาขา', 'Contact information and details for all 5 PHIVARA locations.')
+  const canonical = canonicalUrl(locale, '/contact')
   return {
-    title: t('PHIVARA | ติดต่อทั้ง 5 สาขา', 'PHIVARA | Contact Our 5 Locations'),
-    description: t('ข้อมูลติดต่อและรายละเอียด PHIVARA ทั้ง 5 สาขา', 'Contact information and details for all 5 PHIVARA locations.'),
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: canonical,
+      images: [{ url: '/logo/phivara_logo.jpg', width: 1200, height: 630 }],
+    },
   }
 }
 

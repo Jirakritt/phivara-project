@@ -5,7 +5,7 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getDoctorDetail, getDoctorDisplayBackgrounds, getDoctorJournalArticles } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 import { getDoctorSignaturePrograms } from '@/lib/programsData'
@@ -49,15 +49,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const title = doctor.seo.title || `${doctor.nameEn} | PHIVARA`
   const description = doctor.seo.description || doctor.rich?.bioEn || doctor.noteEn || undefined
   const ogImage = doctor.seo.ogImage || doctor.portraitImage
+  const canonical = canonicalUrl(locale, `/doctor/${slug}`)
 
   return {
     title,
     description,
     robots: doctor.seo.noIndex ? { index: false, follow: true } : undefined,
+    alternates: { canonical },
     openGraph: {
       title,
       description,
       type: 'profile',
+      url: canonical,
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
     },
     twitter: {

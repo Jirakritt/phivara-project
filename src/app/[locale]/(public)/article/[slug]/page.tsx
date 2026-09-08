@@ -6,7 +6,7 @@ import { getArticleDetail, getOtherArticles, getPopularArticles } from '@/lib/ar
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -19,15 +19,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const title = article.seo.title || `${article.titleEn} | PHIVARA Journal`
   const description = article.seo.description || article.summaryEn || article.summaryTh || undefined
   const ogImage = article.seo.ogImage || article.image
+  const canonical = canonicalUrl(locale, `/article/${slug}`)
 
   return {
     title,
     description,
     robots: article.seo.noIndex ? { index: false, follow: true } : undefined,
+    alternates: { canonical },
     openGraph: {
       title,
       description,
       type: 'article',
+      url: canonical,
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
     },
     twitter: {

@@ -3,7 +3,7 @@ import Script from 'next/script'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 import { getMembershipContent } from '@/lib/membershipData'
@@ -12,12 +12,23 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
+  const title = 'PHIVARA AUM | Private Membership'
+  const description = t(
+    'PHIVARA AUM Private Membership การดูแลสุขภาพและความงามเฉพาะบุคคล พร้อมทีมแพทย์และ VIP Concierge ตลอดทั้งปี',
+    'PHIVARA AUM Private Membership — personalized health and beauty care with a dedicated medical team and year-round VIP Concierge.',
+  )
+  const canonical = canonicalUrl(locale, '/membership')
   return {
-    title: 'PHIVARA AUM | Private Membership',
-    description: t(
-      'PHIVARA AUM Private Membership การดูแลสุขภาพและความงามเฉพาะบุคคล พร้อมทีมแพทย์และ VIP Concierge ตลอดทั้งปี',
-      'PHIVARA AUM Private Membership — personalized health and beauty care with a dedicated medical team and year-round VIP Concierge.',
-    ),
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: canonical,
+      images: [{ url: '/logo/phivara_logo.jpg', width: 1200, height: 630 }],
+    },
   }
 }
 

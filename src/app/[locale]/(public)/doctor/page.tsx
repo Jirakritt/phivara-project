@@ -4,7 +4,7 @@ import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getDoctorDisplayBackgrounds, getDoctorsListing } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -12,8 +12,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
+  const title = t('PHIVARA | ทีมแพทย์ผู้เชี่ยวชาญ', 'PHIVARA | Medical Specialists')
+  const canonical = canonicalUrl(locale, '/doctor')
   return {
-    title: t('PHIVARA | ทีมแพทย์ผู้เชี่ยวชาญ', 'PHIVARA | Medical Specialists'),
+    title,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      type: 'website',
+      url: canonical,
+      images: [{ url: '/logo/phivara_logo.jpg', width: 1200, height: 630 }],
+    },
   }
 }
 

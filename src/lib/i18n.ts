@@ -94,3 +94,18 @@ export function localizedHref(locale: LocaleCode, path: string): string {
   const clean = path.startsWith('/') ? path : `/${path}`
   return `/${locale}${clean === '/' ? '' : clean}`
 }
+
+// Absolute, locale-prefixed URL for a page's `alternates.canonical` /
+// `openGraph.url` metadata. Every page.tsx's generateMetadata must set its
+// own canonical explicitly — the root [locale]/layout.tsx only sets a
+// site-wide FALLBACK canonical pointing at the locale homepage, and Next.js
+// does not derive canonical from the route automatically. Without this,
+// every sub-page inherits the homepage's canonical, which makes Facebook's
+// scraper (and Google) treat the sub-page as a duplicate of the homepage —
+// pulling the homepage's og:image (the logo) instead of the page's own
+// image. See DEPLOY.md / the 2026-09-08 Facebook share bug for the full
+// story. Reads the same env var + fallback as layout.tsx's SITE_URL.
+export function canonicalUrl(locale: LocaleCode, path: string): string {
+  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  return `${siteUrl}${localizedHref(locale, path)}`
+}
