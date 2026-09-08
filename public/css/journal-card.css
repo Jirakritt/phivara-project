@@ -43,7 +43,7 @@
   position: relative;
   display: block;
   overflow: hidden;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1200 / 630;
 }
 
 .journal-card__media::after {

@@ -42,7 +42,7 @@
   .program-card{border:1px solid var(--program-line);background:#fff;overflow:hidden;transition:.35s;display:flex;flex-direction:column}
   .program-card:hover{transform:translateY(-7px);box-shadow:0 22px 55px rgba(25,59,48,.11);border-color:transparent}
   .program-card.hidden{display:none}
-  .card-visual{width:100%;height:auto;aspect-ratio:3/2;position:relative;overflow:hidden;background:#dbe5e0}
+  .card-visual{width:100%;height:auto;aspect-ratio:1200/630;position:relative;overflow:hidden;background:#dbe5e0}
   .card-visual > a{display:block;width:100%;height:100%}
   .card-visual img{width:100%;height:100%;object-fit:cover;transition:transform .65s}
   .program-card:hover .card-visual img{transform:scale(1.045)}
