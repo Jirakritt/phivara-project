@@ -81,12 +81,22 @@ function formatEnDate(dateString: string): string {
 }
 
 function slugifyHeading(text: string): string {
-  return text
+  // \p{M} (combining marks) is included alongside \p{L}\p{N} so Thai vowel/
+  // tone marks — which are separate combining characters, not part of
+  // \p{L} — don't get treated as "not a letter" and split words apart with
+  // stray dashes (e.g. "ทุก" turning into "ท-ก"). A fixed non-digit prefix
+  // is required (not just cosmetic): heading text can start with a number
+  // ("1. ทุกมื้ออาหาร..."), and an id starting with a digit is not a valid
+  // CSS identifier — document.querySelector('#' + id) throws a SyntaxError
+  // on it (see article-detail.js's tocSections lookup), which is exactly
+  // what broke the share buttons on numbered-heading articles.
+  const base = text
     .toLowerCase()
     .trim()
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60) || 'section'
+  return `section-${base}`
 }
 
 // Per-locale filtering (see src/lib/payload.ts's findLocalized/

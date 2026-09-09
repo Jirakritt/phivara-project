@@ -18,8 +18,19 @@ window.addEventListener('scroll', updateReadingProgress, { passive: true });
 updateReadingProgress();
 
 const tocLinks = [...document.querySelectorAll('.toc a')];
+// Look up sections by id directly (getElementById) instead of building a
+// CSS selector string ("#" + id) and passing it to querySelector. Heading
+// ids are slugified from user-authored Thai text and can start with a
+// digit (e.g. a heading like "1. ทุกมื้ออาหาร...") — a leading digit makes
+// "#1-..." an invalid CSS identifier and querySelector throws a
+// SyntaxError. Since this file runs as a single synchronous top-level
+// script, that uncaught exception used to abort everything below it,
+// including the share-button listeners further down — so a numbered
+// heading anywhere in the article silently broke Facebook/LINE/copy
+// sharing on the whole page. getElementById does a plain id lookup with
+// no selector parsing, so it can't throw on this.
 const tocSections = tocLinks
-  .map((link) => document.querySelector(link.getAttribute('href')))
+  .map((link) => document.getElementById(link.getAttribute('href').slice(1)))
   .filter(Boolean);
 
 if (tocSections.length) {
