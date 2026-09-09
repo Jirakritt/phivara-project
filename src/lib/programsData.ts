@@ -43,6 +43,13 @@ export interface ProgramCard {
   branchTh: string
   branchEn: string
   searchKeywords: string
+  // Was collected in the CMS (Programs.ts's `validityNote` field) but never
+  // actually read by any page — every "VALID UNTIL" chip (both here on the
+  // card/highlight views and on the detail page) had a leftover hardcoded
+  // '30/12/69' from before this field existed, so editing it in the CMS
+  // silently had no effect on the live site (bug report 2026-09-09).
+  validityNoteTh?: string
+  validityNoteEn?: string
 }
 
 export interface ProgramCheckupItem {
@@ -104,6 +111,8 @@ function mapProgramCard(doc: any, locale: LocaleCode): ProgramCard {
     branchTh: branchName,
     branchEn: branchName,
     searchKeywords: doc.searchKeywords || '',
+    validityNoteTh: doc.validityNote || undefined,
+    validityNoteEn: doc.validityNote || undefined,
   }
 }
 

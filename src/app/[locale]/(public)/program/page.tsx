@@ -118,7 +118,7 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                               <span className="meta-icon">
                                 <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /></svg>
                               </span>
-                              <span><small>{t('รับบริการได้ถึง', 'VALID UNTIL')}</small><strong>{t('30/12/69', '30/12/26')}</strong></span>
+                              <span><small>{t('รับบริการได้ถึง', 'VALID UNTIL')}</small><strong>{t(program.validityNoteTh || 'สอบถามเจ้าหน้าที่', program.validityNoteEn || 'Please contact staff')}</strong></span>
                             </div>
                           </div>
                           <div className="highlight-actions">

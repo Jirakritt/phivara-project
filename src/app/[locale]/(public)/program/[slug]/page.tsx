@@ -143,7 +143,12 @@ export default async function ProgramDetailPage({
                       <span className="meta-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /><path d="M8 14h3M8 17h5" /></svg></span>
                       <small>{t('รับบริการได้ถึง', 'VALID UNTIL')}</small>
                     </span>
-                    <strong>{t('30/12/69', '30/12/26')}</strong>
+                    <strong>
+                      {t(
+                        program.validityNoteTh || 'สอบถามเจ้าหน้าที่',
+                        program.validityNoteEn || 'Please contact staff',
+                      )}
+                    </strong>
                   </span>
                 </div>
               </div>
