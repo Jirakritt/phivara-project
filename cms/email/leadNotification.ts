@@ -84,7 +84,7 @@ function row(label: string, value: string, isLast = false): string {
 }
 
 export function generateLeadNotificationEmailSubject(lead: LeadNotificationInput, branchName: string): string {
-  return `มีลูกค้าใหม่ติดต่อเข้ามา ${branchName}`
+  return `PHIVARA ${branchName}: มีลูกค้าใหม่ติดต่อเข้ามา`
 }
 
 export function generateLeadNotificationEmailHTML(lead: LeadNotificationInput, branchName: string): string {
