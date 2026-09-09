@@ -84,7 +84,7 @@ function row(label: string, value: string, isLast = false): string {
 }
 
 export function generateLeadNotificationEmailSubject(lead: LeadNotificationInput, branchName: string): string {
-  return `มีลูกค้าใหม่ติดต่อเข้ามา — ${branchName}`
+  return `มีลูกค้าใหม่ติดต่อเข้ามา ${branchName}`
 }
 
 export function generateLeadNotificationEmailHTML(lead: LeadNotificationInput, branchName: string): string {
@@ -101,7 +101,7 @@ export function generateLeadNotificationEmailHTML(lead: LeadNotificationInput, b
         </td></tr>
         <tr><td style="padding:28px 28px 8px;">
           <h1 style="margin:0 0 6px;color:#302E2A;font-size:18px;font-weight:500;">มีลูกค้าใหม่ติดต่อเข้ามา</h1>
-          <p style="margin:0 0 20px;color:#6F695F;font-size:13px;line-height:1.6;">สาขา ${escapeHTML(branchName)} — กรุณาติดต่อกลับลูกค้าโดยเร็วที่สุด</p>
+          <p style="margin:0 0 20px;color:#6F695F;font-size:13px;line-height:1.6;">สาขา ${escapeHTML(branchName)} กรุณาติดต่อกลับลูกค้าโดยเร็วที่สุด</p>
         </td></tr>
         <tr><td style="padding:0 28px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;border-collapse:collapse;">
@@ -118,7 +118,7 @@ export function generateLeadNotificationEmailHTML(lead: LeadNotificationInput, b
           <a href="${cmsUrl}" style="display:inline-block;background:#C7A76B;color:#fff;text-decoration:none;padding:12px 26px;border-radius:999px;font-size:13.5px;font-weight:500;">เปิดดูรายการนี้ในระบบ CMS</a>
         </td></tr>
         <tr><td style="padding:20px 28px 26px;">
-          <p style="margin:0;color:#9C9488;font-size:11.5px;line-height:1.6;">อีเมลนี้ส่งอัตโนมัติจากระบบเว็บไซต์ PHIVARA ถึงเจ้าหน้าที่ที่ตั้งค่าไว้สำหรับสาขานี้ — ไม่ต้องตอบกลับอีเมลฉบับนี้</p>
+          <p style="margin:0;color:#9C9488;font-size:11.5px;line-height:1.6;">อีเมลนี้ส่งอัตโนมัติจากระบบเว็บไซต์ PHIVARA ถึงเจ้าหน้าที่ที่ตั้งค่าไว้สำหรับสาขานี้ ไม่ต้องตอบกลับอีเมลฉบับนี้</p>
         </td></tr>
       </table>
     </td></tr>
