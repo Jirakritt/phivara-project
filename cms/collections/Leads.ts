@@ -1,5 +1,5 @@
 import { APIError } from 'payload'
-import type { CollectionAfterChangeHook, CollectionBeforeValidateHook, CollectionConfig } from 'payload'
+import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, CollectionBeforeValidateHook, CollectionConfig } from 'payload'
 
 import { isAdmin, leadsBranchScopedAccess } from '../access/roles'
 import { sendLeadNotificationEmail } from '../email/leadNotification'
@@ -18,6 +18,64 @@ const rejectHoneypot: CollectionBeforeValidateHook = ({ data }) => {
   if (data?.honeypot) {
     throw new APIError('Invalid submission', 400)
   }
+  return data
+}
+
+// Backs the "Internal Remarks" timeline (staff-only progress notes, distinct
+// from the customer-supplied `notes` field above) — see the `internalRemarks`
+// array field near the bottom of this file. Two jobs on every update:
+//
+// 1. Auto-stamp new rows. A staff member only ever types the `note` text in
+//    the admin UI; `authorName`/`createdAt` are readOnly there (see the
+//    field config) so this hook is the only place that ever sets them. A
+//    row "is new" simply when it arrives with no `createdAt` yet.
+// 2. Keep already-stamped rows immutable and lock out new ones once the
+//    lead is Closed. Rows are matched back to the previous doc by
+//    `createdAt` (stable across edits/reorders) rather than array index, so
+//    editing the note text on an old row can't also let its author/time
+//    drift, and inserting a brand-new row is unambiguous even if an old one
+//    was left in place. If the lead was ALREADY Closed before this request
+//    (originalDoc.status), any row not found in the previous doc is
+//    rejected outright — reopen the case (change Status away from Closed)
+//    to keep logging. This deliberately reads originalDoc.status, not
+//    data.status, so the same request that flips a lead to Closed can still
+//    include that final remark.
+const stampInternalRemarks: CollectionBeforeChangeHook = ({ data, originalDoc, req, operation }) => {
+  if (operation === 'create') return data // public form submissions never carry this field
+
+  type RemarkRow = { id?: string; note?: string; authorName?: string; createdAt?: string }
+  const incoming: RemarkRow[] = Array.isArray(data.internalRemarks) ? data.internalRemarks : []
+  const previous: RemarkRow[] = Array.isArray(originalDoc?.internalRemarks) ? originalDoc.internalRemarks : []
+  const previousByCreatedAt = new Map(previous.filter((r) => r.createdAt).map((r) => [r.createdAt as string, r]))
+
+  const wasClosed = originalDoc?.status === 'closed'
+
+  data.internalRemarks = incoming.map((row) => {
+    const prior = row.createdAt ? previousByCreatedAt.get(row.createdAt) : undefined
+    if (prior) {
+      // Existing row: keep its author/timestamp fixed no matter what the
+      // request sent, but still allow a text-only correction to `note`.
+      return { ...prior, note: row.note }
+    }
+    if (wasClosed) {
+      throw new APIError(
+        'เคสนี้ปิด (Status = Closed) แล้ว ไม่สามารถเพิ่มบันทึกใหม่ได้ กรุณาเปลี่ยน Status ออกจาก Closed ก่อน',
+        400,
+      )
+    }
+    // req.user is typed as `User | Member` (Payload's combined auth-user
+    // union across every collection with auth:true) — only Users (staff)
+    // actually has update access to leads (see leadsBranchScopedAccess),
+    // but Member has no `name` field at all, hence the loose cast rather
+    // than a narrower type guard.
+    const author = req.user as { name?: string; email?: string } | null | undefined
+    return {
+      ...row,
+      authorName: author?.name || author?.email || 'ไม่ทราบผู้ใช้',
+      createdAt: new Date().toISOString(),
+    }
+  })
+
   return data
 }
 
@@ -110,6 +168,7 @@ export const Leads: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [rejectHoneypot],
+    beforeChange: [stampInternalRemarks],
     afterChange: [sendLeadNotification],
   },
   access: {
@@ -207,6 +266,35 @@ export const Leads: CollectionConfig = {
         { label: 'Closed', value: 'closed' },
       ],
       admin: { description: 'Internal triage status — not visible to the visitor.' },
+    },
+    {
+      // Staff-only progress log — distinct from the customer-supplied
+      // `notes` field above. Stamped/locked by stampInternalRemarks (see
+      // that hook's comment for the full behavior). Sits after Status in
+      // the main column, in submission order (oldest first, newest last),
+      // so a staff member opening the lead later can scroll straight to
+      // the bottom and see what the previous person already did.
+      name: 'internalRemarks',
+      type: 'array',
+      label: 'Internal Remarks',
+      admin: {
+        description: 'บันทึกความคืบหน้าภายในสำหรับเจ้าหน้าที่ (ไม่แสดงต่อลูกค้า) — กด "Add Remark" เพื่อเพิ่มได้เรื่อยๆ จนกว่าจะปิดเคส (Status = Closed) รายการเก่าจะยังแสดงไว้เป็นประวัติเสมอ',
+      },
+      fields: [
+        { name: 'note', type: 'textarea', required: true, label: 'บันทึก' },
+        {
+          name: 'authorName',
+          type: 'text',
+          label: 'ผู้บันทึก',
+          admin: { readOnly: true, description: 'Auto จากบัญชี login ของผู้บันทึก' },
+        },
+        {
+          name: 'createdAt',
+          type: 'date',
+          label: 'วันเวลาที่บันทึก',
+          admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } },
+        },
+      ],
     },
     {
       // Spam honeypot — see rejectHoneypot above. Hidden from the admin UI

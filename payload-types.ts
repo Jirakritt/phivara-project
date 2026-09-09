@@ -875,6 +875,20 @@ export interface Lead {
    * Internal triage status — not visible to the visitor.
    */
   status: 'new' | 'contacted' | 'booked' | 'closed';
+  /**
+   * บันทึกความคืบหน้าภายในสำหรับเจ้าหน้าที่ (ไม่แสดงต่อลูกค้า) — กด "Add Remark" เพื่อเพิ่มได้เรื่อยๆ จนกว่าจะปิดเคส (Status = Closed) รายการเก่าจะยังแสดงไว้เป็นประวัติเสมอ
+   */
+  internalRemarks?:
+    | {
+        note: string;
+        /**
+         * Auto จากบัญชี login ของผู้บันทึก
+         */
+        authorName?: string | null;
+        createdAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   honeypot?: string | null;
   /**
    * สถานะการส่งอีเมลแจ้งเตือนไปยังเจ้าหน้าที่สาขา (อัปเดตอัตโนมัติ)
@@ -1402,6 +1416,14 @@ export interface LeadsSelect<T extends boolean = true> {
   preferredDate?: T;
   sourcePath?: T;
   status?: T;
+  internalRemarks?:
+    | T
+    | {
+        note?: T;
+        authorName?: T;
+        createdAt?: T;
+        id?: T;
+      };
   honeypot?: T;
   notificationStatus?: T;
   notificationSentAt?: T;
