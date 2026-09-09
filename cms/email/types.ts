@@ -15,6 +15,8 @@ export type EmailRecipient = string | EmailAddress | Array<string | EmailAddress
 
 export interface OutgoingEmail {
   to?: EmailRecipient
+  cc?: EmailRecipient
+  bcc?: EmailRecipient
   from?: string | EmailAddress
   subject?: string
   text?: string
@@ -25,6 +27,15 @@ export function firstRecipientAddress(to: EmailRecipient | undefined): string {
   const first = Array.isArray(to) ? to[0] : to
   if (!first) throw new Error('sendEmail called with no "to" recipient')
   return typeof first === 'string' ? first : first.address
+}
+
+// Every recipient's plain address, in order — used by callers that send to
+// more than one person at once (e.g. a branch's whole notification list),
+// unlike firstRecipientAddress() above which only every needed the single
+// "to" address the auth-email flows (verify/forgot-password) send to.
+export function allRecipientAddresses(to: EmailRecipient | undefined): string[] {
+  const list = Array.isArray(to) ? to : to ? [to] : []
+  return list.map((entry) => (typeof entry === 'string' ? entry : entry.address))
 }
 
 export function addressToString(value: string | EmailAddress | undefined, fallback: string): string {

@@ -1,5 +1,5 @@
 import type { OutgoingEmail } from './types'
-import { addressToString, firstRecipientAddress } from './types'
+import { addressToString, allRecipientAddresses } from './types'
 
 // Sends through the real Gmail account via Gmail's REST API (OAuth2), not
 // SMTP — no nodemailer/SMTP transport dependency needed, just `fetch` +
@@ -54,18 +54,33 @@ function encodeMimeSubject(subject: string): string {
 export async function sendViaGmail(message: OutgoingEmail, defaultFromAddress: string, defaultFromName: string): Promise<void> {
   const accessToken = await getAccessToken()
   const senderEmail = process.env.GMAIL_SENDER_EMAIL || defaultFromAddress
-  const to = firstRecipientAddress(message.to)
+  // Gmail's raw MIME To:/Cc:/Bcc: headers each accept a comma-separated
+  // address list, so joining allRecipientAddresses() per header is enough
+  // for multi-recipient sends — no per-address API calls needed. Gmail's
+  // API parses the raw message and delivers to whichever of these three
+  // headers are present, then strips the Bcc header from the copy other
+  // recipients see (standard MTA Bcc behavior) — so it's safe to put real
+  // addresses in a Bcc: header here, unlike sending Bcc via most SMTP
+  // relays where you'd need a separate envelope-recipient mechanism.
+  const to = allRecipientAddresses(message.to).join(', ')
+  const cc = allRecipientAddresses(message.cc).join(', ')
+  const bcc = allRecipientAddresses(message.bcc).join(', ')
+  if (!to && !cc && !bcc) throw new Error('sendEmail called with no "to"/"cc"/"bcc" recipient')
   const from = addressToString(message.from, `${defaultFromName} <${senderEmail}>`)
 
   const mime = [
     `From: ${from}`,
-    `To: ${to}`,
+    to ? `To: ${to}` : null,
+    cc ? `Cc: ${cc}` : null,
+    bcc ? `Bcc: ${bcc}` : null,
     `Subject: ${encodeMimeSubject(message.subject || '')}`,
     'MIME-Version: 1.0',
     'Content-Type: text/html; charset=UTF-8',
     '',
     message.html || message.text || '',
-  ].join('\r\n')
+  ]
+    .filter((line): line is string => line !== null)
+    .join('\r\n')
 
   const res = await fetch(SEND_URL, {
     method: 'POST',

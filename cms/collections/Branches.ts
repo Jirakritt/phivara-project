@@ -162,6 +162,62 @@ export const Branches: CollectionConfig = {
             },
           ],
         },
+        {
+          // Who gets emailed when a customer submits an inquiry (VIP
+          // Concierge modal or the doctor appointment form) and picks this
+          // branch — see Leads.ts's afterChange hook (sendLeadNotification)
+          // and cms/email/leadNotification.ts. An array (not a single email
+          // field) so a branch can route to more than one staff member, and
+          // each row's own `active` toggle lets a name be paused without
+          // deleting the row (e.g. someone on leave).
+          label: 'แจ้งเตือนอีเมล (Inquiry)',
+          fields: [
+            {
+              name: 'notificationRecipients',
+              type: 'array',
+              admin: {
+                description: 'อีเมลเจ้าหน้าที่ที่จะได้รับแจ้งเตือนทุกครั้งที่มีลูกค้ากรอกฟอร์มติดต่อ/นัดหมายแล้วเลือกสาขานี้ — เพิ่ม/ลบ/ปิดชั่วคราวได้เองจากตรงนี้ ไม่ต้องแก้โค้ด',
+              },
+              fields: [
+                {
+                  name: 'name',
+                  type: 'text',
+                  admin: { description: 'ชื่อเจ้าหน้าที่ (ไว้อ้างอิงเท่านั้น ไม่บังคับกรอก)', width: '30%' },
+                },
+                {
+                  name: 'email',
+                  type: 'email',
+                  required: true,
+                  admin: { width: '30%' },
+                },
+                {
+                  // Which header this address goes on when the notification
+                  // email is sent — see Leads.ts's sendLeadNotification hook,
+                  // which buckets active recipients into to/cc/bcc arrays by
+                  // this value. 'to' is the default so existing rows (added
+                  // before this field existed) keep behaving exactly as
+                  // before once the migration backfills them.
+                  name: 'recipientType',
+                  type: 'select',
+                  defaultValue: 'to',
+                  required: true,
+                  options: [
+                    { label: 'To', value: 'to' },
+                    { label: 'CC', value: 'cc' },
+                    { label: 'BCC', value: 'bcc' },
+                  ],
+                  admin: { width: '20%' },
+                },
+                {
+                  name: 'active',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: { description: 'ปิดชั่วคราวได้โดยไม่ต้องลบแถวนี้', width: '20%' },
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

@@ -1,7 +1,8 @@
 import { APIError } from 'payload'
-import type { CollectionBeforeValidateHook, CollectionConfig } from 'payload'
+import type { CollectionAfterChangeHook, CollectionBeforeValidateHook, CollectionConfig } from 'payload'
 
 import { isAdmin, leadsBranchScopedAccess } from '../access/roles'
+import { sendLeadNotificationEmail } from '../email/leadNotification'
 import { exportLeadsHandler } from '../lib/leadsExport'
 
 // Spam trap: `honeypot` is a real field so it survives Payload's
@@ -18,6 +19,63 @@ const rejectHoneypot: CollectionBeforeValidateHook = ({ data }) => {
     throw new APIError('Invalid submission', 400)
   }
   return data
+}
+
+// Emails the branch's configured staff (Branches.ts's `notificationRecipients`
+// array) every time a new Lead is created, then writes the send result back
+// onto the very same Lead (notificationStatus/notificationSentAt/
+// notificationError) so a failure is visible in the admin, not just a
+// server log. Guarded to `operation === 'create'` only — this hook's own
+// nested `req.payload.update()` call below re-triggers afterChange as an
+// 'update', and this guard is what stops that from looping (same pattern
+// as Members.ts's memberNumber afterChange hook).
+const sendLeadNotification: CollectionAfterChangeHook = async ({ doc, operation, req }) => {
+  if (operation !== 'create') return
+
+  let branchName = doc.branch
+  const to: string[] = []
+  const cc: string[] = []
+  const bcc: string[] = []
+  try {
+    const branches = await req.payload.find({
+      collection: 'branches',
+      where: { slug: { equals: doc.branch } },
+      locale: 'th',
+      depth: 0,
+      limit: 1,
+    })
+    const branch = branches.docs[0] as
+      | { name?: string; notificationRecipients?: Array<{ email: string; active?: boolean; recipientType?: 'to' | 'cc' | 'bcc' }> }
+      | undefined
+    if (branch?.name) branchName = branch.name
+    for (const r of branch?.notificationRecipients || []) {
+      if (r.active === false) continue
+      // Older rows saved before recipientType existed default to 'to' at
+      // the field level (Branches.ts), but be defensive here too in case
+      // that ever reads back undefined.
+      const bucket = r.recipientType === 'cc' ? cc : r.recipientType === 'bcc' ? bcc : to
+      bucket.push(r.email)
+    }
+  } catch (err) {
+    req.payload.logger.error(`[lead-notification] Failed to look up branch "${doc.branch}": ${(err as Error).message}`)
+  }
+
+  const totalRecipients = to.length + cc.length + bcc.length
+  const result =
+    totalRecipients === 0
+      ? { success: false, error: `No active notification recipients configured for branch "${doc.branch}"` }
+      : await sendLeadNotificationEmail({ payload: req.payload, lead: doc, branchName, to, cc, bcc })
+
+  await req.payload.update({
+    collection: 'leads',
+    id: doc.id,
+    data: {
+      notificationStatus: result.success ? 'sent' : totalRecipients === 0 ? 'skipped' : 'failed',
+      notificationSentAt: new Date().toISOString(),
+      notificationError: result.success ? null : result.error,
+    },
+    req,
+  })
 }
 
 // Captures every submission from the site-wide VIP Concierge booking modal
@@ -52,6 +110,7 @@ export const Leads: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [rejectHoneypot],
+    afterChange: [sendLeadNotification],
   },
   access: {
     // Public form submissions — anyone can create a lead, nobody outside
@@ -158,6 +217,46 @@ export const Leads: CollectionConfig = {
       name: 'honeypot',
       type: 'text',
       admin: { hidden: true },
+    },
+    // The 3 fields below are written only by sendLeadNotification's
+    // afterChange hook (see bottom of this file + cms/email/
+    // leadNotification.ts) — never editable by staff, hence readOnly. They
+    // exist so a failed branch-notification email is actually visible in
+    // the admin instead of only showing up in server logs (the shared
+    // email adapter — cms/email/adapter.ts — deliberately swallows send
+    // failures so a broken mail provider can never break account
+    // registration; this hook intentionally does NOT go through that
+    // adapter, precisely so it CAN surface success/failure here).
+    {
+      name: 'notificationStatus',
+      type: 'select',
+      defaultValue: 'pending',
+      options: [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Sent', value: 'sent' },
+        { label: 'Failed', value: 'failed' },
+        { label: 'Skipped — no recipients set for this branch', value: 'skipped' },
+      ],
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'สถานะการส่งอีเมลแจ้งเตือนไปยังเจ้าหน้าที่สาขา (อัปเดตอัตโนมัติ)',
+      },
+    },
+    {
+      name: 'notificationSentAt',
+      type: 'date',
+      admin: { readOnly: true, position: 'sidebar', date: { pickerAppearance: 'dayAndTime' } },
+    },
+    {
+      name: 'notificationError',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        condition: (data) => data?.notificationStatus === 'failed',
+        description: 'ข้อความ error ล่าสุดจากความพยายามส่งอีเมลครั้งล่าสุด',
+      },
     },
   ],
 }

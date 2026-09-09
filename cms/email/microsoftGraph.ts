@@ -1,5 +1,5 @@
 import type { OutgoingEmail } from './types'
-import { addressToString, firstRecipientAddress } from './types'
+import { addressToString, allRecipientAddresses } from './types'
 
 // Sends through Microsoft Graph's REST API using an app-only (client
 // credentials) token — no user sign-in involved, no nodemailer dependency,
@@ -39,8 +39,17 @@ async function getAccessToken(): Promise<string> {
 export async function sendViaMicrosoftGraph(message: OutgoingEmail, defaultFromAddress: string): Promise<void> {
   const accessToken = await getAccessToken()
   const senderUpn = process.env.MSGRAPH_SENDER_UPN || defaultFromAddress
-  const to = firstRecipientAddress(message.to)
+  // Graph's sendMail takes real toRecipients/ccRecipients/bccRecipients
+  // arrays — native support for all three, no header-juggling needed the
+  // way Gmail's raw-MIME path requires.
+  const toAddresses = allRecipientAddresses(message.to)
+  const ccAddresses = allRecipientAddresses(message.cc)
+  const bccAddresses = allRecipientAddresses(message.bcc)
+  if (toAddresses.length === 0 && ccAddresses.length === 0 && bccAddresses.length === 0) {
+    throw new Error('sendEmail called with no "to"/"cc"/"bcc" recipient')
+  }
   const fromAddress = addressToString(message.from, senderUpn)
+  const toRecipient = (address: string) => ({ emailAddress: { address } })
 
   const res = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(senderUpn)}/sendMail`, {
     method: 'POST',
@@ -52,7 +61,9 @@ export async function sendViaMicrosoftGraph(message: OutgoingEmail, defaultFromA
       message: {
         subject: message.subject || '',
         body: { contentType: 'HTML', content: message.html || message.text || '' },
-        toRecipients: [{ emailAddress: { address: to } }],
+        toRecipients: toAddresses.map(toRecipient),
+        ccRecipients: ccAddresses.map(toRecipient),
+        bccRecipients: bccAddresses.map(toRecipient),
         from: { emailAddress: { address: fromAddress } },
       },
       saveToSentItems: false,

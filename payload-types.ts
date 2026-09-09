@@ -264,6 +264,24 @@ export interface Branch {
    */
   doctors?: (number | Doctor)[] | null;
   featuredPrograms?: (number | Program)[] | null;
+  /**
+   * อีเมลเจ้าหน้าที่ที่จะได้รับแจ้งเตือนทุกครั้งที่มีลูกค้ากรอกฟอร์มติดต่อ/นัดหมายแล้วเลือกสาขานี้ — เพิ่ม/ลบ/ปิดชั่วคราวได้เองจากตรงนี้ ไม่ต้องแก้โค้ด
+   */
+  notificationRecipients?:
+    | {
+        /**
+         * ชื่อเจ้าหน้าที่ (ไว้อ้างอิงเท่านั้น ไม่บังคับกรอก)
+         */
+        name?: string | null;
+        email: string;
+        recipientType: 'to' | 'cc' | 'bcc';
+        /**
+         * ปิดชั่วคราวได้โดยไม่ต้องลบแถวนี้
+         */
+        active?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -858,6 +876,15 @@ export interface Lead {
    */
   status: 'new' | 'contacted' | 'booked' | 'closed';
   honeypot?: string | null;
+  /**
+   * สถานะการส่งอีเมลแจ้งเตือนไปยังเจ้าหน้าที่สาขา (อัปเดตอัตโนมัติ)
+   */
+  notificationStatus?: ('pending' | 'sent' | 'failed' | 'skipped') | null;
+  notificationSentAt?: string | null;
+  /**
+   * ข้อความ error ล่าสุดจากความพยายามส่งอีเมลครั้งล่าสุด
+   */
+  notificationError?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1144,6 +1171,15 @@ export interface BranchesSelect<T extends boolean = true> {
   directions?: T;
   doctors?: T;
   featuredPrograms?: T;
+  notificationRecipients?:
+    | T
+    | {
+        name?: T;
+        email?: T;
+        recipientType?: T;
+        active?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1367,6 +1403,9 @@ export interface LeadsSelect<T extends boolean = true> {
   sourcePath?: T;
   status?: T;
   honeypot?: T;
+  notificationStatus?: T;
+  notificationSentAt?: T;
+  notificationError?: T;
   updatedAt?: T;
   createdAt?: T;
 }
