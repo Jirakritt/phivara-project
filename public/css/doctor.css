@@ -59,9 +59,12 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  /* Match the single-branch ".program-branch" label's type size exactly
+     (site-shell.css: 11px / .12em) — was 10px / .06em, which read visibly
+     smaller/tighter next to that style (2026-09-10). */
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: .06em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   /* Match the single-branch ".program-branch" label's text color exactly
      (site-shell.css) — that one uses --terracotta (a darker brown,
