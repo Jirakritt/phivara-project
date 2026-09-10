@@ -19,6 +19,12 @@ export interface DoctorCard {
   branchSlug: string
   branchTh: string
   branchEn: string
+  // Branches.displayOrder (0 default) — carried through so
+  // groupDoctorsByName() can sort a merged card's branches the same way
+  // homeData.ts/branchesData.ts order branches everywhere else on the
+  // site, instead of whatever order the doctor records themselves happen
+  // to sort in (see that function's comment).
+  branchDisplayOrder: number
   specialty: string
   nameTh: string
   nameEn: string
@@ -119,6 +125,7 @@ function mapDoctorCard(doc: any): DoctorCard {
     branchSlug: branch?.slug || '',
     branchTh: branch?.name || '',
     branchEn: branch?.name || '',
+    branchDisplayOrder: typeof branch?.displayOrder === 'number' ? branch.displayOrder : 0,
     specialty: doc.specialty || '',
     nameTh: name,
     nameEn: name,
@@ -163,6 +170,12 @@ export interface DoctorCardBranch {
   // rather than only ever the first one. Guaranteed unique per record by
   // Doctors.ts's `slug` field (unique: true).
   recordSlug: string
+  // Branches.displayOrder — used to sort this array in groupDoctorsByName()
+  // below, so a merged card's branches always appear in the same order as
+  // everywhere else branches are listed site-wide (home/contact/footer),
+  // instead of whichever order the underlying Doctor records happened to
+  // sort in (reported 2026-09-10).
+  displayOrder: number
 }
 
 export interface DoctorCardGroup extends DoctorCard {
@@ -202,14 +215,28 @@ export function groupDoctorsByName(cards: DoctorCard[], enabled = true): DoctorC
   if (!enabled) {
     return cards.map((card) => ({
       ...card,
-      branches: [{ slug: card.branchSlug, th: card.branchTh, en: card.branchEn, recordSlug: card.slug }],
+      branches: [
+        {
+          slug: card.branchSlug,
+          th: card.branchTh,
+          en: card.branchEn,
+          recordSlug: card.slug,
+          displayOrder: card.branchDisplayOrder,
+        },
+      ],
     }))
   }
   const order: string[] = []
   const groups = new Map<string, DoctorCardGroup>()
   for (const card of cards) {
     const key = card.nameTh.trim() || String(card.id)
-    const branch: DoctorCardBranch = { slug: card.branchSlug, th: card.branchTh, en: card.branchEn, recordSlug: card.slug }
+    const branch: DoctorCardBranch = {
+      slug: card.branchSlug,
+      th: card.branchTh,
+      en: card.branchEn,
+      recordSlug: card.slug,
+      displayOrder: card.branchDisplayOrder,
+    }
     const existing = groups.get(key)
     if (existing) {
       existing.branches.push(branch)
@@ -218,7 +245,17 @@ export function groupDoctorsByName(cards: DoctorCard[], enabled = true): DoctorC
       order.push(key)
     }
   }
-  return order.map((key) => groups.get(key) as DoctorCardGroup)
+  // Sort each merged card's branches by Branches.displayOrder (ascending),
+  // same field/order used everywhere else branches are listed site-wide
+  // (home/contact/footer) — falls back to branch name so equal/blank
+  // displayOrder values (default 0) stay in a stable, predictable order
+  // instead of whatever order the underlying Doctor records happened to
+  // come back in.
+  return order.map((key) => {
+    const group = groups.get(key) as DoctorCardGroup
+    group.branches.sort((a, b) => a.displayOrder - b.displayOrder || a.th.localeCompare(b.th))
+    return group
+  })
 }
 
 // Very rough Lexical richText -> plain paragraphs extractor. The seed script
