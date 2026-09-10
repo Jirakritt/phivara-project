@@ -6,6 +6,20 @@
 
 .doctor-grid .spec-card { align-items: stretch; }
 
+/* Tried `align-items: start` on .doctor-grid here (2026-09-10) to stop
+   opening one merged card's .doctor-profile-expand panel from stretching
+   every OTHER card in the same row to match its new height — but the team
+   rejected the trade-off: without grid stretch, cards with different
+   note/subnote text lengths no longer share an aligned bottom edge even
+   at rest (uneven-looking row). Reverted — the default stretch (matching
+   row heights, including the expand side-effect) is the accepted
+   behavior for now. Revisit with a per-row-isolated approach (e.g. an
+   explicit inline height set only while a panel is open) if this needs
+   solving without giving up row alignment.
+.doctor-grid {
+  align-items: start;
+} */
+
 .doctor-grid .spec-card .spec-subnote {
   justify-content: flex-start;
   text-align: left;

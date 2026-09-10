@@ -91,10 +91,21 @@
     return isBookingControl(control) ? control : null;
   }
 
+  // Builds the branch <select>'s inner HTML — `allowedValues` (an array of
+  // branch formValues) restricts the list to just those branches; omit/pass
+  // null for the full site-wide list. Used both for the initial modal
+  // markup and to rebuild the list on every openModal() call, since the
+  // modal is a single shared DOM instance reused by every trigger on the
+  // page (doctor cards, header CTA, program cards, ...) — a doctor-specific
+  // restriction from one open must not leak into the next unrelated one.
+  function branchSelectOptionsHtml(allowedValues){
+    const list = allowedValues ? branches.filter(([value]) => allowedValues.includes(value)) : branches;
+    const options = list.map(([value,label]) => `<option value="${value}">${label}</option>`).join('');
+    return `<option value="">${T.selectBranchPlaceholder}</option>${options}`;
+  }
+
   function modalMarkup(){
-    const branchOptions = branches.map(([value,label]) =>
-      `<option value="${value}">${label}</option>`
-    ).join('');
+    const branchOptions = branchSelectOptionsHtml(null);
     const serviceOptions = categories.map(([value,label]) =>
       `<option value="${value}">${label}</option>`
     ).join('');
@@ -136,7 +147,6 @@
               <label class="vip-field-wide">
                 <span>${T.fieldBranch}</span>
                 <select name="branch" required>
-                  <option value="">${T.selectBranchPlaceholder}</option>
                   ${branchOptions}
                 </select>
               </label>
@@ -220,8 +230,32 @@
       formError.hidden = true;
       const context = triggerContext(trigger);
       notes.value = context;
-      if(trigger.dataset.branch && [...form.elements.branch.options].some(option => option.value === trigger.dataset.branch)){
-        form.elements.branch.value = trigger.dataset.branch;
+
+      // data-lock-branches (comma-separated formValues) restricts the
+      // dropdown to only those branches — e.g. a doctor-card trigger that
+      // only practices at 2 of the site's 5 branches (see doctor/page.tsx).
+      // Rebuilt on EVERY open (not just when locking) because this is one
+      // shared modal DOM reused by every trigger on the page — otherwise a
+      // restriction from a previous doctor-card open would leak into the
+      // next, unrelated trigger (e.g. the header's general booking button).
+      const lockBranches = trigger.dataset.lockBranches
+        ? trigger.dataset.lockBranches.split(',').map(value => value.trim()).filter(Boolean)
+        : null;
+      if(lockBranches && lockBranches.length === 1){
+        // Only one valid branch — skip the blank placeholder entirely so
+        // there's nothing to "unselect" back to (a placeholder + 1 real
+        // option would let the required-field validation round-trip
+        // pointlessly). branches is [formValue, label] pairs (see top of
+        // file); fall back to the raw slug as the label only if it somehow
+        // isn't in the site's branch list (shouldn't happen in practice).
+        const match = branches.find(([value]) => value === lockBranches[0]);
+        form.elements.branch.innerHTML = `<option value="${lockBranches[0]}">${match ? match[1] : lockBranches[0]}</option>`;
+        form.elements.branch.value = lockBranches[0];
+      } else {
+        form.elements.branch.innerHTML = branchSelectOptionsHtml(lockBranches);
+        if(trigger.dataset.branch && [...form.elements.branch.options].some(option => option.value === trigger.dataset.branch)){
+          form.elements.branch.value = trigger.dataset.branch;
+        }
       }
       if(trigger.dataset.service && [...service.options].some(option => option.value === trigger.dataset.service)){
         service.value = trigger.dataset.service;

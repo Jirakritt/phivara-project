@@ -294,7 +294,22 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                   ) : (
                     <button className="btn-doc-detail" data-doc-id={doc.slug}>{t('ดูประวัติแพทย์', 'View Profile')}</button>
                   )}
-                  <a href="#contact" className="go vip-trigger" data-doc-name={doc.nameTh} data-branch={doc.branches[0].slug}>{t('จองปรึกษา →', 'Book →')}</a>
+                  {/* data-lock-branches (comma-separated) restricts the VIP
+                      modal's branch dropdown to only the branch(es) THIS
+                      doctor actually practices at — a single soft
+                      pre-select (the old data-branch) still let a customer
+                      pick a branch the doctor never works at, causing bad
+                      leads (reported 2026-09-10). Covers both single- and
+                      multi-branch doctors since doc.branches always has at
+                      least 1 entry. See vip-modal.js's openModal(). */}
+                  <a
+                    href="#contact"
+                    className="go vip-trigger"
+                    data-doc-name={doc.nameTh}
+                    data-lock-branches={doc.branches.map((b) => b.slug).join(',')}
+                  >
+                    {t('จองปรึกษา →', 'Book →')}
+                  </a>
                 </div>
                 {doc.branches.length > 1 && (
                   <div className="doctor-profile-expand" id={`profile-expand-${doc.slug}`}>
