@@ -86,7 +86,7 @@ export const DoctorDisplaySettings: GlobalConfig = {
       label: 'ตำแหน่งแสดงป้ายสาขาบนการ์ดแพทย์',
       defaultValue: 'top',
       options: [
-        { label: 'บนสุด (ใต้รูป) — ปัจจุบัน', value: 'top' },
+        { label: 'บนสุด (ใต้รูป)', value: 'top' },
         { label: 'ล่างสุด (เหนือปุ่ม "ดูประวัติแพทย์")', value: 'bottom' },
       ],
       access: {
