@@ -577,7 +577,11 @@ footer.site-footer .foot-brand .logo-lockup img { width: auto; height: 28px; fil
 footer.site-footer .foot-brand .logo-lockup .word { color: #fff; font-family: var(--shell-serif); font-size: 17px; font-weight: 500; letter-spacing: .16em; }
 
 footer.site-footer .foot-brand p {
-  max-width: 280px;
+  /* Was 280px — the Thai tagline measures ~282px at this font, just barely
+     over, so its last word ("ยาว") dropped to an orphan second line
+     (reported 2026-09-10). Bumped to 300px so the full line fits with a
+     little headroom for font-rendering variance across browsers. */
+  max-width: 300px;
   margin: 0;
   color: #faf5ec;
   font-size: 14px;
