@@ -8,10 +8,16 @@ import { branchScopedOwnRecord, isAdmin } from '../access/roles'
 export const Branches: CollectionConfig = {
   slug: 'branches',
   admin: {
-    // nameEn (flat field) removed — slug is the only field guaranteed to be
-    // present, required, and unique, so it's the safest useAsTitle now that
-    // `name` (localized) is optional per-locale.
-    useAsTitle: 'slug',
+    // Shows the branch's own name (e.g. "รพ.พญาไท 2") as the page title/
+    // breadcrumb instead of the raw slug ("pt2"). `name` is localized and
+    // not required (same as Doctors.ts's `name` field, which already uses
+    // this same useAsTitle pattern) — a branch missing a name in whichever
+    // locale the admin is viewing will show a blank title, same tradeoff
+    // Doctors.ts already accepts. A virtual fallback-to-slug field was
+    // tried here first but Payload rejects a virtual field as useAsTitle
+    // unless it's linked to a relationship field, so this only has two
+    // real options: bare `name` (this) or the old `slug`.
+    useAsTitle: 'name',
     // `name` first so it's both the leftmost column and the clickable link
     // (Payload's admin list links whichever column is first in this array).
     defaultColumns: ['name', 'displayOrder', 'slug', 'phone'],

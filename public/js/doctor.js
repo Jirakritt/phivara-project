@@ -53,7 +53,12 @@ function initDoctorPage() {
       const textContent = card.textContent.toLowerCase();
 
       const matchSpecialty = selectedSpecialty === 'all' || cardSpecialty === selectedSpecialty;
-      const matchBranch = selectedBranch === 'all' || cardBranch === selectedBranch;
+      // cardBranch is comma-separated when a doctor practices at more than
+      // one branch (grouped listing — see groupDoctorsByName() in
+      // doctorsData.ts), e.g. "pt1,pt3,pts,ptp" instead of a single slug.
+      // .split(',') on an ordinary single-branch card just yields a
+      // 1-element array, so this still matches exactly as before for those.
+      const matchBranch = selectedBranch === 'all' || (cardBranch || '').split(',').includes(selectedBranch);
       const matchSearch = searchQuery === '' || textContent.includes(searchQuery);
 
       if (matchSpecialty && matchBranch && matchSearch) {
@@ -128,6 +133,24 @@ function initDoctorPage() {
 
   // Doctor profile navigation
   doctorGrid.addEventListener('click', (event) => {
+    // A merged multi-branch card (see groupDoctorsByName() in
+    // doctorsData.ts) can't link "ดูประวัติแพทย์" to one arbitrary branch —
+    // each branch's own record can have different bio/credentials/schedule
+    // — so that button expands a per-branch list in place instead of
+    // navigating. It also carries the .btn-doc-detail class (to reuse that
+    // button's visual styling) but must be handled — and returned from —
+    // BEFORE the generic .btn-doc-detail navigate logic below, or it would
+    // fall through and "navigate" with no data-doc-id set.
+    const expandBtn = event.target.closest('.btn-expand-profiles');
+    if (expandBtn) {
+      const panel = document.getElementById(expandBtn.dataset.expandTarget || '');
+      if (panel) {
+        const isOpen = panel.classList.toggle('open');
+        expandBtn.classList.toggle('is-open', isOpen);
+        expandBtn.setAttribute('aria-expanded', String(isOpen));
+      }
+      return;
+    }
     const button = event.target.closest('.btn-doc-detail');
     if (!button) return;
     const doctorId = button.dataset.docId || 'dr01';

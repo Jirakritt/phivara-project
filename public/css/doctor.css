@@ -10,3 +10,166 @@
   justify-content: flex-start;
   text-align: left;
 }
+
+/* A doctor practicing at several branches (see groupDoctorsByName() in
+   src/lib/doctorsData.ts) replaces the single-branch ".program-branch"
+   label with a multi-branch label — style chosen in the CMS (admin-only,
+   DoctorDisplaySettings.multiBranchLabelStyle), rendered by
+   src/app/[locale]/(public)/doctor/page.tsx. Both styles are kept here so
+   switching the CMS setting takes effect immediately without a redeploy. */
+
+/* Style "list": one ".program-branch" row per branch, stacked — same
+   icon/"PHIVARA"/name look as the single-branch case (site-shell.css),
+   just repeated, instead of a single card per branch. Each row already
+   carries its own margin-bottom via .program-branch; only the last one
+   needs the usual 10px gap before the doctor's name, so tighten the
+   others so several stacked rows don't push the card too tall. */
+.program-branch-list .program-branch {
+  margin-bottom: 4px;
+}
+.program-branch-list .program-branch:last-child {
+  margin-bottom: 10px;
+}
+
+/* Style "pills": compact rounded badges, wrapped into rows. Info-only (not
+   clickable) — white/cream fill with a gold border, per 2026-09-10 request,
+   so they read as distinct from the filled .branch-profile-pill rows below
+   (which ARE clickable, inside the "ดูประวัติแพทย์" expand panel). */
+.program-branch-multi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.program-branch-multi .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  /* Match the single-branch ".program-branch" label's text color exactly
+     (site-shell.css) — that one uses --terracotta (a darker brown,
+     #9D8267), not --gold (#B89560, more yellow) — using --gold here made
+     the two labels visibly different shades of the "same" branch info. */
+  color: var(--terracotta, var(--shell-gold));
+  /* Transparent instead of a hardcoded white/cream — shows the card's own
+     background straight through, so the pill always matches the card
+     surface exactly (including its gradient) instead of needing to guess
+     and hardcode that color here. */
+  background: transparent;
+  border: 1px solid rgba(184,149,96,0.3);
+  padding: 3px 9px 3px 7px;
+  border-radius: 30px;
+  line-height: 1.3;
+}
+.program-branch-multi .pill svg {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.doctor-grid .spec-card.merged-card {
+  border-color: rgba(184,149,96,0.45);
+}
+
+/* "ดูประวัติแพทย์" on a merged card expands .doctor-profile-expand below
+   instead of navigating (see doctor.js's click handler and the comment on
+   .btn-expand-profiles's markup in page.tsx) — same size/position as the
+   single-branch button, plus a chevron that rotates open/closed. */
+.btn-expand-profiles {
+  gap: 6px;
+}
+.btn-expand-profiles .chevron {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s ease;
+}
+.btn-expand-profiles.is-open .chevron {
+  transform: rotate(180deg);
+}
+
+/* Collapsed by default (max-height:0, invisible) — .open (toggled by
+   doctor.js) fades and grows it in. Note: since this sits in normal flow
+   inside a CSS Grid card (.doctor-grid), opening one card can grow the
+   whole grid row's height to match (grid rows auto-size to their tallest
+   item) — the other cards in that row just get extra blank space below
+   their own content, not a layout break. Accepted tradeoff; revisit with a
+   non-grid layout if this looks wrong on real data. */
+.doctor-profile-expand {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  width: 100%;
+  transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.35s ease;
+}
+.doctor-profile-expand.open {
+  max-height: 400px;
+  opacity: 1;
+  margin-top: 12px;
+}
+.doctor-profile-expand .branch-profile-pill {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  /* Same padding/font-size as .btn-doc-detail ("ดูประวัติแพทย์" above) so
+     both are the same rendered height, per 2026-09-10 request — note this
+     drops each row below the ~44px mobile tap-target size discussed
+     earlier. Kept the 10px gap between rows (up from 8px) as a partial
+     offset, since these rows are still full-width (a mistap only risks the
+     row above/below, not missing left/right) — flagged so this tradeoff is
+     a deliberate choice, not an oversight. */
+  padding: 7px 16px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 30px;
+  background: var(--gold-pale);
+  /* Same --terracotta color as the info-only pills/label above, for one
+     consistent branch-text color across the whole card (see that comment). */
+  color: var(--terracotta, var(--shell-gold));
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.doctor-profile-expand .branch-profile-pill:last-child {
+  margin-bottom: 0;
+}
+.doctor-profile-expand .branch-profile-pill:hover {
+  /* Same invert-to-solid hover as .btn-doc-detail ("ดูประวัติแพทย์") above. */
+  background: var(--gold);
+  color: #ffffff;
+}
+.doctor-profile-expand .branch-profile-pill svg {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.doctor-profile-expand .branch-profile-pill span {
+  flex: 1;
+  text-align: left;
+}
+.doctor-profile-expand .branch-profile-pill .chevron-right {
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+}

@@ -150,6 +150,77 @@ export async function getDoctorsListing(locale: LocaleCode): Promise<DoctorCard[
   return docs.filter((d) => hasLocaleContent(d.name)).map(mapDoctorCard)
 }
 
+export interface DoctorCardBranch {
+  slug: string
+  th: string
+  en: string
+  // The specific Doctor record's OWN page slug for this branch — different
+  // from the group's inherited `slug` (which is just whichever record
+  // happened to be first). Each branch's record has different content
+  // (bio/credentials/schedule can genuinely differ per branch — see
+  // groupDoctorsByName()'s comment below), so "ดูประวัติแพทย์" on a merged
+  // card must be able to link to each branch's own /doctor/[recordSlug]
+  // rather than only ever the first one. Guaranteed unique per record by
+  // Doctors.ts's `slug` field (unique: true).
+  recordSlug: string
+}
+
+export interface DoctorCardGroup extends DoctorCard {
+  // Every branch this doctor is assigned to, each carrying its own
+  // recordSlug (see DoctorCardBranch) since branch records can have
+  // different profile content. branches[0] is still the same branch as the
+  // inherited branchSlug/branchTh/branchEn/slug fields — used as the
+  // default target for "จองปรึกษา" (see groupDoctorsByName() below for why
+  // a doctor can have more than one).
+  branches: DoctorCardBranch[]
+}
+
+// cms/collections/Doctors.ts's `branch` field is intentionally a single,
+// required relationship — one Doctor record per branch, so a Content
+// Editor scoped to one branch (see Users.assignedBranches) can manage their
+// own doctor profiles without touching another branch's data. A doctor who
+// genuinely practices at several branches therefore exists as several
+// separate published records sharing the same name, each with its own slug
+// (so branch pages and the sitemap still need every record untouched — see
+// getBranchDetail() in branchesData.ts and sitemap.ts, both of which call
+// getDoctorsListing() directly). Only the /doctor aggregate listing showed
+// the same face+name repeated once per branch (reported 2026-09-10), so
+// this groups by name for that ONE page instead of changing the data model.
+// Groups by the already locale-resolved `nameTh` (see mapDoctorCard() above
+// — nameTh/nameEn hold the same value by convention) — a plain text match,
+// so two DIFFERENT doctors who happen to share an identical name would
+// incorrectly merge. Accepted tradeoff for now; revisit with an explicit
+// "same doctor" field on Doctors.ts if that ever actually happens.
+//
+// `enabled` (default true) is the admin-configurable
+// DoctorDisplaySettings.groupDoctorsByBranch toggle (see
+// getDoctorGroupingSettings() above) — when false, every record just
+// becomes its own 1-branch "group" so the caller's rendering code (which
+// always checks `branches.length > 1`) naturally falls back to one card
+// per branch, same as before this feature existed.
+export function groupDoctorsByName(cards: DoctorCard[], enabled = true): DoctorCardGroup[] {
+  if (!enabled) {
+    return cards.map((card) => ({
+      ...card,
+      branches: [{ slug: card.branchSlug, th: card.branchTh, en: card.branchEn, recordSlug: card.slug }],
+    }))
+  }
+  const order: string[] = []
+  const groups = new Map<string, DoctorCardGroup>()
+  for (const card of cards) {
+    const key = card.nameTh.trim() || String(card.id)
+    const branch: DoctorCardBranch = { slug: card.branchSlug, th: card.branchTh, en: card.branchEn, recordSlug: card.slug }
+    const existing = groups.get(key)
+    if (existing) {
+      existing.branches.push(branch)
+    } else {
+      groups.set(key, { ...card, branches: [branch] })
+      order.push(key)
+    }
+  }
+  return order.map((key) => groups.get(key) as DoctorCardGroup)
+}
+
 // Very rough Lexical richText -> plain paragraphs extractor. The seed script
 // only ever wrote single-paragraph richText for doctor bios (see
 // cms/seed/lib/lexical.ts), so this doesn't need to handle every possible
@@ -238,6 +309,30 @@ export async function getDoctorDisplayBackgrounds(): Promise<DoctorDisplayBackgr
   return {
     profileBackground: mediaUrl(settings?.profileBackground) || '',
     featuredBackground: mediaUrl(settings?.featuredBackground) || '',
+  }
+}
+
+export interface DoctorGroupingSettings {
+  groupByBranch: boolean
+  multiBranchLabelStyle: 'pills' | 'list'
+}
+
+// Same global as getDoctorDisplayBackgrounds() above (cms/globals/
+// DoctorDisplaySettings.ts), but kept as a separate function/call rather
+// than folded into that one — the 2 other callers of
+// getDoctorDisplayBackgrounds() (branch/[slug]/page.tsx, doctor/[slug]/
+// page.tsx) only care about the background images and have nothing to do
+// with the /doctor listing's grouping behavior, so this keeps that page's
+// settings request scoped to only the one page that needs it. Both fields
+// are admin-only to edit in the CMS (isAdminField) — see the field
+// comments on DoctorDisplaySettings.ts.
+export async function getDoctorGroupingSettings(): Promise<DoctorGroupingSettings> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const settings = (await payload.findGlobal({ slug: 'doctor-display-settings' })) as any
+  return {
+    groupByBranch: settings?.groupDoctorsByBranch !== false,
+    multiBranchLabelStyle: settings?.multiBranchLabelStyle === 'pills' ? 'pills' : 'list',
   }
 }
 

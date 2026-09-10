@@ -1917,6 +1917,14 @@ export interface DoctorDisplaySetting {
    * พื้นหลังห้องสำหรับการ์ด "แพทย์หลักประจำสาขา" (featured) เท่านั้น — ใช้ร่วมกันทุกสาขา แนะนำสัดส่วนแนวนอนกว้าง ~1.9:1 (เช่น 1200x630px)
    */
   featuredBackground?: (number | null) | Media;
+  /**
+   * เมื่อเปิด: หมอที่ชื่อซ้ำกันในหลาย record (เพราะประจำหลายสาขา) จะถูกรวมแสดงเป็นการ์ดเดียวในหน้า /doctor พร้อมป้ายรวมทุกสาขา แทนการแสดงซ้ำทีละสาขา — ไม่กระทบหน้าโปรไฟล์สาขาหรือหน้ารายละเอียดหมอ ซึ่งยังอิงข้อมูลจริงเสมอ เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
+   */
+  groupDoctorsByBranch?: boolean | null;
+  /**
+   * ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
+   */
+  multiBranchLabelStyle?: ('pills' | 'list') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2255,6 +2263,8 @@ export interface EmailSettingsSelect<T extends boolean = true> {
 export interface DoctorDisplaySettingsSelect<T extends boolean = true> {
   profileBackground?: T;
   featuredBackground?: T;
+  groupDoctorsByBranch?: T;
+  multiBranchLabelStyle?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

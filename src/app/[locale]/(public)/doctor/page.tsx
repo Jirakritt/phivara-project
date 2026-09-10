@@ -2,7 +2,7 @@ import Script from 'next/script'
 
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
-import { getDoctorDisplayBackgrounds, getDoctorsListing } from '@/lib/doctorsData'
+import { getDoctorDisplayBackgrounds, getDoctorGroupingSettings, getDoctorsListing, groupDoctorsByName } from '@/lib/doctorsData'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
@@ -37,11 +37,12 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
-  const [doctors, homeData, liveLocales, displayBackgrounds] = await Promise.all([
+  const [doctors, homeData, liveLocales, displayBackgrounds, groupingSettings] = await Promise.all([
     getDoctorsListing(locale),
     getHomeData(locale),
     getPubliclyLiveLocales(),
     getDoctorDisplayBackgrounds(),
+    getDoctorGroupingSettings(),
   ])
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ branches: homeData.branches, categories: getExpertiseCategoryOptions(homeData.hero) }).replace(/</g, '\\u003c')};`
   const searchPlaceholder = t('ค้นหารายชื่อแพทย์, ความเชี่ยวชาญ...', 'Search doctor, specialty...')
@@ -49,6 +50,14 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
   // — see homeData.ts's getExpertiseCategoryOptions comment. Drives both
   // the hero specialty pills and the "All Specialties" dropdown below.
   const categoryOptions = getExpertiseCategoryOptions(homeData.hero)
+  // Same doctor, same name, filed as a separate published record per branch
+  // (see groupDoctorsByName()'s comment in doctorsData.ts) — merged here so
+  // this one listing doesn't show the same face+name once per branch.
+  // Whether merging happens at all, and which visual style the merged
+  // card's branch label uses, are both admin-only CMS settings (see
+  // getDoctorGroupingSettings()) — groupDoctorsByName() itself falls back
+  // to one branch per group when groupByBranch is off.
+  const groupedDoctors = groupDoctorsByName(doctors, groupingSettings.groupByBranch)
 
   return (
     <>
@@ -197,31 +206,112 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
       <section className="doctor-grid-container">
         <div className="wrap">
           <div className="doctor-grid" id="doctorGrid">
-            {doctors.map((doc) => (
-              <div key={doc.slug} className="spec-card s-item" data-branch={doc.branchSlug} data-specialty={doc.specialty} data-doc-id={doc.slug}>
+            {groupedDoctors.map((doc) => (
+              <div
+                key={doc.slug}
+                className={`spec-card s-item${doc.branches.length > 1 ? ' merged-card' : ''}`}
+                data-branch={doc.branches.map((b) => b.slug).join(',')}
+                data-specialty={doc.specialty}
+                data-doc-id={doc.slug}
+              >
                 <div
                   className="photo-wrap"
                   style={displayBackgrounds.profileBackground ? { backgroundImage: `url('${displayBackgrounds.profileBackground}')` } : undefined}
                 >
                   <img className="ph-photo" src={doc.image} alt={doc.nameTh} />
                 </div>
-                <span className="program-branch">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                    <circle cx="12" cy="10" r="2.5" />
-                  </svg>
-                  <span className="program-branch__text">
-                    <span className="program-branch__brand">PHIVARA</span>
-                    <span className="program-branch__name">{t(doc.branchTh, doc.branchEn)}</span>
+                {doc.branches.length > 1 ? (
+                  groupingSettings.multiBranchLabelStyle === 'pills' ? (
+                    // Style A (CMS admin setting) — compact rounded badges.
+                    <div className="program-branch-multi">
+                      {doc.branches.map((b) => (
+                        <span className="pill" key={b.slug}>
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                            <circle cx="12" cy="10" r="2.5" />
+                          </svg>
+                          {t(b.th, b.en)}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    // Style B (CMS admin setting, default) — each branch in
+                    // the SAME icon+"PHIVARA"+name style as the
+                    // single-branch label below, stacked one per line.
+                    <div className="program-branch-list">
+                      {doc.branches.map((b) => (
+                        <span className="program-branch" key={b.slug}>
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                            <circle cx="12" cy="10" r="2.5" />
+                          </svg>
+                          <span className="program-branch__text">
+                            <span className="program-branch__brand">PHIVARA</span>
+                            <span className="program-branch__name">{t(b.th, b.en)}</span>
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  )
+                ) : (
+                  <span className="program-branch">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                    <span className="program-branch__text">
+                      <span className="program-branch__brand">PHIVARA</span>
+                      <span className="program-branch__name">{t(doc.branchTh, doc.branchEn)}</span>
+                    </span>
                   </span>
-                </span>
+                )}
                 <h3>{t(doc.nameTh, doc.nameEn)}</h3>
                 <p className="note">{t(doc.noteTh, doc.noteEn)}</p>
                 <div className="spec-subnote">{t(doc.subTh, doc.subEn)}</div>
                 <div className="card-actions">
-                  <button className="btn-doc-detail" data-doc-id={doc.slug}>{t('ดูประวัติแพทย์', 'View Profile')}</button>
-                  <a href="#contact" className="go vip-trigger" data-doc-name={doc.nameTh}>{t('จองปรึกษา →', 'Book →')}</a>
+                  {doc.branches.length > 1 ? (
+                    // A branch record's own profile content (bio/credentials/
+                    // schedule) can genuinely differ per branch (reported
+                    // 2026-09-10), so a single "ดูประวัติแพทย์" can't just
+                    // link to one arbitrary branch — this expands the card
+                    // in place (see .doctor-profile-expand in doctor.css and
+                    // the matching click handler in doctor.js) to let the
+                    // visitor pick which branch's profile to open. Same
+                    // size/position as the single-branch button below, just
+                    // with a chevron indicating it expands instead of
+                    // navigating directly.
+                    <button
+                      type="button"
+                      className="btn-doc-detail btn-expand-profiles"
+                      data-expand-target={`profile-expand-${doc.slug}`}
+                      aria-expanded="false"
+                    >
+                      <span>{t('ดูประวัติแพทย์', 'View Profile')}</span>
+                      <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button className="btn-doc-detail" data-doc-id={doc.slug}>{t('ดูประวัติแพทย์', 'View Profile')}</button>
+                  )}
+                  <a href="#contact" className="go vip-trigger" data-doc-name={doc.nameTh} data-branch={doc.branches[0].slug}>{t('จองปรึกษา →', 'Book →')}</a>
                 </div>
+                {doc.branches.length > 1 && (
+                  <div className="doctor-profile-expand" id={`profile-expand-${doc.slug}`}>
+                    {doc.branches.map((b) => (
+                      <button key={b.slug} type="button" className="btn-doc-detail branch-profile-pill" data-doc-id={b.recordSlug}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                          <circle cx="12" cy="10" r="2.5" />
+                        </svg>
+                        <span>PHIVARA {t(b.th, b.en)}</span>
+                        <svg className="chevron-right" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M9 6l6 6-6 6" />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
