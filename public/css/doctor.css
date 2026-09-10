@@ -23,6 +23,15 @@
 .doctor-grid .spec-card .spec-subnote {
   justify-content: flex-start;
   text-align: left;
+  /* Was 12px/weight 300 in the shared .spec-subnote base (main.css) — the
+     light weight made it read even smaller than its already-small size
+     (2026-09-10 legibility pass). Bumped to 13px/400 for readability, but
+     kept the original --olive color per 2026-09-10 follow-up request
+     (color unchanged, only size/weight) — scoped to .doctor-grid only so
+     this doesn't touch .spec-subnote on branch/[slug] pages (their own
+     copy lives in branch-detail.css, untouched here). */
+  font-size: 13px;
+  font-weight: 400;
 }
 
 /* A doctor practicing at several branches (see groupDoctorsByName() in
@@ -45,6 +54,20 @@
   margin-bottom: 10px;
 }
 
+/* Branch label text (single-branch .program-branch from site-shell.css, and
+   its "list" repeat above) measured at 11px / --terracotta (#9D8267) —
+   3.46:1 contrast against the card's cream background, below WCAG AA's
+   4.5:1 minimum, on top of already being the smallest text on the card
+   (2026-09-10 legibility pass). Bumped to 12px and darkened to a deeper
+   shade of the same terracotta hue (5.0:1 contrast) — scoped to
+   .doctor-grid so the site-wide .program-branch used elsewhere (home page,
+   contact page branch cards, etc.) is untouched; this only affects the
+   /doctor listing. */
+.doctor-grid .program-branch {
+  font-size: 12px;
+  color: #7F6852;
+}
+
 /* Style "pills": compact rounded badges, wrapped into rows. Info-only (not
    clickable) — white/cream fill with a gold border, per 2026-09-10 request,
    so they read as distinct from the filled .branch-profile-pill rows below
@@ -59,18 +82,18 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  /* Match the single-branch ".program-branch" label's type size exactly
-     (site-shell.css: 11px / .12em) — was 10px / .06em, which read visibly
-     smaller/tighter next to that style (2026-09-10). */
-  font-size: 11px;
+  /* Match the single-branch ".program-branch" label's type size — bumped
+     11px -> 12px alongside that label (see .doctor-grid .program-branch
+     above) for the same legibility/contrast reason (2026-09-10). */
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
-  /* Match the single-branch ".program-branch" label's text color exactly
-     (site-shell.css) — that one uses --terracotta (a darker brown,
-     #9D8267), not --gold (#B89560, more yellow) — using --gold here made
-     the two labels visibly different shades of the "same" branch info. */
-  color: var(--terracotta, var(--shell-gold));
+  /* Same deeper terracotta shade as .doctor-grid .program-branch above
+     (#7F6852, ~5.0:1 contrast) instead of the raw --terracotta token
+     (#9D8267, 3.46:1) — was failing WCAG AA at this text size
+     (2026-09-10 legibility pass). */
+  color: #7F6852;
   /* Transparent instead of a hardcoded white/cream — shows the card's own
      background straight through, so the pill always matches the card
      surface exactly (including its gradient) instead of needing to guess

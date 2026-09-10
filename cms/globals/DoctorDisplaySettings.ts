@@ -76,5 +76,26 @@ export const DoctorDisplaySettings: GlobalConfig = {
           'ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้',
       },
     },
+    // Where the branch label(s) sit on every doctor card on /doctor —
+    // applies to both the single-branch label and the multi-branch
+    // pills/list above, uniformly across every card (not per-doctor).
+    // Admin-only per 2026-09-10 request, same as the 2 fields above.
+    {
+      name: 'branchLabelPosition',
+      type: 'select',
+      label: 'ตำแหน่งแสดงป้ายสาขาบนการ์ดแพทย์',
+      defaultValue: 'top',
+      options: [
+        { label: 'บนสุด (ใต้รูป) — ปัจจุบัน', value: 'top' },
+        { label: 'ล่างสุด (เหนือปุ่ม "ดูประวัติแพทย์")', value: 'bottom' },
+      ],
+      access: {
+        update: isAdminField,
+      },
+      admin: {
+        description:
+          'กำหนดตำแหน่งป้ายสาขาบนการ์ดแพทย์ทุกใบในหน้า /doctor (มีผลทั้งการ์ดสาขาเดียวและการ์ดที่รวมหลายสาขา) เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้',
+      },
+    },
   ],
 }

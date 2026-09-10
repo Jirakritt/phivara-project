@@ -1925,6 +1925,10 @@ export interface DoctorDisplaySetting {
    * ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
    */
   multiBranchLabelStyle?: ('pills' | 'list') | null;
+  /**
+   * กำหนดตำแหน่งป้ายสาขาบนการ์ดแพทย์ทุกใบในหน้า /doctor (มีผลทั้งการ์ดสาขาเดียวและการ์ดที่รวมหลายสาขา) เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
+   */
+  branchLabelPosition?: ('top' | 'bottom') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2265,6 +2269,7 @@ export interface DoctorDisplaySettingsSelect<T extends boolean = true> {
   featuredBackground?: T;
   groupDoctorsByBranch?: T;
   multiBranchLabelStyle?: T;
+  branchLabelPosition?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

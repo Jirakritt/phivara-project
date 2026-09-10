@@ -206,21 +206,15 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
       <section className="doctor-grid-container">
         <div className="wrap">
           <div className="doctor-grid" id="doctorGrid">
-            {groupedDoctors.map((doc) => (
-              <div
-                key={doc.slug}
-                className={`spec-card s-item${doc.branches.length > 1 ? ' merged-card' : ''}`}
-                data-branch={doc.branches.map((b) => b.slug).join(',')}
-                data-specialty={doc.specialty}
-                data-doc-id={doc.slug}
-              >
-                <div
-                  className="photo-wrap"
-                  style={displayBackgrounds.profileBackground ? { backgroundImage: `url('${displayBackgrounds.profileBackground}')` } : undefined}
-                >
-                  <img className="ph-photo" src={doc.image} alt={doc.nameTh} />
-                </div>
-                {doc.branches.length > 1 ? (
+            {groupedDoctors.map((doc) => {
+              // Branch label(s) — extracted so the SAME markup can render in
+              // either of 2 positions per the CMS admin setting
+              // (DoctorDisplaySettings.branchLabelPosition, 2026-09-10):
+              // 'top' (under the photo, default/current) or 'bottom' (just
+              // above the "ดูประวัติแพทย์" button). Applies to every card,
+              // single- or multi-branch alike.
+              const branchLabel =
+                doc.branches.length > 1 ? (
                   groupingSettings.multiBranchLabelStyle === 'pills' ? (
                     // Style A (CMS admin setting) — compact rounded badges.
                     <div className="program-branch-multi">
@@ -264,10 +258,27 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                       <span className="program-branch__name">{t(doc.branchTh, doc.branchEn)}</span>
                     </span>
                   </span>
-                )}
+                )
+              const branchLabelAtTop = groupingSettings.branchLabelPosition !== 'bottom'
+              return (
+              <div
+                key={doc.slug}
+                className={`spec-card s-item${doc.branches.length > 1 ? ' merged-card' : ''}`}
+                data-branch={doc.branches.map((b) => b.slug).join(',')}
+                data-specialty={doc.specialty}
+                data-doc-id={doc.slug}
+              >
+                <div
+                  className="photo-wrap"
+                  style={displayBackgrounds.profileBackground ? { backgroundImage: `url('${displayBackgrounds.profileBackground}')` } : undefined}
+                >
+                  <img className="ph-photo" src={doc.image} alt={doc.nameTh} />
+                </div>
+                {branchLabelAtTop && branchLabel}
                 <h3>{t(doc.nameTh, doc.nameEn)}</h3>
                 <p className="note">{t(doc.noteTh, doc.noteEn)}</p>
                 <div className="spec-subnote">{t(doc.subTh, doc.subEn)}</div>
+                {!branchLabelAtTop && branchLabel}
                 <div className="card-actions">
                   {doc.branches.length > 1 ? (
                     // A branch record's own profile content (bio/credentials/
@@ -328,7 +339,8 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                   </div>
                 )}
               </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="no-doctor-found" id="noDocFound">

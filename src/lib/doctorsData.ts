@@ -352,6 +352,11 @@ export async function getDoctorDisplayBackgrounds(): Promise<DoctorDisplayBackgr
 export interface DoctorGroupingSettings {
   groupByBranch: boolean
   multiBranchLabelStyle: 'pills' | 'list'
+  // DoctorDisplaySettings.branchLabelPosition — where the branch label(s)
+  // sit on every /doctor card: 'top' (under the photo, current default) or
+  // 'bottom' (just above the "ดูประวัติแพทย์" button). Applies uniformly to
+  // every card, single- or multi-branch (2026-09-10).
+  branchLabelPosition: 'top' | 'bottom'
 }
 
 // Same global as getDoctorDisplayBackgrounds() above (cms/globals/
@@ -370,6 +375,7 @@ export async function getDoctorGroupingSettings(): Promise<DoctorGroupingSetting
   return {
     groupByBranch: settings?.groupDoctorsByBranch !== false,
     multiBranchLabelStyle: settings?.multiBranchLabelStyle === 'pills' ? 'pills' : 'list',
+    branchLabelPosition: settings?.branchLabelPosition === 'bottom' ? 'bottom' : 'top',
   }
 }
 
