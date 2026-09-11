@@ -73,7 +73,7 @@ export const DoctorDisplaySettings: GlobalConfig = {
       admin: {
         condition: (data) => Boolean(data?.groupDoctorsByBranch),
         description:
-          'ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้',
+          'ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน — เลือกแบบ A (pill) จะมีผลกับการ์ดแพทย์ทุกใบ รวมถึงแพทย์ที่มีสาขาเดียวด้วย (2026-09-11) เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้',
       },
     },
     // Where the branch label(s) sit on every doctor card on /doctor —

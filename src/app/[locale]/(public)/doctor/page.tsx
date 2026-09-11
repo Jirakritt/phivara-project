@@ -213,52 +213,61 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
               // 'top' (under the photo, default/current) or 'bottom' (just
               // above the "ดูประวัติแพทย์" button). Applies to every card,
               // single- or multi-branch alike.
-              const branchLabel =
-                doc.branches.length > 1 ? (
-                  groupingSettings.multiBranchLabelStyle === 'pills' ? (
-                    // Style A (CMS admin setting) — compact rounded badges.
-                    <div className="program-branch-multi">
-                      {doc.branches.map((b) => (
-                        <span className="pill" key={b.slug}>
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                            <circle cx="12" cy="10" r="2.5" />
-                          </svg>
-                          {t(b.th, b.en)}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    // Style B (CMS admin setting, default) — each branch in
-                    // the SAME icon+"PHIVARA"+name style as the
-                    // single-branch label below, stacked one per line.
-                    <div className="program-branch-list">
-                      {doc.branches.map((b) => (
-                        <span className="program-branch" key={b.slug}>
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                            <circle cx="12" cy="10" r="2.5" />
-                          </svg>
-                          <span className="program-branch__text">
-                            <span className="program-branch__brand">PHIVARA</span>
-                            <span className="program-branch__name">{t(b.th, b.en)}</span>
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  )
-                ) : (
-                  <span className="program-branch">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                      <circle cx="12" cy="10" r="2.5" />
-                    </svg>
-                    <span className="program-branch__text">
-                      <span className="program-branch__brand">PHIVARA</span>
-                      <span className="program-branch__name">{t(doc.branchTh, doc.branchEn)}</span>
+              // Style A (pills) now applies to EVERY card — including a
+              // single-branch one — instead of only cards merged from
+              // several branches, per 2026-09-11 request ("การ์ดขวา" in
+              // the report had just 1 branch but still needs to look like
+              // the pill style). Gated on groupByBranch too so a stale
+              // 'pills' value left over from before grouping was disabled
+              // doesn't unexpectedly pill-ify every card site-wide — the
+              // CMS field itself is hidden whenever grouping is off (see
+              // DoctorDisplaySettings.ts's admin.condition on this field).
+              const usePillsEverywhere =
+                groupingSettings.groupByBranch && groupingSettings.multiBranchLabelStyle === 'pills'
+              const branchLabel = usePillsEverywhere ? (
+                // Style A (CMS admin setting) — compact rounded badges, one
+                // per branch (just one pill for a single-branch doctor).
+                <div className="program-branch-multi">
+                  {doc.branches.map((b) => (
+                    <span className="pill" key={b.slug}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                        <circle cx="12" cy="10" r="2.5" />
+                      </svg>
+                      {t(b.th, b.en)}
                     </span>
+                  ))}
+                </div>
+              ) : doc.branches.length > 1 ? (
+                // Style B (CMS admin setting, default) — each branch in the
+                // SAME icon+"PHIVARA"+name style as the single-branch label
+                // below, stacked one per line.
+                <div className="program-branch-list">
+                  {doc.branches.map((b) => (
+                    <span className="program-branch" key={b.slug}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                        <circle cx="12" cy="10" r="2.5" />
+                      </svg>
+                      <span className="program-branch__text">
+                        <span className="program-branch__brand">PHIVARA</span>
+                        <span className="program-branch__name">{t(b.th, b.en)}</span>
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <span className="program-branch">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                    <circle cx="12" cy="10" r="2.5" />
+                  </svg>
+                  <span className="program-branch__text">
+                    <span className="program-branch__brand">PHIVARA</span>
+                    <span className="program-branch__name">{t(doc.branchTh, doc.branchEn)}</span>
                   </span>
-                )
+                </span>
+              )
               const branchLabelAtTop = groupingSettings.branchLabelPosition !== 'bottom'
               return (
               <div
