@@ -237,7 +237,10 @@ const settingsItems: NavItem[] = [
     // added, since this sidebar is fully custom (not Payload's
     // auto-generated one) and doesn't pick up new globals on its own.
     slug: 'doctor-display-settings',
-    label: 'พื้นหลังห้องรูปแพทย์',
+    // Kept in sync with cms/globals/DoctorDisplaySettings.ts's own `label`
+    // (2026-09-11 rename) — this sidebar is fully custom and doesn't read
+    // that field automatically, so both need updating together.
+    label: 'ตั้งค่าการแสดงผลหน้าแพทย์',
     type: 'global',
     icon: icon(
       <>
