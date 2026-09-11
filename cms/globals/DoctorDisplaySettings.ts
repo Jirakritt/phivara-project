@@ -12,7 +12,11 @@ import { hasAnyRole, isAdminField } from '../access/roles'
 // cutouts need transparency, not these.
 export const DoctorDisplaySettings: GlobalConfig = {
   slug: 'doctor-display-settings',
-  label: 'พื้นหลังห้องรูปแพทย์ (Doctor Display Settings)',
+  // Renamed from "พื้นหลังห้องรูปแพทย์" (2026-09-11) — this global has grown
+  // beyond just the room backgrounds below to also cover the /doctor
+  // listing's grouping toggle, branch label style, and label position, so
+  // the old name undersold what's actually configurable here.
+  label: 'ตั้งค่าการแสดงผลหน้าแพทย์ (Doctor Display Settings)',
   access: {
     read: () => true,
     update: hasAnyRole('admin', 'editor'),
