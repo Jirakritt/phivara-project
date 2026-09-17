@@ -1703,6 +1703,14 @@
     border-radius:var(--radius-card);
   }
 
+  /* Doctor photo is clickable on the /doctor listing grid (2026-09 feature
+     request) — scoped to #doctorGrid specifically since .spec-card is also
+     reused on the branch detail page, which has no matching click handler
+     in doctor.js and shouldn't show a pointer cursor it can't act on. */
+  #doctorGrid .spec-card .photo-wrap{
+    cursor:pointer;
+  }
+
   /* Typography baseline shared by every production page. */
   p:not(#phivara-paragraph-size-override){
     font-size:14px;

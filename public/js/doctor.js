@@ -133,6 +133,41 @@ function initDoctorPage() {
 
   // Doctor profile navigation
   doctorGrid.addEventListener('click', (event) => {
+    // i18n Phase 2: every page URL now carries a /th|en/ locale prefix
+    // (see src/middleware.ts) — document.documentElement.lang holds the
+    // current one (set server-side per request), so stay on it instead of
+    // dropping back to a bare, locale-less path.
+    const lang = document.documentElement.lang || 'th';
+
+    // Clicking the doctor's photo (2026-09 feature request): a single-
+    // branch card jumps straight to that doctor's profile, same tab. A
+    // merged multi-branch card has no single profile to jump to, so it
+    // opens the same branch-picker panel as its own "ดูประวัติแพทย์" button
+    // instead (see the .btn-expand-profiles handling below). Must run
+    // before the generic .btn-doc-detail handling further down so a photo
+    // click inside a card doesn't also get picked up by anything else.
+    const photo = event.target.closest('.photo-wrap');
+    if (photo) {
+      const card = photo.closest('.spec-card');
+      if (card) {
+        if (card.classList.contains('merged-card')) {
+          const expandBtn = card.querySelector('.btn-expand-profiles');
+          if (expandBtn) {
+            const panel = document.getElementById(expandBtn.dataset.expandTarget || '');
+            if (panel) {
+              const isOpen = panel.classList.toggle('open');
+              expandBtn.classList.toggle('is-open', isOpen);
+              expandBtn.setAttribute('aria-expanded', String(isOpen));
+            }
+          }
+        } else {
+          const doctorId = card.dataset.docId || 'dr01';
+          window.location.href = `/${lang}/doctor/${doctorId}`;
+        }
+      }
+      return;
+    }
+
     // A merged multi-branch card (see groupDoctorsByName() in
     // doctorsData.ts) can't link "ดูประวัติแพทย์" to one arbitrary branch —
     // each branch's own record can have different bio/credentials/schedule
@@ -154,12 +189,12 @@ function initDoctorPage() {
     const button = event.target.closest('.btn-doc-detail');
     if (!button) return;
     const doctorId = button.dataset.docId || 'dr01';
-    // i18n Phase 2: every page URL now carries a /th|en/ locale prefix
-    // (see src/middleware.ts) — document.documentElement.lang holds the
-    // current one (set server-side per request), so stay on it instead of
-    // dropping back to a bare, locale-less path.
-    const lang = document.documentElement.lang || 'th';
-    window.location.href = `/${lang}/doctor/${doctorId}`;
+    // "ดูประวัติแพทย์" opens in a new tab (2026-09 feature request) so the
+    // visitor doesn't lose their place in the doctor listing/search
+    // results — covers both the single-branch card's direct button and the
+    // per-branch pills inside an expanded multi-branch panel, since both
+    // navigate to one specific doctor profile the same way.
+    window.open(`/${lang}/doctor/${doctorId}`, '_blank', 'noopener,noreferrer');
   });
 
   // Pre-fill VIP Concierge Modal when clicking "จองปรึกษา"
