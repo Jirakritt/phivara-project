@@ -139,13 +139,17 @@ function initDoctorPage() {
     // dropping back to a bare, locale-less path.
     const lang = document.documentElement.lang || 'th';
 
-    // Clicking the doctor's photo (2026-09 feature request): a single-
-    // branch card jumps straight to that doctor's profile, same tab. A
-    // merged multi-branch card has no single profile to jump to, so it
-    // opens the same branch-picker panel as its own "ดูประวัติแพทย์" button
-    // instead (see the .btn-expand-profiles handling below). Must run
-    // before the generic .btn-doc-detail handling further down so a photo
-    // click inside a card doesn't also get picked up by anything else.
+    // Clicking the doctor's photo (2026-09 feature request; single-branch
+    // behavior changed 2026-09 from same-tab to new-tab per follow-up
+    // report — it now matches the "ดูประวัติแพทย์" button exactly, since
+    // having the photo and the button on the same card open differently
+    // was confusing): a single-branch card opens that doctor's profile in
+    // a new tab, same as the button. A merged multi-branch card has no
+    // single profile to jump to, so it opens the same branch-picker panel
+    // as its own "ดูประวัติแพทย์" button instead (see the
+    // .btn-expand-profiles handling below). Must run before the generic
+    // .btn-doc-detail handling further down so a photo click inside a card
+    // doesn't also get picked up by anything else.
     const photo = event.target.closest('.photo-wrap');
     if (photo) {
       const card = photo.closest('.spec-card');
@@ -162,7 +166,7 @@ function initDoctorPage() {
           }
         } else {
           const doctorId = card.dataset.docId || 'dr01';
-          window.location.href = `/${lang}/doctor/${doctorId}`;
+          window.open(`/${lang}/doctor/${doctorId}`, '_blank', 'noopener,noreferrer');
         }
       }
       return;
