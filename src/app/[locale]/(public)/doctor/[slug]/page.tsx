@@ -134,7 +134,7 @@ export default async function DoctorDetailPage({
           <div className="doc-breadcrumb">
             <a href={localizedHref(locale, '/')}>{t('หน้าแรก', 'Home')}</a>
             <span className="sep">/</span>
-            <a href={localizedHref(locale, '/doctor')}>{t('ทีมแพทย์ผู้เชี่ยวชาญ', 'Medical Specialists')}</a>
+            <a href={localizedHref(locale, '/doctor')}>{t('ทีมแพทย์เฉพาะทาง', 'Medical Specialists')}</a>
             <span className="sep">/</span>
             <span className="current">{t(doctor.nameTh, doctor.nameEn)}</span>
           </div>
@@ -234,7 +234,7 @@ export default async function DoctorDetailPage({
           <div className="wrap">
             <div className="section-intro">
               <div className="eyebrow center">SIGNATURE MEDICAL PROGRAMS</div>
-              <h2 id="programs-heading">{t('โปรแกรมการตรวจที่เกี่ยวข้อง', 'Related Medical Programs')}</h2>
+              <h2 id="programs-heading">{t('โปรแกรมการดูแลที่แนะนำ', 'Recommended Care Programs')}</h2>
             </div>
 
             <div className="prog-grid">

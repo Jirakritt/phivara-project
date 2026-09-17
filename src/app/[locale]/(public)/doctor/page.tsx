@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
   const t = translator(locale)
-  const title = t('PHIVARA | ทีมแพทย์ผู้เชี่ยวชาญ', 'PHIVARA | Medical Specialists')
+  const title = t('PHIVARA | ทีมแพทย์เฉพาะทาง', 'PHIVARA | Medical Specialists')
   const canonical = canonicalUrl(locale, '/doctor')
   return {
     title,
@@ -84,7 +84,7 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
           <div className="doc-breadcrumb">
             <a href={localizedHref(locale, '/')}>{t('หน้าแรก', 'Home')}</a>
             <span className="sep">/</span>
-            <span className="current">{t('ทีมแพทย์ผู้เชี่ยวชาญ', 'Medical Specialists')}</span>
+            <span className="current">{t('ทีมแพทย์เฉพาะทาง', 'Medical Specialists')}</span>
           </div>
         </div>
       </div>
