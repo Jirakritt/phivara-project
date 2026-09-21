@@ -1,3 +1,4 @@
+import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
@@ -36,7 +37,12 @@ export default async function PublicLayout({
   const locale = resolveLocale(raw)
 
   const liveLocales = await getPubliclyLiveLocales()
-  if (!liveLocales.includes(locale)) notFound()
+  // A reviewer who visited /api/preview?secret=... (see that route's
+  // comment) gets Next's own signed draft-mode cookie, which lets them
+  // browse a not-yet-live locale to check UI copy — everyone else still
+  // 404s here exactly as before.
+  const { isEnabled: isPreview } = await draftMode()
+  if (!liveLocales.includes(locale) && !isPreview) notFound()
 
   return children
 }

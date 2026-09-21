@@ -91,6 +91,11 @@ PAYLOAD_SECRET=<generate ใหม่ — อย่าใช้ค่า dev เ
 PAYLOAD_CONFIG_PATH=cms/payload.config.ts
 NEXT_PUBLIC_SERVER_URL=https://www.phivara.site   # โดเมนจริง
 
+# ไม่บังคับ — ใส่ถ้าต้องการให้คนนอก (เช่น native speaker ตรวจคำแปล) preview
+# ภาษาที่ยังไม่เปิด publiclyLive ได้ ผ่านลิงก์ /api/preview?secret=...&redirect=/ja
+# generate: openssl rand -base64 32 — ดู src/app/api/preview/route.ts
+PREVIEW_SECRET=
+
 # Analytics — ไม่บังคับ เว้นว่างไว้ได้ถ้ายังไม่มี ID จริง (เว็บทำงานปกติ แค่ไม่ยิง tracking)
 NEXT_PUBLIC_GA4_MEASUREMENT_ID=
 NEXT_PUBLIC_META_PIXEL_ID=
