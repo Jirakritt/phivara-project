@@ -2,6 +2,7 @@ import type { Field, GlobalConfig } from 'payload'
 
 import { isAdmin } from '../access/roles'
 import { DEFAULT_ON_LOCALES, LOCALE_META } from '../admin/localeMeta'
+import { getPreviewLinksHandler } from '../lib/previewLinks'
 
 // Controls which of the site's configured locales (see payload.config.ts
 // `localization.locales`) are actually usable, at two independent levels
@@ -67,6 +68,17 @@ export const LanguageSettings: GlobalConfig = {
     description:
       'ควบคุมว่าภาษาไหนแก้ไขได้ใน CMS และภาษาไหนเผยแพร่บนหน้าเว็บจริง — ไทยเป็นภาษาหลัก เปิดใช้งานเสมอ ไม่มีสวิตช์ปิด',
   },
+  // GET /api/globals/language-settings/preview-links — see
+  // cms/lib/previewLinks.ts for the handler; lets the admin get a ready-
+  // to-share reviewer preview link straight from the CMS UI, no server
+  // access needed.
+  endpoints: [
+    {
+      path: '/preview-links',
+      method: 'get',
+      handler: getPreviewLinksHandler,
+    },
+  ],
   fields: [
     {
       name: 'languageSettingsGrid',

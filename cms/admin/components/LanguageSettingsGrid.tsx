@@ -18,11 +18,25 @@
 //   - unsaved-changes indicator + the actual Save button are just
 //     Payload's own document controls — no need to reimplement those,
 //     since this all lives inside Payload's real form.
-import React from 'react'
-import { useField, useFormFields } from '@payloadcms/ui'
+//   - a "draft" card also gets a copy-able reviewer preview link (see
+//     cms/lib/previewLinks.ts's GET /api/globals/language-settings/
+//     preview-links) — lets an admin hand that link to a native speaker
+//     without ever needing SSH/server access themselves.
+import React, { useEffect, useState } from 'react'
+import { CopyToClipboard, useConfig, useField, useFormFields } from '@payloadcms/ui'
 import type { FieldType } from '@payloadcms/ui'
 
 import { LOCALE_META } from '../localeMeta'
+
+interface PreviewLink {
+  code: string
+  label: string
+  url: string
+}
+
+// `configured: false` means PREVIEW_SECRET isn't set in this environment's
+// .env yet — distinct from "loading" (null) and "no links needed" ([]).
+type PreviewLinksState = { configured: boolean; links: PreviewLink[] } | null
 
 type Status = 'live' | 'draft' | 'off'
 
@@ -47,9 +61,10 @@ interface LocaleCardProps {
   cmsChecked: boolean
   liveChecked: boolean
   order: number
+  previewUrl?: string
 }
 
-function LocaleCard({ code, label, rtl, status, cmsChecked, liveChecked, order }: LocaleCardProps) {
+function LocaleCard({ code, label, rtl, status, cmsChecked, liveChecked, order, previewUrl }: LocaleCardProps) {
   // Reading is driven by the parent's single useFormFields subscription
   // (passed in as cmsChecked/liveChecked props) so there's one source of
   // truth for render state; these two useField calls are only used for
@@ -106,6 +121,13 @@ function LocaleCard({ code, label, rtl, status, cmsChecked, liveChecked, order }
         </label>
       )}
 
+      {status === 'draft' && previewUrl && (
+        <div className="phivara-lang-toggle-row" style={{ cursor: 'default' }}>
+          <span>ลิงก์ preview สำหรับผู้ตรวจ</span>
+          <CopyToClipboard value={previewUrl} defaultMessage="คัดลอกลิงก์" successMessage="คัดลอกแล้ว" />
+        </div>
+      )}
+
       {rtl && (
         <div className="phivara-rtl-note">
           ⚠️ ภาษาเขียนขวาไปซ้าย (RTL) — ต้องปรับ layout เพิ่มก่อนเปิดใช้งานจริง
@@ -130,6 +152,30 @@ export function LanguageSettingsGrid() {
   )
 
   const liveCount = rows.filter((r) => r.status === 'live').length + 1 // +1 for Thai, always live
+
+  // Fetched once on mount — not tied to the form's own save/unsaved-changes
+  // cycle, since preview links only depend on server-side PREVIEW_SECRET +
+  // cmsEditable/publiclyLive, which is already the saved (published) state
+  // this admin is looking at.
+  const { config } = useConfig()
+  const [previewLinks, setPreviewLinks] = useState<PreviewLinksState>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`${config.routes.api}/globals/language-settings/preview-links`, { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setPreviewLinks(data)
+      })
+      .catch(() => {
+        if (!cancelled) setPreviewLinks({ configured: false, links: [] })
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [config.routes.api])
+
+  const previewUrlByCode = new Map((previewLinks?.links ?? []).map((l) => [l.code, l.url]))
 
   return (
     <div className="phivara-lang-settings">
@@ -178,6 +224,12 @@ export function LanguageSettingsGrid() {
         ภาษาอื่นๆ ({LOCALE_META.length} ภาษา) — เรียงตามสถานะ: เผยแพร่แล้ว → กำลังแปล → ปิดใช้งาน
       </p>
 
+      {previewLinks?.configured === false && rows.some((r) => r.status === 'draft') && (
+        <p className="phivara-rtl-note" style={{ marginTop: 0 }}>
+          ⚠️ ยังไม่ได้ตั้งค่า PREVIEW_SECRET บน server — ลิงก์ preview สำหรับผู้ตรวจยังใช้ไม่ได้ แจ้งทีม dev เพื่อเปิดใช้งาน
+        </p>
+      )}
+
       <div className="phivara-lang-grid">
         {rows.map((row) => (
           <LocaleCard
@@ -189,6 +241,7 @@ export function LanguageSettingsGrid() {
             cmsChecked={row.cmsChecked}
             liveChecked={row.liveChecked}
             order={STATUS_RANK[row.status] * 100 + row.index}
+            previewUrl={previewUrlByCode.get(row.code)}
           />
         ))}
       </div>
