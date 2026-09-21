@@ -2,7 +2,32 @@ import type { LocaleCode } from './i18n'
 import { translator } from './i18n'
 import type { SeoData } from './payload'
 
-import { findLocalized, hasLocaleContent, mapSeo, mediaUrl } from './payload'
+import { findLocalized, getPayloadClient, hasLocaleContent, mapSeo, mediaUrl } from './payload'
+
+// PHIVARA's central LINE Official Account — used by getProgramDetail's
+// contact card whenever a program isn't tied to one specific branch, or
+// its branch hasn't set its own lineUrl yet (cms/collections/Branches.ts).
+// These are hardcoded last-resort safety nets, not CMS values: they only
+// kick in if Footer.socialLinks.lineId/line (see below) are ALSO empty, so
+// the button never has a dead/empty link or label even before an admin
+// fills anything in. Update these if PHIVARA's central LINE OA ever changes.
+const CENTRAL_LINE_LABEL_FALLBACK = '@phivara'
+const CENTRAL_LINE_URL_FALLBACK = 'https://lin.ee/Rcjy71S'
+
+// Reuses the same Footer.socialLinks.line/lineId fields already wired as a
+// real href in src/components/SiteFooter.tsx — deliberately NOT going
+// through homeData.ts's getFooterContent() (which fetches 3 locale variants
+// and maps link groups just for this one string); this is a much lighter
+// single-locale-independent read since neither field is localized.
+async function getCentralLine(): Promise<{ label: string; url: string }> {
+  const payload = await getPayloadClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const footer = (await payload.findGlobal({ slug: 'footer' })) as any
+  return {
+    label: footer?.socialLinks?.lineId || CENTRAL_LINE_LABEL_FALLBACK,
+    url: footer?.socialLinks?.line || CENTRAL_LINE_URL_FALLBACK,
+  }
+}
 
 // Card-level fields shown on /program and reused as the base of the detail
 // page. Note: program.html's own client-side JS stripped the 2-bullet
@@ -80,6 +105,13 @@ export interface ProgramDetail extends ProgramCard {
   contactHoursTh?: string
   contactHoursEn?: string
   contactPhone?: string
+  // Branch's own LINE OA if this program is tied to one specific branch
+  // AND that branch has filled in its lineUrl (cms/collections/Branches.ts);
+  // otherwise PHIVARA's central LINE OA (Footer.socialLinks.line/lineId, see
+  // getCentralLine() above). contactLineLabel is the display handle
+  // (e.g. "@phivara"), contactLineUrl is what the link actually opens.
+  contactLineLabel: string
+  contactLineUrl: string
   seo: SeoData
 }
 
@@ -190,6 +222,17 @@ export async function getProgramDetail(slug: string, locale: LocaleCode): Promis
   const card = mapProgramCard(doc, locale)
   const aboutProgram = lexicalToPlainText(doc.aboutProgram)
 
+  // Branch-aware LINE OA: use the linked branch's own lineUrl/lineId only
+  // when BOTH the program is tied to one specific branch AND that branch
+  // has filled in lineUrl (cms/collections/Branches.ts) — otherwise fall
+  // back to PHIVARA's central LINE OA (Footer.socialLinks.line/lineId, with
+  // hardcoded last-resort values — see getCentralLine() above).
+  const branch = doc.branch && typeof doc.branch === 'object' ? doc.branch : null
+  const branchLineUrl = branch?.lineUrl || ''
+  const centralLine = branchLineUrl ? null : await getCentralLine()
+  const contactLineLabel = branchLineUrl ? branch?.lineId || CENTRAL_LINE_LABEL_FALLBACK : centralLine!.label
+  const contactLineUrl = branchLineUrl || centralLine!.url
+
   return {
     ...card,
     heroImage: mediaUrl(doc.heroImage) || card.image,
@@ -215,6 +258,8 @@ export async function getProgramDetail(slug: string, locale: LocaleCode): Promis
     contactHoursTh: doc.contactOverride?.hours,
     contactHoursEn: doc.contactOverride?.hours,
     contactPhone: doc.contactOverride?.phone,
+    contactLineLabel,
+    contactLineUrl,
     seo: mapSeo(doc.seo),
   }
 }

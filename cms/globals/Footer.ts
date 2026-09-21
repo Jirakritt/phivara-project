@@ -58,7 +58,13 @@ export const Footer: GlobalConfig = {
       fields: [
         { name: 'instagram', type: 'text' },
         { name: 'facebook', type: 'text' },
-        { name: 'line', type: 'text' },
+        {
+          name: 'lineId',
+          type: 'text',
+          defaultValue: '@phivara',
+          admin: { description: 'ชื่อ LINE ส่วนกลางที่แสดงบนเว็บ (เช่น @phivara) — ใช้คู่กับลิงก์ด้านล่าง' },
+        },
+        { name: 'line', type: 'text', admin: { description: 'ลิงก์ LINE Official Account ส่วนกลาง (เช่น https://lin.ee/xxxxx)' } },
       ],
     },
   ],

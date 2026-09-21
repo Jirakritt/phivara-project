@@ -2,6 +2,13 @@ import type { LocaleCode } from './i18n'
 import { DEFAULT_LOCALE } from './i18n'
 import { findLocalized, getPayloadClient, hasLocaleContent, mediaUrl } from './payload'
 
+// Same hardcoded last-resort safety net as programsData.ts's
+// CENTRAL_LINE_URL_FALLBACK — kept as a separate constant here (rather than
+// a shared import) since this file and programsData.ts don't otherwise
+// depend on each other. Update both if PHIVARA's central LINE OA ever
+// changes.
+const CENTRAL_LINE_URL_FALLBACK = 'https://lin.ee/Rcjy71S'
+
 // Thai months in Buddhist Era style, matching the original site's date
 // formatting (e.g. "28 พฤษภาคม 2569").
 const THAI_MONTHS = [
@@ -258,6 +265,12 @@ export interface HomeTopBar {
   hotlineTextEn: string
   lineTextTh: string
   lineTextEn: string
+  // PHIVARA's central LINE OA link — same source (and same hardcoded
+  // last-resort fallback) as programsData.ts's getCentralLine(), so the
+  // "LINE: @phivara" text in the top bar (SiteHeader.tsx) is always a real
+  // clickable link, never dead text even before an admin fills in
+  // Footer.socialLinks.line.
+  lineUrl: string
 }
 
 export interface HomeData {
@@ -508,6 +521,9 @@ async function getTopBarContent(locale: LocaleCode): Promise<HomeTopBar> {
     hotlineTextEn: hotlineText,
     lineTextTh: lineText,
     lineTextEn: lineText,
+    // Overwritten in getHomeData() once footer (the actual source) has
+    // resolved — placeholder here only so this object satisfies HomeTopBar.
+    lineUrl: '',
   }
 }
 
@@ -648,6 +664,13 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
       const caption = doc.caption || ''
       return { image: mediaUrl(doc.image) || '', captionTh: caption, captionEn: caption }
     })
+
+  // Wire the top bar's "LINE: ..." text to a real, always-working link —
+  // reuses the same Footer.socialLinks.line value (with the same hardcoded
+  // fallback) as programsData.ts's getCentralLine(), computed here instead
+  // of inside getTopBarContent() since footer is only resolved once both
+  // promises above settle.
+  topbar.lineUrl = footer.social.line || CENTRAL_LINE_URL_FALLBACK
 
   return { hero, branches, doctors, programs, articles, awards, membershipTeaser, footer, topbar }
 }

@@ -306,7 +306,7 @@ export default async function ProgramDetailPage({
                   <span className="contact-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 3.5 10 8 7.8 9.8a14.5 14.5 0 0 0 6.4 6.4L16 14l4.5 2.5v3A1.5 1.5 0 0 1 19 21C10.2 21 3 13.8 3 5a1.5 1.5 0 0 1 1.5-1.5h3Z" /></svg></span>
                   <div>
                     <small>{t('ช่องทางติดต่อ', 'CONTACT')}</small>
-                    <strong>{program.contactPhone ? <a href={`tel:${program.contactPhone.replace(/[^0-9]/g, '')}`}>{program.contactPhone}</a> : <a href="tel:02XXXXXXX">02-XXX-XXXX</a>} · <a href="https://lin.ee/Rcjy71S" target="_blank" rel="noopener noreferrer">LINE: @phivara</a></strong>
+                    <strong>{program.contactPhone ? <a href={`tel:${program.contactPhone.replace(/[^0-9]/g, '')}`}>{program.contactPhone}</a> : <a href="tel:02XXXXXXX">02-XXX-XXXX</a>} · <a href={program.contactLineUrl} target="_blank" rel="noopener noreferrer">LINE: {program.contactLineLabel}</a></strong>
                   </div>
                 </div>
               </div>

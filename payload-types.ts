@@ -235,6 +235,10 @@ export interface Branch {
   phone?: string | null;
   lineId?: string | null;
   /**
+   * ลิงก์ LINE Official Account ของสาขานี้ (เช่น https://lin.ee/xxxxx) — เว้นว่างไว้ถ้าสาขานี้ใช้ LINE OA ส่วนกลาง
+   */
+  lineUrl?: string | null;
+  /**
    * Google Maps link or embed URL (not present on current site — recommended addition)
    */
   mapUrl?: string | null;
@@ -1167,6 +1171,7 @@ export interface BranchesSelect<T extends boolean = true> {
   hours?: T;
   phone?: T;
   lineId?: T;
+  lineUrl?: T;
   mapUrl?: T;
   heroImage?: T;
   gallery?:
@@ -1773,6 +1778,13 @@ export interface Footer {
   socialLinks?: {
     instagram?: string | null;
     facebook?: string | null;
+    /**
+     * ชื่อ LINE ส่วนกลางที่แสดงบนเว็บ (เช่น @phivara) — ใช้คู่กับลิงก์ด้านล่าง
+     */
+    lineId?: string | null;
+    /**
+     * ลิงก์ LINE Official Account ส่วนกลาง (เช่น https://lin.ee/xxxxx)
+     */
     line?: string | null;
   };
   updatedAt?: string | null;
@@ -2135,6 +2147,7 @@ export interface FooterSelect<T extends boolean = true> {
     | {
         instagram?: T;
         facebook?: T;
+        lineId?: T;
         line?: T;
       };
   updatedAt?: T;

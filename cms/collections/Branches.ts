@@ -109,6 +109,11 @@ export const Branches: CollectionConfig = {
             { name: 'phone', type: 'text' },
             { name: 'lineId', type: 'text', defaultValue: '@phivara' },
             {
+              name: 'lineUrl',
+              type: 'text',
+              admin: { description: 'ลิงก์ LINE Official Account ของสาขานี้ (เช่น https://lin.ee/xxxxx) — เว้นว่างไว้ถ้าสาขานี้ใช้ LINE OA ส่วนกลาง' },
+            },
+            {
               name: 'mapUrl',
               type: 'text',
               admin: { description: 'Google Maps link or embed URL (not present on current site — recommended addition)' },

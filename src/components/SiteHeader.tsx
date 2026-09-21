@@ -158,7 +158,10 @@ export default function SiteHeader({
           <div className="tb-left">{t(topbar.taglineTh, topbar.taglineEn)}</div>
           <div className="tb-right">
             <span>{t(topbar.hotlineTextTh, topbar.hotlineTextEn)}</span>
-            <span>{t(topbar.lineTextTh, topbar.lineTextEn)}</span>
+            {/* site-shell.css forces a 14px minimum on every <a> unless it
+                carries this escape-hatch class — without it this link would
+                render noticeably larger than the hotline span next to it. */}
+            <a href={topbar.lineUrl} target="_blank" rel="noopener noreferrer" className="phivara-type-size-override">{t(topbar.lineTextTh, topbar.lineTextEn)}</a>
             <LanguageSwitcher locale={locale} localePath={localePath} liveLocales={liveLocales} />
           </div>
         </div>

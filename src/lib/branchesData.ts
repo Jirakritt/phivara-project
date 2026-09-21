@@ -25,6 +25,7 @@ export interface BranchCard {
   hoursEn: string
   phone: string
   lineId: string
+  lineUrl: string
   image: string
   mapUrl: string
 }
@@ -68,6 +69,7 @@ function mapBranchCard(doc: any): BranchCard {
     hoursEn: hours,
     phone: doc.phone || '',
     lineId: doc.lineId || '@phivara',
+    lineUrl: doc.lineUrl || '',
     image: mediaUrl(doc.heroImage) || '/assets/images/brand/about-lounge.jpg',
     mapUrl: doc.mapUrl || mapHref,
   }

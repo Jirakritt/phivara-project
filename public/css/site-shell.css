@@ -214,7 +214,8 @@ footer.site-footer > .wrap {
 
 .topbar .tb-left { opacity: .8; }
 .topbar .tb-right { display: flex; align-items: center; gap: 20px; }
-.topbar .tb-right > span { opacity: .85; }
+.topbar .tb-right > span,
+.topbar .tb-right > a { opacity: .85; }
 
 .topbar .lang-toggle {
   display: flex;
