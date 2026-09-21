@@ -190,7 +190,7 @@ export default async function DoctorDetailPage({
 
               <div className="doc-cta-group">
                 <a href="#contact" className="btn btn-gold vip-trigger" data-doc-name={doctor.nameTh}>
-                  {t(`จองนัดหมายปรึกษา ${doctor.nameTh}`, `Book Consultation with ${doctor.nameEn}`)}
+                  {t('จองนัดหมายปรึกษา', 'Book Consultation')}
                 </a>
                 {rich && rich.schedule.length > 0 && (
                   <a href="#schedule" className="btn btn-outline-dark">{t('ดูตารางเวรออกตรวจ', 'View Clinic Schedule')}</a>
@@ -305,7 +305,7 @@ export default async function DoctorDetailPage({
 
             <div className="section-actions">
               <a href="#contact" className="btn btn-gold vip-trigger" data-doc-name={doctor.nameTh}>
-                {t(`จองนัดหมายปรึกษา ${doctor.nameTh}`, `Reserve Consultation with ${doctor.nameEn}`)}
+                {t('จองนัดหมายปรึกษา', 'Reserve Consultation')}
               </a>
             </div>
           </div>
