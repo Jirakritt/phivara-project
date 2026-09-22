@@ -358,7 +358,18 @@ export interface Doctor {
    */
   displayOrder?: number | null;
   name?: string | null;
+  /**
+   * (เดิม) จะถูกแทนที่ด้วย "สาขาที่ออกตรวจ" ด้านล่าง — อย่าเพิ่งลบจนกว่าทีมจะรวมโปรไฟล์แพทย์ครบทุกคน
+   */
   branch: number | Branch;
+  /**
+   * สาขาที่แพทย์ท่านนี้ออกตรวจ (เลือกได้หลายสาขา) — โปรไฟล์เดียวกันจะใช้ร่วมกันในทุกสาขาที่เลือกไว้ที่นี่ ยกเว้นตารางออกตรวจซึ่งแยกตามสาขาด้านล่าง
+   */
+  branches?: (number | Branch)[] | null;
+  /**
+   * สาขาหลัก — ต้องเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบน ใช้กำหนดว่าจะแสดงเป็นแพทย์แนะนำ (featured) ที่หน้าไหน
+   */
+  mainBranch?: (number | null) | Branch;
   /**
    * Filter key used on doctor.html (matches the 4 Beaugevity pillars)
    */
@@ -431,7 +442,7 @@ export interface Doctor {
       }[]
     | null;
   /**
-   * Weekly outpatient schedule table
+   * (เดิม) จะถูกแทนที่ด้วย "ตารางออกตรวจแยกตามสาขา" ด้านล่าง
    */
   schedule?:
     | {
@@ -442,6 +453,33 @@ export interface Doctor {
         hours: string;
         locationName?: string | null;
         locationNote?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * ตารางออกตรวจ แยกตามสาขา — แต่ละกลุ่มด้านล่างคือ 1 สาขา ใช้แสดงเป็นแท็บเลือกสาขาบนหน้าเว็บ
+   */
+  scheduleByBranch?:
+    | {
+        /**
+         * ควรเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบนสุดของฟอร์ม
+         */
+        branch: number | Branch;
+        /**
+         * วัน-เวลาออกตรวจของสาขานี้
+         */
+        rows?:
+          | {
+              day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+              /**
+               * e.g. "09:00 - 20:00 น."
+               */
+              hours: string;
+              locationName?: string | null;
+              locationNote?: string | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -1211,6 +1249,8 @@ export interface DoctorsSelect<T extends boolean = true> {
   displayOrder?: T;
   name?: T;
   branch?: T;
+  branches?: T;
+  mainBranch?: T;
   specialty?: T;
   specialtyLabel?: T;
   subSpecialty?: T;
@@ -1245,6 +1285,21 @@ export interface DoctorsSelect<T extends boolean = true> {
         hours?: T;
         locationName?: T;
         locationNote?: T;
+        id?: T;
+      };
+  scheduleByBranch?:
+    | T
+    | {
+        branch?: T;
+        rows?:
+          | T
+          | {
+              day?: T;
+              hours?: T;
+              locationName?: T;
+              locationNote?: T;
+              id?: T;
+            };
         id?: T;
       };
   contactIntro?: T;

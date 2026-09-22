@@ -173,6 +173,55 @@ export const validateBranchInScope =
     return 'คุณกำหนดสาขาได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
   }
 
+// Array-of-relationships counterpart to validateBranchInScope, for fields
+// like Doctors.branches where a doctor can now be tagged to more than one
+// branch (CR: "หมอ 1 profile หลายสาขา"). An editor/medical-reviewer may only
+// select branches they themselves are assigned to — they can't grant a
+// shared doctor profile to a branch outside their own scope (that's an
+// admin-only action, matching how the initial multi-branch merge itself is
+// expected to be done by an admin). Admins are unrestricted, same precedent
+// as validateBranchInScope.
+export const validateBranchesInScope =
+  (allowEmpty = false) =>
+  (value: unknown, { req }: { req: { user: unknown } }) => {
+    const user = req.user as UserWithBranches | null
+    if (!user || user.role === 'admin') return true
+    if (user.role !== 'editor' && user.role !== 'medical-reviewer') return true
+    const branchIds = getUserBranchIds(user)
+    const values = Array.isArray(value) ? value : value ? [value] : []
+    if (!values.length) {
+      if (allowEmpty) return true
+      return 'กรุณาเลือกอย่างน้อย 1 สาขา — คุณกำหนดสาขาให้แพทย์ได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
+    }
+    const ids = values.map((v) => (typeof v === 'object' && v !== null ? (v as { id: number | string }).id : v))
+    const allInScope = ids.every((id) => branchIds.includes(id as number | string))
+    if (!allInScope) return 'คุณกำหนดสาขาให้แพทย์ได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
+    return true
+  }
+
+// `mainBranch` (used to decide which single branch's page shows this
+// doctor's "featured lead doctor" card — see Doctors.ts's
+// isBranchFeatured/quote/featuredHighlights tab) must be one of the values
+// currently selected in `branches`. Checked for every role including
+// admin — a doctor can't be "featured" at a branch they aren't even listed
+// as practicing at. If `branches` itself is still empty (not filled in
+// yet), this passes silently and lets `branches`'s own required/validate
+// surface the real error instead of piling on a second one.
+export const validateMainBranchInBranches = (
+  value: unknown,
+  { siblingData }: { siblingData: { branches?: unknown } },
+) => {
+  if (!value) return 'กรุณาเลือกสาขาหลัก'
+  const mainId = typeof value === 'object' && value !== null ? (value as { id: number | string }).id : value
+  const branches = Array.isArray(siblingData?.branches) ? siblingData.branches : []
+  if (!branches.length) return true
+  const branchIds = branches.map((b) => (typeof b === 'object' && b !== null ? (b as { id: number | string }).id : b))
+  if (!branchIds.includes(mainId as number | string)) {
+    return 'สาขาหลักต้องเป็นหนึ่งในสาขาที่เลือกไว้ในช่อง "สาขาที่ออกตรวจ" ด้านบน'
+  }
+  return true
+}
+
 // Branches collection itself: an editor can update only the branch(es)
 // they're assigned to (their own location's address/hours/gallery, etc);
 // medical reviewers never touch operational branch data. Matches against

@@ -4,7 +4,9 @@ import {
   branchScopedContent,
   hasAnyRole,
   publishedOrBranchScopedStaff,
+  validateBranchesInScope,
   validateBranchInScope,
+  validateMainBranchInBranches,
 } from '../access/roles'
 import { seoFields } from '../fields/seo'
 import { autoSlugFromNameEn } from './hooks/autoSlugFromNameEn'
@@ -39,12 +41,20 @@ export const Doctors: CollectionConfig = {
     beforeValidate: [autoSlugFromNameEn],
   },
   access: {
-    read: publishedOrBranchScopedStaff('branch'),
+    // Scoped against the new `branches` (hasMany) field rather than the
+    // legacy single `branch` — a branch-scoped editor/reviewer should see
+    // and manage a doctor if they practice at ANY of that editor's
+    // branches, not just whichever branch happens to be in the old field.
+    // `branches` isn't `required` yet (see its field def below — kept
+    // optional until the team finishes merging every doctor's duplicate
+    // records), but every doctor should have it populated by the
+    // backfillDoctorBranches.ts script; a doctor with no `branches` set
+    // falls through `allowUnassigned:false` and is admin-only until fixed,
+    // same safety behavior the old `branch`-based scoping had.
+    read: publishedOrBranchScopedStaff('branches'),
     create: hasAnyRole('admin', 'editor', 'medical-reviewer'),
-    // branch is required on every doctor (no "shared/unassigned" case here
-    // — see the field below), so update/delete both use the same scoping.
-    update: branchScopedContent(['editor', 'medical-reviewer'], 'branch', false),
-    delete: branchScopedContent(['editor'], 'branch', false),
+    update: branchScopedContent(['editor', 'medical-reviewer'], 'branches', false),
+    delete: branchScopedContent(['editor'], 'branches', false),
   },
   // Grouped into tabs (UI-only — none are named, so this doesn't change how
   // the data is stored/queried) to match the reviewed CMS mockup
@@ -110,11 +120,60 @@ export const Doctors: CollectionConfig = {
             // locale intentionally untranslated.
             { name: 'name', type: 'text', localized: true },
             {
+              // LEGACY — kept temporarily during the multi-branch rollout
+              // (CR: "หมอ 1 profile หลายสาขา"). This is still the real field
+              // every existing doctor doc has one value in (one doc per
+              // branch today); `branches`/`mainBranch` below are the new
+              // replacement. Not removed yet because: (1) access control
+              // (branchScopedContent/publishedOrBranchScopedStaff above)
+              // still reads this field, (2) the /doctor listing page's
+              // groupDoctorsByName() fallback still needs it during the
+              // transition while admins manually merge duplicate doctor
+              // records one at a time (see the admin backfill plan — no
+              // automatic merge-by-name, an admin reviews and merges each
+              // doctor by hand). Safe to delete once every doctor has been
+              // merged into `branches`/`mainBranch` and the grouping
+              // fallback is retired.
               name: 'branch',
               type: 'relationship',
               relationTo: 'branches',
               required: true,
               validate: validateBranchInScope(false),
+              admin: {
+                description: '(เดิม) จะถูกแทนที่ด้วย "สาขาที่ออกตรวจ" ด้านล่าง — อย่าเพิ่งลบจนกว่าทีมจะรวมโปรไฟล์แพทย์ครบทุกคน',
+              },
+            },
+            {
+              // NEW — replaces `branch` above. A doctor can now practice at
+              // more than one branch under a single shared profile, instead
+              // of one separate published record per branch. Left optional
+              // (not required) for now so existing docs don't fail
+              // validation before the one-off backfill script
+              // (cms/scripts/backfillDoctorBranches.ts) has run — this gets
+              // tightened to required once every doctor has real data here.
+              name: 'branches',
+              type: 'relationship',
+              relationTo: 'branches',
+              hasMany: true,
+              validate: validateBranchesInScope(true),
+              admin: {
+                description:
+                  'สาขาที่แพทย์ท่านนี้ออกตรวจ (เลือกได้หลายสาขา) — โปรไฟล์เดียวกันจะใช้ร่วมกันในทุกสาขาที่เลือกไว้ที่นี่ ยกเว้นตารางออกตรวจซึ่งแยกตามสาขาด้านล่าง',
+              },
+            },
+            {
+              // NEW — decides which ONE of the selected `branches` this
+              // doctor is treated as "แพทย์หลักประจำสาขา" (featured lead
+              // doctor) at — see the isBranchFeatured/quote/featuredHighlights
+              // tab further down. A doctor at 3 branches still has only one
+              // "main" branch; the other branches just list them normally.
+              name: 'mainBranch',
+              type: 'relationship',
+              relationTo: 'branches',
+              validate: validateMainBranchInBranches,
+              admin: {
+                description: 'สาขาหลัก — ต้องเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบน ใช้กำหนดว่าจะแสดงเป็นแพทย์แนะนำ (featured) ที่หน้าไหน',
+              },
             },
             {
               name: 'specialty',
@@ -233,9 +292,15 @@ export const Doctors: CollectionConfig = {
           label: 'ตารางออกตรวจ & ติดต่อ',
           fields: [
             {
+              // LEGACY — kept alongside `scheduleByBranch` below during the
+              // multi-branch rollout, same reasoning as the `branch` field
+              // above (one doc = one branch today, so this flat table was
+              // never ambiguous about which branch it belonged to). Safe to
+              // delete once every doctor has real data in
+              // `scheduleByBranch`.
               name: 'schedule',
               type: 'array',
-              admin: { description: 'Weekly outpatient schedule table' },
+              admin: { description: '(เดิม) จะถูกแทนที่ด้วย "ตารางออกตรวจแยกตามสาขา" ด้านล่าง' },
               fields: [
                 {
                   name: 'day',
@@ -246,6 +311,43 @@ export const Doctors: CollectionConfig = {
                 { name: 'hours', type: 'text', required: true, admin: { description: 'e.g. "09:00 - 20:00 น."' } },
                 { name: 'locationName', type: 'text', localized: true },
                 { name: 'locationNote', type: 'text', localized: true },
+              ],
+            },
+            {
+              // NEW — replaces `schedule` above. One group per branch this
+              // doctor practices at, rendered as one tab per branch on the
+              // public profile page (src/app/[locale]/(public)/doctor/
+              // [slug]/page.tsx) instead of a single flat table with a
+              // repeated branch column.
+              name: 'scheduleByBranch',
+              type: 'array',
+              admin: {
+                description: 'ตารางออกตรวจ แยกตามสาขา — แต่ละกลุ่มด้านล่างคือ 1 สาขา ใช้แสดงเป็นแท็บเลือกสาขาบนหน้าเว็บ',
+              },
+              fields: [
+                {
+                  name: 'branch',
+                  type: 'relationship',
+                  relationTo: 'branches',
+                  required: true,
+                  admin: { description: 'ควรเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบนสุดของฟอร์ม' },
+                },
+                {
+                  name: 'rows',
+                  type: 'array',
+                  admin: { description: 'วัน-เวลาออกตรวจของสาขานี้' },
+                  fields: [
+                    {
+                      name: 'day',
+                      type: 'select',
+                      required: true,
+                      options: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+                    },
+                    { name: 'hours', type: 'text', required: true, admin: { description: 'e.g. "09:00 - 20:00 น."' } },
+                    { name: 'locationName', type: 'text', localized: true },
+                    { name: 'locationNote', type: 'text', localized: true },
+                  ],
+                },
               ],
             },
             {
