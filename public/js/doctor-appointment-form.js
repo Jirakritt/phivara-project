@@ -139,6 +139,35 @@
     });
   }
 
+  // Multi-branch CR: every branch's schedule tab + table is server-rendered
+  // (see the doctor-detail page's #scheduleBranchTabs / .schedule-branch-
+  // panel markup) — this just toggles which one is visible, same "show/
+  // hide what's already in the DOM" pattern as the rest of the site's
+  // vanilla-JS interactivity (e.g. doctor.js's card filtering), rather than
+  // reconstructing rows from a JS data blob.
+  function initScheduleBranchTabs() {
+    const tabsWrap = document.getElementById('scheduleBranchTabs');
+    if (!tabsWrap) return;
+    const tabs = Array.from(tabsWrap.querySelectorAll('button[data-branch-index]'));
+    const panels = Array.from(document.querySelectorAll('.schedule-branch-panel[data-branch-index]'));
+    if (!tabs.length || !panels.length) return;
+
+    tabsWrap.addEventListener('click', (event) => {
+      const tab = event.target.closest('button[data-branch-index]');
+      if (!tab) return;
+      const index = tab.dataset.branchIndex;
+      tabs.forEach((btn) => {
+        const isActive = btn.dataset.branchIndex === index;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', String(isActive));
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.branchIndex !== index;
+      });
+    });
+  }
+
   setMinimumAppointmentDate();
   initAppointmentForm();
+  initScheduleBranchTabs();
 })();

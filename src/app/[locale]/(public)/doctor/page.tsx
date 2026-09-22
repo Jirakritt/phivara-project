@@ -269,10 +269,21 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                 </span>
               )
               const branchLabelAtTop = groupingSettings.branchLabelPosition !== 'bottom'
+              // Multi-branch CR: a doctor now merged into ONE CMS record
+              // (Doctors.branches, several branches, one shared profile —
+              // see doctorsData.ts's ownBranches) has every branch pill
+              // pointing at the SAME recordSlug, so there's nothing to pick
+              // between — go straight to the profile, no expand step. Only
+              // still-duplicated doctors (same name, separate not-yet-
+              // merged records, each with a DIFFERENT recordSlug) need the
+              // branch-picker panel, since each of THEIR records can have
+              // genuinely different bio/credentials/schedule content.
+              const distinctRecordSlugs = new Set(doc.branches.map((b) => b.recordSlug))
+              const needsBranchPicker = distinctRecordSlugs.size > 1
               return (
               <div
                 key={doc.slug}
-                className={`spec-card s-item${doc.branches.length > 1 ? ' merged-card' : ''}`}
+                className={`spec-card s-item${needsBranchPicker ? ' merged-card' : ''}`}
                 data-branch={doc.branches.map((b) => b.slug).join(',')}
                 data-specialty={doc.specialty}
                 data-doc-id={doc.slug}
@@ -289,7 +300,7 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                 <div className="spec-subnote">{t(doc.subTh, doc.subEn)}</div>
                 {!branchLabelAtTop && branchLabel}
                 <div className="card-actions">
-                  {doc.branches.length > 1 ? (
+                  {needsBranchPicker ? (
                     // A branch record's own profile content (bio/credentials/
                     // schedule) can genuinely differ per branch (reported
                     // 2026-09-10), so a single "ดูประวัติแพทย์" can't just
@@ -331,7 +342,7 @@ export default async function DoctorListPage({ params }: { params: Promise<{ loc
                     {t('จองปรึกษา →', 'Book →')}
                   </a>
                 </div>
-                {doc.branches.length > 1 && (
+                {needsBranchPicker && (
                   <div className="doctor-profile-expand" id={`profile-expand-${doc.slug}`}>
                     {doc.branches.map((b) => (
                       <button key={b.slug} type="button" className="btn-doc-detail branch-profile-pill" data-doc-id={b.recordSlug}>

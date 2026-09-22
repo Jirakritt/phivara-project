@@ -161,13 +161,19 @@ export default async function DoctorDetailPage({
                 <div className="doc-hero-title-badge">
                   {t(rich?.hospitalTitleTh || doctor.noteTh, rich?.hospitalTitleEn || doctor.noteEn)}
                 </div>
-                <span className="doc-branch-label">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                    <circle cx="12" cy="10" r="2.5" />
-                  </svg>
-                  PHIVARA {doctor.branchEn}
-                </span>
+                {/* Multi-branch CR: one badge per branch this doctor
+                    practices at (doctor.ownBranches, Doctors.branches) —
+                    falls back to the single branchTh/branchEn pair if
+                    ownBranches somehow came back empty. */}
+                {(doctor.ownBranches.length ? doctor.ownBranches : [{ slug: doctor.branchSlug, th: doctor.branchTh, en: doctor.branchEn }]).map((b) => (
+                  <span className="doc-branch-label" key={b.slug || b.th}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                    PHIVARA {t(b.th, b.en)}
+                  </span>
+                ))}
               </div>
 
               {(rich?.boardCertificationTh || doctor.subTh) && (
@@ -192,7 +198,7 @@ export default async function DoctorDetailPage({
                 <a href="#contact" className="btn btn-gold vip-trigger" data-doc-name={doctor.nameTh}>
                   {t('จองนัดหมายปรึกษา', 'Book Consultation')}
                 </a>
-                {rich && rich.schedule.length > 0 && (
+                {rich && (rich.scheduleByBranch.length > 0 || rich.schedule.length > 0) && (
                   <a href="#schedule" className="btn btn-outline-dark">{t('ดูตารางเวรออกตรวจ', 'View Clinic Schedule')}</a>
                 )}
               </div>
@@ -260,7 +266,7 @@ export default async function DoctorDetailPage({
         </section>
       )}
 
-      {rich && rich.schedule.length > 0 && (
+      {rich && (rich.scheduleByBranch.length > 0 || rich.schedule.length > 0) && (
         <section className="doc-schedule-section" id="schedule" aria-labelledby="schedule-heading">
           <div className="wrap">
             <div className="section-intro section-intro--compact">
@@ -274,34 +280,103 @@ export default async function DoctorDetailPage({
               </p>
             </div>
 
-            <div className="schedule-table-card">
-              <table className="schedule-table" aria-labelledby="schedule-heading">
-                <thead>
-                  <tr>
-                    <th>{t('วันออกตรวจ', 'Day')}</th>
-                    <th>{t('ช่วงเวลา', 'Hours')}</th>
-                    <th>{t('สาขา / สถานที่', 'Clinic Location')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rich.schedule.map((row, i) => {
-                    const dayLabel = DAY_LABELS[row.day] || { th: row.day, en: row.day }
-                    return (
-                    <tr key={i}>
-                      <td><strong>{t(`${dayLabel.th} (${dayLabel.en})`, dayLabel.en)}</strong></td>
-                      <td>{row.hours}</td>
-                      <td>
-                        <strong>PHIVARA {doctor.branchEn}</strong>
-                        {row.locationNameTh && (
-                          <div className="branch-subtext">{t(row.locationNameTh, row.locationNameEn)}</div>
-                        )}
-                      </td>
+            {/* Multi-branch CR: scheduleByBranch (Doctors.scheduleByBranch)
+                — one tab per branch, table swaps to that branch's rows.
+                Every branch's table is server-rendered (only one shown at a
+                time via the `hidden` attribute + .active tab), so the
+                content is still fully there for a11y/SEO/no-JS; the click
+                handler in doctor-appointment-form.js just toggles which one
+                is visible. Falls back to the old flat, single-branch table
+                (no tabs) for any doctor not yet backfilled onto
+                scheduleByBranch. */}
+            {rich.scheduleByBranch.length > 0 ? (
+              <>
+                <div className="schedule-branch-tabs" id="scheduleBranchTabs" role="tablist" aria-label={t('เลือกสาขาเพื่อดูตารางออกตรวจ', 'Select a branch to view its schedule')}>
+                  {rich.scheduleByBranch.map((group, i) => (
+                    <button
+                      key={group.branchSlug || i}
+                      type="button"
+                      role="tab"
+                      className={i === 0 ? 'active' : undefined}
+                      aria-selected={i === 0}
+                      aria-controls={`schedule-branch-panel-${i}`}
+                      data-branch-index={i}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                        <circle cx="12" cy="10" r="2.5" />
+                      </svg>
+                      <span>PHIVARA {t(group.branchTh, group.branchEn)}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {rich.scheduleByBranch.map((group, i) => (
+                  <div
+                    key={group.branchSlug || i}
+                    className="schedule-table-card schedule-branch-panel"
+                    id={`schedule-branch-panel-${i}`}
+                    data-branch-index={i}
+                    role="tabpanel"
+                    hidden={i !== 0}
+                  >
+                    <table className="schedule-table" aria-labelledby="schedule-heading">
+                      <thead>
+                        <tr>
+                          <th>{t('วันออกตรวจ', 'Day')}</th>
+                          <th>{t('ช่วงเวลา', 'Hours')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.rows.map((row, ri) => {
+                          const dayLabel = DAY_LABELS[row.day] || { th: row.day, en: row.day }
+                          return (
+                            <tr key={ri}>
+                              <td><strong>{t(`${dayLabel.th} (${dayLabel.en})`, dayLabel.en)}</strong></td>
+                              <td>
+                                {row.hours}
+                                {row.locationNameTh && (
+                                  <div className="branch-subtext">{t(row.locationNameTh, row.locationNameEn)}</div>
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="schedule-table-card">
+                <table className="schedule-table" aria-labelledby="schedule-heading">
+                  <thead>
+                    <tr>
+                      <th>{t('วันออกตรวจ', 'Day')}</th>
+                      <th>{t('ช่วงเวลา', 'Hours')}</th>
+                      <th>{t('สาขา / สถานที่', 'Clinic Location')}</th>
                     </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {rich.schedule.map((row, i) => {
+                      const dayLabel = DAY_LABELS[row.day] || { th: row.day, en: row.day }
+                      return (
+                      <tr key={i}>
+                        <td><strong>{t(`${dayLabel.th} (${dayLabel.en})`, dayLabel.en)}</strong></td>
+                        <td>{row.hours}</td>
+                        <td>
+                          <strong>PHIVARA {doctor.branchEn}</strong>
+                          {row.locationNameTh && (
+                            <div className="branch-subtext">{t(row.locationNameTh, row.locationNameEn)}</div>
+                          )}
+                        </td>
+                      </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             <div className="section-actions">
               <a href="#contact" className="btn btn-gold vip-trigger" data-doc-name={doctor.nameTh}>
@@ -419,8 +494,16 @@ export default async function DoctorDetailPage({
 
               <div className="form-field">
                 <label className="form-label" htmlFor="appointmentBranch">{t('เลือกสาขาที่สะดวกเข้ารับบริการ', 'Preferred Branch')}</label>
+                {/* Multi-branch CR: only list branches THIS doctor actually
+                    practices at (doctor.ownBranches, Doctors.branches) — a
+                    visitor should never be able to request an appointment
+                    at a branch the doctor doesn't work at. Falls back to
+                    the single branchSlug/branchEn pair for any doctor not
+                    yet backfilled. */}
                 <select className="form-control" id="appointmentBranch" name="branch" defaultValue={doctor.branchSlug}>
-                  <option value={doctor.branchSlug}>PHIVARA {doctor.branchEn}</option>
+                  {(doctor.ownBranches.length ? doctor.ownBranches : [{ slug: doctor.branchSlug, th: doctor.branchTh, en: doctor.branchEn }]).map((b) => (
+                    <option key={b.slug || b.th} value={b.slug}>PHIVARA {t(b.th, b.en)}</option>
+                  ))}
                 </select>
               </div>
 

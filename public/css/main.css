@@ -1371,6 +1371,53 @@
     padding: 80px 0;
     background: var(--cream-card);
   }
+  /* Multi-branch schedule tabs (Doctor CR) — matches the
+     .doctor-profile-expand .branch-profile-pill pattern on /doctor
+     (pale-gold pill, inverts to solid gold on hover/active) so a doctor's
+     branch picker looks the same everywhere it appears on the site.
+     Approved design: phivara-design-html/doctor_detail-multibranch.html */
+  .schedule-branch-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 36px;
+    margin-bottom: 0;
+  }
+  .schedule-branch-tabs button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: normal;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 30px;
+    background: var(--gold-pale);
+    color: var(--terracotta, var(--gold));
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+  }
+  .schedule-branch-tabs button svg {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .schedule-branch-tabs button:hover,
+  .schedule-branch-tabs button.active {
+    background: var(--gold);
+    color: #fff;
+  }
+  .schedule-branch-panel[hidden] {
+    display: none;
+  }
   .schedule-table-card {
     background: #FFFFFF;
     border: 1px solid rgba(184,149,96,0.25);

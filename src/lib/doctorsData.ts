@@ -25,6 +25,15 @@ export interface DoctorCard {
   // site, instead of whatever order the doctor records themselves happen
   // to sort in (see that function's comment).
   branchDisplayOrder: number
+  // This record's OWN branches — sourced from the new Doctors.branches
+  // (hasMany) field (multi-branch CR), falling back to a single entry from
+  // the legacy `branch` field for any doctor not yet backfilled. Every
+  // entry's recordSlug is THIS record's own slug (one shared profile
+  // across every branch it lists) — contrast with groupDoctorsByName()'s
+  // DoctorCardGroup.branches below, whose entries can carry DIFFERENT
+  // recordSlugs when the same doctor still exists as several separate,
+  // not-yet-merged records.
+  ownBranches: DoctorCardBranch[]
   specialty: string
   nameTh: string
   nameEn: string
@@ -70,7 +79,20 @@ export interface DoctorRichProfile {
     headingEn: string
     items: Array<{ th: string; en: string }>
   }>
+  // (เดิม) flat schedule — kept for any doctor not yet backfilled onto
+  // scheduleByBranch below (cms/scripts/backfillDoctorBranches.ts).
   schedule: Array<{ day: string; hours: string; locationNameTh: string; locationNameEn: string }>
+  // Multi-branch CR: the same doctor's schedule, split per branch they
+  // practice at (Doctors.scheduleByBranch) — drives the branch-tab picker
+  // above the schedule table on the profile page. Empty for any doctor not
+  // yet backfilled; the page falls back to the flat `schedule` above (one
+  // implied branch: doctor.branchTh/branchEn) in that case.
+  scheduleByBranch: Array<{
+    branchSlug: string
+    branchTh: string
+    branchEn: string
+    rows: Array<{ day: string; hours: string; locationNameTh: string; locationNameEn: string }>
+  }>
   contactIntroTh: string
   contactIntroEn: string
   contactFactTh: string
@@ -112,6 +134,25 @@ function formatEnDate(dateString: string): string {
 
 function mapDoctorCard(doc: any): DoctorCard {
   const branch = doc.branch && typeof doc.branch === 'object' ? doc.branch : null
+  // Multi-branch CR: prefer the new hasMany `branches` field (every branch
+  // this ONE record practices at, sharing this record's own slug) — falls
+  // back to the legacy single `branch` for any doctor not yet backfilled
+  // (cms/scripts/backfillDoctorBranches.ts) so nothing goes blank mid-
+  // migration. `mainBranch` (falling back to the first listed branch, then
+  // the legacy `branch`) decides the card's single "home" branch — used for
+  // branchSlug/branchTh/branchEn below, same fields featured-card logic
+  // elsewhere on the site already keys off.
+  const rawBranches: any[] = Array.isArray(doc.branches) ? doc.branches : []
+  const ownBranches: DoctorCardBranch[] = (rawBranches.length ? rawBranches : branch ? [branch] : [])
+    .filter((b) => b && typeof b === 'object')
+    .map((b: any) => ({
+      slug: b.slug || '',
+      th: b.name || '',
+      en: b.name || '',
+      recordSlug: doc.slug,
+      displayOrder: typeof b.displayOrder === 'number' ? b.displayOrder : 0,
+    }))
+  const mainBranch = doc.mainBranch && typeof doc.mainBranch === 'object' ? doc.mainBranch : (rawBranches[0] as any) || branch
   const name = doc.name
   const note = doc.specialtyLabel || ''
   const sub = doc.subNote || ''
@@ -122,10 +163,11 @@ function mapDoctorCard(doc: any): DoctorCard {
     id: doc.id,
     slug: doc.slug,
     image,
-    branchSlug: branch?.slug || '',
-    branchTh: branch?.name || '',
-    branchEn: branch?.name || '',
-    branchDisplayOrder: typeof branch?.displayOrder === 'number' ? branch.displayOrder : 0,
+    branchSlug: mainBranch?.slug || '',
+    branchTh: mainBranch?.name || '',
+    branchEn: mainBranch?.name || '',
+    branchDisplayOrder: typeof mainBranch?.displayOrder === 'number' ? mainBranch.displayOrder : 0,
+    ownBranches,
     specialty: doc.specialty || '',
     nameTh: name,
     nameEn: name,
@@ -211,37 +253,40 @@ export interface DoctorCardGroup extends DoctorCard {
 // becomes its own 1-branch "group" so the caller's rendering code (which
 // always checks `branches.length > 1`) naturally falls back to one card
 // per branch, same as before this feature existed.
+// Fallback single-entry branch list for a card whose own `ownBranches` came
+// back empty (shouldn't normally happen post-backfill, but keeps a doctor
+// from rendering with zero branches if it ever does).
+function fallbackBranch(card: DoctorCard): DoctorCardBranch {
+  return {
+    slug: card.branchSlug,
+    th: card.branchTh,
+    en: card.branchEn,
+    recordSlug: card.slug,
+    displayOrder: card.branchDisplayOrder,
+  }
+}
+
 export function groupDoctorsByName(cards: DoctorCard[], enabled = true): DoctorCardGroup[] {
   if (!enabled) {
     return cards.map((card) => ({
       ...card,
-      branches: [
-        {
-          slug: card.branchSlug,
-          th: card.branchTh,
-          en: card.branchEn,
-          recordSlug: card.slug,
-          displayOrder: card.branchDisplayOrder,
-        },
-      ],
+      branches: card.ownBranches.length ? card.ownBranches : [fallbackBranch(card)],
     }))
   }
   const order: string[] = []
   const groups = new Map<string, DoctorCardGroup>()
   for (const card of cards) {
     const key = card.nameTh.trim() || String(card.id)
-    const branch: DoctorCardBranch = {
-      slug: card.branchSlug,
-      th: card.branchTh,
-      en: card.branchEn,
-      recordSlug: card.slug,
-      displayOrder: card.branchDisplayOrder,
-    }
+    // A single record can itself list several branches now (multi-branch
+    // CR, Doctors.branches) — spread all of THIS record's own branches in,
+    // not just one, so a fully-merged doctor's 3 branches show up as 3
+    // pills from a single grouped card instead of only the first.
+    const ownBranches = card.ownBranches.length ? card.ownBranches : [fallbackBranch(card)]
     const existing = groups.get(key)
     if (existing) {
-      existing.branches.push(branch)
+      existing.branches.push(...ownBranches)
     } else {
-      groups.set(key, { ...card, branches: [branch] })
+      groups.set(key, { ...card, branches: [...ownBranches] })
       order.push(key)
     }
   }
@@ -286,7 +331,12 @@ export async function getDoctorDetail(slug: string, locale: LocaleCode): Promise
   if (!doc || !hasLocaleContent(doc.name)) return null
   const card = mapDoctorCard(doc)
 
-  const hasRich = Boolean(doc.bio || (doc.credentialGroups && doc.credentialGroups.length) || (doc.schedule && doc.schedule.length))
+  const hasRich = Boolean(
+    doc.bio ||
+      (doc.credentialGroups && doc.credentialGroups.length) ||
+      (doc.schedule && doc.schedule.length) ||
+      (doc.scheduleByBranch && doc.scheduleByBranch.length),
+  )
   const rich: DoctorRichProfile | null = hasRich
     ? {
         hospitalTitleTh: doc.hospitalTitle || '',
@@ -313,6 +363,20 @@ export async function getDoctorDetail(slug: string, locale: LocaleCode): Promise
           locationNameTh: row.locationName || '',
           locationNameEn: row.locationName || '',
         })),
+        scheduleByBranch: (doc.scheduleByBranch || []).map((group: any) => {
+          const b = group.branch && typeof group.branch === 'object' ? group.branch : null
+          return {
+            branchSlug: b?.slug || '',
+            branchTh: b?.name || '',
+            branchEn: b?.name || '',
+            rows: (group.rows || []).map((row: any) => ({
+              day: row.day,
+              hours: row.hours,
+              locationNameTh: row.locationName || '',
+              locationNameEn: row.locationName || '',
+            })),
+          }
+        }),
         contactIntroTh: doc.contactIntro || '',
         contactIntroEn: doc.contactIntro || '',
         contactFactTh: doc.contactFact || '',
