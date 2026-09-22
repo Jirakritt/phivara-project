@@ -227,7 +227,12 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
                     <h3><a className="card-title-link" href={localizedHref(locale, `/program/${program.slug}`)}>{t(program.titleTh, program.titleEn)}</a></h3>
                     <p>{t(program.shortDescriptionTh, program.shortDescriptionEn)}</p>
                     <div className="card-foot">
-                      <span>{program.price.toLocaleString('en-US')}</span>
+                      <span>
+                        {program.priceVariants.length > 0 && (
+                          <small className="card-price-from">{t('เริ่มต้น ', 'From ')}</small>
+                        )}
+                        {program.price.toLocaleString('en-US')}
+                      </span>
                       <a className="card-link" href={localizedHref(locale, `/program/${program.slug}`)}>{t('รายละเอียด →', 'Details →')}</a>
                     </div>
                   </div>

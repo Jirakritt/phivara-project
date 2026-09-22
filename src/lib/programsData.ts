@@ -75,6 +75,14 @@ export interface ProgramCard {
   // silently had no effect on the live site (bug report 2026-09-09).
   validityNoteTh?: string
   validityNoteEn?: string
+  // Optional unit/price options (e.g. "50 units" vs "100 units" of the same
+  // program) — see cms/collections/Programs.ts's `priceVariants` field
+  // comment. Empty for the vast majority of programs, which just use the
+  // single `price` above unchanged. `price` itself is expected to equal the
+  // lowest variant's price when this is filled in, so every "starting
+  // from"/FROM price display (highlight carousel, catalog card) keeps
+  // working without needing to know about variants at all.
+  priceVariants: Array<{ labelTh: string; labelEn: string; price: number }>
 }
 
 export interface ProgramCheckupItem {
@@ -145,6 +153,11 @@ function mapProgramCard(doc: any, locale: LocaleCode): ProgramCard {
     searchKeywords: doc.searchKeywords || '',
     validityNoteTh: doc.validityNote || undefined,
     validityNoteEn: doc.validityNote || undefined,
+    priceVariants: (doc.priceVariants || []).map((v: any) => ({
+      labelTh: v.label || '',
+      labelEn: v.label || '',
+      price: v.price,
+    })),
   }
 }
 

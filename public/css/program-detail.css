@@ -26,6 +26,13 @@
     .detail-copy .eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:11px;letter-spacing:.2em;font-weight:600}
     .detail-copy .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold)}
     .detail-copy h1{margin:17px 0 18px;font-size:clamp(36px,4.4vw,58px);line-height:1.27;font-weight:400;letter-spacing:-.025em}
+    /* Multi-unit programs only (cms/collections/Programs.ts's priceVariants)
+       — same pill pattern as the doctor detail page's per-branch schedule
+       tabs (public/css/main.css's .schedule-branch-tabs). */
+    .program-variant-select{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
+    .program-variant-select .variant-pill{display:inline-flex;align-items:center;font-family:var(--sans);font-size:12.5px;font-weight:500;padding:8px 18px;border:1px solid var(--gold-line);border-radius:30px;background:#fff;color:var(--olive-dark);cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease}
+    .program-variant-select .variant-pill:hover{border-color:var(--gold)}
+    .program-variant-select .variant-pill.active{border-color:var(--gold);background:var(--gold);color:#fff}
     .detail-meta{display:grid;grid-template-columns:repeat(3,1fr);margin:28px 0 30px;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
     .detail-meta>div{display:block;padding:18px 14px 18px 0}
     .detail-meta div+div{padding-left:18px;border-left:1px solid var(--gold-line)}

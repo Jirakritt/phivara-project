@@ -76,6 +76,10 @@ export default async function ProgramDetailPage({
   const maleItems = program.checkupItems.filter((item) => item.group === 'male')
   const femaleItems = program.checkupItems.filter((item) => item.group === 'female')
   const allItems = program.checkupItems.filter((item) => item.group === 'all')
+  // Multi-unit programs (e.g. Botox 50 vs 100 units): pill 0 is shown
+  // selected on first render, so the server-rendered price matches it
+  // rather than always trusting `program.price` to be the lowest option.
+  const initialVisualPrice = program.priceVariants[0]?.price ?? program.price
 
   return (
     <>
@@ -109,15 +113,31 @@ export default async function ProgramDetailPage({
           <div className="wrap detail-hero-grid">
             <div className="detail-visual">
               <img src={program.heroImage} alt={program.titleTh} />
-              <div className="visual-price-tag" aria-label={t(`ราคาแพ็กเกจ ${program.price.toLocaleString('en-US')} บาท`, `Package price ${program.price.toLocaleString('en-US')} THB`)}>
+              <div className="visual-price-tag" id="programPriceTag" aria-label={t(`ราคาแพ็กเกจ ${initialVisualPrice.toLocaleString('en-US')} บาท`, `Package price ${initialVisualPrice.toLocaleString('en-US')} THB`)}>
                 <small className="phivara-type-size-override">PACKAGE PRICE</small>
-                <strong className="phivara-type-size-override">{program.price.toLocaleString('en-US')}</strong>
+                <strong className="phivara-type-size-override" id="programPriceValue">{initialVisualPrice.toLocaleString('en-US')}</strong>
                 <span>{t('บาท', 'THB')}</span>
               </div>
             </div>
             <div className="detail-copy">
               <span className="eyebrow">{program.code}</span>
               <h1>{t(program.titleTh, program.titleEn)}</h1>
+              {program.priceVariants.length > 0 && (
+                <div className="program-variant-select" id="programVariantSelect" role="tablist" aria-label={t('เลือกจำนวนยูนิต', 'Select an option')}>
+                  {program.priceVariants.map((variant, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`variant-pill${i === 0 ? ' active' : ''}`}
+                      role="tab"
+                      aria-selected={i === 0}
+                      data-variant-price={variant.price}
+                    >
+                      {t(variant.labelTh, variant.labelEn)}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="detail-meta">
                 <div>
                   <span className="meta-copy">
@@ -319,6 +339,7 @@ export default async function ProgramDetailPage({
 
       <Script src="/js/site-runtime.js" strategy="afterInteractive" />
       <Script src="/js/vip-modal.js" strategy="afterInteractive" />
+      <Script src="/js/program-detail.js" strategy="afterInteractive" />
     </>
   )
 }
