@@ -123,19 +123,33 @@ export default async function ProgramDetailPage({
               <span className="eyebrow">{program.code}</span>
               <h1>{t(program.titleTh, program.titleEn)}</h1>
               {program.priceVariants.length > 0 && (
-                <div className="program-variant-select" id="programVariantSelect" role="tablist" aria-label={t('เลือกจำนวนยูนิต', 'Select an option')}>
-                  {program.priceVariants.map((variant, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={`variant-pill${i === 0 ? ' active' : ''}`}
-                      role="tab"
-                      aria-selected={i === 0}
-                      data-variant-price={variant.price}
-                    >
-                      {t(variant.labelTh, variant.labelEn)}
-                    </button>
-                  ))}
+                // Deliberately its own bordered card, not just a row of pills
+                // near the title — an earlier version placed the pills there
+                // with only the price tag floating over the hero image
+                // reacting to clicks, and that connection was easy to miss.
+                // Showing the price change right next to the button the
+                // visitor just clicked makes the cause/effect obvious.
+                <div className="program-variant-card" id="programVariantCard">
+                  <span className="program-variant-card__label">{t('เลือกแพ็กเกจ', 'Select a package')}</span>
+                  <div className="program-variant-select" id="programVariantSelect" role="tablist" aria-label={t('เลือกแพ็กเกจ', 'Select a package')}>
+                    {program.priceVariants.map((variant, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`variant-pill${i === 0 ? ' active' : ''}`}
+                        role="tab"
+                        aria-selected={i === 0}
+                        data-variant-price={variant.price}
+                      >
+                        {t(variant.labelTh, variant.labelEn)}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="program-variant-card__price">
+                    <small>{t('ราคาแพ็กเกจ', 'Package price')}</small>
+                    <strong id="programVariantPriceValue">{initialVisualPrice.toLocaleString('en-US')}</strong>
+                    <span>{t('บาท', 'THB')}</span>
+                  </div>
                 </div>
               )}
               <div className="detail-meta">

@@ -551,9 +551,25 @@ export interface Program {
   category: 'plastic' | 'dermatology' | 'longevity' | 'wellness';
   title: string;
   /**
-   * THB
+   * THB. If "Price options" below is filled in, set this to the LOWEST option's price — it drives the "starting from" price shown on the catalog card and highlight carousel.
    */
   price: number;
+  /**
+   * Optional. Use this instead of duplicating the whole program when the only real difference is unit count/price (e.g. "50 units" vs "100 units" of the same Botox program) — fill in the shared content once above/below, add one row per option here, and the detail page shows a selector. Leave empty for a normal single-price program.
+   */
+  priceVariants?:
+    | {
+        /**
+         * e.g. "100 ยูนิต" / "100 units"
+         */
+        label: string;
+        /**
+         * THB
+         */
+        price: number;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Show in the /program highlight carousel (program.html originally hardcoded pv01, pv02, pv03, pv06 here)
    */
@@ -1335,6 +1351,13 @@ export interface ProgramsSelect<T extends boolean = true> {
   category?: T;
   title?: T;
   price?: T;
+  priceVariants?:
+    | T
+    | {
+        label?: T;
+        price?: T;
+        id?: T;
+      };
   featured?: T;
   branch?: T;
   validityNote?: T;

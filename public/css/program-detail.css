@@ -27,12 +27,21 @@
     .detail-copy .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold)}
     .detail-copy h1{margin:17px 0 18px;font-size:clamp(36px,4.4vw,58px);line-height:1.27;font-weight:400;letter-spacing:-.025em}
     /* Multi-unit programs only (cms/collections/Programs.ts's priceVariants)
-       — same pill pattern as the doctor detail page's per-branch schedule
-       tabs (public/css/main.css's .schedule-branch-tabs). */
-    .program-variant-select{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
-    .program-variant-select .variant-pill{display:inline-flex;align-items:center;font-family:var(--sans);font-size:12.5px;font-weight:500;padding:8px 18px;border:1px solid var(--gold-line);border-radius:30px;background:#fff;color:var(--olive-dark);cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease}
-    .program-variant-select .variant-pill:hover{border-color:var(--gold)}
-    .program-variant-select .variant-pill.active{border-color:var(--gold);background:var(--gold);color:#fff}
+       — its own card, not just a row of pills, so the price reacting to a
+       click is obvious right next to the button instead of only changing
+       far away on the hero image's floating price tag. Colors are tuned
+       for the dark hero background below (2026 Medical Editorial Redesign),
+       not the light-theme base this file starts from. */
+    .program-variant-card{margin:0 0 26px;padding:18px 22px;border:1px solid rgba(230,211,170,.28);border-radius:10px;background:rgba(255,255,255,.05)}
+    .program-variant-card__label{display:block;margin-bottom:12px;color:var(--gold-light);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+    .program-variant-select{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+    .variant-pill{display:inline-flex;align-items:center;font-family:var(--sans);font-size:12.5px;font-weight:500;padding:8px 18px;border:1px solid rgba(230,211,170,.4);border-radius:30px;background:rgba(255,255,255,.06);color:#fff;cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease}
+    .variant-pill:hover{border-color:var(--gold-light)}
+    .variant-pill.active{border-color:var(--gold);background:var(--gold);color:#241f14}
+    .program-variant-card__price{display:flex;align-items:baseline;gap:8px;padding-top:14px;border-top:1px solid rgba(230,211,170,.18)}
+    .program-variant-card__price small{color:rgba(230,211,170,.8);font-size:11px;letter-spacing:.1em}
+    .program-variant-card__price strong{color:#fff;font-family:var(--serif-en);font-size:26px;font-weight:500}
+    .program-variant-card__price span{color:rgba(230,211,170,.8);font-size:13px;font-weight:500}
     .detail-meta{display:grid;grid-template-columns:repeat(3,1fr);margin:28px 0 30px;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
     .detail-meta>div{display:block;padding:18px 14px 18px 0}
     .detail-meta div+div{padding-left:18px;border-left:1px solid var(--gold-line)}

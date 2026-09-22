@@ -9,9 +9,14 @@
 (() => {
   function initProgramVariantSelect() {
     const wrap = document.getElementById('programVariantSelect');
-    const priceEl = document.getElementById('programPriceValue');
+    // Two price displays share one selector: the hero image's floating
+    // price tag, and the readout inside the variant card itself (right next
+    // to the buttons — see the JSX comment in [slug]/page.tsx for why both
+    // exist). Keep them in lockstep on every click.
+    const heroPriceEl = document.getElementById('programPriceValue');
+    const cardPriceEl = document.getElementById('programVariantPriceValue');
     const priceTag = document.getElementById('programPriceTag');
-    if (!wrap || !priceEl) return;
+    if (!wrap || (!heroPriceEl && !cardPriceEl)) return;
     const buttons = Array.from(wrap.querySelectorAll('button[data-variant-price]'));
     if (!buttons.length) return;
 
@@ -25,7 +30,8 @@
       });
       const price = Number(button.dataset.variantPrice || 0);
       const formatted = price.toLocaleString('en-US');
-      priceEl.textContent = formatted;
+      if (heroPriceEl) heroPriceEl.textContent = formatted;
+      if (cardPriceEl) cardPriceEl.textContent = formatted;
       if (priceTag) {
         const unit = document.documentElement.lang && document.documentElement.lang.startsWith('en') ? 'THB' : 'บาท';
         priceTag.setAttribute('aria-label', `${formatted} ${unit}`);
