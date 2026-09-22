@@ -211,12 +211,7 @@ export default async function ProgramDetailPage({
               <div className="variant-picker-intro">
                 <span className="section-label">CHOOSE YOUR PACKAGE</span>
                 <h2>{t('เลือกแพ็กเกจของคุณ', 'Choose Your Package')}</h2>
-                <p>
-                  {t(
-                    'เลือกตัวเลือกที่เหมาะกับความต้องการของคุณ แต่ละแพ็กเกจแสดงราคาไว้ให้เปรียบเทียบชัดเจน',
-                    'Pick the option that fits you best — each package shows its price right on the card.',
-                  )}
-                </p>
+                <p>{t('เลือกตัวเลือกที่เหมาะกับความต้องการของคุณ', 'Pick the option that fits you best.')}</p>
               </div>
               <div className="variant-picker-grid" id="programVariantSelect" role="radiogroup" aria-label={t('เลือกแพ็กเกจ', 'Choose a package')}>
                 {program.priceVariants.map((variant, i) => (
