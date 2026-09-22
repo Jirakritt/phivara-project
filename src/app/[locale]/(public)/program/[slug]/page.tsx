@@ -213,8 +213,8 @@ export default async function ProgramDetailPage({
                 <h2>{t('เลือกแพ็กเกจของคุณ', 'Choose Your Package')}</h2>
                 <p>
                   {t(
-                    'เลือกตัวเลือกที่เหมาะกับความต้องการของคุณ ราคาด้านล่างจะปรับตามแพ็กเกจที่เลือกโดยอัตโนมัติ',
-                    'Pick the option that fits you best — the price below updates automatically.',
+                    'เลือกตัวเลือกที่เหมาะกับความต้องการของคุณ แต่ละแพ็กเกจแสดงราคาไว้ให้เปรียบเทียบชัดเจน',
+                    'Pick the option that fits you best — each package shows its price right on the card.',
                   )}
                 </p>
               </div>
