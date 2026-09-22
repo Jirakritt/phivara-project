@@ -122,36 +122,6 @@ export default async function ProgramDetailPage({
             <div className="detail-copy">
               <span className="eyebrow">{program.code}</span>
               <h1>{t(program.titleTh, program.titleEn)}</h1>
-              {program.priceVariants.length > 0 && (
-                // Deliberately its own bordered card, not just a row of pills
-                // near the title — an earlier version placed the pills there
-                // with only the price tag floating over the hero image
-                // reacting to clicks, and that connection was easy to miss.
-                // Showing the price change right next to the button the
-                // visitor just clicked makes the cause/effect obvious.
-                <div className="program-variant-card" id="programVariantCard">
-                  <span className="program-variant-card__label">{t('เลือกแพ็กเกจ', 'Select a package')}</span>
-                  <div className="program-variant-select" id="programVariantSelect" role="tablist" aria-label={t('เลือกแพ็กเกจ', 'Select a package')}>
-                    {program.priceVariants.map((variant, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        className={`variant-pill${i === 0 ? ' active' : ''}`}
-                        role="tab"
-                        aria-selected={i === 0}
-                        data-variant-price={variant.price}
-                      >
-                        {t(variant.labelTh, variant.labelEn)}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="program-variant-card__price">
-                    <small>{t('ราคาแพ็กเกจ', 'Package price')}</small>
-                    <strong id="programVariantPriceValue">{initialVisualPrice.toLocaleString('en-US')}</strong>
-                    <span>{t('บาท', 'THB')}</span>
-                  </div>
-                </div>
-              )}
               <div className="detail-meta">
                 <div>
                   <span className="meta-copy">
@@ -226,6 +196,53 @@ export default async function ProgramDetailPage({
             </div>
           </div>
         </section>
+
+        {program.priceVariants.length > 0 && (
+          // Multi-unit programs only (cms/collections/Programs.ts's
+          // priceVariants) — its own full section rather than a small
+          // widget tucked into the hero, so it reads clearly for visitors
+          // of any age: bigger touch targets, an explicit "choose one"
+          // framing, and the selected price restated in plain text right
+          // next to a booking button. Placed right after "About this
+          // program" (visitors now understand what they're buying) and
+          // before the checkup list, which is the natural decision point.
+          <section className="program-variant-picker" id="choosePackage">
+            <div className="wrap">
+              <div className="variant-picker-intro">
+                <span className="section-label">CHOOSE YOUR PACKAGE</span>
+                <h2>{t('เลือกแพ็กเกจของคุณ', 'Choose Your Package')}</h2>
+                <p>
+                  {t(
+                    'เลือกตัวเลือกที่เหมาะกับความต้องการของคุณ ราคาด้านล่างจะปรับตามแพ็กเกจที่เลือกโดยอัตโนมัติ',
+                    'Pick the option that fits you best — the price below updates automatically.',
+                  )}
+                </p>
+              </div>
+              <div className="variant-picker-grid" id="programVariantSelect" role="radiogroup" aria-label={t('เลือกแพ็กเกจ', 'Choose a package')}>
+                {program.priceVariants.map((variant, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`variant-option${i === 0 ? ' active' : ''}`}
+                    role="radio"
+                    aria-checked={i === 0}
+                    data-variant-price={variant.price}
+                  >
+                    <span className="variant-option__radio" aria-hidden="true"></span>
+                    <span className="variant-option__label">{t(variant.labelTh, variant.labelEn)}</span>
+                    <span className="variant-option__price">
+                      <strong>{variant.price.toLocaleString('en-US')}</strong>
+                      <small>{t('บาท', 'THB')}</small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div className="variant-picker-summary">
+                <button className="detail-btn booking-trigger" data-program={program.titleTh}>{t('นัดหมายปรึกษาโปรแกรม', 'Book a Consultation')} <span>→</span></button>
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="detail-includes">
           <div className="wrap includes-grid">

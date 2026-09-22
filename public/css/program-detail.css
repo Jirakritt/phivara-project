@@ -26,22 +26,6 @@
     .detail-copy .eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:11px;letter-spacing:.2em;font-weight:600}
     .detail-copy .eyebrow::before{content:"";width:28px;height:1px;background:var(--gold)}
     .detail-copy h1{margin:17px 0 18px;font-size:clamp(36px,4.4vw,58px);line-height:1.27;font-weight:400;letter-spacing:-.025em}
-    /* Multi-unit programs only (cms/collections/Programs.ts's priceVariants)
-       — its own card, not just a row of pills, so the price reacting to a
-       click is obvious right next to the button instead of only changing
-       far away on the hero image's floating price tag. Colors are tuned
-       for the dark hero background below (2026 Medical Editorial Redesign),
-       not the light-theme base this file starts from. */
-    .program-variant-card{margin:0 0 26px;padding:18px 22px;border:1px solid rgba(230,211,170,.28);border-radius:10px;background:rgba(255,255,255,.05)}
-    .program-variant-card__label{display:block;margin-bottom:12px;color:var(--gold-light);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
-    .program-variant-select{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}
-    .variant-pill{display:inline-flex;align-items:center;font-family:var(--sans);font-size:12.5px;font-weight:500;padding:8px 18px;border:1px solid rgba(230,211,170,.4);border-radius:30px;background:rgba(255,255,255,.06);color:#fff;cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease}
-    .variant-pill:hover{border-color:var(--gold-light)}
-    .variant-pill.active{border-color:var(--gold);background:var(--gold);color:#241f14}
-    .program-variant-card__price{display:flex;align-items:baseline;gap:8px;padding-top:14px;border-top:1px solid rgba(230,211,170,.18)}
-    .program-variant-card__price small{color:rgba(230,211,170,.8);font-size:11px;letter-spacing:.1em}
-    .program-variant-card__price strong{color:#fff;font-family:var(--serif-en);font-size:26px;font-weight:500}
-    .program-variant-card__price span{color:rgba(230,211,170,.8);font-size:13px;font-weight:500}
     .detail-meta{display:grid;grid-template-columns:repeat(3,1fr);margin:28px 0 30px;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
     .detail-meta>div{display:block;padding:18px 14px 18px 0}
     .detail-meta div+div{padding-left:18px;border-left:1px solid var(--gold-line)}
@@ -65,6 +49,32 @@
     .benefit-card h3{margin:15px 0 8px;font-size:17px;font-weight:500}
     .benefit-card p{color:var(--ink-soft);font-size:13px}
     .audience-detail{grid-column:1/-1;padding:28px;border:1px solid var(--gold-line);background:linear-gradient(145deg,#fff,var(--detail-card));color:var(--ink-soft)}
+    /* Multi-unit programs only (cms/collections/Programs.ts's priceVariants)
+       — its own full section between "About this program" and the checkup
+       list, not a small widget in the hero. An earlier version tucked the
+       selector into a compact hero card; on a page visited by people of
+       very different ages, that was too easy to miss and didn't make it
+       obvious that the price was even something you could change. This
+       version gives each option a full-width, individually clickable card
+       plus a plain-language "selected package price" readout next to the
+       booking button. */
+    .program-variant-picker{padding:70px 0;background:#fff;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
+    .variant-picker-intro{max-width:620px;margin:0 auto 42px;text-align:center}
+    .variant-picker-intro h2{margin:12px 0 12px;font-size:clamp(28px,3.4vw,40px);font-weight:400}
+    .variant-picker-intro p{color:var(--ink-soft);font-size:14px;line-height:1.8}
+    .variant-picker-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;max-width:780px;margin:0 auto}
+    .variant-option{display:flex;align-items:center;gap:16px;padding:24px 26px;border:1.5px solid var(--gold-line);border-radius:var(--radius-card);background:#fff;cursor:pointer;text-align:left;transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
+    .variant-option:hover{border-color:var(--gold)}
+    .variant-option.active{border-color:var(--gold);background:linear-gradient(135deg,#fffaf0,#fff);box-shadow:0 16px 38px rgba(184,149,96,.18)}
+    .variant-option__radio{flex:0 0 22px;width:22px;height:22px;border-radius:50%;border:2px solid var(--gold-line);position:relative;transition:border-color .25s ease}
+    .variant-option.active .variant-option__radio{border-color:var(--gold)}
+    .variant-option.active .variant-option__radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--gold)}
+    .variant-option__label{flex:1;font-family:var(--sans);font-size:15.5px;font-weight:500;color:var(--ink)}
+    .variant-option__price{display:flex;align-items:baseline;gap:4px;color:var(--terracotta)}
+    .variant-option__price strong{font-family:var(--serif-en);font-size:21px;font-weight:600}
+    .variant-option__price small{font-size:11px;color:var(--ink-soft)}
+    .variant-picker-summary{display:flex;justify-content:center;max-width:780px;margin:36px auto 0;padding-top:32px;border-top:1px solid var(--gold-line)}
+    @media(max-width:700px){.program-variant-picker{padding:48px 0}.variant-picker-grid{grid-template-columns:1fr}}
     .detail-includes{padding:86px 0;background:linear-gradient(135deg,#30372b,#454c3b);color:#fff}
     .includes-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:80px}
     .includes-copy h2{margin:12px 0 17px;color:#fff;font-size:clamp(31px,3.6vw,44px);font-weight:400}
