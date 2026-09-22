@@ -164,48 +164,15 @@ export default async function ProgramDetailPage({
           </div>
         </section>
 
-        <section className="detail-overview" id="overview">
-          <div className="wrap overview-grid">
-            <div className="overview-intro">
-              <span className="section-label">PACKAGE DETAILS</span>
-              <h2>{t('รายละเอียดโปรแกรมตรวจ', 'Program details')}</h2>
-            </div>
-            <div className="benefit-list" id="audienceContent">
-              <div className="program-description">
-                <h3>{t('เกี่ยวกับโปรแกรมตรวจ', 'About This Program')}</h3>
-                <p>{t(program.aboutProgramTh, program.aboutProgramEn)}</p>
-              </div>
-              <div className="program-card-grid">
-                <article className="program-audience-card">
-                  <h3>{t('ตรวจเพื่ออะไร', 'Purpose of This Checkup')}</h3>
-                  <ul className="diamond-list">
-                    {program.purposeList.map((item, i) => (
-                      <li key={i}>{t(item.th, item.en)}</li>
-                    ))}
-                  </ul>
-                </article>
-                <article className="program-audience-card">
-                  <h3>{t('เหมาะกับใคร', 'Who It’s For')}</h3>
-                  <ul className="diamond-list">
-                    {program.audienceList.map((item, i) => (
-                      <li key={i}>{t(item.th, item.en)}</li>
-                    ))}
-                  </ul>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {program.priceVariants.length > 0 && (
           // Multi-unit programs only (cms/collections/Programs.ts's
           // priceVariants) — its own full section rather than a small
           // widget tucked into the hero, so it reads clearly for visitors
           // of any age: bigger touch targets, an explicit "choose one"
           // framing, and the selected price restated in plain text right
-          // next to a booking button. Placed right after "About this
-          // program" (visitors now understand what they're buying) and
-          // before the checkup list, which is the natural decision point.
+          // next to a booking button. Placed right after the hero and
+          // before "About this program" per team decision — the visitor
+          // picks a package first, then reads what it includes.
           <section className="program-variant-picker" id="choosePackage">
             <div className="wrap">
               <div className="variant-picker-intro">
@@ -238,6 +205,39 @@ export default async function ProgramDetailPage({
             </div>
           </section>
         )}
+
+        <section className="detail-overview" id="overview">
+          <div className="wrap overview-grid">
+            <div className="overview-intro">
+              <span className="section-label">PACKAGE DETAILS</span>
+              <h2>{t('รายละเอียดโปรแกรมตรวจ', 'Program details')}</h2>
+            </div>
+            <div className="benefit-list" id="audienceContent">
+              <div className="program-description">
+                <h3>{t('เกี่ยวกับโปรแกรมตรวจ', 'About This Program')}</h3>
+                <p>{t(program.aboutProgramTh, program.aboutProgramEn)}</p>
+              </div>
+              <div className="program-card-grid">
+                <article className="program-audience-card">
+                  <h3>{t('ตรวจเพื่ออะไร', 'Purpose of This Checkup')}</h3>
+                  <ul className="diamond-list">
+                    {program.purposeList.map((item, i) => (
+                      <li key={i}>{t(item.th, item.en)}</li>
+                    ))}
+                  </ul>
+                </article>
+                <article className="program-audience-card">
+                  <h3>{t('เหมาะกับใคร', 'Who It’s For')}</h3>
+                  <ul className="diamond-list">
+                    {program.audienceList.map((item, i) => (
+                      <li key={i}>{t(item.th, item.en)}</li>
+                    ))}
+                  </ul>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section className="detail-includes">
           <div className="wrap includes-grid">

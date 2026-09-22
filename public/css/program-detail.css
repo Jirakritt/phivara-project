@@ -59,14 +59,8 @@
        plus a plain-language "selected package price" readout next to the
        booking button. */
     .program-variant-picker{padding:70px 0;background:#fff;border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line)}
-    /* Box model + heading size for .variant-picker-intro deliberately come
-       from the shared ".detail-overview .overview-intro, .detail-includes
-       .includes-copy, .detail-process .process-heading" rule groups further
-       down this file (search "Compact unified information sections") —
-       .program-variant-picker .variant-picker-intro is added to each of
-       those selector lists so this section's title lines up with every
-       other section's left-aligned eyebrow/heading/divider instead of
-       drifting out of sync with them if either gets tweaked later. */
+    .variant-picker-intro{max-width:620px;margin:0 auto 42px;text-align:center}
+    .variant-picker-intro h2{margin:12px 0 12px;font-size:clamp(28px,3.4vw,40px);font-weight:400}
     .variant-picker-intro p{color:var(--ink-soft);font-size:14px;line-height:1.8}
     .variant-picker-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;max-width:780px;margin:0 auto}
     .variant-option{display:flex;align-items:center;gap:16px;padding:24px 26px;border:1.5px solid var(--gold-line);border-radius:var(--radius-card);background:#fff;cursor:pointer;text-align:left;transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
@@ -412,22 +406,19 @@
     main section section{padding:0}
     .detail-overview .overview-intro,
     .detail-includes .includes-copy,
-    .detail-process .process-heading,
-    .program-variant-picker .variant-picker-intro{
+    .detail-process .process-heading{
       display:block;
       max-width:none;
       margin:0 0 18px;
       padding:0 0 17px;
       border-bottom:1px solid var(--gold-line);
-      text-align:left;
     }
     .detail-overview .overview-intro .section-label,
     .detail-includes .includes-copy .section-label,
     .detail-process .process-heading .section-label{grid-area:label;align-self:start}
     .detail-overview .overview-intro h2,
     .detail-includes .includes-copy h2,
-    .detail-process .process-heading h2,
-    .program-variant-picker .variant-picker-intro h2{
+    .detail-process .process-heading h2{
       margin:6px 0 0;
       font-size:clamp(27px,2.7vw,35px);
       line-height:1.25;
@@ -615,16 +606,14 @@
       .detail-process{padding:32px 0}
       .detail-overview .overview-intro,
       .detail-includes .includes-copy,
-      .detail-process .process-heading,
-      .program-variant-picker .variant-picker-intro{
+      .detail-process .process-heading{
         display:block;
         margin-bottom:14px;
         padding-bottom:14px;
       }
       .detail-overview .overview-intro h2,
       .detail-includes .includes-copy h2,
-      .detail-process .process-heading h2,
-      .program-variant-picker .variant-picker-intro h2{margin:6px 0 0}
+      .detail-process .process-heading h2{margin:6px 0 0}
       .pv02-description .hormone-text{grid-template-columns:1fr}
       .gender-checkup-grid{grid-template-columns:1fr}
       .program-card-grid{grid-template-columns:1fr}
