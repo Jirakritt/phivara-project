@@ -537,17 +537,48 @@
 
     /* Sourced from Payload's `doctors` collection — see src/lib/homeData.ts. */
     const doctorProfiles = cmsData.doctors || [];
+    /* Admin-configurable multi-branch label style (DoctorDisplaySettings) —
+       see homeData.ts's HomeDoctorDisplay. Mirrors the exact same 3-way
+       branch-label logic src/app/[locale]/(public)/doctor/page.tsx uses, so
+       a doctor who practices at several branches renders identically here
+       and on /doctor (2026-09-23 consistency fix) instead of always
+       collapsing to one branch. */
+    const doctorDisplay = cmsData.doctorDisplay || { groupByBranch: true, multiBranchLabelStyle: 'list', branchLabelPosition: 'top' };
+    function branchPillSvg(){
+      return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+    }
+    function singleBranchLabel(th, en){
+      return `<span class="program-branch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span class="program-branch__text"><span class="program-branch__brand">PHIVARA</span><span class="program-branch__name" data-th="${th}" data-en="${en}">${th}</span></span>
+        </span>`;
+    }
+    function renderBranchLabel(profile){
+      const branches = Array.isArray(profile.branches) && profile.branches.length ? profile.branches : [{ th: profile.branchTh, en: profile.branchEn }];
+      const usePillsEverywhere = doctorDisplay.groupByBranch && doctorDisplay.multiBranchLabelStyle === 'pills';
+      if (usePillsEverywhere) {
+        // Style A — compact rounded badges, one per branch (just one pill
+        // for a single-branch doctor), same as .program-branch-multi on /doctor.
+        return `<div class="program-branch-multi">${branches.map((b) => `<span class="pill">${branchPillSvg()}${b.th}</span>`).join('')}</div>`;
+      }
+      if (branches.length > 1) {
+        // Style B (default) — each branch in the same icon+"PHIVARA"+name
+        // style as the single-branch label, stacked one per line.
+        return `<div class="program-branch-list">${branches.map((b) => singleBranchLabel(b.th, b.en)).join('')}</div>`;
+      }
+      return singleBranchLabel(branches[0].th, branches[0].en);
+    }
     function renderDoctorCard(profile){
       const profileHref = `/doctor/${profile.id}`;
+      const branchLabel = renderBranchLabel(profile);
+      const branchLabelAtTop = doctorDisplay.branchLabelPosition !== 'bottom';
       return `<div class="spec-card">
         <div class="photo-wrap"><a href="${profileHref}" aria-label="${profile.nameTh}"><img class="ph-photo" src="${profile.image}" alt="${profile.nameTh}"></a></div>
-        <div class="program-branch">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-          <span class="program-branch__text"><span class="program-branch__brand">PHIVARA</span><span class="program-branch__name" data-th="${profile.branchTh}" data-en="${profile.branchEn}">${profile.branchTh}</span></span>
-        </div>
+        ${branchLabelAtTop ? branchLabel : ''}
         <h3><a href="${profileHref}" data-th="${profile.nameTh}" data-en="${profile.nameEn}">${profile.nameTh}</a></h3>
         <p class="note" data-th="${profile.noteTh}" data-en="${profile.noteEn}">${profile.noteTh}</p>
         <div class="spec-subnote" data-th="${profile.subTh}" data-en="${profile.subEn}">${profile.subTh}</div>
+        ${branchLabelAtTop ? '' : branchLabel}
         <div class="card-actions">
           <a class="btn-doc-detail" href="${profileHref}">${mainStrings.viewProfile}</a>
           <a href="#contact" class="go vip-trigger" data-doc-name="${profile.nameTh}">${mainStrings.book}</a>

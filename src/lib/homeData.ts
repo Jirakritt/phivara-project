@@ -1,6 +1,13 @@
 import type { LocaleCode } from './i18n'
 import { DEFAULT_LOCALE } from './i18n'
 import { findLocalized, getPayloadClient, hasLocaleContent, mediaUrl } from './payload'
+// Reused so the homepage carousel groups/labels doctors exactly like
+// /doctor (getDoctorsListing + groupDoctorsByName merges same-name records
+// across branches; getDoctorGroupingSettings reads the admin's pill/list
+// choice) instead of the ad-hoc single-branch-only mapping this file used
+// to do — see the doctors block in getHomeData() below. doctorsData.ts
+// itself doesn't import from this file, so no circular dependency.
+import { getDoctorGroupingSettings, getDoctorsListing, groupDoctorsByName } from './doctorsData'
 
 // Same hardcoded last-resort safety net as programsData.ts's
 // CENTRAL_LINE_URL_FALLBACK — kept as a separate constant here (rather than
@@ -45,17 +52,45 @@ export interface HomeBranch {
   image: string
 }
 
+// One doctor's branch, for the multi-branch pill/list label — mirrors
+// doctorsData.ts's DoctorCardBranch (th/en already locale-resolved, same
+// convention as everywhere else in this file).
+export interface HomeDoctorBranch {
+  slug: string
+  th: string
+  en: string
+}
+
 export interface HomeDoctor {
   id: string
   image: string
+  // Single "home" branch — same value as branches[0] after sorting, kept
+  // as a convenience for the single-branch card markup (site-shell.css's
+  // default .program-branch look), matching mainBranch/branches[0] on
+  // /doctor (doctorsData.ts's mapDoctorCard()).
   branchTh: string
   branchEn: string
+  // Every branch this doctor practices at (multi-branch CR) — lets the
+  // homepage carousel render the same pill/list multi-branch label as
+  // /doctor instead of always collapsing to one branch. Length 1 for a
+  // single-branch doctor.
+  branches: HomeDoctorBranch[]
   nameTh: string
   nameEn: string
   noteTh: string
   noteEn: string
   subTh: string
   subEn: string
+}
+
+// Admin-configurable multi-branch label style (DoctorDisplaySettings) —
+// injected alongside `doctors` so the homepage carousel (public/js/main.js)
+// can pick the same pill/list/single rendering /doctor uses instead of
+// hardcoding one style. See doctorsData.ts's getDoctorGroupingSettings().
+export interface HomeDoctorDisplay {
+  groupByBranch: boolean
+  multiBranchLabelStyle: 'pills' | 'list'
+  branchLabelPosition: 'top' | 'bottom'
 }
 
 export interface HomeProgram {
@@ -277,6 +312,7 @@ export interface HomeData {
   hero: HomeHero
   branches: HomeBranch[]
   doctors: HomeDoctor[]
+  doctorDisplay: HomeDoctorDisplay
   programs: HomeProgram[]
   articles: HomeArticle[]
   awards: HomeAward[]
@@ -539,7 +575,7 @@ async function getTopBarContent(locale: LocaleCode): Promise<HomeTopBar> {
 // homepage teaser never shows a doctor/program/article that doesn't
 // actually have `locale` content yet.
 export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
-  const [hero, membershipTeaser, footer, topbar, branchDocs, doctorDocs, programDocs, articleDocs, awardDocs] = await Promise.all([
+  const [hero, membershipTeaser, footer, topbar, branchDocs, doctorCards, groupingSettings, programDocs, articleDocs, awardDocs] = await Promise.all([
     getHomeHero(locale),
     getMembershipTeaser(locale),
     getFooterContent(locale),
@@ -552,12 +588,12 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
     // Payload falls back to its default `-createdAt` sort) — see
     // branchesData.ts's matching comment for the same gotcha.
     findLocalized<any>('branches', locale, { limit: 10, depth: 1, sort: ['displayOrder', 'id'] }),
-    findLocalized<any>('doctors', locale, {
-      limit: 12,
-      depth: 1,
-      sort: ['displayOrder', 'id'],
-      where: { _status: { equals: 'published' } },
-    }),
+    // Reuse /doctor's exact data pipeline (getDoctorsListing + the grouping
+    // below) instead of a separate ad-hoc query, so the homepage carousel
+    // can never show different branch data than /doctor for the same
+    // doctor (2026-09-23 bug report — see the doctors mapping below).
+    getDoctorsListing(locale),
+    getDoctorGroupingSettings(),
     findLocalized<any>('programs', locale, { limit: 100, depth: 1, where: { _status: { equals: 'published' } } }),
     findLocalized<any>('articles', locale, {
       limit: 3,
@@ -595,40 +631,30 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
       }
     })
 
-  const doctors: HomeDoctor[] = doctorDocs
-    .filter((doc) => hasLocaleContent(doc.name))
-    .map((doc) => {
-      // Multi-branch CR: match doctorsData.ts's mapDoctorCard() — prefer
-      // `mainBranch` (the admin-picked "home" branch for a doctor who
-      // practices at several), falling back to the first entry of the new
-      // hasMany `branches` field, then the legacy single `branch` field for
-      // any doctor not yet backfilled (cms/scripts/backfillDoctorBranches.ts).
-      // The homepage carousel only has room for ONE branch label per card
-      // (public/js/main.js's renderDoctorCard(), unlike /doctor's multi-pill
-      // layout), so this picks the correct single branch to show rather
-      // than the stale legacy field, which could differ from — or be blank
-      // relative to — the doctor's real current branches.
-      const legacyBranch = doc.branch && typeof doc.branch === 'object' ? doc.branch : null
-      const rawBranches: any[] = Array.isArray(doc.branches) ? doc.branches : []
-      const mainBranch =
-        (doc.mainBranch && typeof doc.mainBranch === 'object' ? doc.mainBranch : null) ||
-        (rawBranches.find((b) => b && typeof b === 'object') as any) ||
-        legacyBranch
-      const note = doc.specialtyLabel || ''
-      const sub = doc.subNote || ''
-      return {
-        id: doc.slug,
-        image: mediaUrl(doc.cardPhoto) || mediaUrl(doc.portrait) || '/assets/images/doctors/dr01.png',
-        branchTh: mainBranch?.name || '',
-        branchEn: mainBranch?.name || '',
-        nameTh: doc.name,
-        nameEn: doc.name,
-        noteTh: note,
-        noteEn: note,
-        subTh: sub,
-        subEn: sub,
-      }
-    })
+  // Group by name exactly like /doctor (groupDoctorsByName() in
+  // doctorsData.ts — same doctor split across several branch-scoped records
+  // gets merged into one card with every branch it practices at, instead of
+  // showing once per branch or collapsing to a single stale branch). Capped
+  // at 12 AFTER grouping (same count the old query used) so the carousel
+  // stays a reasonable length — order is preserved from getDoctorsListing's
+  // displayOrder/id sort (groupDoctorsByName keeps first-seen order).
+  const doctorGroups = groupDoctorsByName(doctorCards, groupingSettings.groupByBranch).slice(0, 12)
+  const doctors: HomeDoctor[] = doctorGroups.map((doc) => {
+    const branches: HomeDoctorBranch[] = doc.branches.map((b) => ({ slug: b.slug, th: b.th, en: b.en }))
+    return {
+      id: doc.slug,
+      image: doc.image,
+      branchTh: doc.branchTh,
+      branchEn: doc.branchEn,
+      branches,
+      nameTh: doc.nameTh,
+      nameEn: doc.nameEn,
+      noteTh: doc.noteTh,
+      noteEn: doc.noteEn,
+      subTh: doc.subTh,
+      subEn: doc.subEn,
+    }
+  })
 
   const programs: HomeProgram[] = programDocs
     .filter((doc) => hasLocaleContent(doc.title))
@@ -687,5 +713,5 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
   // promises above settle.
   topbar.lineUrl = footer.social.line || CENTRAL_LINE_URL_FALLBACK
 
-  return { hero, branches, doctors, programs, articles, awards, membershipTeaser, footer, topbar }
+  return { hero, branches, doctors, doctorDisplay: groupingSettings, programs, articles, awards, membershipTeaser, footer, topbar }
 }
