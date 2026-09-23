@@ -67,8 +67,15 @@
        to; a vertical list of rows does. --variant-cols is shared by the
        header row and every option row so their 3 columns (radio / package
        info / price) always line up regardless of how many rows there are. */
-    .variant-table{--variant-cols:28px minmax(0,1fr) auto;display:flex;flex-direction:column;max-width:820px;margin:0 auto;border:1.5px solid var(--gold-line);border-radius:var(--radius-card);overflow:hidden;background:#fff}
-    .variant-table__head{display:grid;grid-template-columns:var(--variant-cols);gap:16px;padding:14px 26px;background:#FAF7F1;border-bottom:1px solid var(--gold-line);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+    /* Price column is a FIXED width (not auto) deliberately — auto sizes
+       each grid independently per its own content, so the short "ราคา"
+       header label and the wider "24,500 บาท" row values ended up as
+       different-width tracks that both happened to hug the right edge,
+       leaving their LEFT edges (where the text actually starts) out of
+       line with each other. A shared fixed width makes every row's price
+       column start at the exact same x-position as the header label. */
+    .variant-table{--variant-cols:28px minmax(0,1fr) 120px;display:flex;flex-direction:column;max-width:820px;margin:0 auto;border:1.5px solid var(--gold-line);border-radius:var(--radius-card);overflow:hidden;background:#fff}
+    .variant-table__head{display:grid;grid-template-columns:var(--variant-cols);gap:16px;padding:14px 26px;background:#FAF7F1;border-bottom:1px solid var(--gold-line);font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
     /* font-family:var(--sans) here isn't decorative — <button> doesn't
        inherit typography from its parent in browsers' default UA
        stylesheets, so without this every un-styled piece of text inside
