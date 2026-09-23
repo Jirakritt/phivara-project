@@ -22,7 +22,7 @@
 .toc{position:relative;display:grid;grid-template-columns:1fr;margin-bottom:38px;padding:20px 24px 17px;border:1px solid var(--line);border-top:3px solid var(--gold);background:linear-gradient(135deg,var(--cream-card),rgba(239,231,216,.42))}
 .toc-label{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:8px;padding-bottom:10px;border-bottom:1px solid var(--gold-line);font-size:18px;line-height:1.4;font-weight:500;color:var(--olive-dark)}
 .toc-label:after{content:"CONTENTS";font:500 9px var(--sans);letter-spacing:.18em;color:var(--gold)}
-.toc a{position:relative;display:flex;align-items:flex-start;padding:6px 8px;border-bottom:1px dotted var(--line);font-size:14px;line-height:1.6;color:var(--ink-soft);transition:color .2s,padding-left .2s,background .2s}
+.toc a{position:relative;display:flex;align-items:flex-start;padding:6px 8px;border-bottom:1px dotted var(--line);font-size:16px;line-height:1.6;color:var(--ink-soft);transition:color .2s,padding-left .2s,background .2s}
 .toc a:last-child{border-bottom:0}
 .toc a:before{content:"◆";flex:0 0 auto;display:inline-block;margin:6px 12px 0 1px;color:var(--gold);font-size:11px;line-height:1}
 .toc a:hover,.toc a.active{padding-left:12px;color:var(--olive-dark)}
@@ -175,7 +175,7 @@ footer .foot-social a:hover{background:var(--gold);border-color:var(--gold);colo
   .article-shell{display:flex;padding:36px 0 75px}
   .toc{grid-template-columns:1fr;padding:23px 20px 20px;margin-bottom:34px}
   .toc-label{font-size:18px}
-  .toc a{font-size:14px}
+  .toc a{font-size:16px}
   .share-rail{justify-content:flex-start;margin-top:36px}
   .share-label{margin:0 5px 0 0}
   .article-sidebar{display:flex;flex-direction:column}
