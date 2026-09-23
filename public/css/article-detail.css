@@ -30,8 +30,17 @@
 .toc a.active:before{color:var(--terracotta);transform:scale(1.15)}
 
 .prose{width:100%;font-size:16px;line-height:2;color:#40392f;font-weight:300}
-.prose .lead{font-size:20px;line-height:1.85;color:var(--olive-dark);font-weight:300}
-.prose p{margin:0 0 26px}
+/* Same ID-specificity issue as .prose p below — .lead is also a <p>,
+   so it needs !important too (found while fixing the same bug there;
+   without this its "lead paragraph" styling silently collapsed to the
+   same 14px as regular body text). */
+.prose .lead{font-size:20px!important;line-height:1.85!important;color:var(--olive-dark);font-weight:300}
+/* !important needed — main.css has a site-wide paragraph lock
+   (p:not(#phivara-paragraph-size-override){font-size:14px}) whose :not(#id)
+   gives it ID-level specificity. That beats .prose's inherited 16px
+   because it targets <p> directly (inheritance loses to any directly
+   matching declaration, regardless of specificity on the ancestor). */
+.prose p{margin:0 0 26px;font-size:16px!important;line-height:2!important}
 .prose h2{position:relative;scroll-margin-top:120px;margin:52px 0 20px;padding-bottom:9px;font-size:clamp(23px,2.4vw,29px);line-height:1.45;color:var(--olive-dark);font-weight:400}
 .prose h2:after{content:"";position:absolute;left:0;bottom:0;width:48px;height:1px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:scaleX(0);transform-origin:left;transition:transform .85s var(--ease)}
 .prose h2.gold-line-in:after{transform:scaleX(1)}
