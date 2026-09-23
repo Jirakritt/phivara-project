@@ -482,8 +482,14 @@
       margin:0;
       padding:0;
       color:var(--ink-soft);
-      font-size:14px;
-      line-height:1.65;
+      /* !important needed here — main.css has its own site-wide paragraph
+         lock (`p:not(#phivara-paragraph-size-override){font-size:14px}`)
+         whose :not(#id) gives it ID-level specificity, which beats this
+         selector's two classes even though this rule comes later in the
+         file. Matches the .program-description h3 rule just above, which
+         needed the same fix for the same reason. */
+      font-size:16px!important;
+      line-height:1.65!important;
     }
     .detail-overview .program-description p+p{margin-top:10px}
     .detail-overview .program-description strong{
