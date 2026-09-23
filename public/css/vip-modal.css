@@ -170,7 +170,14 @@
 }
 @media(max-width:760px){
   .vip-modal-overlay{ align-items:flex-start; padding:14px; }
-  .vip-modal-overlay > .vip-modal{ grid-template-columns:1fr; max-height:none; margin:auto 0; overflow:visible; }
+  /* NOT overflow:visible here — the base rule's overflow:hidden (needed to
+     clip the brand panel's square background to this box's rounded
+     border-radius) must stay in effect on mobile too, otherwise the gold
+     panel's corners visibly poke out past the rounded edge. Height is
+     already auto (max-height:none + no fixed height), so hiding overflow
+     doesn't clip any real content — .vip-modal-content below still scrolls
+     its own contents independently via overflow-y:auto. */
+  .vip-modal-overlay > .vip-modal{ grid-template-columns:1fr; max-height:none; margin:auto 0; }
   .vip-modal-brand{ padding:28px 26px 25px; min-height:185px; }
   .vip-modal-brand>img{ width:34px; height:34px; margin-bottom:20px; }
   #vipModalOverlay .vip-brand-quote{ max-width:280px; margin-bottom:0; font-size:24px; }
