@@ -575,7 +575,7 @@
   .flagship-nav-btn{
     flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:center; gap:10px;
     border:0; border-right:1px solid rgba(126,100,61,.16); background:transparent; cursor:pointer;
-    padding:16px 12px; text-align:center; color:#776857; font-size:12px; line-height:1.45;
+    padding:16px 12px; text-align:center; color:#776857; font-size:14px; line-height:1.45;
     letter-spacing:.035em; font-family:var(--sans); position:relative;
     transition:color .35s ease, background .35s ease; font-weight:400;
   }
@@ -585,7 +585,7 @@
     transform:translateX(-50%);
     transition:width .35s var(--ease);
   }
-  .flagship-nav-index{ font-family:var(--serif-en); font-size:11px; color:#AC987C; letter-spacing:.08em; }
+  .flagship-nav-index{ font-family:var(--serif-en); font-size:13px; color:#AC987C; letter-spacing:.08em; }
   .flagship-nav-btn:hover{ color:#2F261E; background:rgba(255,255,255,.42); }
   .flagship-nav-btn.active{
     color:#3B2B20; background:rgba(255,255,255,.68); font-weight:500;
@@ -614,7 +614,7 @@
     .flagship-text::before{ width:30px; margin-bottom:10px; }
     .flagship-text h3{ font-size:clamp(21px,5.8vw,27px); margin-bottom:8px; }
     .flagship-text p{ font-size:14px!important; line-height:1.55!important; margin-bottom:12px; -webkit-line-clamp:3; }
-    .flagship-nav-btn{ flex-basis:172px; min-height:66px; font-size:11px; }
+    .flagship-nav-btn{ flex-basis:172px; min-height:66px; font-size:13px; }
   }
   @media(max-width:420px){
     .flagship-slides{ height:533px; min-height:533px; }
