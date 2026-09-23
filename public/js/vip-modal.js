@@ -180,9 +180,21 @@
     </div>`;
   }
 
+  // ?booking=open (or #booking) in the URL auto-opens the modal on load —
+  // for LINE OA Rich Menu links that should land the visitor straight in
+  // the booking form instead of requiring an extra click on the page.
+  function wantsAutoOpen(){
+    return new URLSearchParams(window.location.search).get('booking') === 'open'
+      || window.location.hash === '#booking';
+  }
+
   function init(){
     const knownTriggers = [...document.querySelectorAll('a, button')].filter(isBookingControl);
-    if(!knownTriggers.length) return;
+    const autoOpen = wantsAutoOpen();
+    // Still build the modal even if this particular page happens to have no
+    // visible trigger — an auto-open link should work on any page it's
+    // pointed at, not just ones with a "จองปรึกษาส่วนตัว" button in view.
+    if(!knownTriggers.length && !autoOpen) return;
 
     document.querySelectorAll('#vipModalOverlay, #bookingModal').forEach(modal => modal.remove());
     document.body.insertAdjacentHTML('beforeend', modalMarkup());
@@ -367,6 +379,26 @@
         submitButton.disabled = false;
       }
     });
+
+    if(autoOpen){
+      // A blank, detached <div> stands in for a real trigger element here —
+      // there's no specific doctor/program/branch context for a Rich Menu
+      // link, so triggerContext()/lockBranches fall through to their
+      // generic defaults (same as the header's general "จองปรึกษาส่วนตัว"
+      // button). Deliberately NOT document.body: triggerContext() does
+      // `trigger.querySelector('strong')` when there's no dataset.program,
+      // and document.body would match the first <strong> tag ANYWHERE on
+      // the page — this blank div has no descendants, so that lookup
+      // safely finds nothing instead.
+      openModal(document.createElement('div'));
+      // Strip ?booking=open / #booking from the address bar so a refresh,
+      // back-navigation, or share of the URL after this point doesn't
+      // force the modal open again.
+      const url = new URL(window.location.href);
+      url.searchParams.delete('booking');
+      if(url.hash === '#booking') url.hash = '';
+      window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+    }
   }
 
   if(document.readyState === 'complete') init();
