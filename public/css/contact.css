@@ -323,9 +323,9 @@
 .branch-card__description {
   margin: 16px 0 0;
   color: var(--ink-soft);
-  font-size: 14.5px;
+  font-size: 16px !important;
   font-weight: 300;
-  line-height: 1.85;
+  line-height: 1.85 !important;
 }
 
 .branch-card__address {
@@ -337,8 +337,8 @@
 .branch-card__address p {
   margin: 6px 0 0;
   color: var(--ink-soft);
-  font-size: 14px;
-  line-height: 1.75;
+  font-size: 16px !important;
+  line-height: 1.75 !important;
   font-weight: 300;
 }
 
