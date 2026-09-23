@@ -85,14 +85,17 @@
        (like the "บาท" unit label below) silently falls back to the
        browser's default font (Arial) instead of Noto Sans Thai, which
        renders Thai glyphs from a different, visually mismatched font. */
-    .variant-row{display:grid;grid-template-columns:var(--variant-cols);align-items:center;gap:16px;width:100%;padding:20px 26px;border:none;border-bottom:1px solid var(--gold-line);background:#fff;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .25s ease}
+    /* Row padding/gaps kept tight on purpose — some programs run to 8-10
+       options, and the original 20px padding + 4px label/desc gap made the
+       whole table run very long on those. */
+    .variant-row{display:grid;grid-template-columns:var(--variant-cols);align-items:center;gap:16px;width:100%;padding:12px 26px;border:none;border-bottom:1px solid var(--gold-line);background:#fff;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .25s ease}
     .variant-row:last-child{border-bottom:none}
     .variant-row:hover{background:#FAF7F1}
     .variant-row.active{background:linear-gradient(135deg,#fffaf0,#fff)}
     .variant-row__radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--gold-line);position:relative;transition:border-color .25s ease}
     .variant-row.active .variant-row__radio{border-color:var(--gold)}
     .variant-row.active .variant-row__radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--gold)}
-    .variant-row__info{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .variant-row__info{display:flex;flex-direction:column;gap:2px;min-width:0}
     .variant-row__label{font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink)}
     .variant-row__desc{font-family:var(--sans);font-size:13px;line-height:1.55;color:var(--ink-soft)}
     .variant-row__price{display:flex;align-items:baseline;gap:5px;color:var(--terracotta)}
