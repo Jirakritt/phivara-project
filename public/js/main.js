@@ -572,8 +572,14 @@
       const profileHref = `/doctor/${profile.id}`;
       const branchLabel = renderBranchLabel(profile);
       const branchLabelAtTop = doctorDisplay.branchLabelPosition !== 'bottom';
+      // Same shared "room" backdrop /doctor's .photo-wrap sets inline
+      // (DoctorDisplaySettings.profileBackground) — .ph-photo is a
+      // transparent PNG cutout layered on top (2026-09-23 consistency fix;
+      // this was missing entirely before, so every homepage card showed a
+      // flat placeholder gradient instead of the real room photo).
+      const photoWrapStyle = doctorDisplay.profileBackground ? ` style="background-image:url('${doctorDisplay.profileBackground}')"` : '';
       return `<div class="spec-card">
-        <div class="photo-wrap"><a href="${profileHref}" aria-label="${profile.nameTh}"><img class="ph-photo" src="${profile.image}" alt="${profile.nameTh}"></a></div>
+        <div class="photo-wrap"${photoWrapStyle}><a href="${profileHref}" aria-label="${profile.nameTh}"><img class="ph-photo" src="${profile.image}" alt="${profile.nameTh}"></a></div>
         ${branchLabelAtTop ? branchLabel : ''}
         <h3><a href="${profileHref}" data-th="${profile.nameTh}" data-en="${profile.nameEn}">${profile.nameTh}</a></h3>
         <p class="note" data-th="${profile.noteTh}" data-en="${profile.noteEn}">${profile.noteTh}</p>

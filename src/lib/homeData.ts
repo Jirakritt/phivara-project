@@ -7,7 +7,7 @@ import { findLocalized, getPayloadClient, hasLocaleContent, mediaUrl } from './p
 // choice) instead of the ad-hoc single-branch-only mapping this file used
 // to do — see the doctors block in getHomeData() below. doctorsData.ts
 // itself doesn't import from this file, so no circular dependency.
-import { getDoctorGroupingSettings, getDoctorsListing, groupDoctorsByName } from './doctorsData'
+import { getDoctorDisplayBackgrounds, getDoctorGroupingSettings, getDoctorsListing, groupDoctorsByName } from './doctorsData'
 
 // Same hardcoded last-resort safety net as programsData.ts's
 // CENTRAL_LINE_URL_FALLBACK — kept as a separate constant here (rather than
@@ -91,6 +91,13 @@ export interface HomeDoctorDisplay {
   groupByBranch: boolean
   multiBranchLabelStyle: 'pills' | 'list'
   branchLabelPosition: 'top' | 'bottom'
+  // Shared "room" backdrop composited behind every doctor cutout photo
+  // (Doctors.cardPhoto is a transparent PNG) — same field /doctor's
+  // .photo-wrap sets inline via getDoctorDisplayBackgrounds().
+  // profileBackground; the homepage carousel was missing this entirely
+  // until 2026-09-23 (cards showed a flat placeholder gradient instead of
+  // the real room photo behind each doctor).
+  profileBackground: string
 }
 
 export interface HomeProgram {
@@ -575,7 +582,7 @@ async function getTopBarContent(locale: LocaleCode): Promise<HomeTopBar> {
 // homepage teaser never shows a doctor/program/article that doesn't
 // actually have `locale` content yet.
 export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
-  const [hero, membershipTeaser, footer, topbar, branchDocs, doctorCards, groupingSettings, programDocs, articleDocs, awardDocs] = await Promise.all([
+  const [hero, membershipTeaser, footer, topbar, branchDocs, doctorCards, groupingSettings, displayBackgrounds, programDocs, articleDocs, awardDocs] = await Promise.all([
     getHomeHero(locale),
     getMembershipTeaser(locale),
     getFooterContent(locale),
@@ -594,6 +601,7 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
     // doctor (2026-09-23 bug report — see the doctors mapping below).
     getDoctorsListing(locale),
     getDoctorGroupingSettings(),
+    getDoctorDisplayBackgrounds(),
     findLocalized<any>('programs', locale, { limit: 100, depth: 1, where: { _status: { equals: 'published' } } }),
     findLocalized<any>('articles', locale, {
       limit: 3,
@@ -713,5 +721,6 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
   // promises above settle.
   topbar.lineUrl = footer.social.line || CENTRAL_LINE_URL_FALLBACK
 
-  return { hero, branches, doctors, doctorDisplay: groupingSettings, programs, articles, awards, membershipTeaser, footer, topbar }
+  const doctorDisplay: HomeDoctorDisplay = { ...groupingSettings, profileBackground: displayBackgrounds.profileBackground }
+  return { hero, branches, doctors, doctorDisplay, programs, articles, awards, membershipTeaser, footer, topbar }
 }
