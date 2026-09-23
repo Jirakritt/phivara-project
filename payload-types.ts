@@ -567,6 +567,10 @@ export interface Program {
          * THB
          */
         price: number;
+        /**
+         * Optional. What this option includes, e.g. "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว" — shown under the option label in the picker table.
+         */
+        description?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1356,6 +1360,7 @@ export interface ProgramsSelect<T extends boolean = true> {
     | {
         label?: T;
         price?: T;
+        description?: T;
         id?: T;
       };
   featured?: T;

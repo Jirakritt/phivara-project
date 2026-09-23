@@ -62,25 +62,48 @@
     .variant-picker-intro{max-width:620px;margin:0 auto 42px;text-align:center}
     .variant-picker-intro h2{margin:12px 0 12px;font-size:clamp(28px,3.4vw,40px);font-weight:400}
     .variant-picker-intro p{color:var(--ink-soft);font-size:14px;line-height:1.8}
-    .variant-picker-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;max-width:780px;margin:0 auto}
+    /* Table layout (replaced the old 2-up card grid 2026-09) — some
+       programs run to 8-10 price options, which a card grid doesn't scale
+       to; a vertical list of rows does. --variant-cols is shared by the
+       header row and every option row so their 3 columns (radio / package
+       info / price) always line up regardless of how many rows there are. */
+    .variant-table{--variant-cols:28px minmax(0,1fr) auto;display:flex;flex-direction:column;max-width:820px;margin:0 auto;border:1.5px solid var(--gold-line);border-radius:var(--radius-card);overflow:hidden;background:#fff}
+    .variant-table__head{display:grid;grid-template-columns:var(--variant-cols);gap:16px;padding:14px 26px;background:#FAF7F1;border-bottom:1px solid var(--gold-line);font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
     /* font-family:var(--sans) here isn't decorative — <button> doesn't
        inherit typography from its parent in browsers' default UA
        stylesheets, so without this every un-styled piece of text inside
        (like the "บาท" unit label below) silently falls back to the
        browser's default font (Arial) instead of Noto Sans Thai, which
        renders Thai glyphs from a different, visually mismatched font. */
-    .variant-option{display:flex;align-items:center;gap:16px;padding:24px 26px;border:1.5px solid var(--gold-line);border-radius:var(--radius-card);background:#fff;cursor:pointer;text-align:left;font-family:var(--sans);transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
-    .variant-option:hover{border-color:var(--gold)}
-    .variant-option.active{border-color:var(--gold);background:linear-gradient(135deg,#fffaf0,#fff);box-shadow:0 16px 38px rgba(184,149,96,.18)}
-    .variant-option__radio{flex:0 0 22px;width:22px;height:22px;border-radius:50%;border:2px solid var(--gold-line);position:relative;transition:border-color .25s ease}
-    .variant-option.active .variant-option__radio{border-color:var(--gold)}
-    .variant-option.active .variant-option__radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--gold)}
-    .variant-option__label{flex:1;font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink-soft)}
-    .variant-option__price{display:flex;align-items:baseline;gap:5px;color:var(--terracotta)}
-    .variant-option__price strong{font-family:var(--serif-en);font-size:29px;font-weight:700;letter-spacing:-.01em}
-    .variant-option__price small{font-size:12px;font-weight:500;color:var(--ink-soft)}
-    .variant-picker-summary{display:flex;justify-content:center;max-width:780px;margin:36px auto 0;padding-top:32px;border-top:1px solid var(--gold-line)}
-    @media(max-width:700px){.program-variant-picker{padding:48px 0}.variant-picker-grid{grid-template-columns:1fr}}
+    .variant-row{display:grid;grid-template-columns:var(--variant-cols);align-items:center;gap:16px;width:100%;padding:20px 26px;border:none;border-bottom:1px solid var(--gold-line);background:#fff;cursor:pointer;text-align:left;font-family:var(--sans);transition:background .25s ease}
+    .variant-row:last-child{border-bottom:none}
+    .variant-row:hover{background:#FAF7F1}
+    .variant-row.active{background:linear-gradient(135deg,#fffaf0,#fff)}
+    .variant-row__radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--gold-line);position:relative;transition:border-color .25s ease}
+    .variant-row.active .variant-row__radio{border-color:var(--gold)}
+    .variant-row.active .variant-row__radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--gold)}
+    .variant-row__info{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .variant-row__label{font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink)}
+    .variant-row__desc{font-family:var(--sans);font-size:13px;line-height:1.55;color:var(--ink-soft)}
+    .variant-row__price{display:flex;align-items:baseline;gap:5px;color:var(--terracotta)}
+    .variant-row__price strong{font-family:var(--serif-en);font-size:24px;font-weight:700;letter-spacing:-.01em}
+    .variant-row__price small{font-size:11px;font-weight:500;color:var(--ink-soft)}
+    .variant-picker-summary{display:flex;justify-content:center;max-width:820px;margin:36px auto 0;padding-top:32px;border-top:1px solid var(--gold-line)}
+    @media(max-width:700px){
+      .program-variant-picker{padding:48px 0}
+      /* Stacked cards instead of a table on narrow screens — each row
+         becomes its own bordered card (radio+label on one line, price
+         moved below spanning the full width) rather than 3 cramped
+         columns squeezed into a phone-width row. */
+      .variant-table{display:block;border:none;background:none;overflow:visible}
+      .variant-table__head{display:none}
+      .variant-row{grid-template-columns:22px 1fr;grid-template-areas:"radio info" "radio price";border:1.5px solid var(--gold-line);border-radius:var(--radius-card);margin-bottom:12px;padding:18px 20px}
+      .variant-row:last-child{margin-bottom:0}
+      .variant-row.active{box-shadow:0 16px 38px rgba(184,149,96,.18)}
+      .variant-row__radio{grid-area:radio;align-self:start;margin-top:2px}
+      .variant-row__info{grid-area:info}
+      .variant-row__price{grid-area:price;margin-top:10px}
+    }
     .detail-includes{padding:86px 0;background:linear-gradient(135deg,#30372b,#454c3b);color:#fff}
     .includes-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:80px}
     .includes-copy h2{margin:12px 0 17px;color:#fff;font-size:clamp(31px,3.6vw,44px);font-weight:400}

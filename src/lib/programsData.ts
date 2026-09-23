@@ -82,7 +82,7 @@ export interface ProgramCard {
   // lowest variant's price when this is filled in, so every "starting
   // from"/FROM price display (highlight carousel, catalog card) keeps
   // working without needing to know about variants at all.
-  priceVariants: Array<{ labelTh: string; labelEn: string; price: number }>
+  priceVariants: Array<{ labelTh: string; labelEn: string; price: number; descriptionTh: string; descriptionEn: string }>
 }
 
 export interface ProgramCheckupItem {
@@ -157,6 +157,8 @@ function mapProgramCard(doc: any, locale: LocaleCode): ProgramCard {
       labelTh: v.label || '',
       labelEn: v.label || '',
       price: v.price,
+      descriptionTh: v.description || '',
+      descriptionEn: v.description || '',
     })),
   }
 }

@@ -91,6 +91,15 @@ export const Programs: CollectionConfig = {
               fields: [
                 { name: 'label', type: 'text', localized: true, required: true, admin: { description: 'e.g. "100 ยูนิต" / "100 units"' } },
                 { name: 'price', type: 'number', required: true, admin: { description: 'THB' } },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  localized: true,
+                  admin: {
+                    description:
+                      'Optional. What this option includes, e.g. "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว" — shown under the option label in the picker table.',
+                  },
+                },
               ],
             },
             {

@@ -180,19 +180,40 @@ export default async function ProgramDetailPage({
                 <h2>{t('เลือกแพ็กเกจของคุณ', 'Choose Your Package')}</h2>
                 <p>{t('เลือกตัวเลือกที่เหมาะกับความต้องการของคุณ', 'Pick the option that fits you best.')}</p>
               </div>
-              <div className="variant-picker-grid" id="programVariantSelect" role="radiogroup" aria-label={t('เลือกแพ็กเกจ', 'Choose a package')}>
+              {/* Table (not the old 2-up card grid) — some programs run to
+                  8-10 options, which a card grid doesn't scale to, and each
+                  row now has room for an optional description line (e.g.
+                  "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว") under the
+                  package name. Still real <button role="radio"> elements
+                  (not <table>/<tr>) — one option per row is just a 1-column
+                  grid at that point, and buttons keep full native keyboard
+                  operability for free, same as the previous card version.
+                  program-detail.js doesn't care about any of this: it only
+                  looks for #programVariantSelect and [data-variant-price],
+                  neither of which changed. */}
+              <div className="variant-table" id="programVariantSelect" role="radiogroup" aria-label={t('เลือกแพ็กเกจ', 'Choose a package')}>
+                <div className="variant-table__head" aria-hidden="true">
+                  <span></span>
+                  <span>{t('แพ็กเกจ', 'Package')}</span>
+                  <span>{t('ราคา', 'Price')}</span>
+                </div>
                 {program.priceVariants.map((variant, i) => (
                   <button
                     key={i}
                     type="button"
-                    className={`variant-option${i === 0 ? ' active' : ''}`}
+                    className={`variant-row${i === 0 ? ' active' : ''}`}
                     role="radio"
                     aria-checked={i === 0}
                     data-variant-price={variant.price}
                   >
-                    <span className="variant-option__radio" aria-hidden="true"></span>
-                    <span className="variant-option__label">{t(variant.labelTh, variant.labelEn)}</span>
-                    <span className="variant-option__price">
+                    <span className="variant-row__radio" aria-hidden="true"></span>
+                    <span className="variant-row__info">
+                      <span className="variant-row__label">{t(variant.labelTh, variant.labelEn)}</span>
+                      {(variant.descriptionTh || variant.descriptionEn) && (
+                        <span className="variant-row__desc">{t(variant.descriptionTh, variant.descriptionEn)}</span>
+                      )}
+                    </span>
+                    <span className="variant-row__price">
                       <strong>{variant.price.toLocaleString('en-US')}</strong>
                       <small>{t('บาท', 'THB')}</small>
                     </span>
