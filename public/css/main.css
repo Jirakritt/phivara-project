@@ -126,7 +126,7 @@
   .btn-outline-dark:hover{ color:var(--cream); }
 
   /* ---------- Topbar ---------- */
-  .topbar{ background:var(--olive-dark); color:#EAE1CC; font-size:11.5px; letter-spacing:.04em; }
+  .topbar{ background:var(--olive-dark); color:#EAE1CC; font-size:13.5px; letter-spacing:.04em; }
   .topbar .wrap{ display:flex; justify-content:space-between; align-items:center; height:38px; }
   .topbar .tb-left{opacity:.8;}
   .topbar .tb-right{ display:flex; align-items:center; gap:20px; }
