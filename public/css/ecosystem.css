@@ -186,7 +186,7 @@
 
 .eco-chip-row{ display:flex; flex-wrap:wrap; gap:9px; margin-bottom:34px; }
 .eco-chip{
-  font-size:12px; font-weight:500; padding:8px 15px; border-radius:30px; border:1px solid var(--line);
+  font-size:13px; font-weight:500; padding:8px 15px; border-radius:30px; border:1px solid var(--line);
   color:var(--ink-soft); background:#fff; transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
 }
 .tone-longevity .eco-chip:hover{ border-color:var(--tone-longevity); color:var(--tone-longevity); transform:translateY(-3px); box-shadow:0 10px 20px var(--tone-longevity-soft); }
@@ -202,8 +202,8 @@
 }
 .eco-link-card .eco-link-icon{ width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
 .eco-link-card .eco-link-icon svg{ width:18px; height:18px; stroke-width:1.7; }
-.eco-link-card .eco-link-label{ font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.4; }
-.eco-link-card .eco-link-arrow{ margin-top:auto; display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+.eco-link-card .eco-link-label{ font-size:14px; font-weight:600; color:var(--ink); line-height:1.4; }
+.eco-link-card .eco-link-arrow{ margin-top:auto; display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
 .eco-link-card .eco-link-arrow svg{ width:13px; height:13px; transition:transform .3s ease; }
 .eco-link-card:hover .eco-link-arrow svg{ transform:translateX(4px); }
 .eco-link-card:hover{ transform:translateY(-6px); }
@@ -361,7 +361,7 @@
   padding:7px 13px;
   border-color:color-mix(in srgb, var(--section-tone) 24%, var(--line));
   background:color-mix(in srgb, var(--section-tone) 5%, #fff);
-  font-size:11.5px;
+  font-size:13px;
 }
 .eco-chip:hover{
   color:var(--section-tone) !important;
@@ -391,10 +391,10 @@
   background:color-mix(in srgb, var(--section-tone) 12%, #fff) !important;
 }
 .eco-link-card .eco-link-icon svg{ width:16px; height:16px; }
-.eco-link-card .eco-link-label{ font-size:12.5px; }
+.eco-link-card .eco-link-label{ font-size:14px; }
 .eco-link-card .eco-link-arrow{
   color:var(--section-tone) !important;
-  font-size:10.5px;
+  font-size:13px;
   letter-spacing:.04em;
 }
 .eco-link-card:hover{
@@ -699,7 +699,7 @@
   border-radius:3px;
   color:var(--ink-soft);
   background:rgba(255,255,255,.42);
-  font-size:10.5px;
+  font-size:13px;
   font-weight:500;
 }
 .eco-chip:hover{
@@ -741,14 +741,14 @@
 }
 .eco-link-card .eco-link-label{
   color:var(--ink);
-  font-size:13px;
+  font-size:14px;
   font-weight:500;
   line-height:1.45;
 }
 .eco-link-card .eco-link-arrow{
   margin:0;
   color:var(--section-tone) !important;
-  font-size:9.5px;
+  font-size:13px;
   letter-spacing:.08em;
 }
 .eco-link-card:hover{

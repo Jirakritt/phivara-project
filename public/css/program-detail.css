@@ -38,7 +38,7 @@
     .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
     .detail-overview{padding:86px 0;background:#fff}
     .overview-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:86px}
-    .section-label{color:var(--gold);font-size:11px;letter-spacing:.24em;font-weight:600}
+    .section-label{color:var(--gold);font-size:13px;letter-spacing:.24em;font-weight:600}
     .overview-intro h2,.process-heading h2,.related-heading h2{margin:12px 0 20px;font-size:clamp(30px,3.8vw,44px);font-weight:400}
     .overview-intro p{color:var(--ink-soft)}
     .benefit-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -180,7 +180,7 @@
     @keyframes priceShimmer{0%,55%{left:-55%}82%,100%{left:125%}}
     @keyframes priceFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
     @media(prefers-reduced-motion:reduce){.visual-price-tag{animation:none}.visual-price-tag::after{animation:none;display:none}}
-    .visual-price-tag small{grid-area:label;margin-bottom:4px;color:#765c31;font-size:11px;font-weight:600;line-height:1;letter-spacing:.18em;opacity:.9}
+    .visual-price-tag small{grid-area:label;margin-bottom:4px;color:#765c31;font-size:13px;font-weight:600;line-height:1;letter-spacing:.18em;opacity:.9}
     .visual-price-tag strong{grid-area:price;color:#2f291f;font-family:var(--serif-en);font-size:30px;font-weight:500;line-height:.95;letter-spacing:-.035em}
     .visual-price-tag span{grid-area:unit;padding-bottom:1px;color:#644d29;font-family:var(--sans);font-size:13px;font-weight:600;line-height:1;letter-spacing:.04em}
     .detail-visual img{border:1px solid rgba(230,211,170,.45);border-radius:var(--radius-card);box-shadow:0 35px 85px rgba(12,15,11,.36)}
@@ -356,7 +356,7 @@
     #packageDescription,.detail-process p{font-size:16px!important}
     .detail-includes p{font-size:16px!important}
     .detail-includes .includes-copy p{font-size:16px!important}
-    .section-label{font-size:12px!important}
+    .section-label{font-size:13px!important}
     .detail-btn.booking-trigger{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--detail-dark)!important}
     .detail-btn.booking-trigger:hover{background:var(--detail-dark)!important;border-color:var(--detail-dark)!important;color:#fff!important}
     .desktop-title-break{display:block}
@@ -425,7 +425,7 @@
     .includes-list{display:block;overflow:hidden;border:1px solid rgba(151,123,73,.22);border-radius:10px;background:rgba(255,255,255,.8);box-shadow:0 10px 28px rgba(58,50,38,.04)}
     .checkup-table{display:block;width:100%;border-collapse:collapse}
     .checkup-table thead,.checkup-table thead tr,.checkup-table th{display:block;width:100%}
-    .checkup-table th{padding:11px 15px;border-bottom:1px solid rgba(151,123,73,.28);background:#ded3c1;color:#5f513b;font-size:11px;font-weight:600;letter-spacing:.08em;text-align:left}
+    .checkup-table th{padding:11px 15px;border-bottom:1px solid rgba(151,123,73,.28);background:#ded3c1;color:#5f513b;font-size:13px;font-weight:600;letter-spacing:.08em;text-align:left}
     .checkup-table tbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:rgba(151,123,73,.17)}
     .checkup-table tbody tr,
     .checkup-table tbody tr:nth-child(odd),
@@ -433,10 +433,10 @@
     .checkup-table tbody tr:nth-last-child(2):nth-child(odd){display:block;min-width:0;border:0;background:rgba(255,255,255,.82);transition:background-color .2s ease}
     .checkup-table tbody tr:hover{background:#fff}
     .checkup-table td{display:flex;align-items:flex-start;gap:8px;width:100%;min-height:68px;padding:10px 12px;color:var(--ink);font-size:13px;line-height:1.4;vertical-align:top}
-    .checkup-table .checkup-number{display:block;flex:0 0 21px;width:21px;padding-top:1px;color:#8d7449;font-family:var(--sans);font-size:11px;font-weight:400;line-height:1.4}
+    .checkup-table .checkup-number{display:block;flex:0 0 21px;width:21px;padding-top:1px;color:#8d7449;font-family:var(--sans);font-size:13px;font-weight:400;line-height:1.4}
     .checkup-table .checkup-copy{min-width:0}
     .checkup-table .checkup-name{display:block;min-width:0;font-weight:500}
-    .checkup-table .checkup-description{display:block;margin-top:2px;color:var(--ink-soft);font-size:11.5px;line-height:1.4}
+    .checkup-table .checkup-description{display:block;margin-top:2px;color:var(--ink-soft);font-size:13px;line-height:1.4}
     @media(max-width:980px){
       .checkup-table tbody{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
@@ -604,11 +604,11 @@
     }
 
     .detail-includes .includes-list{border-radius:10px;box-shadow:none}
-    .detail-includes .checkup-table th{padding:9px 12px;font-size:12px}
+    .detail-includes .checkup-table th{padding:9px 12px;font-size:13px}
     .detail-includes .checkup-table td{min-height:0;padding:8px 10px;gap:7px}
-    .detail-includes .checkup-table .checkup-number{flex-basis:22px;width:22px;font-size:12px}
+    .detail-includes .checkup-table .checkup-number{flex-basis:22px;width:22px;font-size:13px}
     .detail-includes .checkup-table .checkup-name{font-size:14px;line-height:1.4}
-    .detail-includes .checkup-table .checkup-description{margin-top:2px;font-size:12.5px;line-height:1.4}
+    .detail-includes .checkup-table .checkup-description{margin-top:2px;font-size:13px;line-height:1.4}
 
     .detail-process .process-grid,
     .detail-process .process-grid.hormone-terms{
