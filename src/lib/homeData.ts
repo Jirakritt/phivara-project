@@ -598,14 +598,29 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
   const doctors: HomeDoctor[] = doctorDocs
     .filter((doc) => hasLocaleContent(doc.name))
     .map((doc) => {
-      const branch = doc.branch && typeof doc.branch === 'object' ? doc.branch : null
+      // Multi-branch CR: match doctorsData.ts's mapDoctorCard() — prefer
+      // `mainBranch` (the admin-picked "home" branch for a doctor who
+      // practices at several), falling back to the first entry of the new
+      // hasMany `branches` field, then the legacy single `branch` field for
+      // any doctor not yet backfilled (cms/scripts/backfillDoctorBranches.ts).
+      // The homepage carousel only has room for ONE branch label per card
+      // (public/js/main.js's renderDoctorCard(), unlike /doctor's multi-pill
+      // layout), so this picks the correct single branch to show rather
+      // than the stale legacy field, which could differ from — or be blank
+      // relative to — the doctor's real current branches.
+      const legacyBranch = doc.branch && typeof doc.branch === 'object' ? doc.branch : null
+      const rawBranches: any[] = Array.isArray(doc.branches) ? doc.branches : []
+      const mainBranch =
+        (doc.mainBranch && typeof doc.mainBranch === 'object' ? doc.mainBranch : null) ||
+        (rawBranches.find((b) => b && typeof b === 'object') as any) ||
+        legacyBranch
       const note = doc.specialtyLabel || ''
       const sub = doc.subNote || ''
       return {
         id: doc.slug,
         image: mediaUrl(doc.cardPhoto) || mediaUrl(doc.portrait) || '/assets/images/doctors/dr01.png',
-        branchTh: branch?.name || '',
-        branchEn: branch?.name || '',
+        branchTh: mainBranch?.name || '',
+        branchEn: mainBranch?.name || '',
         nameTh: doc.name,
         nameEn: doc.name,
         noteTh: note,
