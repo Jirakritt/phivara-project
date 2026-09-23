@@ -517,7 +517,7 @@
   .spec-card:hover .ph-photo{ transform:scale(1.06); }
   .spec-card h3{ font-size:17px; margin-bottom:5px; font-weight:500; }
   .spec-card h3 a{ color:inherit; font-size:17px; transition:color .3s ease; }
-  .spec-card p.note{ font-size:13px; color:var(--ink-soft); font-weight:400; margin-bottom:14px; line-height:1.5; }
+  .spec-card p.note{ font-size:14px !important; color:var(--ink-soft); font-weight:400; margin-bottom:14px; line-height:1.5; }
   .spec-card .go{ font-size:13px; font-weight:600; letter-spacing:.06em; color:var(--gold); text-transform:uppercase; transition:color 0.3s ease; }
   .spec-card .go:hover{ color:var(--olive-dark); }
 
