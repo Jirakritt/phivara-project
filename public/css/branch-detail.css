@@ -310,9 +310,15 @@ body[data-branch-id="pt2"] .branch-top-hero__pills .spec-pill:hover::before {
 .branch-detail-description {
   margin: 16px 0 0;
   color: var(--ink-soft);
-  font-size: 15px;
+  /* !important needed — main.css's site-wide paragraph lock
+     (p:not(#phivara-paragraph-size-override){font-size:14px}) targets <p>
+     directly with ID-level specificity, beating this rule's declared size
+     regardless of what it says (was rendering at 14px, not the 15px
+     written here, before this fix). Bumped to 16px to match the same
+     readability pass done on program/article/doctor body text. */
+  font-size: 16px !important;
   font-weight: 300;
-  line-height: 1.85;
+  line-height: 1.85 !important;
 }
 
 .branch-detail-address {

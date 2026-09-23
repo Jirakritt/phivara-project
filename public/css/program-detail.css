@@ -339,17 +339,23 @@
       .benefit-card,.benefit-card:nth-of-type(even){padding:20px;border-left:0}
     }
 
-    /* Readability adjustment */
+    /* Readability adjustment — bumped 14px -> 16px (2026-09) to match the
+       "About this program" paragraph fix above; !important needed for the
+       same reason (main.css's site-wide p:not(#id) lock). These 3 rules
+       used to independently redeclare 14px at different points in this
+       file (all same value, so it never mattered which "won") — now kept
+       in sync so a future edit to one doesn't silently leave the others
+       behind. */
     .detail-overview p,
     .detail-includes p,
-    .detail-process p{font-size:14px;line-height:1.65}
+    .detail-process p{font-size:16px!important;line-height:1.65!important}
     .detail-overview span,
     .detail-includes span,
     .detail-process span{font-size:12px}
     .include-row h3{font-size:14px}
-    #packageDescription,.detail-process p{font-size:14px}
-    .detail-includes p{font-size:14px}
-    .detail-includes .includes-copy p{font-size:14px}
+    #packageDescription,.detail-process p{font-size:16px!important}
+    .detail-includes p{font-size:16px!important}
+    .detail-includes .includes-copy p{font-size:16px!important}
     .section-label{font-size:12px!important}
     .detail-btn.booking-trigger{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--detail-dark)!important}
     .detail-btn.booking-trigger:hover{background:var(--detail-dark)!important;border-color:var(--detail-dark)!important;color:#fff!important}

@@ -551,7 +551,7 @@
     padding:45px 22px 25px;
   }
   .eco-content h2{ font-size:26px; }
-  .eco-content p.eco-desc{ padding-left:14px; font-size:14px; }
+  .eco-content p.eco-desc{ padding-left:14px; font-size:14px!important; }
   .eco-links{ grid-template-columns:1fr; }
   .eco-link-card{
     min-height:0;
@@ -672,14 +672,22 @@
   line-height:1.25;
   letter-spacing:-.025em;
 }
+/* This is the 3rd unguarded ".eco-content p.eco-desc" declaration in this
+   file (see also lines ~185, ~351, both dead/superseded — same "stacked
+   redesign passes never cleaned up" pattern as program-detail.css) — this
+   one wins since it's last in source order at equal specificity, which is
+   also why it's the one that needed the !important fix below (main.css's
+   site-wide p:not(#phivara-paragraph-size-override) lock otherwise beats
+   it via ID-level specificity). Mobile overrides further down needed
+   !important added too, or they'd stop applying now that this has it. */
 .eco-content p.eco-desc{
   max-width:500px;
   margin-bottom:16px;
   padding:0;
   border:0;
   color:var(--ink-soft);
-  font-size:14px;
-  line-height:1.72;
+  font-size:16px!important;
+  line-height:1.72!important;
 }
 .eco-chip-row{
   gap:7px;
@@ -921,7 +929,7 @@
     opacity:.7;
   }
   .eco-content h2{ font-size:25px; }
-  .eco-content p.eco-desc{ font-size:13px; line-height:1.72; }
+  .eco-content p.eco-desc{ font-size:13px!important; line-height:1.72!important; }
   .eco-chip-row{
     flex-wrap:nowrap;
     gap:7px;

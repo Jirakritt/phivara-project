@@ -230,8 +230,14 @@
 .doc-bio {
   margin-bottom: 32px;
   color: var(--ink-soft);
-  font-size: 14.5px;
-  line-height: 1.8;
+  /* !important needed — main.css's site-wide paragraph lock
+     (p:not(#phivara-paragraph-size-override){font-size:14px}) targets <p>
+     directly with ID-level specificity, beating this rule's declared size
+     regardless of what it says (was rendering at 14px, not the 14.5px
+     written here, before this fix). Bumped to 16px to match the same
+     readability pass done on program/article body text. */
+  font-size: 16px !important;
+  line-height: 1.8 !important;
   overflow-wrap: break-word;
   word-break: break-word;
 }

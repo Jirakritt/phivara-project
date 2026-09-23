@@ -131,9 +131,18 @@ body.has-cursor button { cursor: auto; }
   max-width: 570px;
   margin: 0;
   color: rgba(255, 255, 255, .72);
-  font-size: 15px;
+  /* !important needed — main.css's site-wide paragraph lock
+     (p:not(#phivara-paragraph-size-override){font-size:14px}) targets <p>
+     directly with ID-level specificity, beating this rule's declared size
+     regardless of what it says (was rendering at 14px, not the 15px
+     written here, before this fix). Bumped to 16px to match the same
+     readability pass done elsewhere. The mobile media-query override
+     below needed !important added too, or it would stop working now that
+     this base rule has it (a non-!important rule, however specific or
+     however late in the cascade, never beats an earlier !important one). */
+  font-size: 16px !important;
   font-weight: 300;
-  line-height: 1.95;
+  line-height: 1.95 !important;
 }
 
 .aum-actions {
@@ -276,8 +285,11 @@ body.has-cursor button { cursor: auto; }
   max-width: 760px;
   margin: 0;
   color: var(--aum-muted);
-  font-size: 16px;
-  line-height: 2;
+  /* !important needed — see .aum-lead's comment above (same site-wide
+     paragraph lock). This one already said 16px, but was still silently
+     rendering at 14px without !important. */
+  font-size: 16px !important;
+  line-height: 2 !important;
 }
 
 .aum-privileges {
@@ -687,7 +699,7 @@ body.has-cursor button { cursor: auto; }
   .aum-kicker { margin-bottom: 28px; letter-spacing: .18em; }
   .aum-mark { font-size: 76px; }
   .aum-hero h1 { margin-top: 28px; font-size: 31px; }
-  .aum-lead { font-size: 14px; }
+  .aum-lead { font-size: 14px !important; }
 
   .aum-actions {
     align-items: stretch;
@@ -711,7 +723,7 @@ body.has-cursor button { cursor: auto; }
   .aum-intro-grid { gap: 30px; }
   .aum-intro-copy h2,
   .aum-section-head h2 { font-size: 30px; }
-  .aum-intro-copy > p { font-size: 14px; }
+  .aum-intro-copy > p { font-size: 14px !important; }
   .aum-section-head { margin-bottom: 42px; }
 
   .aum-privilege-grid { grid-template-columns: 1fr; }
