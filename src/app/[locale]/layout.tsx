@@ -110,11 +110,15 @@ export default async function LocaleLayout({
   // comment for why this matters).
   const localeFont = LOCALE_GOOGLE_FONTS[locale]
 
-  // Both env vars are optional and blank until real GA4/Meta accounts
-  // exist — consent-banner.js only loads a script when its id is actually
-  // present, so an unset id here just means that one stays off entirely,
-  // not a broken/placeholder state.
+  // All 3 env vars are optional and blank until real accounts exist —
+  // consent-banner.js only loads a script when its id is actually present,
+  // so an unset id here just means that one stays off entirely, not a
+  // broken/placeholder state. gtmId takes priority when set: the marketing
+  // team's chosen setup (2026-09) routes GA4 + Meta Pixel as tags inside
+  // one GTM container rather than loading them directly — see
+  // consent-banner.js's loadAnalytics() for the fallback-when-no-GTM logic.
   const analyticsScript = `window.__PHIVARA_ANALYTICS__ = ${JSON.stringify({
+    gtmId: process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || '',
     gaId: process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || '',
     metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID || '',
   }).replace(/</g, '\\u003c')};`

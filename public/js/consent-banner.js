@@ -59,6 +59,23 @@ function initConsentBanner() {
     }, 500);
   }
 
+  // Google's standard GTM install snippet also adds a <noscript><iframe>
+  // fallback right after <body> that fires UNCONDITIONALLY, with no
+  // consent check — deliberately NOT added here, since that would load
+  // tracking before the PDPA banner's "accept" click, defeating the whole
+  // point of gating loadAnalytics() behind consent in the first place.
+  // No-JS visitors simply get no analytics, same as they'd get no GA4/Pixel
+  // today (this whole site needs JS to render regardless).
+  function loadGTM(gtmId) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(gtmId);
+    document.head.appendChild(script);
+    window.__phivaraGtmLoaded = true;
+  }
+
   function loadGA4(gaId) {
     var script = document.createElement('script');
     script.async = true;
@@ -91,6 +108,19 @@ function initConsentBanner() {
 
   function loadAnalytics() {
     var cfg = window.__PHIVARA_ANALYTICS__ || {};
+    if (cfg.gtmId) {
+      // Marketing team's setup (2026-09): GA4 + Meta Pixel are configured
+      // as tags INSIDE this one GTM container, not loaded directly by us —
+      // see phivaraTrackLead() below for how the generate_lead event
+      // reaches them. Deliberately skips the direct gaId/metaPixelId
+      // branch entirely when gtmId is set, so nothing double-fires once
+      // GTM's own GA4/Pixel tags are wired up on the marketing team's side.
+      if (!window.__phivaraGtmLoaded) loadGTM(cfg.gtmId);
+      return;
+    }
+    // Fallback for the period before a GTM container exists yet (or if the
+    // team ever goes back to direct-only tracking) — same direct gtag.js /
+    // Meta Pixel loading this site used before GTM.
     if (cfg.gaId && typeof window.gtag !== 'function') loadGA4(cfg.gaId);
     if (cfg.metaPixelId && typeof window.fbq !== 'function') loadMetaPixel(cfg.metaPixelId);
   }
@@ -102,6 +132,18 @@ function initConsentBanner() {
   // - SiteFooter's "Cookie Settings" link calls phivaraReopenConsent() so a
   //   visitor can change their mind after the initial choice.
   window.phivaraTrackLead = function () {
+    if (window.__phivaraGtmLoaded) {
+      // GTM setup: push to dataLayer and let the GA4 + Meta Pixel tags
+      // configured inside the GTM container (marketing team's side, not
+      // this codebase) pick it up via their own triggers. Do NOT also call
+      // gtag/fbq directly here — GTM's own tags already forward to both,
+      // so doing both would double-count every lead.
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'generate_lead' });
+      return;
+    }
+    // Fallback for the period before a GTM container exists yet — see
+    // loadAnalytics() above for the matching direct-load branch.
     if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead');
     if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
   };

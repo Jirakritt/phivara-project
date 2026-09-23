@@ -50,7 +50,10 @@ export async function generateMetadata() {
 export default async function GlobalNotFound() {
   const locale = await resolveLocale()
   const t = translator(locale)
+  // Kept in sync with [locale]/layout.tsx's analyticsScript — see that
+  // file's comment for why gtmId takes priority.
   const analyticsScript = `window.__PHIVARA_ANALYTICS__ = ${JSON.stringify({
+    gtmId: process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || '',
     gaId: process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || '',
     metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID || '',
   }).replace(/</g, '\\u003c')};`
