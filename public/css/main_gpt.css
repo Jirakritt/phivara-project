@@ -663,10 +663,22 @@
   .program-branch-multi .pill svg{ width:10px; height:10px; flex:0 0 10px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .program-branch-list .program-branch{ margin-bottom:4px; }
   .program-branch-list .program-branch:last-child{ margin-bottom:10px; }
-  .spec-card p.note{ font-size:14px!important; color:var(--ink-soft); font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
+  /* color hardcoded to #45413C (not var(--ink-soft)) — this file redefines
+     --ink-soft twice (a lighter #6D6962 further down wins the cascade,
+     same "two :root blocks" legacy pattern as main.css, which happens to
+     land on a DIFFERENT #45413C for its own second block) — 2026-09-23
+     consistency fix so the note text color matches /doctor exactly instead
+     of inheriting whichever --ink-soft each file's cascade happens to
+     resolve to. */
+  .spec-card p.note{ font-size:14px!important; color:#45413C; font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
   .spec-card .go{ font-size:13px; font-weight:600; letter-spacing:.06em; color:var(--gold); text-transform:uppercase; transition:color 0.3s ease; }
   .spec-card .go:hover{ color:var(--olive-dark); }
-  .spec-card .spec-subnote{ font-size:16px; color:var(--olive); margin-bottom:16px; line-height:1.45; min-height:36px; text-align:left; }
+  /* font-weight:400 added (2026-09-23) — /doctor's copy of this rule
+     (.doctor-grid .spec-card .spec-subnote in doctor.css) explicitly sets
+     400; this rule had no font-weight declared at all, so it fell through
+     to whatever the ambient 300 ended up being, reading noticeably
+     lighter/thinner than /doctor's card. */
+  .spec-card .spec-subnote{ font-size:16px; font-weight:400; color:var(--olive); margin-bottom:16px; line-height:1.45; min-height:36px; text-align:left; }
   .spec-card .card-actions{ display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; padding-top:13px; border-top:1px solid var(--line); margin-top:auto; }
   .spec-card .btn-doc-detail{ display:inline-flex; align-items:center; justify-content:center; padding:7px 12px; border:1px solid var(--gold-line); border-radius:30px; background:transparent; color:var(--olive-dark); font-size:14px !important; font-weight:500; white-space:nowrap; text-decoration:none; transition:all .3s ease; }
   .spec-card .btn-doc-detail:hover{ background:var(--gold); color:#ffffff; border-color:var(--gold); text-decoration:none; }
