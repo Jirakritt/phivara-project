@@ -220,9 +220,6 @@ export default async function ProgramDetailPage({
                   </button>
                 ))}
               </div>
-              <div className="variant-picker-summary">
-                <button className="detail-btn booking-trigger" data-program={program.titleTh}>{t('นัดหมายปรึกษาโปรแกรม', 'Book a Consultation')} <span>→</span></button>
-              </div>
             </div>
           </section>
         )}
