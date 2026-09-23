@@ -578,16 +578,16 @@ footer.site-footer .foot-brand .logo-lockup img { width: auto; height: 28px; fil
 footer.site-footer .foot-brand .logo-lockup .word { color: #fff; font-family: var(--shell-serif); font-size: 17px; font-weight: 500; letter-spacing: .16em; }
 
 footer.site-footer .foot-brand p {
-  /* Was 280px — the Thai tagline measures ~282px at this font, just barely
-     over, so its last word ("ยาว") dropped to an orphan second line
-     (reported 2026-09-10). Bumped to 300px so the full line fits with a
-     little headroom for font-rendering variance across browsers. */
-  max-width: 300px;
+  /* Was 280px, then 300px at font-size 14px. Font-size bumped to 16px for
+     readability (2026-09-23), which widened the Thai tagline enough to drop
+     its last word ("ยาว") to an orphan second line again — bumped to 340px
+     so the full line fits with headroom for font-rendering variance. */
+  max-width: 340px;
   margin: 0;
   color: #faf5ec;
-  font-size: 14px;
+  font-size: 16px !important;
   font-weight: 300;
-  line-height: 1.85;
+  line-height: 1.85 !important;
 }
 
 footer.site-footer .foot-col h4 {
@@ -605,8 +605,8 @@ footer.site-footer .foot-col span {
   display: block;
   margin-bottom: 12px;
   color: #faf5ec;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
   text-decoration: none;
   transition: color .3s ease;
 }
