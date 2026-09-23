@@ -637,14 +637,14 @@
   .spec-card .photo-wrap{ overflow:hidden; margin-bottom:18px; }
   .spec-card .ph-photo{ aspect-ratio:4/5; object-fit:cover; filter:saturate(.94); transition:transform .8s var(--ease); width:100%; display:block; }
   .spec-card:hover .ph-photo{ transform:scale(1.06); }
-  .spec-card h3{ font-size:17px; margin-bottom:5px; font-weight:500; text-align:left; }
-  .spec-card h3 a{ color:inherit; font-size:17px; transition:color .3s ease; }
+  .spec-card h3{ font-size:16px; margin-bottom:5px; font-weight:500; text-align:left; }
+  .spec-card h3 a{ color:inherit; font-size:16px !important; transition:color .3s ease; }
   .spec-card h3 a:hover{ color:var(--gold); }
   .spec-card .photo-wrap>a{ display:block; width:100%; height:100%; }
   .spec-card p.note{ font-size:14px!important; color:var(--ink-soft); font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
   .spec-card .go{ font-size:13px; font-weight:600; letter-spacing:.06em; color:var(--gold); text-transform:uppercase; transition:color 0.3s ease; }
   .spec-card .go:hover{ color:var(--olive-dark); }
-  .spec-card .spec-subnote{ font-size:14px; color:var(--olive); margin-bottom:16px; line-height:1.45; min-height:36px; text-align:left; }
+  .spec-card .spec-subnote{ font-size:16px; color:var(--olive); margin-bottom:16px; line-height:1.45; min-height:36px; text-align:left; }
   .spec-card .card-actions{ display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; padding-top:13px; border-top:1px solid var(--line); margin-top:auto; }
   .spec-card .btn-doc-detail{ display:inline-flex; align-items:center; justify-content:center; padding:7px 12px; border:1px solid var(--gold-line); border-radius:30px; background:transparent; color:var(--olive-dark); font-size:14px !important; font-weight:500; white-space:nowrap; text-decoration:none; transition:all .3s ease; }
   .spec-card .btn-doc-detail:hover{ background:var(--gold); color:#ffffff; border-color:var(--gold); text-decoration:none; }

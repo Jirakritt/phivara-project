@@ -907,7 +907,7 @@ body[data-branch-id="pt2"] .branch-doctor-featured__quote p {
 
 .branch-doctor-grid h3 {
   margin: 0 0 5px;
-  font-size: 17px !important;
+  font-size: 16px !important;
   font-weight: 500;
   color: var(--ink);
   text-align: left;
@@ -915,7 +915,7 @@ body[data-branch-id="pt2"] .branch-doctor-featured__quote p {
 
 .branch-doctor-grid h3 a {
   color: inherit;
-  font-size: 17px !important;
+  font-size: 16px !important;
   transition: color .3s ease;
 }
 
@@ -926,7 +926,7 @@ body[data-branch-id="pt2"] .branch-doctor-featured__quote p {
 .branch-doctor-grid .note {
   margin-bottom: 14px;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 16px !important;
   font-weight: 400;
   line-height: 1.5;
   text-align: left;
@@ -938,7 +938,7 @@ body[data-branch-id="pt2"] .branch-doctor-featured__quote p {
   min-height: 36px;
   margin-bottom: 16px;
   color: var(--olive);
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.45;
   text-align: left;
 }
