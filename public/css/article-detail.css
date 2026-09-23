@@ -92,7 +92,7 @@
 .program-item:last-child{border-bottom:0}
 .program-item small{display:block;margin-bottom:4px;font-size:10px;color:var(--terracotta)}
 .program-item strong{display:block;font-size:14px;line-height:1.5;font-weight:500;color:var(--olive-dark)}
-.program-item span{display:block;margin-top:5px;font-size:11.5px;line-height:1.55;color:var(--ink-soft)}
+.program-item span{display:block;margin-top:5px;font-size:14px;line-height:1.6;color:var(--ink-soft)}
 .program-item:hover strong{color:var(--gold)}
 
 .sidebar-cta{padding:22px 20px;background:var(--olive-dark);color:var(--cream)}
