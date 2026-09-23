@@ -238,7 +238,7 @@
   .hero h1 .word{ display:inline-block; transform:translateY(115%); animation:wordUp 1s var(--ease) forwards; }
   @keyframes wordUp{ to{ transform:translateY(0); } }
   @keyframes heroFade{ to{ opacity:1; } }
-  .hero p.sub{ font-size:17px; line-height:1.85; color:#EAE1CC; max-width:520px; margin-bottom:42px; font-weight:300; opacity:0; animation:heroFade 1s ease forwards 1.1s;}
+  .hero p.sub{ font-size:17px!important; line-height:1.85!important; color:#EAE1CC; max-width:520px; margin-bottom:42px; font-weight:300; opacity:0; animation:heroFade 1s ease forwards 1.1s;}
   .hero .cta-row{ display:flex; gap:18px; flex-wrap:wrap; align-items:center; opacity:0; animation:heroFade 1s ease forwards 1.35s;}
   .scroll-cue{ position:absolute; bottom:36px; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; gap:10px; color:#EAE1CC; font-size:10px; letter-spacing:.24em; text-transform:uppercase; opacity:.8; }
   .scroll-cue .line{ width:1px; height:36px; background:linear-gradient(#EAE1CC, transparent); animation:scrollpulse 2.2s infinite; }
@@ -251,7 +251,7 @@
   @media(max-width:768px){ section{ padding:80px 0; } }
   .section-head{ text-align:center; max-width:640px; margin:0 auto 40px; }
   .section-head h2{ font-size:clamp(27px,3.6vw,40px); margin-top:20px; font-weight:300; }
-  .section-head p{ margin-top:20px; color:var(--ink-soft); font-size:16px; line-height:1.85; font-weight:300; }
+  .section-head p{ margin-top:20px; color:var(--ink-soft); font-size:16px!important; line-height:1.85!important; font-weight:300; }
 
   .reveal{ opacity:0; transform:translateY(34px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
   .reveal.in{ opacity:1; transform:translateY(0); }
@@ -264,7 +264,7 @@
   .intro .grid{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:76px; align-items:center; position:relative; z-index:1; }
   .intro .ph-photo{ border-radius:1px; aspect-ratio:3/4; object-fit:cover; }
   .intro blockquote{ font-family:var(--serif); font-weight:300; font-size:clamp(23px,2.7vw,32px); line-height:1.5; color:var(--olive-dark); margin:28px 0 28px; }
-  .intro p.body{ color:var(--ink-soft); font-size:16px; line-height:1.95; font-weight:300; margin-bottom:28px; }
+  .intro p.body{ color:var(--ink-soft); font-size:16px!important; line-height:1.95!important; font-weight:300; margin-bottom:28px; }
   .intro .sig{ font-family:var(--serif-en); font-style:italic; color:var(--gold); font-size:18px; }
   @media(max-width:900px){ .intro .grid{ grid-template-columns:1fr; gap:44px; } .intro .ph-photo{ aspect-ratio:16/10; max-width:480px; margin:0 auto; } }
 
@@ -401,7 +401,7 @@
   .exp-card-grid .card-body{ padding:22px 22px 20px; display:flex; flex:1; flex-direction:column; align-items:stretch; }
   .exp-card-grid .card-body h4{ position:relative; width:100%; padding-bottom:14px; font-family:var(--sans); font-size:17px; font-weight:500; color:var(--ink); margin:0 0 14px; line-height:1.5; text-align:left; }
   .exp-card-grid .card-body h4::after{ content:""; position:absolute; left:0; bottom:0; width:72px; height:1px; background:linear-gradient(90deg,var(--gold),rgba(199,167,107,.42),transparent); }
-  .exp-card-grid .card-body p{ width:100%; min-height:64px; font-size:12.5px; color:var(--ink-soft); line-height:1.7; font-weight:300; margin-bottom:18px; text-align:left;
+  .exp-card-grid .card-body p{ width:100%; min-height:64px; font-size:16px!important; color:var(--ink-soft); line-height:1.7!important; font-weight:300; margin-bottom:18px; text-align:left;
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .exp-card-grid .card-body .card-title-link{ color:inherit; font-size:inherit; }
   .exp-card-grid .card-body .card-title-link:hover{ color:var(--gold); }
@@ -467,7 +467,7 @@
   .mem-text .eyebrow{ color:var(--gold-light); }
   .mem-text .eyebrow::before{ background:var(--gold-light); }
   .mem-text h2{ color:#fff; font-size:clamp(25px,3.2vw,36px); margin:20px 0 22px; line-height:1.35; font-weight:300; }
-  .mem-text p{ color:#D9CFB8; font-weight:300; font-size:15.5px; line-height:1.9; margin-bottom:32px; }
+  .mem-text p{ color:#D9CFB8; font-weight:300; font-size:16px!important; line-height:1.9!important; margin-bottom:32px; }
   .mem-cta-row{ display:flex; align-items:center; gap:28px; flex-wrap:wrap; }
   /* Secondary "View Details" link to /membership — .arrow-link's default
      gold/olive-dark hover pair is tuned for light backgrounds; olive-dark
@@ -536,7 +536,7 @@
   }
   .flagship-text h3{ color:#342A21; font-size:clamp(25px,2.25vw,33px); margin:0 0 14px; line-height:1.28; font-weight:300; }
   .flagship-text p{
-    color:#645749; font-weight:300; font-size:15px; line-height:1.7;
+    color:#645749; font-weight:300; font-size:16px!important; line-height:1.7!important;
     margin-bottom:20px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
   }
   .flagship-link{
@@ -613,7 +613,7 @@
     }
     .flagship-text::before{ width:30px; margin-bottom:10px; }
     .flagship-text h3{ font-size:clamp(21px,5.8vw,27px); margin-bottom:8px; }
-    .flagship-text p{ font-size:12.5px; line-height:1.55; margin-bottom:12px; -webkit-line-clamp:3; }
+    .flagship-text p{ font-size:14px!important; line-height:1.55!important; margin-bottom:12px; -webkit-line-clamp:3; }
     .flagship-nav-btn{ flex-basis:172px; min-height:66px; font-size:11px; }
   }
   @media(max-width:420px){
@@ -641,7 +641,7 @@
   .spec-card h3 a{ color:inherit; font-size:17px; transition:color .3s ease; }
   .spec-card h3 a:hover{ color:var(--gold); }
   .spec-card .photo-wrap>a{ display:block; width:100%; height:100%; }
-  .spec-card p.note{ font-size:13px; color:var(--ink-soft); font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
+  .spec-card p.note{ font-size:14px!important; color:var(--ink-soft); font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
   .spec-card .go{ font-size:13px; font-weight:600; letter-spacing:.06em; color:var(--gold); text-transform:uppercase; transition:color 0.3s ease; }
   .spec-card .go:hover{ color:var(--olive-dark); }
   .spec-card .spec-subnote{ font-size:14px; color:var(--olive); margin-bottom:16px; line-height:1.45; min-height:36px; text-align:left; }
