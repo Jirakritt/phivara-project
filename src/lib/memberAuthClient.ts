@@ -20,14 +20,31 @@
 
 export interface PayloadApiError {
   message: string
+  // Payload nests per-field validation failures (e.g. a duplicate email)
+  // under `data.errors` — the top-level `message` is only a generic
+  // "The following field is invalid: email".
+  data?: { errors?: Array<{ message?: string; path?: string }> }
 }
 
-async function parseError(res: Response): Promise<string> {
+// Carries which fields failed so callers can show a specific, translated
+// message instead of Payload's raw English one (see RegisterForm).
+export class MemberApiError extends Error {
+  fieldPaths: string[]
+  constructor(message: string, fieldPaths: string[] = []) {
+    super(message)
+    this.name = 'MemberApiError'
+    this.fieldPaths = fieldPaths
+  }
+}
+
+async function parseError(res: Response): Promise<MemberApiError> {
   try {
     const body = (await res.json()) as { errors?: PayloadApiError[]; message?: string }
-    return body.errors?.[0]?.message || body.message || `Request failed (${res.status})`
+    const first = body.errors?.[0]
+    const fieldPaths = (first?.data?.errors || []).map((e) => e.path).filter((p): p is string => !!p)
+    return new MemberApiError(first?.message || body.message || `Request failed (${res.status})`, fieldPaths)
   } catch {
-    return `Request failed (${res.status})`
+    return new MemberApiError(`Request failed (${res.status})`)
   }
 }
 
@@ -37,7 +54,7 @@ async function postJSON<T>(url: string, data: unknown): Promise<T> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error(await parseError(res))
+  if (!res.ok) throw await parseError(res)
   return res.json() as Promise<T>
 }
 
@@ -104,7 +121,7 @@ export async function updateMember(id: number, data: Record<string, unknown>): P
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error(await parseError(res))
+  if (!res.ok) throw await parseError(res)
   const body = (await res.json()) as { doc: MemberSummary }
   return body.doc
 }

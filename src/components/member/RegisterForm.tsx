@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { registerMember } from '@/lib/memberAuthClient'
+import { MemberApiError, registerMember } from '@/lib/memberAuthClient'
 import { localizedHref, translator } from '@/lib/i18n'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -19,11 +19,13 @@ export default function RegisterForm({ locale }: { locale: LocaleCode }) {
   const [password, setPassword] = useState('')
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [error, setError] = useState('')
+  const [emailTaken, setEmailTaken] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+    setEmailTaken(false)
     if (!acceptTerms) {
       setError(t('กรุณายอมรับข้อตกลงการใช้งานและนโยบายความเป็นส่วนตัว', 'Please accept the Terms of Use and Privacy Policy'))
       return
@@ -37,6 +39,13 @@ export default function RegisterForm({ locale }: { locale: LocaleCode }) {
       await registerMember(email, password, locale)
       router.push(`${localizedHref(locale, '/register/check-email')}?email=${encodeURIComponent(email)}`)
     } catch (err) {
+      // Payload reports a duplicate email as a generic "field is invalid: email"
+      // with path 'email' in data.errors — show a specific message + login link.
+      if (err instanceof MemberApiError && err.fieldPaths.includes('email')) {
+        setEmailTaken(true)
+        setSubmitting(false)
+        return
+      }
       setError(err instanceof Error ? err.message : t('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง', 'Something went wrong. Please try again.'))
       setSubmitting(false)
     }
@@ -79,6 +88,14 @@ export default function RegisterForm({ locale }: { locale: LocaleCode }) {
       </div>
 
       {error && <span className="auth-field-error">{error}</span>}
+      {emailTaken && (
+        <span className="auth-field-error" role="alert">
+          {t('อีเมลนี้ถูกใช้สมัครสมาชิกแล้ว', 'This email is already registered.')}{' '}
+          <a href={localizedHref(locale, '/login')}>{t('เข้าสู่ระบบ', 'Log in')}</a>
+          {' · '}
+          <a href={localizedHref(locale, '/forgot-password')}>{t('ลืมรหัสผ่าน?', 'Forgot password?')}</a>
+        </span>
+      )}
 
       <button type="submit" className="auth-btn" disabled={submitting}>
         {submitting ? t('กำลังส่ง...', 'Sending...') : t('ส่งลิงก์ยืนยัน', 'Send verification link')}
