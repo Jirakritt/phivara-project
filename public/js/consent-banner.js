@@ -151,6 +151,36 @@ function initConsentBanner() {
     showBanner();
   };
 
+  // Homepage only: (public)/page.tsx sets window.__PHIVARA_POPUP_GATE__ =
+  // 'pending' while the "special day" popup (HomePopup.tsx) may still show.
+  // The first-visit banner waits for it ('done' via phivaraPopupDone) so the
+  // two never stack; a fallback timer guarantees the banner still appears
+  // even if the popup code never reports back.
+  var bannerWaiting = false;
+  function popupBusy() {
+    var gate = window.__PHIVARA_POPUP_GATE__;
+    return gate === 'pending' || gate === 'open';
+  }
+  function showBannerWhenFree() {
+    if (!popupBusy()) {
+      showBanner();
+      return;
+    }
+    bannerWaiting = true;
+    setTimeout(function () {
+      // 'pending' this long means HomePopup never ran/answered; an 'open'
+      // popup is still on screen, so keep waiting for its close.
+      if (bannerWaiting && window.__PHIVARA_POPUP_GATE__ === 'pending') window.phivaraPopupDone();
+    }, 12000);
+  }
+  window.phivaraPopupDone = function () {
+    window.__PHIVARA_POPUP_GATE__ = 'done';
+    if (bannerWaiting) {
+      bannerWaiting = false;
+      showBanner();
+    }
+  };
+
   var existing = readConsent();
   if (existing && existing.choice === 'granted') {
     loadAnalytics();
@@ -158,7 +188,7 @@ function initConsentBanner() {
   } else if (existing && existing.choice === 'denied') {
     hideBanner(true);
   } else {
-    showBanner();
+    showBannerWhenFree();
   }
 
   if (acceptBtn) {

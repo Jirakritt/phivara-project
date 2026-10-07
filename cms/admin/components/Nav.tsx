@@ -141,6 +141,17 @@ const contentItems: NavItem[] = [
       </>,
     ),
   },
+  {
+    slug: 'popups',
+    label: 'Popup หน้าแรก',
+    type: 'collection',
+    icon: icon(
+      <>
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M15 9l-6 6M9 9l6 6" />
+      </>,
+    ),
+  },
 ]
 
 const settingsItems: NavItem[] = [

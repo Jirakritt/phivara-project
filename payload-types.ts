@@ -77,6 +77,7 @@ export interface Config {
     programs: Program;
     articles: Article;
     awards: Award;
+    popups: Popup;
     leads: Lead;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -94,6 +95,7 @@ export interface Config {
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     awards: AwardsSelect<false> | AwardsSelect<true>;
+    popups: PopupsSelect<false> | PopupsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -907,6 +909,47 @@ export interface Award {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "popups".
+ */
+export interface Popup {
+  id: number;
+  /**
+   * ชื่อสำหรับทีมงาน (ไม่แสดงบนหน้าเว็บ) เช่น "สงกรานต์ 2569"
+   */
+  title: string;
+  /**
+   * ปิดเพื่อหยุดแสดง popup นี้ทันที (แม้ยังอยู่ในช่วงเวลา)
+   */
+  enabled?: boolean | null;
+  /**
+   * รูปที่แสดงใน popup (ใช้รูปเดียวทุกภาษาและทุกอุปกรณ์) แนะนำแนวตั้งหรือสี่เหลี่ยมจัตุรัส กว้างอย่างน้อย 800px — เปลี่ยนรูปแล้วผู้เข้าชมจะเห็น popup ทันทีโดยไม่ต้องรอช่วงเวลาแสดงซ้ำ
+   */
+  image: number | Media;
+  /**
+   * คำอธิบายรูปสำหรับผู้ใช้ screen reader (ไม่บังคับ — ถ้าเว้นว่างจะใช้ชื่อด้านบน)
+   */
+  alt?: string | null;
+  /**
+   * วัน-เวลาที่เริ่มแสดง (ตามเวลาของเครื่องที่ใช้แก้ไข)
+   */
+  startAt: string;
+  /**
+   * วัน-เวลาที่หยุดแสดง
+   */
+  endAt: string;
+  /**
+   * ผู้เข้าชมคนเดิมที่ refresh หน้า จะเห็น popup อีกครั้งเมื่อพ้นกี่นาทีนับจากครั้งที่แสดงล่าสุด (ค่าเริ่มต้น 15)
+   */
+  reshowIntervalMinutes: number;
+  /**
+   * ลิงก์เมื่อคลิกรูป (ไม่บังคับ) — ใส่ https://… หรือ path ภายในเว็บ เช่น /th/membership
+   */
+  linkUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Booking requests submitted through the VIP Concierge modal and doctor appointment forms across the site.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1023,6 +1066,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'awards';
         value: number | Award;
+      } | null)
+    | ({
+        relationTo: 'popups';
+        value: number | Popup;
       } | null)
     | ({
         relationTo: 'leads';
@@ -1488,6 +1535,22 @@ export interface ArticlesSelect<T extends boolean = true> {
 export interface AwardsSelect<T extends boolean = true> {
   image?: T;
   caption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "popups_select".
+ */
+export interface PopupsSelect<T extends boolean = true> {
+  title?: T;
+  enabled?: T;
+  image?: T;
+  alt?: T;
+  startAt?: T;
+  endAt?: T;
+  reshowIntervalMinutes?: T;
+  linkUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }

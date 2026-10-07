@@ -76,6 +76,7 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 | Program price variants + LINE OA ต่อสาขา | production | LINE กลางแก้ได้ที่ Footer > Social Links (`lineId`, `line`) มี fallback hardcode กันลิงก์ตาย |
 | TopBar LINE เป็นลิงก์จริง, `?booking=open` เปิด popup จอง (สำหรับ LINE Rich Menu) | production | |
 | GTM (ลำดับก่อน GA4/Meta Pixel โดยตรง) | โค้ดพร้อม | ID ใน production `.env` ยังว่าง |
+| Popup วันพิเศษหน้าแรก | commit แล้ว ยังไม่ deploy | collection `popups` (`cms/collections/Popups.ts`) ตั้งรูป/วัน-เวลาเริ่ม-สิ้นสุด/สวิตช์เปิดปิด/ช่วงแสดงซ้ำ (ค่าเริ่มต้น 15 นาที); เสิร์ฟผ่าน `/api/popup/active` (คิดเวลาตอน request เพราะหน้าแรกเป็น ISR 60s); จำรอบแสดงใน localStorage `phivara_popup` (key = popup id + รูป → เปลี่ยนรูปแสดงทันที); แบนเนอร์คุกกี้รอจนปิด popup (`__PHIVARA_POPUP_GATE__`); migration `20261007_150536_popups` (เพิ่มตารางอย่างเดียว) — deploy ตามลำดับ pull → `npx payload migrate` → build → reload |
 | Preview ภาษาที่ยังไม่เปิด (Draft Mode + `PREVIEW_SECRET`) | commit แล้ว (`89eca42`, `dc73c02`) | ลิงก์ `/api/preview?secret=…&redirect=/ja`; ปุ่มสร้างลิงก์อยู่ใน Language Management; ตรวจว่าตั้ง `PREVIEW_SECRET` ใน production `.env` แล้วหรือยัง |
 | **Doctor multi-branch CR** | deploy production แล้ว 22 ก.ย. | ดูหัวข้อ 5 |
 | เอกสาร TOR / Proposal / DES-PHIVARA-2569-001 / Scope / ส่งมอบ | เสร็จ | Proposal ใช้ theme บริษัท Codeworks (ต่างจาก TOR) |

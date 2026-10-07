@@ -1,5 +1,6 @@
 import Script from 'next/script'
 
+import HomePopup from '@/components/HomePopup'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
@@ -96,7 +97,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <link rel="stylesheet" href="/css/journal-card.css" />
       <link rel="stylesheet" href="/css/vip-modal.css" />
+      <link rel="stylesheet" href="/css/home-popup.css" />
 
+      {/* Tells consent-banner.js to hold the cookie banner back until the
+          homepage popup (HomePopup, below) has been shown and closed — or
+          decided not to show. HomePopup always clears this; consent-banner.js
+          also has its own timeout so it can never be withheld for good. */}
+      <Script id="phivara-popup-gate" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: "window.__PHIVARA_POPUP_GATE__='pending';" }} />
       <Script id="phivara-home-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
       <Script id="phivara-main-strings" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: mainStringsScript }} />
 
@@ -324,6 +331,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       <SiteFooter branches={data.branches} footer={data.footer} locale={locale} />
+
+      <HomePopup locale={locale} />
 
       <Script src="/js/main.js" strategy="afterInteractive" />
       <Script src="/js/vip-modal.js" strategy="afterInteractive" />

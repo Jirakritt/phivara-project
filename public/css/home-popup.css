@@ -1,0 +1,39 @@
+/* Homepage "special day" popup — see src/components/HomePopup.tsx.
+   z-index sits above the VIP modal/consent banner/preloader so it's never
+   hidden behind them; the cookie banner is held back until it closes. */
+.home-popup-overlay{
+  position:fixed; inset:0; z-index:10050; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:rgba(37,31,23,.62);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  animation:homePopupFade .35s ease both;
+}
+.home-popup{
+  position:relative; max-width:min(560px,100%); max-height:100%;
+  display:flex; align-items:center; justify-content:center;
+  animation:homePopupRise .45s cubic-bezier(.2,.75,.25,1) both;
+}
+.home-popup a{ display:block; line-height:0; }
+.home-popup-img{
+  display:block; width:auto; height:auto; max-width:100%; max-height:calc(100vh - 96px);
+  border-radius:14px; background:#fffefc;
+  box-shadow:0 42px 100px rgba(31,24,15,.45);
+}
+.home-popup-close{
+  position:absolute; top:-14px; right:-14px; z-index:2; width:38px; height:38px; padding:0;
+  border-radius:50%; border:1px solid rgba(184,149,96,.5); background:#fffefc; color:#46463A;
+  font:400 24px/1 var(--sans,sans-serif); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 18px rgba(31,24,15,.25);
+  transition:border-color .3s ease,transform .3s ease;
+}
+.home-popup-close:hover{ border-color:#C7A76B; transform:rotate(90deg); }
+.home-popup-close:focus-visible{ outline:2px solid #C7A76B; outline-offset:3px; }
+@keyframes homePopupFade{ from{opacity:0} to{opacity:1} }
+@keyframes homePopupRise{ from{opacity:0; transform:translateY(24px) scale(.97)} to{opacity:1; transform:none} }
+@media (max-width:600px){
+  .home-popup-overlay{ padding:20px 16px; }
+  .home-popup-close{ top:-12px; right:-6px; }
+}
+@media (prefers-reduced-motion:reduce){
+  .home-popup-overlay,.home-popup{ animation:none; }
+}

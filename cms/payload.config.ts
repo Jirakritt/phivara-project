@@ -26,6 +26,7 @@ import { Doctors } from './collections/Doctors'
 import { Programs } from './collections/Programs'
 import { Articles } from './collections/Articles'
 import { Awards } from './collections/Awards'
+import { Popups } from './collections/Popups'
 import { Leads } from './collections/Leads'
 import { Members } from './collections/Members'
 import { MembershipTiers } from './collections/MembershipTiers'
@@ -43,7 +44,7 @@ import { PrivacyPolicy } from './globals/PrivacyPolicy'
 import { DoctorDisplaySettings } from './globals/DoctorDisplaySettings'
 
 export default buildConfig({
-  collections: [Users, Members, MembershipTiers, Media, Branches, Doctors, Programs, Articles, Awards, Leads],
+  collections: [Users, Members, MembershipTiers, Media, Branches, Doctors, Programs, Articles, Awards, Popups, Leads],
   globals: [Membership, MemberPrivileges, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings, PrivacyPolicy, EmailSettings, DoctorDisplaySettings],
 
   // Sends member-account emails (verify/forgot-password — see
