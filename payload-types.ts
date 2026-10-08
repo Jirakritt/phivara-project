@@ -122,6 +122,7 @@ export interface Config {
     'privacy-policy': PrivacyPolicy;
     'email-settings': EmailSetting;
     'doctor-display-settings': DoctorDisplaySetting;
+    'grayscale-mode': GrayscaleMode;
   };
   globalsSelect: {
     membership: MembershipSelect<false> | MembershipSelect<true>;
@@ -134,6 +135,7 @@ export interface Config {
     'privacy-policy': PrivacyPolicySelect<false> | PrivacyPolicySelect<true>;
     'email-settings': EmailSettingsSelect<false> | EmailSettingsSelect<true>;
     'doctor-display-settings': DoctorDisplaySettingsSelect<false> | DoctorDisplaySettingsSelect<true>;
+    'grayscale-mode': GrayscaleModeSelect<false> | GrayscaleModeSelect<true>;
   };
   locale: 'th' | 'en' | 'ja' | 'zh' | 'vi' | 'km' | 'ar' | 'ms' | 'id' | 'de' | 'ru' | 'lo' | 'ko' | 'fr';
   widgets: {
@@ -2092,6 +2094,31 @@ export interface DoctorDisplaySetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "grayscale-mode".
+ */
+export interface GrayscaleMode {
+  id: number;
+  /**
+   * สวิตช์หลัก — ปิดเมื่อไรเว็บกลับเป็นสีปกติทันที (ไม่ว่าจะตั้งวันเวลาไว้อย่างไร) ถ้าเปิดและไม่ใส่วัน-เวลา โหมดจะทำงานต่อเนื่องจนกว่าจะปิดเอง
+   */
+  enabled?: boolean | null;
+  /**
+   * 0% = สีปกติ, 100% = ขาว-ดำเต็มที่ (ปรับได้ทีละ 10%)
+   */
+  level: '0' | '10' | '20' | '30' | '40' | '50' | '60' | '70' | '80' | '90' | '100';
+  /**
+   * เว้นว่างได้ — ถ้าไม่ใส่จะเริ่มทันทีที่เปิดสวิตช์ (ตามเวลาของเครื่องที่ใช้แก้ไข)
+   */
+  startAt?: string | null;
+  /**
+   * เว้นว่างได้ — ถ้าไม่ใส่จะทำงานต่อเนื่องจนกว่าจะปิดสวิตช์ (การเปลี่ยนตามเวลาอัตโนมัติอาจช้าได้สูงสุดประมาณ 1 นาที)
+   */
+  endAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership_select".
  */
 export interface MembershipSelect<T extends boolean = true> {
@@ -2429,6 +2456,19 @@ export interface DoctorDisplaySettingsSelect<T extends boolean = true> {
   groupDoctorsByBranch?: T;
   multiBranchLabelStyle?: T;
   branchLabelPosition?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "grayscale-mode_select".
+ */
+export interface GrayscaleModeSelect<T extends boolean = true> {
+  enabled?: T;
+  level?: T;
+  startAt?: T;
+  endAt?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

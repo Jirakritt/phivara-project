@@ -4,6 +4,7 @@ import React from 'react'
 
 import PreloaderController from '@/components/PreloaderController'
 import { LOCALE_GOOGLE_FONTS } from '@/lib/fonts'
+import { getGrayscaleCss } from '@/lib/grayscaleMode'
 import { DEFAULT_LOCALE, isLocaleCode, isRtl, translator } from '@/lib/i18n'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -110,6 +111,9 @@ export default async function LocaleLayout({
   // comment for why this matters).
   const localeFont = LOCALE_GOOGLE_FONTS[locale]
 
+  // Site-wide black & white mode (CMS > โหมดขาว-ดำ) — '' when off.
+  const grayscaleCss = await getGrayscaleCss()
+
   // All 3 env vars are optional and blank until real accounts exist —
   // consent-banner.js only loads a script when its id is actually present,
   // so an unset id here just means that one stays off entirely, not a
@@ -200,6 +204,7 @@ export default async function LocaleLayout({
         <link rel="stylesheet" href="/css/main_gpt.css" />
         <link rel="stylesheet" href="/css/site-shell.css" />
         <link rel="stylesheet" href="/css/consent-banner.css" />
+        {grayscaleCss && <style id="phivara-grayscale" dangerouslySetInnerHTML={{ __html: grayscaleCss }} />}
         <Script id="phivara-analytics-config" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: analyticsScript }} />
         <Script id="phivara-vip-modal-strings" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: vipModalScript }} />
       </head>

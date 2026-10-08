@@ -42,10 +42,11 @@ import { TopBar } from './globals/TopBar'
 import { LanguageSettings } from './globals/LanguageSettings'
 import { PrivacyPolicy } from './globals/PrivacyPolicy'
 import { DoctorDisplaySettings } from './globals/DoctorDisplaySettings'
+import { GrayscaleMode } from './globals/GrayscaleMode'
 
 export default buildConfig({
   collections: [Users, Members, MembershipTiers, Media, Branches, Doctors, Programs, Articles, Awards, Popups, Leads],
-  globals: [Membership, MemberPrivileges, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings, PrivacyPolicy, EmailSettings, DoctorDisplaySettings],
+  globals: [Membership, MemberPrivileges, Ecosystem, HomeHero, Footer, TopBar, LanguageSettings, PrivacyPolicy, EmailSettings, DoctorDisplaySettings, GrayscaleMode],
 
   // Sends member-account emails (verify/forgot-password — see
   // cms/collections/Members.ts's `auth` config) via whichever provider is

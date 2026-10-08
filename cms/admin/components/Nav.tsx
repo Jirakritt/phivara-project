@@ -204,6 +204,17 @@ const settingsItems: NavItem[] = [
     ),
   },
   {
+    slug: 'grayscale-mode',
+    label: 'โหมดขาว-ดำ (Grayscale)',
+    type: 'global',
+    icon: icon(
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" />
+      </>,
+    ),
+  },
+  {
     slug: 'topbar',
     label: 'แถบบนสุด (Top Bar)',
     type: 'global',

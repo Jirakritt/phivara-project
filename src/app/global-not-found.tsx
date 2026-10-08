@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import Script from 'next/script'
 
 import NotFoundContent from '@/components/NotFoundContent'
+import { getGrayscaleCss } from '@/lib/grayscaleMode'
 import { DEFAULT_LOCALE, isLocaleCode, isRtl, translator } from '@/lib/i18n'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -50,6 +51,7 @@ export async function generateMetadata() {
 export default async function GlobalNotFound() {
   const locale = await resolveLocale()
   const t = translator(locale)
+  const grayscaleCss = await getGrayscaleCss()
   // Kept in sync with [locale]/layout.tsx's analyticsScript — see that
   // file's comment for why gtmId takes priority.
   const analyticsScript = `window.__PHIVARA_ANALYTICS__ = ${JSON.stringify({
@@ -73,6 +75,7 @@ export default async function GlobalNotFound() {
         <link rel="stylesheet" href="/css/404.css" />
         <link rel="stylesheet" href="/css/vip-modal.css" />
         <link rel="stylesheet" href="/css/consent-banner.css" />
+        {grayscaleCss && <style id="phivara-grayscale" dangerouslySetInnerHTML={{ __html: grayscaleCss }} />}
         <Script id="phivara-analytics-config" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: analyticsScript }} />
       </head>
       <body>
