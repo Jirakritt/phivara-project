@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>คู่มือการใช้งาน CMS — สาขา (Branches) | PHIVARA</title>
+<title>คู่มือการใช้งาน CMS: สาขา (Branches) | PHIVARA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -102,10 +102,10 @@
   <section id="overview">
     <div class="section-label">ภาพรวม</div>
     <h2>เมนู "สาขา" คืออะไร</h2>
-    <p>ใช้จัดการข้อมูลของแต่ละสาขา PHIVARA ทั้ง 5 แห่ง — แสดงในหน้ารายละเอียดสาขา, ตัวเลือกสาขาในฟอร์มจองปรึกษา, และคอลัมน์ "สาขา" ที่ footer ของทุกหน้า (คอลัมน์นี้ดึงจากที่นี่โดยตรง แก้จาก footer ไม่ได้ ต้องแก้ที่เมนูนี้)</p>
+    <p>ใช้จัดการข้อมูลของแต่ละสาขา PHIVARA ทั้ง 5 แห่ง แสดงในหน้ารายละเอียดสาขา, ตัวเลือกสาขาในฟอร์มจองปรึกษา, และคอลัมน์ "สาขา" ที่ footer ของทุกหน้า (คอลัมน์นี้ดึงจากที่นี่โดยตรง แก้จาก footer ไม่ได้ ต้องแก้ที่เมนูนี้)</p>
     <div class="callout warn">
       <span class="callout-label">ต่างจากเมนูอื่น</span>
-      <p>สาขา<strong>ไม่มีระบบ Draft/Published</strong> — บันทึกแล้วขึ้นเว็บไซต์จริงทันที ไม่มีขั้นตอนตรวจทานก่อนเผยแพร่ ควรตรวจสอบข้อมูลให้ถูกต้องก่อนบันทึกทุกครั้ง โดยเฉพาะเบอร์โทรและที่อยู่</p>
+      <p>สาขา<strong>ไม่มีระบบ Draft/Published</strong>: บันทึกแล้วขึ้นเว็บไซต์จริงทันที ไม่มีขั้นตอนตรวจทานก่อนเผยแพร่ ควรตรวจสอบข้อมูลให้ถูกต้องก่อนบันทึกทุกครั้ง โดยเฉพาะเบอร์โทรและที่อยู่</p>
     </div>
   </section>
 
@@ -137,7 +137,7 @@
     <h2>ข้อมูลพื้นฐาน</h2>
     <table class="field-table">
       <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
-      <tr><td>Slug <span class="tag required">จำเป็น</span></td><td>รหัสสาขาที่ใช้ในลิงก์และฟอร์มจอง เช่น <code>sanampao</code>, <code>phaholyothin</code>, <code>sriayudhaya</code>, <code>sriracha</code>, <code>petchakasem</code> — <strong>ห้ามเปลี่ยนค่านี้ทีหลัง</strong> ถ้าไม่จำเป็น เพราะฟิลด์อื่นๆ ในระบบ (leads เก่า) อ้างอิงค่านี้อยู่</td></tr>
+      <tr><td>Slug <span class="tag required">จำเป็น</span></td><td>รหัสสาขาที่ใช้ในลิงก์และฟอร์มจอง เช่น <code>sanampao</code>, <code>phaholyothin</code>, <code>sriayudhaya</code>, <code>sriracha</code>, <code>petchakasem</code> <strong>ห้ามเปลี่ยนค่านี้ทีหลัง</strong> ถ้าไม่จำเป็น เพราะฟิลด์อื่นๆ ในระบบ (leads เก่า) อ้างอิงค่านี้อยู่</td></tr>
       <tr><td>ชื่อไทย (nameTh) <span class="tag required">จำเป็น</span></td><td>ชื่อสาขาภาษาไทย</td></tr>
       <tr><td>ชื่ออังกฤษ (nameEn) <span class="tag required">จำเป็น</span></td><td>ชื่อสาขาภาษาอังกฤษ</td></tr>
       <tr><td>แท็กไลน์ (tagline)</td><td class="optional">เช่น "Hospital-Grade Plastic Surgery Center"</td></tr>
@@ -154,7 +154,7 @@
       <tr><td>เวลาทำการ (hours)</td><td class="optional">เช่น "ทุกวัน 09:00 - 20:00 น."</td></tr>
       <tr><td>เบอร์โทร (phone)</td><td class="optional">ไม่รองรับ 2 ภาษา (ใช้เบอร์เดียวกันทุกภาษา)</td></tr>
       <tr><td>LINE ID (lineId)</td><td class="optional">ค่าเริ่มต้น <code>@phivara</code> เปลี่ยนได้ถ้าสาขานี้มี LINE แยก</td></tr>
-      <tr><td>ลิงก์แผนที่ (mapUrl)</td><td class="optional">ลิงก์ Google Maps — ปัจจุบันยังไม่มีการนำไปแสดงผลบนเว็บไซต์จริง เตรียมไว้สำหรับใช้ในอนาคต</td></tr>
+      <tr><td>ลิงก์แผนที่ (mapUrl)</td><td class="optional">ลิงก์ Google Maps ปัจจุบันยังไม่มีการนำไปแสดงผลบนเว็บไซต์จริง เตรียมไว้สำหรับใช้ในอนาคต</td></tr>
     </table>
   </section>
 
@@ -163,7 +163,7 @@
     <h2>รูปภาพ &amp; แกลเลอรี</h2>
     <table class="field-table">
       <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
-      <tr><td>รูปภาพหลัก (heroImage)</td><td class="optional">รูป hero บนหน้ารายละเอียดสาขา — แนะนำแนวนอน ความละเอียดสูง (~1600×900 px) ไฟล์ไม่เกิน 1 MB</td></tr>
+      <tr><td>รูปภาพหลัก (heroImage)</td><td class="optional">รูป hero บนหน้ารายละเอียดสาขา แนะนำแนวนอน ความละเอียดสูง (~1600×900 px) ไฟล์ไม่เกิน 1 MB</td></tr>
       <tr><td>แกลเลอรี (gallery)</td><td class="optional">อัลบั้มรูปเพิ่มเติมของสาขา แต่ละรูปใส่คำบรรยาย (caption) ได้</td></tr>
     </table>
   </section>
@@ -183,7 +183,7 @@
     <h2>แพทย์ &amp; โปรแกรมที่เกี่ยวข้อง</h2>
     <table class="field-table">
       <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
-      <tr><td>แพทย์ (doctors)</td><td class="optional">เลือกแพทย์ที่จะโชว์เด่นบนหน้าสาขานี้ — ไม่จำเป็นต้องเลือกเอง เพราะระบบจะดึงแพทย์ที่ตั้งค่า "สาขา" ตรงกับสาขานี้มาแสดงอัตโนมัติอยู่แล้ว ใช้ฟิลด์นี้เมื่อต้องการ "เลือกเน้น" เป็นพิเศษเท่านั้น</td></tr>
+      <tr><td>แพทย์ (doctors)</td><td class="optional">เลือกแพทย์ที่จะโชว์เด่นบนหน้าสาขานี้ ไม่จำเป็นต้องเลือกเอง เพราะระบบจะดึงแพทย์ที่ตั้งค่า "สาขา" ตรงกับสาขานี้มาแสดงอัตโนมัติอยู่แล้ว ใช้ฟิลด์นี้เมื่อต้องการ "เลือกเน้น" เป็นพิเศษเท่านั้น</td></tr>
       <tr><td>โปรแกรมแนะนำ (featuredPrograms)</td><td class="optional">เลือกโปรแกรมที่ต้องการโปรโมตบนหน้าสาขานี้</td></tr>
     </table>
   </section>
@@ -193,18 +193,18 @@
     <h2>ข้อควรรู้เพิ่มเติม</h2>
     <div class="callout warn">
       <span class="callout-label">ข้อควรระวัง</span>
-      <p>เบอร์โทรและที่อยู่ในเมนูนี้ถูกใช้แสดงผลในหลายจุดของเว็บไซต์ (footer, หน้าติดต่อ, หน้าสาขา) รวมถึงข้อความ "สายด่วนส่วนตัว" ที่แถบบนสุดของเว็บ (เมนู "แถบบนสุด") เป็นข้อความแยกต่างหาก ไม่ได้ดึงจากเบอร์โทรสาขาอัตโนมัติ — ถ้าต้องการให้เบอร์ตรงกัน ต้องไปแก้ทั้ง 2 เมนูแยกกัน</p>
+      <p>เบอร์โทรและที่อยู่ในเมนูนี้ถูกใช้แสดงผลในหลายจุดของเว็บไซต์ (footer, หน้าติดต่อ, หน้าสาขา) รวมถึงข้อความ "สายด่วนส่วนตัว" ที่แถบบนสุดของเว็บ (เมนู "แถบบนสุด") เป็นข้อความแยกต่างหาก ไม่ได้ดึงจากเบอร์โทรสาขาอัตโนมัติ ถ้าต้องการให้เบอร์ตรงกัน ต้องไปแก้ทั้ง 2 เมนูแยกกัน</p>
     </div>
     <div class="callout">
       <span class="callout-label">ไม่มี Draft</span>
-      <p>เพราะไม่มีระบบร่าง การแก้ไขข้อมูลสาขาจะขึ้นเว็บไซต์จริงทันทีที่กดบันทึก (ภายใน 60 วินาที) — ควรตรวจทานให้ถูกต้องก่อนบันทึกเสมอ โดยเฉพาะเบอร์โทรและที่อยู่</p>
+      <p>เพราะไม่มีระบบร่าง การแก้ไขข้อมูลสาขาจะขึ้นเว็บไซต์จริงทันทีที่กดบันทึก (ภายใน 60 วินาที) ควรตรวจทานให้ถูกต้องก่อนบันทึกเสมอ โดยเฉพาะเบอร์โทรและที่อยู่</p>
     </div>
   </section>
 
 </main>
 
 <footer class="doc-footer">
-  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: สาขา (Branches) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+  <div class="wrap">คู่มือการใช้งาน CMS: <strong>PHIVARA</strong> · เมนู: สาขา (Branches) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
 </footer>
 
 </body>

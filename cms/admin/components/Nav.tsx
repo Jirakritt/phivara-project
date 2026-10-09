@@ -315,7 +315,7 @@ export function Nav() {
     <aside className={navClassName} inert={!navOpen ? true : undefined}>
       {/* Reuses Payload's real `nav__scroll` class so the built-in sticky
           positioning, height, flex layout, and padding vars (which reserve
-          space below the top header bar) keep working — we only add our own
+          space below the top header bar) keep working we only add our own
           visual styling (background, logo, groups) on top via .phivara-nav. */}
       <div className="nav__scroll" ref={navRef}>
         <Link href={formatAdminURL({ adminRoute, path: '' })} className="phivara-nav__logo" prefetch={false}>

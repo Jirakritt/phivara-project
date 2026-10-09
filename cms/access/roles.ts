@@ -166,7 +166,7 @@ export const validateBranchInScope =
     const branchIds = getUserBranchIds(user)
     if (!value) {
       if (allowUnassigned) return true
-      return 'กรุณาเลือกสาขา — คุณกำหนดสาขาให้เนื้อหาได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
+      return 'กรุณาเลือกสาขา: คุณกำหนดสาขาให้เนื้อหาได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
     }
     const valueId = typeof value === 'object' && value !== null ? (value as { id: number | string }).id : value
     if (branchIds.includes(valueId as number | string)) return true
@@ -191,7 +191,7 @@ export const validateBranchesInScope =
     const values = Array.isArray(value) ? value : value ? [value] : []
     if (!values.length) {
       if (allowEmpty) return true
-      return 'กรุณาเลือกอย่างน้อย 1 สาขา — คุณกำหนดสาขาให้แพทย์ได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
+      return 'กรุณาเลือกอย่างน้อย 1 สาขา: คุณกำหนดสาขาให้แพทย์ได้เฉพาะสาขาที่คุณดูแลเท่านั้น'
     }
     const ids = values.map((v) => (typeof v === 'object' && v !== null ? (v as { id: number | string }).id : v))
     const allInScope = ids.every((id) => branchIds.includes(id as number | string))

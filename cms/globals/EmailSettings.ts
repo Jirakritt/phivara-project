@@ -12,7 +12,7 @@ import { hasAnyRole } from '../access/roles'
 export const EmailSettings: GlobalConfig = {
   slug: 'email-settings',
   admin: {
-    description: 'เลือกผู้ให้บริการส่งอีเมลระบบ (ยืนยันบัญชี / รีเซ็ตรหัสผ่าน) — ค่า credentials ตั้งค่าแยกที่ .env บน server เท่านั้น ไม่ใส่ในหน้านี้',
+    description: 'เลือกผู้ให้บริการส่งอีเมลระบบ (ยืนยันบัญชี / รีเซ็ตรหัสผ่าน) ค่า credentials ตั้งค่าแยกที่ .env บน server เท่านั้น ไม่ใส่ในหน้านี้',
   },
   access: {
     read: hasAnyRole('admin', 'editor'),

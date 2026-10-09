@@ -57,7 +57,7 @@ export const Programs: CollectionConfig = {
               type: 'text',
               required: true,
               unique: true,
-              admin: { description: 'e.g. pv01 — used in program_detail.html?id=' },
+              admin: { description: 'e.g. pv01: used in program_detail.html?id=' },
             },
             { name: 'code', type: 'text', admin: { description: 'e.g. "PV · 01"' } },
             {
@@ -78,7 +78,7 @@ export const Programs: CollectionConfig = {
               required: true,
               admin: {
                 description:
-                  'THB. If "Price options" below is filled in, set this to the LOWEST option\'s price — it drives the "starting from" price shown on the catalog card and highlight carousel.',
+                  'THB. If "Price options" below is filled in, set this to the LOWEST option\'s price it drives the "starting from" price shown on the catalog card and highlight carousel.',
               },
             },
             {
@@ -86,7 +86,7 @@ export const Programs: CollectionConfig = {
               type: 'array',
               admin: {
                 description:
-                  'Optional. Use this instead of duplicating the whole program when the only real difference is unit count/price (e.g. "50 units" vs "100 units" of the same Botox program) — fill in the shared content once above/below, add one row per option here, and the detail page shows a selector. Leave empty for a normal single-price program.',
+                  'Optional. Use this instead of duplicating the whole program when the only real difference is unit count/price (e.g. "50 units" vs "100 units" of the same Botox program) fill in the shared content once above/below, add one row per option here, and the detail page shows a selector. Leave empty for a normal single-price program.',
               },
               fields: [
                 { name: 'label', type: 'text', localized: true, required: true, admin: { description: 'e.g. "100 ยูนิต" / "100 units"' } },
@@ -97,7 +97,7 @@ export const Programs: CollectionConfig = {
                   localized: true,
                   admin: {
                     description:
-                      'Optional. What this option includes, e.g. "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว" — shown under the option label in the picker table.',
+                      'Optional. What this option includes, e.g. "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว" shown under the option label in the picker table.',
                   },
                 },
               ],

@@ -27,7 +27,7 @@ export const MembershipTiers: CollectionConfig = {
     useAsTitle: 'label',
     defaultColumns: ['label', 'slug', 'order'],
     description:
-      'ระดับสมาชิก PHIVARA — เพิ่ม/ลบ/แก้ไข/จัดลำดับได้อิสระ ใช้กำหนดหน้าบัตรสมาชิก (สี) และผูกกับการ์ดสิทธิพิเศษ (member-privileges)',
+      'ระดับสมาชิก PHIVARA: เพิ่ม/ลบ/แก้ไข/จัดลำดับได้อิสระ ใช้กำหนดหน้าบัตรสมาชิก (สี) และผูกกับการ์ดสิทธิพิเศษ (member-privileges)',
   },
   access: {
     read: () => true,
@@ -42,7 +42,7 @@ export const MembershipTiers: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
-      admin: { description: 'รหัสภายในของ tier นี้ (ห้ามซ้ำ, ห้ามมีช่องว่าง) เช่น "diamond" — ไม่แสดงให้สมาชิกเห็น' },
+      admin: { description: 'รหัสภายในของ tier นี้ (ห้ามซ้ำ, ห้ามมีช่องว่าง) เช่น "diamond" ไม่แสดงให้สมาชิกเห็น' },
       validate: (value: unknown) => (typeof value === 'string' && /^[a-z0-9-]+$/.test(value) ? true : 'ใช้ได้เฉพาะตัวพิมพ์เล็ก a-z, ตัวเลข, และ - เท่านั้น'),
     },
     {
@@ -50,7 +50,7 @@ export const MembershipTiers: CollectionConfig = {
       type: 'number',
       required: true,
       defaultValue: 0,
-      admin: { description: 'ลำดับการแสดงผล (เลขน้อยไปมาก) — ใช้เรียงตารางเปรียบเทียบ tier ในหน้าโปรไฟล์สมาชิก' },
+      admin: { description: 'ลำดับการแสดงผล (เลขน้อยไปมาก): ใช้เรียงตารางเปรียบเทียบ tier ในหน้าโปรไฟล์สมาชิก' },
     },
     {
       type: 'row',

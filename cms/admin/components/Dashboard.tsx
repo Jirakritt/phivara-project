@@ -197,7 +197,7 @@ export async function Dashboard({ initPageResult }: AdminViewServerProps) {
           {recentDocs.map((doc) => (
             <a key={`${doc.collectionSlug}-${doc.id}`} className="phivara-dashboard__activity-row" href={`/admin/collections/${doc.collectionSlug}/${doc.id}`}>
               <span className="what">
-                <strong>{doc.collectionLabel}</strong> — {doc.title}
+                <strong>{doc.collectionLabel}</strong>: {doc.title}
               </span>
               <span className="when">{relativeTime(doc.updatedAt)}</span>
             </a>
@@ -219,7 +219,7 @@ function statLine(total: number, draft: number) {
 }
 
 function relativeTime(iso?: string | null) {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const diffMs = Date.now() - new Date(iso).getTime()
   const minutes = Math.floor(diffMs / 60000)
   if (minutes < 1) return 'เมื่อสักครู่'

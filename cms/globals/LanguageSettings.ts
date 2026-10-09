@@ -66,7 +66,7 @@ export const LanguageSettings: GlobalConfig = {
   },
   admin: {
     description:
-      'ควบคุมว่าภาษาไหนแก้ไขได้ใน CMS และภาษาไหนเผยแพร่บนหน้าเว็บจริง — ไทยเป็นภาษาหลัก เปิดใช้งานเสมอ ไม่มีสวิตช์ปิด',
+      'ควบคุมว่าภาษาไหนแก้ไขได้ใน CMS และภาษาไหนเผยแพร่บนหน้าเว็บจริง ไทยเป็นภาษาหลัก เปิดใช้งานเสมอ ไม่มีสวิตช์ปิด',
   },
   // GET /api/globals/language-settings/preview-links — see
   // cms/lib/previewLinks.ts for the handler; lets the admin get a ready-

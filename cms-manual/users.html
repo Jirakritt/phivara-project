@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>คู่มือการใช้งาน CMS — ผู้ใช้งาน (Users) | PHIVARA</title>
+<title>คู่มือการใช้งาน CMS: ผู้ใช้งาน (Users) | PHIVARA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -98,10 +98,10 @@
   <section id="overview">
     <div class="section-label">ภาพรวม</div>
     <h2>เมนู "ผู้ใช้งาน" คืออะไร</h2>
-    <p>ใช้จัดการบัญชีล็อกอินเข้า CMS ทั้งหมด — กำหนดชื่อ, อีเมล/รหัสผ่านสำหรับล็อกอิน, บทบาท (role) ที่กำหนดสิทธิ์การเข้าถึงแต่ละเมนู และสาขาที่รับผิดชอบ (สำหรับผู้ใช้ที่ไม่ใช่ Admin)</p>
+    <p>ใช้จัดการบัญชีล็อกอินเข้า CMS ทั้งหมด กำหนดชื่อ, อีเมล/รหัสผ่านสำหรับล็อกอิน, บทบาท (role) ที่กำหนดสิทธิ์การเข้าถึงแต่ละเมนู และสาขาที่รับผิดชอบ (สำหรับผู้ใช้ที่ไม่ใช่ Admin)</p>
     <div class="callout warn">
       <span class="callout-label">Admin เท่านั้น</span>
-      <p>เมนูนี้จัดการได้เฉพาะ Admin เท่านั้น — Content Editor และ Medical Reviewer มองไม่เห็นและแตะต้องเมนูนี้ไม่ได้เลย แม้แต่การแก้ไขบัญชีของตัวเอง (ยกเว้นเปลี่ยนรหัสผ่านตัวเองตอนล็อกอิน)</p>
+      <p>เมนูนี้จัดการได้เฉพาะ Admin เท่านั้น Content Editor และ Medical Reviewer มองไม่เห็นและแตะต้องเมนูนี้ไม่ได้เลย แม้แต่การแก้ไขบัญชีของตัวเอง (ยกเว้นเปลี่ยนรหัสผ่านตัวเองตอนล็อกอิน)</p>
     </div>
   </section>
 
@@ -121,9 +121,9 @@
     <ol class="steps">
       <li>เข้าเมนู <strong>ผู้ใช้งาน (Users)</strong> แล้วกด <strong>Create New</strong></li>
       <li>กรอกอีเมลและตั้งรหัสผ่านชั่วคราวให้ผู้ใช้งาน (แนะนำให้ผู้ใช้เปลี่ยนรหัสผ่านเองหลังล็อกอินครั้งแรก)</li>
-      <li>กรอกชื่อ (Name) — ใช้แสดงในระบบ</li>
+      <li>กรอกชื่อ (Name): ใช้แสดงในระบบ</li>
       <li>เลือกบทบาท (Role) ให้ตรงกับหน้าที่ของผู้ใช้งานคนนั้น</li>
-      <li>ถ้าเลือก Role เป็น Content Editor หรือ Medical Reviewer จะมีช่อง <strong>สาขาที่รับผิดชอบ (assignedBranches)</strong> ปรากฏขึ้น — เลือกสาขาที่ผู้ใช้คนนี้ควรเข้าถึงได้ (เลือกได้มากกว่า 1 สาขา)</li>
+      <li>ถ้าเลือก Role เป็น Content Editor หรือ Medical Reviewer จะมีช่อง <strong>สาขาที่รับผิดชอบ (assignedBranches)</strong> ปรากฏขึ้น เลือกสาขาที่ผู้ใช้คนนี้ควรเข้าถึงได้ (เลือกได้มากกว่า 1 สาขา)</li>
       <li>กด <strong>Save</strong></li>
     </ol>
   </section>
@@ -134,9 +134,9 @@
     <table class="field-table">
       <tr><th>ฟิลด์</th><th>คำอธิบาย</th></tr>
       <tr><td>ชื่อ (name) <span class="tag required">จำเป็น</span></td><td>ชื่อที่แสดงในระบบ CMS</td></tr>
-      <tr><td>อีเมล / รหัสผ่าน</td><td>ใช้สำหรับล็อกอินเข้า CMS — จัดการผ่านระบบยืนยันตัวตนมาตรฐานของ Payload</td></tr>
-      <tr><td>บทบาท (role) <span class="tag required">จำเป็น</span></td><td>เลือกจาก 3 แบบ: Admin / Content Editor / Medical Reviewer — ค่าเริ่มต้นคือ Content Editor เมื่อสร้างใหม่</td></tr>
-      <tr><td>สาขาที่รับผิดชอบ (assignedBranches)</td><td class="optional">แสดงเฉพาะเมื่อ role ไม่ใช่ Admin — เลือกสาขาที่ผู้ใช้งานคนนี้เข้าถึง/แก้ไขเนื้อหาได้ ถ้า role เป็น Admin ช่องนี้จะถูกซ่อนไปเลย (Admin เข้าถึงทุกสาขาอยู่แล้ว)</td></tr>
+      <tr><td>อีเมล / รหัสผ่าน</td><td>ใช้สำหรับล็อกอินเข้า CMS จัดการผ่านระบบยืนยันตัวตนมาตรฐานของ Payload</td></tr>
+      <tr><td>บทบาท (role) <span class="tag required">จำเป็น</span></td><td>เลือกจาก 3 แบบ: Admin / Content Editor / Medical Reviewer ค่าเริ่มต้นคือ Content Editor เมื่อสร้างใหม่</td></tr>
+      <tr><td>สาขาที่รับผิดชอบ (assignedBranches)</td><td class="optional">แสดงเฉพาะเมื่อ role ไม่ใช่ Admin เลือกสาขาที่ผู้ใช้งานคนนี้เข้าถึง/แก้ไขเนื้อหาได้ ถ้า role เป็น Admin ช่องนี้จะถูกซ่อนไปเลย (Admin เข้าถึงทุกสาขาอยู่แล้ว)</td></tr>
     </table>
   </section>
 
@@ -145,9 +145,9 @@
     <h2>3 บทบาท (Role) มีอะไรบ้าง</h2>
     <table class="field-table">
       <tr><th>บทบาท</th><th>ขอบเขตการเข้าถึง</th></tr>
-      <tr><td>Admin</td><td>เข้าถึงทุกเมนู ทุกสาขา ทุกสิทธิ์ — รวมถึงเมนูที่เมนูอื่นแตะไม่ได้ เช่น ผู้ใช้งาน, รางวัล/ผลงาน, และการลบ Leads</td></tr>
-      <tr><td>Content Editor</td><td>แก้ไขเนื้อหาส่วนใหญ่ได้ (บทความ, แพทย์, โปรแกรม, สาขาที่ตนรับผิดชอบ) แต่เข้าถึงเฉพาะสาขาที่ถูกกำหนดใน assignedBranches เท่านั้น (ยกเว้นเนื้อหาที่ตั้งเป็น "ไม่ระบุสาขา" — เข้าถึงได้ทุกคน)</td></tr>
-      <tr><td>Medical Reviewer</td><td>ขอบเขตแคบกว่า Content Editor — เข้าถึงได้เฉพาะบางเมนู (เช่น แพทย์) ตามสาขาที่รับผิดชอบ ไม่สามารถแตะเมนู สาขา, รางวัล/ผลงาน, ผู้ใช้งาน ได้เลย</td></tr>
+      <tr><td>Admin</td><td>เข้าถึงทุกเมนู ทุกสาขา ทุกสิทธิ์ รวมถึงเมนูที่เมนูอื่นแตะไม่ได้ เช่น ผู้ใช้งาน, รางวัล/ผลงาน, และการลบ Leads</td></tr>
+      <tr><td>Content Editor</td><td>แก้ไขเนื้อหาส่วนใหญ่ได้ (บทความ, แพทย์, โปรแกรม, สาขาที่ตนรับผิดชอบ) แต่เข้าถึงเฉพาะสาขาที่ถูกกำหนดใน assignedBranches เท่านั้น (ยกเว้นเนื้อหาที่ตั้งเป็น "ไม่ระบุสาขา" เข้าถึงได้ทุกคน)</td></tr>
+      <tr><td>Medical Reviewer</td><td>ขอบเขตแคบกว่า Content Editor เข้าถึงได้เฉพาะบางเมนู (เช่น แพทย์) ตามสาขาที่รับผิดชอบ ไม่สามารถแตะเมนู สาขา, รางวัล/ผลงาน, ผู้ใช้งาน ได้เลย</td></tr>
     </table>
   </section>
 
@@ -156,7 +156,7 @@
     <h2>ข้อควรรู้เพิ่มเติม</h2>
     <div class="callout warn">
       <span class="callout-label">เปลี่ยน Role ผู้ใช้เอง ทำไม่ได้</span>
-      <p>ผู้ใช้งานที่ไม่ใช่ Admin ไม่สามารถเปลี่ยนบทบาท (role) หรือสาขาที่รับผิดชอบ (assignedBranches) ของตัวเองได้ — ต้องให้ Admin เป็นผู้เปลี่ยนให้เท่านั้น เพื่อป้องกันการปรับสิทธิ์ตัวเองโดยไม่ได้รับอนุญาต</p>
+      <p>ผู้ใช้งานที่ไม่ใช่ Admin ไม่สามารถเปลี่ยนบทบาท (role) หรือสาขาที่รับผิดชอบ (assignedBranches) ของตัวเองได้ ต้องให้ Admin เป็นผู้เปลี่ยนให้เท่านั้น เพื่อป้องกันการปรับสิทธิ์ตัวเองโดยไม่ได้รับอนุญาต</p>
     </div>
     <div class="callout">
       <span class="callout-label">มอบหมายสาขาให้ครบ</span>
@@ -167,7 +167,7 @@
 </main>
 
 <footer class="doc-footer">
-  <div class="wrap">คู่มือการใช้งาน CMS — <strong>PHIVARA</strong> · เมนู: ผู้ใช้งาน (Users) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
+  <div class="wrap">คู่มือการใช้งาน CMS: <strong>PHIVARA</strong> · เมนู: ผู้ใช้งาน (Users) · <a href="index.html">กลับหน้าหลักคู่มือ</a></div>
 </footer>
 
 </body>

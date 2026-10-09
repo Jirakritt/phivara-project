@@ -147,7 +147,7 @@ export const Members: CollectionConfig = {
       name: 'dob',
       type: 'date',
       admin: {
-        description: 'วันเกิด — บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูล เพราะบัญชีถูกสร้างตั้งแต่ขั้นตอนที่ 1 (แค่อีเมล+รหัสผ่าน) ก่อนจะมีข้อมูลนี้',
+        description: 'วันเกิด: บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูล เพราะบัญชีถูกสร้างตั้งแต่ขั้นตอนที่ 1 (แค่อีเมล+รหัสผ่าน) ก่อนจะมีข้อมูลนี้',
         date: { pickerAppearance: 'dayOnly' },
       },
     },
@@ -162,7 +162,7 @@ export const Members: CollectionConfig = {
       type: 'text',
       admin: {
         description:
-          'Branch slug ที่สมาชิกเลือกไว้ตอนสมัคร — บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูลด้วยเหตุผลเดียวกับ dob ด้านบน — ไม่ใช่ relationship ด้วยเหตุผลเดียวกับ Leads.branch',
+          'Branch slug ที่สมาชิกเลือกไว้ตอนสมัคร บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูลด้วยเหตุผลเดียวกับ dob ด้านบน ไม่ใช่ relationship ด้วยเหตุผลเดียวกับ Leads.branch',
       },
     },
     {
@@ -181,7 +181,7 @@ export const Members: CollectionConfig = {
         // this is set manually by an admin per confirmed scope).
         update: isStaffField,
       },
-      admin: { description: 'กำหนดโดยแอดมินเท่านั้น — ระบบยังไม่มีการซื้อขาย/คำนวณระดับสมาชิกอัตโนมัติ (จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)")' },
+      admin: { description: 'กำหนดโดยแอดมินเท่านั้น: ระบบยังไม่มีการซื้อขาย/คำนวณระดับสมาชิกอัตโนมัติ (จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)")' },
     },
     {
       name: 'emailOptIn',
@@ -200,7 +200,7 @@ export const Members: CollectionConfig = {
       name: 'preferredLocale',
       type: 'text',
       defaultValue: 'th',
-      admin: { description: "ภาษาที่สมาชิกใช้งานตอนสมัคร เช่น 'th', 'en' — ใช้เลือกภาษาของอีเมลยืนยัน/รีเซ็ตรหัสผ่านเท่านั้น" },
+      admin: { description: "ภาษาที่สมาชิกใช้งานตอนสมัคร เช่น 'th', 'en' ใช้เลือกภาษาของอีเมลยืนยัน/รีเซ็ตรหัสผ่านเท่านั้น" },
     },
   ],
 }

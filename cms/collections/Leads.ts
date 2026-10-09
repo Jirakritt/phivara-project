@@ -215,7 +215,7 @@ export const Leads: CollectionConfig = {
       name: 'branch',
       type: 'text',
       required: true,
-      admin: { description: 'Branch slug selected in the modal, e.g. "pt2" (not a relationship — see field comment)' },
+      admin: { description: 'Branch slug selected in the modal, e.g. "pt2" (not a relationship see field comment)' },
     },
     {
       name: 'service',
@@ -245,14 +245,14 @@ export const Leads: CollectionConfig = {
       name: 'preferredDate',
       type: 'date',
       admin: {
-        description: 'Only set by the doctor detail page\'s own appointment form (public/js/doctor-appointment-form.js) — the shared VIP modal has no date field, so this stays empty for those leads.',
+        description: 'Only set by the doctor detail page\'s own appointment form (public/js/doctor-appointment-form.js) the shared VIP modal has no date field, so this stays empty for those leads.',
         date: { pickerAppearance: 'dayOnly' },
       },
     },
     {
       name: 'sourcePath',
       type: 'text',
-      admin: { description: 'Page path the form was submitted from, e.g. /program/pv02 — for triage context, not shown to the visitor.', readOnly: true },
+      admin: { description: 'Page path the form was submitted from, e.g. /program/pv02 for triage context, not shown to the visitor.', readOnly: true },
     },
     {
       name: 'status',
@@ -265,7 +265,7 @@ export const Leads: CollectionConfig = {
         { label: 'Booked', value: 'booked' },
         { label: 'Closed', value: 'closed' },
       ],
-      admin: { description: 'Internal triage status — not visible to the visitor.' },
+      admin: { description: 'Internal triage status: not visible to the visitor.' },
     },
     {
       // Staff-only progress log — distinct from the customer-supplied
@@ -278,7 +278,7 @@ export const Leads: CollectionConfig = {
       type: 'array',
       label: 'Internal Remarks',
       admin: {
-        description: 'บันทึกความคืบหน้าภายในสำหรับเจ้าหน้าที่ (ไม่แสดงต่อลูกค้า) — กด "Add Remark" เพื่อเพิ่มได้เรื่อยๆ จนกว่าจะปิดเคส (Status = Closed) รายการเก่าจะยังแสดงไว้เป็นประวัติเสมอ',
+        description: 'บันทึกความคืบหน้าภายในสำหรับเจ้าหน้าที่ (ไม่แสดงต่อลูกค้า) กด "Add Remark" เพื่อเพิ่มได้เรื่อยๆ จนกว่าจะปิดเคส (Status = Closed) รายการเก่าจะยังแสดงไว้เป็นประวัติเสมอ',
       },
       fields: [
         { name: 'note', type: 'textarea', required: true, label: 'บันทึก' },
@@ -323,7 +323,7 @@ export const Leads: CollectionConfig = {
         { label: 'Pending', value: 'pending' },
         { label: 'Sent', value: 'sent' },
         { label: 'Failed', value: 'failed' },
-        { label: 'Skipped — no recipients set for this branch', value: 'skipped' },
+        { label: 'Skipped: no recipients set for this branch', value: 'skipped' },
       ],
       admin: {
         readOnly: true,

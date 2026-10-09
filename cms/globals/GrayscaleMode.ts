@@ -45,7 +45,7 @@ export const GrayscaleMode: GlobalConfig = {
       label: 'เปิดโหมดขาว-ดำ',
       admin: {
         description:
-          'สวิตช์หลัก — ปิดเมื่อไรเว็บกลับเป็นสีปกติทันที (ไม่ว่าจะตั้งวันเวลาไว้อย่างไร) ถ้าเปิดและไม่ใส่วัน-เวลา โหมดจะทำงานต่อเนื่องจนกว่าจะปิดเอง',
+          'สวิตช์หลัก: ปิดเมื่อไรเว็บกลับเป็นสีปกติทันที (ไม่ว่าจะตั้งวันเวลาไว้อย่างไร) ถ้าเปิดและไม่ใส่วัน-เวลา โหมดจะทำงานต่อเนื่องจนกว่าจะปิดเอง',
       },
     },
     {
@@ -63,7 +63,7 @@ export const GrayscaleMode: GlobalConfig = {
       label: 'เริ่มแสดง (ไม่บังคับ)',
       admin: {
         date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd/MM/yyyy HH:mm' },
-        description: 'เว้นว่างได้ — ถ้าไม่ใส่จะเริ่มทันทีที่เปิดสวิตช์ (ตามเวลาของเครื่องที่ใช้แก้ไข)',
+        description: 'เว้นว่างได้: ถ้าไม่ใส่จะเริ่มทันทีที่เปิดสวิตช์ (ตามเวลาของเครื่องที่ใช้แก้ไข)',
       },
     },
     {
@@ -72,7 +72,7 @@ export const GrayscaleMode: GlobalConfig = {
       label: 'หยุดแสดง (ไม่บังคับ)',
       admin: {
         date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd/MM/yyyy HH:mm' },
-        description: 'เว้นว่างได้ — ถ้าไม่ใส่จะทำงานต่อเนื่องจนกว่าจะปิดสวิตช์ (การเปลี่ยนตามเวลาอัตโนมัติอาจช้าได้สูงสุดประมาณ 1 นาที)',
+        description: 'เว้นว่างได้: ถ้าไม่ใส่จะทำงานต่อเนื่องจนกว่าจะปิดสวิตช์ (การเปลี่ยนตามเวลาอัตโนมัติอาจช้าได้สูงสุดประมาณ 1 นาที)',
       },
       validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
         const start = siblingData?.startAt ? new Date(siblingData.startAt as string).getTime() : NaN

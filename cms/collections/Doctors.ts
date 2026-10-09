@@ -100,7 +100,7 @@ export const Doctors: CollectionConfig = {
               defaultValue: 0,
               admin: {
                 description:
-                  'ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้ารายชื่อแพทย์และกริดแพทย์ประจำสาขา',
+                  'ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน): ใช้ที่หน้ารายชื่อแพทย์และกริดแพทย์ประจำสาขา',
                 position: 'sidebar',
               },
             },
@@ -140,7 +140,7 @@ export const Doctors: CollectionConfig = {
               required: true,
               validate: validateBranchInScope(false),
               admin: {
-                description: '(เดิม) จะถูกแทนที่ด้วย "สาขาที่ออกตรวจ" ด้านล่าง — อย่าเพิ่งลบจนกว่าทีมจะรวมโปรไฟล์แพทย์ครบทุกคน',
+                description: '(เดิม) จะถูกแทนที่ด้วย "สาขาที่ออกตรวจ" ด้านล่าง อย่าเพิ่งลบจนกว่าทีมจะรวมโปรไฟล์แพทย์ครบทุกคน',
               },
             },
             {
@@ -158,7 +158,7 @@ export const Doctors: CollectionConfig = {
               validate: validateBranchesInScope(true),
               admin: {
                 description:
-                  'สาขาที่แพทย์ท่านนี้ออกตรวจ (เลือกได้หลายสาขา) — โปรไฟล์เดียวกันจะใช้ร่วมกันในทุกสาขาที่เลือกไว้ที่นี่ ยกเว้นตารางออกตรวจซึ่งแยกตามสาขาด้านล่าง',
+                  'สาขาที่แพทย์ท่านนี้ออกตรวจ (เลือกได้หลายสาขา) โปรไฟล์เดียวกันจะใช้ร่วมกันในทุกสาขาที่เลือกไว้ที่นี่ ยกเว้นตารางออกตรวจซึ่งแยกตามสาขาด้านล่าง',
               },
             },
             {
@@ -172,7 +172,7 @@ export const Doctors: CollectionConfig = {
               relationTo: 'branches',
               validate: validateMainBranchInBranches,
               admin: {
-                description: 'สาขาหลัก — ต้องเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบน ใช้กำหนดว่าจะแสดงเป็นแพทย์แนะนำ (featured) ที่หน้าไหน',
+                description: 'สาขาหลัก: ต้องเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบน ใช้กำหนดว่าจะแสดงเป็นแพทย์แนะนำ (featured) ที่หน้าไหน',
               },
             },
             {
@@ -203,7 +203,7 @@ export const Doctors: CollectionConfig = {
               name: 'subSpecialty',
               type: 'text',
               localized: true,
-              admin: { description: 'ความชำนาญพิเศษเฉพาะทาง — ใช้แสดงในการ์ดแพทย์หลักประจำสาขา เช่น "ตจวิทยา"' },
+              admin: { description: 'ความชำนาญพิเศษเฉพาะทาง: ใช้แสดงในการ์ดแพทย์หลักประจำสาขา เช่น "ตจวิทยา"' },
             },
             {
               name: 'subNote',
@@ -233,7 +233,7 @@ export const Doctors: CollectionConfig = {
               relationTo: 'media',
               admin: {
                 description:
-                  'รูปแพทย์สำหรับ hero หน้าโปรไฟล์ — ต้องเป็น PNG ตัดพื้นหลังโปร่งใส (เฉพาะตัวคน) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ',
+                  'รูปแพทย์สำหรับ hero หน้าโปรไฟล์: ต้องเป็น PNG ตัดพื้นหลังโปร่งใส (เฉพาะตัวคน) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ',
               },
             },
             {
@@ -242,7 +242,7 @@ export const Doctors: CollectionConfig = {
               relationTo: 'media',
               admin: {
                 description:
-                  'รูปแพทย์สำหรับการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นกัน แนะนำสัดส่วนแนวตั้งประมาณ 4:5',
+                  'รูปแพทย์สำหรับการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นกัน แนะนำสัดส่วนแนวตั้งประมาณ 4:5',
               },
             },
           ],
@@ -322,7 +322,7 @@ export const Doctors: CollectionConfig = {
               name: 'scheduleByBranch',
               type: 'array',
               admin: {
-                description: 'ตารางออกตรวจ แยกตามสาขา — แต่ละกลุ่มด้านล่างคือ 1 สาขา ใช้แสดงเป็นแท็บเลือกสาขาบนหน้าเว็บ',
+                description: 'ตารางออกตรวจ แยกตามสาขา: แต่ละกลุ่มด้านล่างคือ 1 สาขา ใช้แสดงเป็นแท็บเลือกสาขาบนหน้าเว็บ',
               },
               fields: [
                 {
@@ -405,7 +405,7 @@ export const Doctors: CollectionConfig = {
               relationTo: 'media',
               admin: {
                 description:
-                  'รูปแพทย์สำหรับการ์ดแพทย์หลัก — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นเดียวกับ Portrait/Card Photo แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องกว้างจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ',
+                  'รูปแพทย์สำหรับการ์ดแพทย์หลัก: ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นเดียวกับ Portrait/Card Photo แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องกว้างจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ',
                 condition: (_, siblingData) => Boolean(siblingData?.isBranchFeatured),
               },
             },
@@ -422,7 +422,7 @@ export const Doctors: CollectionConfig = {
               name: 'featuredHighlights',
               type: 'array',
               admin: {
-                description: 'รายการ checklist ในการ์ดแพทย์หลัก เช่น "ประเมินสุขภาพเชิงลึก & ฟื้นฟูสมดุล" — ใส่กี่ข้อก็ได้',
+                description: 'รายการ checklist ในการ์ดแพทย์หลัก เช่น "ประเมินสุขภาพเชิงลึก & ฟื้นฟูสมดุล" ใส่กี่ข้อก็ได้',
                 condition: (_, siblingData) => Boolean(siblingData?.isBranchFeatured),
               },
               fields: [{ name: 'text', type: 'text', localized: true, required: true }],

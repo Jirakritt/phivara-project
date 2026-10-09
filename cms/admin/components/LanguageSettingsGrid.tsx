@@ -100,7 +100,7 @@ function LocaleCard({ code, label, rtl, status, cmsChecked, liveChecked, order, 
             type="checkbox"
             checked={cmsChecked}
             onChange={handleCmsChange}
-            aria-label={`แก้ไขได้ใน CMS — ${label}`}
+            aria-label={`แก้ไขได้ใน CMS: ${label}`}
           />
           <span className="phivara-switch__slider" />
         </span>
@@ -114,7 +114,7 @@ function LocaleCard({ code, label, rtl, status, cmsChecked, liveChecked, order, 
               type="checkbox"
               checked={liveChecked}
               onChange={handleLiveChange}
-              aria-label={`เผยแพร่บนหน้าเว็บ — ${label}`}
+              aria-label={`เผยแพร่บนหน้าเว็บ: ${label}`}
             />
             <span className="phivara-switch__slider" />
           </span>
@@ -130,7 +130,7 @@ function LocaleCard({ code, label, rtl, status, cmsChecked, liveChecked, order, 
 
       {rtl && (
         <div className="phivara-rtl-note">
-          ⚠️ ภาษาเขียนขวาไปซ้าย (RTL) — ต้องปรับ layout เพิ่มก่อนเปิดใช้งานจริง
+          ⚠️ ภาษาเขียนขวาไปซ้าย (RTL): ต้องปรับ layout เพิ่มก่อนเปิดใช้งานจริง
         </div>
       )}
     </div>
@@ -194,7 +194,7 @@ export function LanguageSettingsGrid() {
           <span className="dot dot--cms" />
           <div>
             <strong>แก้ไขได้ใน CMS</strong>
-            <p>เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล — ยังไม่แสดงบนหน้าเว็บจริง</p>
+            <p>เปิดให้ทีม content เห็นภาษานี้ในตัวเลือกภาษาของ CMS เพื่อเริ่มกรอก/แก้คำแปล ยังไม่แสดงบนหน้าเว็บจริง</p>
           </div>
         </div>
         <div className="phivara-lang-legend__item">
@@ -202,7 +202,7 @@ export function LanguageSettingsGrid() {
           <div>
             <strong>เผยแพร่บนหน้าเว็บ</strong>
             <p>
-              เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ — ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
+              เปิดให้ผู้เข้าชมเว็บไซต์จริงเลือกภาษานี้ได้ ควรเปิดหลังทีม content ตรวจทานคำแปลใน CMS เสร็จแล้วเท่านั้น
               (ตัวเลือกนี้จะโผล่มาก็ต่อเมื่อเปิด &ldquo;แก้ไขได้ใน CMS&rdquo; ก่อน)
             </p>
           </div>
@@ -214,19 +214,19 @@ export function LanguageSettingsGrid() {
           <span className="flag">🇹🇭</span>
           <div>
             <strong>ไทย (Thai)</strong>
-            <span>ภาษาหลักของเว็บไซต์ — ภาษาต้นฉบับสำหรับทุกเนื้อหา</span>
+            <span>ภาษาหลักของเว็บไซต์: ภาษาต้นฉบับสำหรับทุกเนื้อหา</span>
           </div>
         </div>
         <span className="phivara-lang-primary__badge">🔒 เปิดใช้งานเสมอ</span>
       </div>
 
       <p className="phivara-lang-section-label">
-        ภาษาอื่นๆ ({LOCALE_META.length} ภาษา) — เรียงตามสถานะ: เผยแพร่แล้ว → กำลังแปล → ปิดใช้งาน
+        ภาษาอื่นๆ ({LOCALE_META.length} ภาษา) เรียงตามสถานะ: เผยแพร่แล้ว → กำลังแปล → ปิดใช้งาน
       </p>
 
       {previewLinks?.configured === false && rows.some((r) => r.status === 'draft') && (
         <p className="phivara-rtl-note" style={{ marginTop: 0 }}>
-          ⚠️ ยังไม่ได้ตั้งค่า PREVIEW_SECRET บน server — ลิงก์ preview สำหรับผู้ตรวจยังใช้ไม่ได้ แจ้งทีม dev เพื่อเปิดใช้งาน
+          ⚠️ ยังไม่ได้ตั้งค่า PREVIEW_SECRET บน server ลิงก์ preview สำหรับผู้ตรวจยังใช้ไม่ได้ แจ้งทีม dev เพื่อเปิดใช้งาน
         </p>
       )}
 

@@ -68,7 +68,7 @@ export const Branches: CollectionConfig = {
               type: 'number',
               defaultValue: 0,
               admin: {
-                description: 'ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้าแรก, หน้าติดต่อ, footer และฟอร์มสมัครสมาชิก',
+                description: 'ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน): ใช้ที่หน้าแรก, หน้าติดต่อ, footer และฟอร์มสมัครสมาชิก',
                 position: 'sidebar',
               },
             },
@@ -111,12 +111,12 @@ export const Branches: CollectionConfig = {
             {
               name: 'lineUrl',
               type: 'text',
-              admin: { description: 'ลิงก์ LINE Official Account ของสาขานี้ (เช่น https://lin.ee/xxxxx) — เว้นว่างไว้ถ้าสาขานี้ใช้ LINE OA ส่วนกลาง' },
+              admin: { description: 'ลิงก์ LINE Official Account ของสาขานี้ (เช่น https://lin.ee/xxxxx) เว้นว่างไว้ถ้าสาขานี้ใช้ LINE OA ส่วนกลาง' },
             },
             {
               name: 'mapUrl',
               type: 'text',
-              admin: { description: 'Google Maps link or embed URL (not present on current site — recommended addition)' },
+              admin: { description: 'Google Maps link or embed URL (not present on current site recommended addition)' },
             },
           ],
         },
@@ -187,7 +187,7 @@ export const Branches: CollectionConfig = {
               name: 'notificationRecipients',
               type: 'array',
               admin: {
-                description: 'อีเมลเจ้าหน้าที่ที่จะได้รับแจ้งเตือนทุกครั้งที่มีลูกค้ากรอกฟอร์มติดต่อ/นัดหมายแล้วเลือกสาขานี้ — เพิ่ม/ลบ/ปิดชั่วคราวได้เองจากตรงนี้ ไม่ต้องแก้โค้ด',
+                description: 'อีเมลเจ้าหน้าที่ที่จะได้รับแจ้งเตือนทุกครั้งที่มีลูกค้ากรอกฟอร์มติดต่อ/นัดหมายแล้วเลือกสาขานี้ เพิ่ม/ลบ/ปิดชั่วคราวได้เองจากตรงนี้ ไม่ต้องแก้โค้ด',
               },
               fields: [
                 {

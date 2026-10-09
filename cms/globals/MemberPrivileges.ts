@@ -33,7 +33,7 @@ export const MemberPrivileges: GlobalConfig = {
       name: 'cards',
       type: 'array',
       admin: {
-        description: 'เพิ่ม/ลบ/จัดลำดับการ์ดได้อิสระ — แต่ละการ์ดเลือกได้ว่าจะโชว์ให้ระดับสมาชิกไหนเห็นบ้าง (เลือกได้มากกว่า 1 ระดับ)',
+        description: 'เพิ่ม/ลบ/จัดลำดับการ์ดได้อิสระ: แต่ละการ์ดเลือกได้ว่าจะโชว์ให้ระดับสมาชิกไหนเห็นบ้าง (เลือกได้มากกว่า 1 ระดับ)',
       },
       fields: [
         { name: 'title', type: 'text', localized: true, required: true },
@@ -64,7 +64,7 @@ export const MemberPrivileges: GlobalConfig = {
           relationTo: 'membership-tiers',
           hasMany: true,
           required: true,
-          admin: { description: 'แสดงการ์ดนี้ให้สมาชิกระดับที่เลือกเห็นเท่านั้น (เลือกได้หลายระดับ) — จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)"' },
+          admin: { description: 'แสดงการ์ดนี้ให้สมาชิกระดับที่เลือกเห็นเท่านั้น (เลือกได้หลายระดับ) จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)"' },
         },
       ],
     },

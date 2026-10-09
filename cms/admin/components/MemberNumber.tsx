@@ -20,7 +20,7 @@ import type { DefaultCellComponentProps } from 'payload'
 // passes in even to custom Cells) restores click-through to member detail.
 export function MemberNumberCell({ cellData, collectionSlug, link, linkURL, rowData, viewType }: DefaultCellComponentProps) {
   const { config } = useConfig()
-  const display = cellData ? String(cellData) : '—'
+  const display = cellData ? String(cellData) : '-'
 
   if (!link) return <span>{display}</span>
 
@@ -41,7 +41,7 @@ export function MemberNumberField() {
     <div className="field-type">
       <label className="field-label">รหัสสมาชิก (Member Number)</label>
       <p style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em' }}>
-        {value || 'ยังไม่มี — บันทึกเอกสารอีกครั้งเพื่อให้ระบบสร้างให้'}
+        {value || 'ยังไม่มี: บันทึกเอกสารอีกครั้งเพื่อให้ระบบสร้างให้'}
       </p>
     </div>
   )
