@@ -192,7 +192,7 @@ export interface User {
   name: string;
   role: 'admin' | 'editor' | 'medical-reviewer';
   /**
-   * สาขาที่ผู้ใช้คนนี้ดูแล — ใช้จำกัดสิทธิ์แก้ไข/ลบข้อมูลเฉพาะสาขาที่เลือก (Admin ไม่ต้องตั้งค่านี้ เพราะเข้าถึงได้ทุกสาขาอยู่แล้ว)
+   * สาขาที่ผู้ใช้คนนี้ดูแล: ใช้จำกัดสิทธิ์แก้ไข/ลบข้อมูลเฉพาะสาขาที่เลือก (Admin ไม่ต้องตั้งค่านี้ เพราะเข้าถึงได้ทุกสาขาอยู่แล้ว)
    */
   assignedBranches?: (number | Branch)[] | null;
   updatedAt: string;
@@ -225,7 +225,7 @@ export interface Branch {
    */
   slug: string;
   /**
-   * ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้าแรก, หน้าติดต่อ, footer และฟอร์มสมัครสมาชิก
+   * ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน): ใช้ที่หน้าแรก, หน้าติดต่อ, footer และฟอร์มสมัครสมาชิก
    */
   displayOrder?: number | null;
   name?: string | null;
@@ -239,11 +239,11 @@ export interface Branch {
   phone?: string | null;
   lineId?: string | null;
   /**
-   * ลิงก์ LINE Official Account ของสาขานี้ (เช่น https://lin.ee/xxxxx) — เว้นว่างไว้ถ้าสาขานี้ใช้ LINE OA ส่วนกลาง
+   * ลิงก์ LINE Official Account ของสาขานี้ (เช่น https://lin.ee/xxxxx) เว้นว่างไว้ถ้าสาขานี้ใช้ LINE OA ส่วนกลาง
    */
   lineUrl?: string | null;
   /**
-   * Google Maps link or embed URL (not present on current site — recommended addition)
+   * Google Maps link or embed URL (not present on current site recommended addition)
    */
   mapUrl?: string | null;
   heroImage?: (number | null) | Media;
@@ -273,7 +273,7 @@ export interface Branch {
   doctors?: (number | Doctor)[] | null;
   featuredPrograms?: (number | Program)[] | null;
   /**
-   * อีเมลเจ้าหน้าที่ที่จะได้รับแจ้งเตือนทุกครั้งที่มีลูกค้ากรอกฟอร์มติดต่อ/นัดหมายแล้วเลือกสาขานี้ — เพิ่ม/ลบ/ปิดชั่วคราวได้เองจากตรงนี้ ไม่ต้องแก้โค้ด
+   * อีเมลเจ้าหน้าที่ที่จะได้รับแจ้งเตือนทุกครั้งที่มีลูกค้ากรอกฟอร์มติดต่อ/นัดหมายแล้วเลือกสาขานี้ เพิ่ม/ลบ/ปิดชั่วคราวได้เองจากตรงนี้ ไม่ต้องแก้โค้ด
    */
   notificationRecipients?:
     | {
@@ -358,20 +358,20 @@ export interface Doctor {
    */
   slug?: string | null;
   /**
-   * ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน) — ใช้ที่หน้ารายชื่อแพทย์และกริดแพทย์ประจำสาขา
+   * ลำดับการแสดงผล (ตัวเลขน้อยแสดงก่อน): ใช้ที่หน้ารายชื่อแพทย์และกริดแพทย์ประจำสาขา
    */
   displayOrder?: number | null;
   name?: string | null;
   /**
-   * (เดิม) จะถูกแทนที่ด้วย "สาขาที่ออกตรวจ" ด้านล่าง — อย่าเพิ่งลบจนกว่าทีมจะรวมโปรไฟล์แพทย์ครบทุกคน
+   * (เดิม) จะถูกแทนที่ด้วย "สาขาที่ออกตรวจ" ด้านล่าง อย่าเพิ่งลบจนกว่าทีมจะรวมโปรไฟล์แพทย์ครบทุกคน
    */
   branch: number | Branch;
   /**
-   * สาขาที่แพทย์ท่านนี้ออกตรวจ (เลือกได้หลายสาขา) — โปรไฟล์เดียวกันจะใช้ร่วมกันในทุกสาขาที่เลือกไว้ที่นี่ ยกเว้นตารางออกตรวจซึ่งแยกตามสาขาด้านล่าง
+   * สาขาที่แพทย์ท่านนี้ออกตรวจ (เลือกได้หลายสาขา) โปรไฟล์เดียวกันจะใช้ร่วมกันในทุกสาขาที่เลือกไว้ที่นี่ ยกเว้นตารางออกตรวจซึ่งแยกตามสาขาด้านล่าง
    */
   branches?: (number | Branch)[] | null;
   /**
-   * สาขาหลัก — ต้องเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบน ใช้กำหนดว่าจะแสดงเป็นแพทย์แนะนำ (featured) ที่หน้าไหน
+   * สาขาหลัก: ต้องเป็นหนึ่งในสาขาที่เลือกไว้ที่ "สาขาที่ออกตรวจ" ด้านบน ใช้กำหนดว่าจะแสดงเป็นแพทย์แนะนำ (featured) ที่หน้าไหน
    */
   mainBranch?: (number | null) | Branch;
   /**
@@ -383,7 +383,7 @@ export interface Doctor {
    */
   specialtyLabel?: string | null;
   /**
-   * ความชำนาญพิเศษเฉพาะทาง — ใช้แสดงในการ์ดแพทย์หลักประจำสาขา เช่น "ตจวิทยา"
+   * ความชำนาญพิเศษเฉพาะทาง: ใช้แสดงในการ์ดแพทย์หลักประจำสาขา เช่น "ตจวิทยา"
    */
   subSpecialty?: string | null;
   /**
@@ -391,11 +391,11 @@ export interface Doctor {
    */
   subNote?: string | null;
   /**
-   * รูปแพทย์สำหรับ hero หน้าโปรไฟล์ — ต้องเป็น PNG ตัดพื้นหลังโปร่งใส (เฉพาะตัวคน) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ
+   * รูปแพทย์สำหรับ hero หน้าโปรไฟล์: ต้องเป็น PNG ตัดพื้นหลังโปร่งใส (เฉพาะตัวคน) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ
    */
   portrait?: (number | null) | Media;
   /**
-   * รูปแพทย์สำหรับการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นกัน แนะนำสัดส่วนแนวตั้งประมาณ 4:5
+   * รูปแพทย์สำหรับการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นกัน แนะนำสัดส่วนแนวตั้งประมาณ 4:5
    */
   cardPhoto?: (number | null) | Media;
   /**
@@ -461,7 +461,7 @@ export interface Doctor {
       }[]
     | null;
   /**
-   * ตารางออกตรวจ แยกตามสาขา — แต่ละกลุ่มด้านล่างคือ 1 สาขา ใช้แสดงเป็นแท็บเลือกสาขาบนหน้าเว็บ
+   * ตารางออกตรวจ แยกตามสาขา: แต่ละกลุ่มด้านล่างคือ 1 สาขา ใช้แสดงเป็นแท็บเลือกสาขาบนหน้าเว็บ
    */
   scheduleByBranch?:
     | {
@@ -500,7 +500,7 @@ export interface Doctor {
    */
   isBranchFeatured?: boolean | null;
   /**
-   * รูปแพทย์สำหรับการ์ดแพทย์หลัก — ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นเดียวกับ Portrait/Card Photo แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องกว้างจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ
+   * รูปแพทย์สำหรับการ์ดแพทย์หลัก: ต้องเป็น PNG ตัดพื้นหลังโปร่งใสเช่นเดียวกับ Portrait/Card Photo แนะนำสัดส่วนแนวตั้งประมาณ 4:5 พื้นหลังห้องกว้างจะดึงมาจาก Doctor Display Settings แทนอัตโนมัติ
    */
   featuredPhoto?: (number | null) | Media;
   /**
@@ -508,7 +508,7 @@ export interface Doctor {
    */
   quote?: string | null;
   /**
-   * รายการ checklist ในการ์ดแพทย์หลัก เช่น "ประเมินสุขภาพเชิงลึก & ฟื้นฟูสมดุล" — ใส่กี่ข้อก็ได้
+   * รายการ checklist ในการ์ดแพทย์หลัก เช่น "ประเมินสุขภาพเชิงลึก & ฟื้นฟูสมดุล" ใส่กี่ข้อก็ได้
    */
   featuredHighlights?:
     | {
@@ -545,7 +545,7 @@ export interface Doctor {
 export interface Program {
   id: number;
   /**
-   * e.g. pv01 — used in program_detail.html?id=
+   * e.g. pv01: used in program_detail.html?id=
    */
   slug: string;
   /**
@@ -555,11 +555,11 @@ export interface Program {
   category: 'plastic' | 'dermatology' | 'longevity' | 'wellness';
   title: string;
   /**
-   * THB. If "Price options" below is filled in, set this to the LOWEST option's price — it drives the "starting from" price shown on the catalog card and highlight carousel.
+   * THB. If "Price options" below is filled in, set this to the LOWEST option's price it drives the "starting from" price shown on the catalog card and highlight carousel.
    */
   price: number;
   /**
-   * Optional. Use this instead of duplicating the whole program when the only real difference is unit count/price (e.g. "50 units" vs "100 units" of the same Botox program) — fill in the shared content once above/below, add one row per option here, and the detail page shows a selector. Leave empty for a normal single-price program.
+   * Optional. Use this instead of duplicating the whole program when the only real difference is unit count/price (e.g. "50 units" vs "100 units" of the same Botox program) fill in the shared content once above/below, add one row per option here, and the detail page shows a selector. Leave empty for a normal single-price program.
    */
   priceVariants?:
     | {
@@ -572,7 +572,7 @@ export interface Program {
          */
         price: number;
         /**
-         * Optional. What this option includes, e.g. "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว" — shown under the option label in the picker table.
+         * Optional. What this option includes, e.g. "โปรแกรมตรวจประเมิน 10 รายการ รวมค่าแพทย์แล้ว" shown under the option label in the picker table.
          */
         description?: string | null;
         id?: string | null;
@@ -716,15 +716,15 @@ export interface Member {
   lastName?: string | null;
   phone?: string | null;
   /**
-   * วันเกิด — บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูล เพราะบัญชีถูกสร้างตั้งแต่ขั้นตอนที่ 1 (แค่อีเมล+รหัสผ่าน) ก่อนจะมีข้อมูลนี้
+   * วันเกิด: บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูล เพราะบัญชีถูกสร้างตั้งแต่ขั้นตอนที่ 1 (แค่อีเมล+รหัสผ่าน) ก่อนจะมีข้อมูลนี้
    */
   dob?: string | null;
   /**
-   * Branch slug ที่สมาชิกเลือกไว้ตอนสมัคร — บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูลด้วยเหตุผลเดียวกับ dob ด้านบน — ไม่ใช่ relationship ด้วยเหตุผลเดียวกับ Leads.branch
+   * Branch slug ที่สมาชิกเลือกไว้ตอนสมัคร บังคับกรอกที่หน้าสมัคร (ขั้นตอนที่ 3) แต่ไม่ได้บังคับระดับฐานข้อมูลด้วยเหตุผลเดียวกับ dob ด้านบน ไม่ใช่ relationship ด้วยเหตุผลเดียวกับ Leads.branch
    */
   preferredBranch?: string | null;
   /**
-   * กำหนดโดยแอดมินเท่านั้น — ระบบยังไม่มีการซื้อขาย/คำนวณระดับสมาชิกอัตโนมัติ (จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)")
+   * กำหนดโดยแอดมินเท่านั้น: ระบบยังไม่มีการซื้อขาย/คำนวณระดับสมาชิกอัตโนมัติ (จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)")
    */
   membershipTier?: (number | null) | MembershipTier;
   /**
@@ -732,7 +732,7 @@ export interface Member {
    */
   emailOptIn?: boolean | null;
   /**
-   * ภาษาที่สมาชิกใช้งานตอนสมัคร เช่น 'th', 'en' — ใช้เลือกภาษาของอีเมลยืนยัน/รีเซ็ตรหัสผ่านเท่านั้น
+   * ภาษาที่สมาชิกใช้งานตอนสมัคร เช่น 'th', 'en' ใช้เลือกภาษาของอีเมลยืนยัน/รีเซ็ตรหัสผ่านเท่านั้น
    */
   preferredLocale?: string | null;
   updatedAt: string;
@@ -757,7 +757,7 @@ export interface Member {
   collection: 'members';
 }
 /**
- * ระดับสมาชิก PHIVARA — เพิ่ม/ลบ/แก้ไข/จัดลำดับได้อิสระ ใช้กำหนดหน้าบัตรสมาชิก (สี) และผูกกับการ์ดสิทธิพิเศษ (member-privileges)
+ * ระดับสมาชิก PHIVARA: เพิ่ม/ลบ/แก้ไข/จัดลำดับได้อิสระ ใช้กำหนดหน้าบัตรสมาชิก (สี) และผูกกับการ์ดสิทธิพิเศษ (member-privileges)
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership-tiers".
@@ -769,11 +769,11 @@ export interface MembershipTier {
    */
   label: string;
   /**
-   * รหัสภายในของ tier นี้ (ห้ามซ้ำ, ห้ามมีช่องว่าง) เช่น "diamond" — ไม่แสดงให้สมาชิกเห็น
+   * รหัสภายในของ tier นี้ (ห้ามซ้ำ, ห้ามมีช่องว่าง) เช่น "diamond" ไม่แสดงให้สมาชิกเห็น
    */
   slug: string;
   /**
-   * ลำดับการแสดงผล (เลขน้อยไปมาก) — ใช้เรียงตารางเปรียบเทียบ tier ในหน้าโปรไฟล์สมาชิก
+   * ลำดับการแสดงผล (เลขน้อยไปมาก): ใช้เรียงตารางเปรียบเทียบ tier ในหน้าโปรไฟล์สมาชิก
    */
   order: number;
   /**
@@ -798,7 +798,7 @@ export interface MembershipTier {
 export interface Article {
   id: number;
   /**
-   * e.g. blue-ocean-pathway — used in article_detail.html?id=
+   * e.g. blue-ocean-pathway: used in article_detail.html?id=
    */
   slug: string;
   title: string;
@@ -812,7 +812,7 @@ export interface Article {
    */
   categoryLabel?: string | null;
   /**
-   * Optional — only set this if the article is specific to one branch. Leave blank for general editorial content.
+   * Optional: only set this if the article is specific to one branch. Leave blank for general editorial content.
    */
   branch?: (number | null) | Branch;
   coverImage: number | Media;
@@ -925,11 +925,23 @@ export interface Popup {
    */
   enabled?: boolean | null;
   /**
-   * รูปที่แสดงใน popup (ใช้รูปเดียวทุกภาษาและทุกอุปกรณ์) แนะนำแนวตั้งหรือสี่เหลี่ยมจัตุรัส กว้างอย่างน้อย 800px — เปลี่ยนรูปแล้วผู้เข้าชมจะเห็น popup ทันทีโดยไม่ต้องรอช่วงเวลาแสดงซ้ำ
+   * กล่องกลางจอ: รูปเดียวลอยทับหน้าแรก | เต็มจอ: รูปเต็มหน้าจอ (เดสก์ท็อป + มือถือ) พร้อมปุ่ม "เข้าสู่เว็บไซต์" และปุ่ม × เลือกเต็มจอแล้วต้องใส่รูปมือถือด้วย
+   */
+  displayMode: 'modal' | 'fullscreen';
+  /**
+   * กล่องกลางจอ: ใช้รูปเดียวทุกอุปกรณ์ แนะนำแนวตั้ง 4:5 ขนาด 1000×1250 px | เต็มจอ: นี่คือรูปเดสก์ท็อป สัดส่วน 16:9 ขนาด 1920×1080 px (ไม่เกิน ~1 MB) หน้าจอที่ไม่ใช่ 16:9 จะถูกตัดขอบซ้าย-ขวา ให้วางเนื้อหาสำคัญไว้ในกรอบกลางสัดส่วน 4:3 (กว้าง 1440 px กึ่งกลางภาพ) และเว้นกลางล่างไว้ให้ปุ่ม เปลี่ยนรูปแล้วผู้เข้าชมจะเห็นทันทีโดยไม่ต้องรอช่วงเวลาแสดงซ้ำ
    */
   image: number | Media;
   /**
-   * คำอธิบายรูปสำหรับผู้ใช้ screen reader (ไม่บังคับ — ถ้าเว้นว่างจะใช้ชื่อด้านบน)
+   * สัดส่วน 9:16 ขนาด 1080×1920 px (ไม่เกิน ~1 MB) มือถือบางรุ่นจอยาวกว่า 9:16 จะถูกตัดขอบซ้าย-ขวา ให้เว้นขอบข้างละ ~12% วางข้อความสำคัญไว้กลางภาพ และเว้นกลางล่างไว้ให้ปุ่ม ใช้เมื่อหน้าจอเล็ก/แนวตั้ง
+   */
+  imageMobile?: (number | null) | Media;
+  /**
+   * เว้นว่างได้: ใช้ค่าเริ่มต้นตามภาษา ("เข้าสู่เว็บไซต์" / "Enter Website")
+   */
+  buttonLabel?: string | null;
+  /**
+   * คำอธิบายรูปสำหรับผู้ใช้ screen reader (ไม่บังคับ ถ้าเว้นว่างจะใช้ชื่อด้านบน)
    */
   alt?: string | null;
   /**
@@ -945,7 +957,7 @@ export interface Popup {
    */
   reshowIntervalMinutes: number;
   /**
-   * ลิงก์เมื่อคลิกรูป (ไม่บังคับ) — ใส่ https://… หรือ path ภายในเว็บ เช่น /th/membership
+   * ลิงก์เมื่อคลิกรูป (กล่องกลางจอ) หรือกดปุ่ม (เต็มจอ) ไม่บังคับ ใส่ https://… หรือ path ภายในเว็บ เช่น /th/membership (เต็มจอ: เว้นว่างหรือใส่หน้าปัจจุบัน = ปุ่มแค่ปิด Splash)
    */
   linkUrl?: string | null;
   updatedAt: string;
@@ -962,7 +974,7 @@ export interface Lead {
   name: string;
   phone: string;
   /**
-   * Branch slug selected in the modal, e.g. "pt2" (not a relationship — see field comment)
+   * Branch slug selected in the modal, e.g. "pt2" (not a relationship see field comment)
    */
   branch: string;
   service: 'wellness' | 'longevity' | 'plastic-surgery' | 'dermatology' | 'membership';
@@ -971,19 +983,19 @@ export interface Lead {
    */
   notes?: string | null;
   /**
-   * Only set by the doctor detail page's own appointment form (public/js/doctor-appointment-form.js) — the shared VIP modal has no date field, so this stays empty for those leads.
+   * Only set by the doctor detail page's own appointment form (public/js/doctor-appointment-form.js) the shared VIP modal has no date field, so this stays empty for those leads.
    */
   preferredDate?: string | null;
   /**
-   * Page path the form was submitted from, e.g. /program/pv02 — for triage context, not shown to the visitor.
+   * Page path the form was submitted from, e.g. /program/pv02 for triage context, not shown to the visitor.
    */
   sourcePath?: string | null;
   /**
-   * Internal triage status — not visible to the visitor.
+   * Internal triage status: not visible to the visitor.
    */
   status: 'new' | 'contacted' | 'booked' | 'closed';
   /**
-   * บันทึกความคืบหน้าภายในสำหรับเจ้าหน้าที่ (ไม่แสดงต่อลูกค้า) — กด "Add Remark" เพื่อเพิ่มได้เรื่อยๆ จนกว่าจะปิดเคส (Status = Closed) รายการเก่าจะยังแสดงไว้เป็นประวัติเสมอ
+   * บันทึกความคืบหน้าภายในสำหรับเจ้าหน้าที่ (ไม่แสดงต่อลูกค้า) กด "Add Remark" เพื่อเพิ่มได้เรื่อยๆ จนกว่าจะปิดเคส (Status = Closed) รายการเก่าจะยังแสดงไว้เป็นประวัติเสมอ
    */
   internalRemarks?:
     | {
@@ -1547,7 +1559,10 @@ export interface AwardsSelect<T extends boolean = true> {
 export interface PopupsSelect<T extends boolean = true> {
   title?: T;
   enabled?: T;
+  displayMode?: T;
   image?: T;
+  imageMobile?: T;
+  buttonLabel?: T;
   alt?: T;
   startAt?: T;
   endAt?: T;
@@ -1694,7 +1709,7 @@ export interface Membership {
 export interface MemberPrivilege {
   id: number;
   /**
-   * เพิ่ม/ลบ/จัดลำดับการ์ดได้อิสระ — แต่ละการ์ดเลือกได้ว่าจะโชว์ให้ระดับสมาชิกไหนเห็นบ้าง (เลือกได้มากกว่า 1 ระดับ)
+   * เพิ่ม/ลบ/จัดลำดับการ์ดได้อิสระ: แต่ละการ์ดเลือกได้ว่าจะโชว์ให้ระดับสมาชิกไหนเห็นบ้าง (เลือกได้มากกว่า 1 ระดับ)
    */
   cards?:
     | {
@@ -1702,7 +1717,7 @@ export interface MemberPrivilege {
         description: string;
         icon: 'discount' | 'priority' | 'doctor' | 'gift' | 'star' | 'heart' | 'diamond' | 'badge';
         /**
-         * แสดงการ์ดนี้ให้สมาชิกระดับที่เลือกเห็นเท่านั้น (เลือกได้หลายระดับ) — จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)"
+         * แสดงการ์ดนี้ให้สมาชิกระดับที่เลือกเห็นเท่านั้น (เลือกได้หลายระดับ) จัดการรายชื่อ tier ได้ที่เมนู "ระดับสมาชิก (Tiers)"
          */
         tiers: (number | MembershipTier)[];
         id?: string | null;
@@ -1927,7 +1942,7 @@ export interface Footer {
     instagram?: string | null;
     facebook?: string | null;
     /**
-     * ชื่อ LINE ส่วนกลางที่แสดงบนเว็บ (เช่น @phivara) — ใช้คู่กับลิงก์ด้านล่าง
+     * ชื่อ LINE ส่วนกลางที่แสดงบนเว็บ (เช่น @phivara) ใช้คู่กับลิงก์ด้านล่าง
      */
     lineId?: string | null;
     /**
@@ -1960,7 +1975,7 @@ export interface Topbar {
   createdAt?: string | null;
 }
 /**
- * ควบคุมว่าภาษาไหนแก้ไขได้ใน CMS และภาษาไหนเผยแพร่บนหน้าเว็บจริง — ไทยเป็นภาษาหลัก เปิดใช้งานเสมอ ไม่มีสวิตช์ปิด
+ * ควบคุมว่าภาษาไหนแก้ไขได้ใน CMS และภาษาไหนเผยแพร่บนหน้าเว็บจริง ไทยเป็นภาษาหลัก เปิดใช้งานเสมอ ไม่มีสวิตช์ปิด
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "language-settings".
@@ -2028,7 +2043,7 @@ export interface LanguageSetting {
 export interface PrivacyPolicy {
   id: number;
   /**
-   * เนื้อหานโยบายความเป็นส่วนตัวทั้งหมด (หัวข้อ ย่อหน้า และ list) แก้ไขได้อิสระต่อภาษา — ยังคงมีข้อความ [...] เป็น placeholder ที่ต้องรอทีมกฎหมายกรอกก่อนเผยแพร่จริง หากภาษาใดยังไม่มีเนื้อหา หน้าเว็บจะแสดงฉบับอังกฤษแทน (หรือไทย หากอังกฤษก็ยังไม่มี)
+   * เนื้อหานโยบายความเป็นส่วนตัวทั้งหมด (หัวข้อ ย่อหน้า และ list) แก้ไขได้อิสระต่อภาษา ยังคงมีข้อความ [...] เป็น placeholder ที่ต้องรอทีมกฎหมายกรอกก่อนเผยแพร่จริง หากภาษาใดยังไม่มีเนื้อหา หน้าเว็บจะแสดงฉบับอังกฤษแทน (หรือไทย หากอังกฤษก็ยังไม่มี)
    */
   body?: {
     root: {
@@ -2049,7 +2064,7 @@ export interface PrivacyPolicy {
   createdAt?: string | null;
 }
 /**
- * เลือกผู้ให้บริการส่งอีเมลระบบ (ยืนยันบัญชี / รีเซ็ตรหัสผ่าน) — ค่า credentials ตั้งค่าแยกที่ .env บน server เท่านั้น ไม่ใส่ในหน้านี้
+ * เลือกผู้ให้บริการส่งอีเมลระบบ (ยืนยันบัญชี / รีเซ็ตรหัสผ่าน) ค่า credentials ตั้งค่าแยกที่ .env บน server เท่านั้น ไม่ใส่ในหน้านี้
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "email-settings".
@@ -2070,19 +2085,19 @@ export interface EmailSetting {
 export interface DoctorDisplaySetting {
   id: number;
   /**
-   * พื้นหลังห้องที่ใช้ร่วมกันทั่วเว็บ สำหรับรูปแพทย์แบบ "โปรไฟล์" ทั้งหมด — hero ที่หน้า /doctor/[slug] และการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 ให้ใกล้เคียงกับรูปแพทย์ที่ตัดขอบไว้
+   * พื้นหลังห้องที่ใช้ร่วมกันทั่วเว็บ สำหรับรูปแพทย์แบบ "โปรไฟล์" ทั้งหมด hero ที่หน้า /doctor/[slug] และการ์ด thumbnail (หน้ารายชื่อแพทย์ + กริดแพทย์ประจำสาขา) แนะนำสัดส่วนแนวตั้งประมาณ 4:5 ให้ใกล้เคียงกับรูปแพทย์ที่ตัดขอบไว้
    */
   profileBackground?: (number | null) | Media;
   /**
-   * พื้นหลังห้องสำหรับการ์ด "แพทย์หลักประจำสาขา" (featured) เท่านั้น — ใช้ร่วมกันทุกสาขา แนะนำสัดส่วนแนวนอนกว้าง ~1.9:1 (เช่น 1200x630px)
+   * พื้นหลังห้องสำหรับการ์ด "แพทย์หลักประจำสาขา" (featured) เท่านั้น ใช้ร่วมกันทุกสาขา แนะนำสัดส่วนแนวนอนกว้าง ~1.9:1 (เช่น 1200x630px)
    */
   featuredBackground?: (number | null) | Media;
   /**
-   * เมื่อเปิด: หมอที่ชื่อซ้ำกันในหลาย record (เพราะประจำหลายสาขา) จะถูกรวมแสดงเป็นการ์ดเดียวในหน้า /doctor พร้อมป้ายรวมทุกสาขา แทนการแสดงซ้ำทีละสาขา — ไม่กระทบหน้าโปรไฟล์สาขาหรือหน้ารายละเอียดหมอ ซึ่งยังอิงข้อมูลจริงเสมอ เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
+   * เมื่อเปิด: หมอที่ชื่อซ้ำกันในหลาย record (เพราะประจำหลายสาขา) จะถูกรวมแสดงเป็นการ์ดเดียวในหน้า /doctor พร้อมป้ายรวมทุกสาขา แทนการแสดงซ้ำทีละสาขา ไม่กระทบหน้าโปรไฟล์สาขาหรือหน้ารายละเอียดหมอ ซึ่งยังอิงข้อมูลจริงเสมอ เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
    */
   groupDoctorsByBranch?: boolean | null;
   /**
-   * ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน — เลือกแบบ A (pill) จะมีผลกับการ์ดแพทย์ทุกใบ รวมถึงแพทย์ที่มีสาขาเดียวด้วย (2026-09-11) เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
+   * ใช้เฉพาะตอนเปิด "รวมหมอที่ประจำหลายสาขาเป็นการ์ดเดียว" ด้านบน เลือกแบบ A (pill) จะมีผลกับการ์ดแพทย์ทุกใบ รวมถึงแพทย์ที่มีสาขาเดียวด้วย (2026-09-11) เฉพาะ Admin เท่านั้นที่แก้ค่านี้ได้
    */
   multiBranchLabelStyle?: ('pills' | 'list') | null;
   /**
@@ -2099,7 +2114,7 @@ export interface DoctorDisplaySetting {
 export interface GrayscaleMode {
   id: number;
   /**
-   * สวิตช์หลัก — ปิดเมื่อไรเว็บกลับเป็นสีปกติทันที (ไม่ว่าจะตั้งวันเวลาไว้อย่างไร) ถ้าเปิดและไม่ใส่วัน-เวลา โหมดจะทำงานต่อเนื่องจนกว่าจะปิดเอง
+   * สวิตช์หลัก: ปิดเมื่อไรเว็บกลับเป็นสีปกติทันที (ไม่ว่าจะตั้งวันเวลาไว้อย่างไร) ถ้าเปิดและไม่ใส่วัน-เวลา โหมดจะทำงานต่อเนื่องจนกว่าจะปิดเอง
    */
   enabled?: boolean | null;
   /**
@@ -2107,11 +2122,11 @@ export interface GrayscaleMode {
    */
   level: '0' | '10' | '20' | '30' | '40' | '50' | '60' | '70' | '80' | '90' | '100';
   /**
-   * เว้นว่างได้ — ถ้าไม่ใส่จะเริ่มทันทีที่เปิดสวิตช์ (ตามเวลาของเครื่องที่ใช้แก้ไข)
+   * เว้นว่างได้: ถ้าไม่ใส่จะเริ่มทันทีที่เปิดสวิตช์ (ตามเวลาของเครื่องที่ใช้แก้ไข)
    */
   startAt?: string | null;
   /**
-   * เว้นว่างได้ — ถ้าไม่ใส่จะทำงานต่อเนื่องจนกว่าจะปิดสวิตช์ (การเปลี่ยนตามเวลาอัตโนมัติอาจช้าได้สูงสุดประมาณ 1 นาที)
+   * เว้นว่างได้: ถ้าไม่ใส่จะทำงานต่อเนื่องจนกว่าจะปิดสวิตช์ (การเปลี่ยนตามเวลาอัตโนมัติอาจช้าได้สูงสุดประมาณ 1 นาที)
    */
   endAt?: string | null;
   updatedAt?: string | null;

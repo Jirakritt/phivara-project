@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { translator } from '@/lib/i18n'
 import type { LocaleCode } from '@/lib/i18n'
 
 // Homepage "special day" popup. Content/schedule come from the Popups
@@ -15,6 +16,13 @@ import type { LocaleCode } from '@/lib/i18n'
 // identity), so a new popup or a replaced image shows immediately.
 // localStorage unavailable (private mode) → shows on every load; accepted.
 //
+// Fullscreen splash: same schedule/cooldown/gate logic, different markup —
+// a <picture> picks the desktop or mobile image by viewport (phones and any
+// portrait screen get the 9:16 one), a gold "enter website" button (goes to
+// the CMS link, or just closes the splash when there is none / it points at
+// the page already open) and a small × in the corner. No backdrop-click
+// dismissal (the image IS the backdrop); ESC still closes.
+//
 // Ordering with the PDPA cookie banner: (public)/page.tsx sets
 // window.__PHIVARA_POPUP_GATE__ = 'pending' before this runs and
 // consent-banner.js holds the banner back while it's 'pending'/'open'.
@@ -23,7 +31,12 @@ import type { LocaleCode } from '@/lib/i18n'
 
 interface ActivePopup {
   key: string
+  // 'modal' = the original centred image box; 'fullscreen' = full-viewport
+  // splash (desktop image + mobile image + "enter website" button).
+  mode: 'modal' | 'fullscreen'
   imageUrl: string
+  mobileImageUrl: string | null
+  buttonLabel: string
   width: number | null
   height: number | null
   alt: string
@@ -75,6 +88,17 @@ function waitForPreloader(): Promise<void> {
   })
 }
 
+// Same media query the <picture> below uses, so the preloaded file is the one
+// the browser actually renders.
+const MOBILE_QUERY = '(max-width: 768px), (orientation: portrait)'
+function isMobileViewport(): boolean {
+  try {
+    return window.matchMedia(MOBILE_QUERY).matches
+  } catch {
+    return false
+  }
+}
+
 function preloadImage(src: string): Promise<boolean> {
   return new Promise((resolve) => {
     const img = new Image()
@@ -92,9 +116,11 @@ function preloadImage(src: string): Promise<boolean> {
 }
 
 export default function HomePopup({ locale }: { locale: LocaleCode }) {
+  const t = translator(locale)
   const [popup, setPopup] = useState<ActivePopup | null>(null)
   const [open, setOpen] = useState(false)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const ctaRef = useRef<HTMLAnchorElement | HTMLButtonElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -109,7 +135,8 @@ export default function HomePopup({ locale }: { locale: LocaleCode }) {
         const body = (await res.json()) as { popup: ActivePopup | null }
         const active = body.popup
         if (!active || wasShownRecently(active)) return
-        if (!(await preloadImage(active.imageUrl))) return
+        const wantMobile = active.mode === 'fullscreen' && isMobileViewport()
+        if (!(await preloadImage((wantMobile && active.mobileImageUrl) || active.imageUrl))) return
         await waitForPreloader()
         if (cancelled) return
         markShown(active)
@@ -139,7 +166,7 @@ export default function HomePopup({ locale }: { locale: LocaleCode }) {
     if (!open) return
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    closeRef.current?.focus()
+    ;(ctaRef.current || closeRef.current)?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close()
     }
@@ -151,6 +178,59 @@ export default function HomePopup({ locale }: { locale: LocaleCode }) {
   }, [open, close])
 
   if (!popup || !open) return null
+
+  if (popup.mode === 'fullscreen') {
+    const url = popup.linkUrl
+    const isExternal = url ? /^https?:\/\//i.test(url) : false
+    // A link to the page that's already open would just reload it — treat
+    // that (and no link at all) as "close the splash".
+    const samePage = (() => {
+      if (!url) return true
+      try {
+        const u = new URL(url, window.location.origin)
+        return u.origin === window.location.origin && u.pathname + u.search === window.location.pathname + window.location.search
+      } catch {
+        return false
+      }
+    })()
+    const label = popup.buttonLabel
+    const arrow = (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    )
+    return (
+      <div className="home-splash" role="dialog" aria-modal="true" aria-label={popup.alt}>
+        <picture>
+          {popup.mobileImageUrl && <source media={MOBILE_QUERY} srcSet={popup.mobileImageUrl} />}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="home-splash-img" src={popup.imageUrl} alt={popup.alt} />
+        </picture>
+        <button ref={closeRef} type="button" className="home-splash-close" aria-label={t('ปิด', 'Close')} onClick={close}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+        {samePage ? (
+          <button ref={ctaRef as React.RefObject<HTMLButtonElement>} type="button" className="home-splash-cta" onClick={close}>
+            <span>{label}</span>
+            {arrow}
+          </button>
+        ) : (
+          <a
+            ref={ctaRef as React.RefObject<HTMLAnchorElement>}
+            className="home-splash-cta"
+            href={url as string}
+            {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            onClick={close}
+          >
+            <span>{label}</span>
+            {arrow}
+          </a>
+        )}
+      </div>
+    )
+  }
 
   const external = popup.linkUrl ? /^https?:\/\//i.test(popup.linkUrl) : false
   const img = (
@@ -175,7 +255,7 @@ export default function HomePopup({ locale }: { locale: LocaleCode }) {
       }}
     >
       <div className="home-popup">
-        <button ref={closeRef} type="button" className="home-popup-close" aria-label={locale === 'th' ? 'ปิด' : 'Close'} onClick={close}>
+        <button ref={closeRef} type="button" className="home-popup-close" aria-label={t('ปิด', 'Close')} onClick={close}>
           ×
         </button>
         {popup.linkUrl ? (

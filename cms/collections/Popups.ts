@@ -51,20 +51,63 @@ export const Popups: CollectionConfig = {
       },
     },
     {
+      name: 'displayMode',
+      type: 'select',
+      required: true,
+      defaultValue: 'modal',
+      label: 'รูปแบบการแสดง',
+      options: [
+        { label: 'กล่องกลางจอ (แบบเดิม)', value: 'modal' },
+        { label: 'เต็มจอ (Splash): มีปุ่มเข้าสู่เว็บไซต์', value: 'fullscreen' },
+      ],
+      admin: {
+        description:
+          'กล่องกลางจอ: รูปเดียวลอยทับหน้าแรก | เต็มจอ: รูปเต็มหน้าจอ (เดสก์ท็อป + มือถือ) พร้อมปุ่ม "เข้าสู่เว็บไซต์" และปุ่ม × เลือกเต็มจอแล้วต้องใส่รูปมือถือด้วย',
+      },
+    },
+    {
       name: 'image',
       type: 'upload',
       relationTo: 'media',
       required: true,
+      label: 'รูป (กล่องกลางจอ / เดสก์ท็อป)',
       admin: {
         description:
-          'รูปที่แสดงใน popup (ใช้รูปเดียวทุกภาษาและทุกอุปกรณ์) แนะนำแนวตั้งหรือสี่เหลี่ยมจัตุรัส กว้างอย่างน้อย 800px — เปลี่ยนรูปแล้วผู้เข้าชมจะเห็น popup ทันทีโดยไม่ต้องรอช่วงเวลาแสดงซ้ำ',
+          'กล่องกลางจอ: ใช้รูปเดียวทุกอุปกรณ์ แนะนำแนวตั้ง 4:5 ขนาด 1000×1250 px | เต็มจอ: นี่คือรูปเดสก์ท็อป สัดส่วน 16:9 ขนาด 1920×1080 px (ไม่เกิน ~1 MB) หน้าจอที่ไม่ใช่ 16:9 จะถูกตัดขอบซ้าย-ขวา ให้วางเนื้อหาสำคัญไว้ในกรอบกลางสัดส่วน 4:3 (กว้าง 1440 px กึ่งกลางภาพ) และเว้นกลางล่างไว้ให้ปุ่ม เปลี่ยนรูปแล้วผู้เข้าชมจะเห็นทันทีโดยไม่ต้องรอช่วงเวลาแสดงซ้ำ',
+      },
+    },
+    {
+      name: 'imageMobile',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'รูปมือถือ (เต็มจอเท่านั้น)',
+      admin: {
+        condition: (data) => data?.displayMode === 'fullscreen',
+        description:
+          'สัดส่วน 9:16 ขนาด 1080×1920 px (ไม่เกิน ~1 MB) มือถือบางรุ่นจอยาวกว่า 9:16 จะถูกตัดขอบซ้าย-ขวา ให้เว้นขอบข้างละ ~12% วางข้อความสำคัญไว้กลางภาพ และเว้นกลางล่างไว้ให้ปุ่ม ใช้เมื่อหน้าจอเล็ก/แนวตั้ง',
+      },
+      validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
+        if (siblingData?.displayMode === 'fullscreen' && !value) {
+          return 'รูปแบบเต็มจอต้องใส่รูปมือถือ (9:16)'
+        }
+        return true
+      },
+    },
+    {
+      name: 'buttonLabel',
+      type: 'text',
+      localized: true,
+      label: 'ข้อความบนปุ่ม (เต็มจอเท่านั้น)',
+      admin: {
+        condition: (data) => data?.displayMode === 'fullscreen',
+        description: 'เว้นว่างได้: ใช้ค่าเริ่มต้นตามภาษา ("เข้าสู่เว็บไซต์" / "Enter Website")',
       },
     },
     {
       name: 'alt',
       type: 'text',
       localized: true,
-      admin: { description: 'คำอธิบายรูปสำหรับผู้ใช้ screen reader (ไม่บังคับ — ถ้าเว้นว่างจะใช้ชื่อด้านบน)' },
+      admin: { description: 'คำอธิบายรูปสำหรับผู้ใช้ screen reader (ไม่บังคับ ถ้าเว้นว่างจะใช้ชื่อด้านบน)' },
     },
     {
       name: 'startAt',
@@ -111,7 +154,7 @@ export const Popups: CollectionConfig = {
       name: 'linkUrl',
       type: 'text',
       admin: {
-        description: 'ลิงก์เมื่อคลิกรูป (ไม่บังคับ) — ใส่ https://… หรือ path ภายในเว็บ เช่น /th/membership',
+        description: 'ลิงก์เมื่อคลิกรูป (กล่องกลางจอ) หรือกดปุ่ม (เต็มจอ) ไม่บังคับ ใส่ https://… หรือ path ภายในเว็บ เช่น /th/membership (เต็มจอ: เว้นว่างหรือใส่หน้าปัจจุบัน = ปุ่มแค่ปิด Splash)',
       },
       validate: (value: unknown) => {
         if (!value) return true

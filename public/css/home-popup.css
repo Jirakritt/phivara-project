@@ -37,3 +37,45 @@
 @media (prefers-reduced-motion:reduce){
   .home-popup-overlay,.home-popup{ animation:none; }
 }
+
+/* ---- Fullscreen splash (displayMode = fullscreen) ----------------------
+   The image is the backdrop: cover-fit to the real visible viewport (dvh —
+   avoids the mobile URL-bar jump), a soft top/bottom scrim keeps the close
+   button and CTA readable on any artwork, and safe-area insets keep both
+   clear of notches/home indicators. */
+.home-splash{
+  position:fixed; inset:0; z-index:10050; width:100%; height:100vh; height:100dvh;
+  background:#1a1713; overflow:hidden; animation:homePopupFade .45s ease both;
+}
+.home-splash picture{ position:absolute; inset:0; display:block; }
+.home-splash-img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+.home-splash::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.28) 0,transparent 20%,transparent 62%,rgba(0,0,0,.5) 100%);
+}
+.home-splash-close{
+  position:absolute; z-index:2; top:max(18px,env(safe-area-inset-top)); right:max(18px,env(safe-area-inset-right));
+  width:38px; height:38px; padding:0; border-radius:50%; cursor:pointer;
+  border:1px solid rgba(255,255,255,.5); background:rgba(20,17,13,.38); color:#fff;
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  transition:background .3s ease,transform .3s ease;
+}
+.home-splash-close:hover{ background:rgba(20,17,13,.65); transform:rotate(90deg); }
+.home-splash-close svg{ width:17px; height:17px; }
+.home-splash-cta{
+  position:absolute; z-index:2; left:50%; transform:translateX(-50%);
+  bottom:calc(clamp(40px,8vh,96px) + env(safe-area-inset-bottom));
+  display:inline-flex; align-items:center; gap:12px; white-space:nowrap; cursor:pointer; text-decoration:none;
+  border:0; border-radius:60px; padding:16px 42px;
+  background:linear-gradient(135deg,#C7A76B,#E2C98F); color:#2d2820;
+  font:600 17px/1 var(--sans,'Noto Sans Thai',sans-serif); letter-spacing:.04em;
+  box-shadow:0 14px 34px rgba(0,0,0,.4); transition:transform .25s ease,box-shadow .25s ease;
+}
+.home-splash-cta:hover{ transform:translateX(-50%) translateY(-2px); box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.home-splash-cta svg{ width:17px; height:17px; flex:none; }
+.home-splash-close:focus-visible,.home-splash-cta:focus-visible{ outline:2px solid #fff; outline-offset:3px; }
+@media (max-width:600px){
+  .home-splash-cta{ padding:14px 32px; font-size:15px; }
+}
+@media (prefers-reduced-motion:reduce){ .home-splash{ animation:none; } .home-splash-cta,.home-splash-close{ transition:none; } }

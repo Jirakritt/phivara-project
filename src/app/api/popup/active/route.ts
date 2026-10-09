@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-import { DEFAULT_LOCALE, isLocaleCode } from '@/lib/i18n'
+import { DEFAULT_LOCALE, isLocaleCode, translator } from '@/lib/i18n'
 import { getPayloadClient } from '@/lib/payload'
 
 // Serves the homepage "special day" popup (cms/collections/Popups.ts) to
@@ -44,6 +44,13 @@ export async function GET(request: NextRequest) {
     const image = doc && typeof doc.image === 'object' && doc.image ? doc.image : null
     if (!doc || !image?.url) return NextResponse.json({ popup: null }, { headers: noStore })
 
+    // Fullscreen splash needs its mobile image too; without it (shouldn't
+    // happen — the CMS requires it) fall back to the box popup rather than
+    // showing a badly cropped desktop image on phones.
+    const mobile = doc.imageMobile && typeof doc.imageMobile === 'object' ? doc.imageMobile : null
+    const isFullscreen = doc.displayMode === 'fullscreen' && Boolean(mobile?.url)
+    const t = translator(locale)
+
     return NextResponse.json(
       {
         popup: {
@@ -52,8 +59,13 @@ export async function GET(request: NextRequest) {
           // the schedule/interval keeps the same key. `updatedAt` of the
           // media doc is part of it so re-uploading over the same media
           // record also counts as a new image.
-          key: `${doc.id}:${image.id}:${image.updatedAt || ''}`,
+          key: `${doc.id}:${isFullscreen ? 'fs' : 'md'}:${image.id}:${image.updatedAt || ''}${
+            isFullscreen ? `:${mobile!.id}:${mobile!.updatedAt || ''}` : ''
+          }`,
+          mode: isFullscreen ? 'fullscreen' : 'modal',
           imageUrl: image.url,
+          mobileImageUrl: isFullscreen ? mobile!.url : null,
+          buttonLabel: doc.buttonLabel || t('เข้าสู่เว็บไซต์', 'Enter Website'),
           width: image.width || null,
           height: image.height || null,
           alt: doc.alt || doc.title,
