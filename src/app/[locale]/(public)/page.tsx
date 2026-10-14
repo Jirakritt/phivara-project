@@ -275,6 +275,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* ================= AWARDS ================= */}
+      {/* Hidden entirely when every award is switched off in the CMS (main.js
+          skips its awards code when #awardTrack isn't in the page). */}
+      {data.awards.length > 0 && (
       <section className="awards">
         <div className="wrap">
           <div className="section-head reveal">
@@ -299,6 +302,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="award-dots" id="awardDots"></div>
         </div>
       </section>
+      )}
 
       {/* ================= MEMBERSHIP ================= */}
       {/* Sourced from Payload's `membership` Global (hero + finalCta.buttonLabel)

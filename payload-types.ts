@@ -902,6 +902,10 @@ export interface Article {
  */
 export interface Award {
   id: number;
+  /**
+   * ปิดเพื่อซ่อนรางวัลนี้จากหน้าแรก (ข้อมูลและรูปยังอยู่ใน CMS) ถ้าปิดครบทุกรายการ ส่วน AWARDS & RECOGNITION ในหน้าแรกจะถูกซ่อนทั้งก้อน
+   */
+  enabled?: boolean | null;
   image: number | Media;
   /**
    * e.g. "COVID Management Initiative of the Year - Thailand · Healthcare Asia Awards 2022"
@@ -1547,6 +1551,7 @@ export interface ArticlesSelect<T extends boolean = true> {
  * via the `definition` "awards_select".
  */
 export interface AwardsSelect<T extends boolean = true> {
+  enabled?: T;
   image?: T;
   caption?: T;
   updatedAt?: T;

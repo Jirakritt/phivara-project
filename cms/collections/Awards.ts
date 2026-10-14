@@ -2,6 +2,15 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin } from '../access/roles'
 
+async function revalidateHome() {
+  try {
+    const { revalidatePath } = await import('next/cache')
+    revalidatePath('/', 'layout')
+  } catch {
+    // Not running inside Next (e.g. a seed/migrate script): nothing cached to purge.
+  }
+}
+
 // Source: js/main.js's hardcoded `awards` array (Awards & Recognition
 // carousel on the homepage) — moved into a real collection so staff can
 // add/remove/reorder awards without touching code. No explicit "order"
@@ -12,7 +21,13 @@ export const Awards: CollectionConfig = {
   slug: 'awards',
   admin: {
     useAsTitle: 'caption',
-    defaultColumns: ['caption', 'image'],
+    defaultColumns: ['caption', 'enabled', 'image'],
+  },
+  // Saving/deleting an award refreshes the homepage right away (it's ISR-cached
+  // for 60s) so switching an award off, or all of them, shows immediately.
+  hooks: {
+    afterChange: [revalidateHome],
+    afterDelete: [revalidateHome],
   },
   access: {
     read: () => true,
@@ -21,6 +36,17 @@ export const Awards: CollectionConfig = {
     delete: isAdmin,
   },
   fields: [
+    {
+      name: 'enabled',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'แสดงบนหน้าเว็บ',
+      admin: {
+        position: 'sidebar',
+        description:
+          'ปิดเพื่อซ่อนรางวัลนี้จากหน้าแรก (ข้อมูลและรูปยังอยู่ใน CMS) ถ้าปิดครบทุกรายการ ส่วน AWARDS & RECOGNITION ในหน้าแรกจะถูกซ่อนทั้งก้อน',
+      },
+    },
     {
       name: 'image',
       type: 'upload',

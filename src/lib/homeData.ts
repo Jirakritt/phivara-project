@@ -707,7 +707,11 @@ export async function getHomeData(locale: LocaleCode): Promise<HomeData> {
       }
     })
 
+  // `enabled !== false` (not `=== true`) so rows saved before the switch
+  // existed (null) keep showing. When none are left, page.tsx hides the whole
+  // AWARDS & RECOGNITION section.
   const awards: HomeAward[] = awardDocs
+    .filter((doc) => doc.enabled !== false)
     .filter((doc) => hasLocaleContent(doc.caption))
     .map((doc) => {
       const caption = doc.caption || ''

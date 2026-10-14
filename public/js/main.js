@@ -349,7 +349,8 @@
      Sourced from Payload's `awards` collection — see src/lib/homeData.ts. */
   const awards = cmsData.awards || [];
   const awardTrack = document.getElementById('awardTrack');
-  awardTrack.innerHTML = awards.map(award => `
+  // #awardTrack is absent when every award is switched off (section hidden).
+  if (awardTrack) awardTrack.innerHTML = awards.map(award => `
     <div class="award-card">
       <div class="photo-wrap"><img class="ph-photo" src="${award.image}" alt="${award.captionEn}" onerror="this.hidden=true"></div>
       <p class="award-caption" data-th="${award.captionTh}" data-en="${award.captionEn}">${award.captionTh}</p>
