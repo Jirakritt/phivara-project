@@ -100,7 +100,9 @@ PREVIEW_SECRET=
 # - ใส่ GTM (เช่น GTM-XXXXXXX) แล้วระบบโหลดเฉพาะ GTM และ "ไม่สนใจ" GA4 ID ตรงด้านล่าง
 #   (ให้สร้างแท็ก GA4 / Meta Pixel ภายในคอนเทนเนอร์ GTM แทน) — ห้ามวางสคริปต์ gtag/gtm ลงโค้ดเอง
 # - ถ้าไม่ใช้ GTM ให้เว้นช่อง GTM ว่าง แล้วใส่ GA4 (G-XXXXXXXXXX) ตรง
-# - โหลดหลังผู้เข้าชมกดยอมรับคุกกี้เท่านั้น (PDPA) และค่า NEXT_PUBLIC_* ฝังตอน build:
+# - นโยบาย PHIVARA: GTM/GA4 (analytics) โหลดทุกครั้งที่เปิดหน้า ไม่ผูกกับปุ่มยอมรับคุกกี้; ปุ่มยอมรับ/ปฏิเสธคุมเฉพาะคุกกี้การตลาด
+#   (Consent Mode: ad_storage/ad_user_data/ad_personalization = denied จนกว่าจะกดยอมรับ, และ Meta Pixel ที่โหลดตรง)
+#   ค่า NEXT_PUBLIC_* ฝังตอน build:
 #   แก้ .env แล้วต้อง npm run build + pm2 restart phivara --update-env
 # - CSP ใน next.config.mjs อนุญาต googletagmanager.com / *.google-analytics.com /
 #   *.analytics.google.com ไว้แล้ว; Meta Pixel และโดเมนเพิ่มเติมจากแท็กใน GTM

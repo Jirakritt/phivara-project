@@ -1,16 +1,24 @@
 'use strict';
 
-// Site-wide PDPA consent banner + gated analytics loader. Loaded on every
-// page from the root layout (src/app/(frontend)/layout.tsx), which also
-// injects `window.__PHIVARA_ANALYTICS__ = { gaId, metaPixelId }` from
+// Site-wide cookie banner + analytics loader. Loaded on every page from the
+// root layout, which also injects `window.__PHIVARA_ANALYTICS__ = { gtmId,
+// gaId, metaPixelId }` from NEXT_PUBLIC_GTM_CONTAINER_ID /
 // NEXT_PUBLIC_GA4_MEASUREMENT_ID / NEXT_PUBLIC_META_PIXEL_ID.
 //
-// Thailand's PDPA requires explicit opt-in before any non-essential
-// tracking runs — implied consent (e.g. "kept browsing = accepted") isn't
-// valid. So GA4/Meta Pixel are never loaded up front: gtag.js and the
-// Meta Pixel snippet are only injected here, after the fact, once the
-// visitor actively clicks "accept". Rejecting (or just not answering yet)
-// means neither script ever touches the page.
+// PHIVARA policy (confirmed by the team, 2026-10): cookies needed to run and
+// improve the site, i.e. Google Tag Manager / GA4 analytics, load on every
+// page view and do NOT depend on the banner buttons. The accept / decline
+// choice is still recorded and now governs MARKETING / advertising cookies
+// only:
+//   - Google Consent Mode: before GTM/gtag loads we push a consent default
+//     of analytics_storage = granted and ad_storage / ad_user_data /
+//     ad_personalization = denied; "accept" updates those three to granted,
+//     "decline" (or no answer) leaves / returns them denied. Ad tags in the
+//     GTM container that honour consent settings follow that choice.
+//   - The Meta Pixel snippet loaded DIRECTLY by this file (only used when no
+//     GTM id is set) is injected after "accept" only.
+// Whether this policy is compliant is the team's / DPO's call; to go back to
+// strict opt-in, load GTM/GA4 only inside the accept handler again.
 function initConsentBanner() {
   var STORAGE_KEY = 'phivara_consent';
   var banner = document.getElementById('consentBanner');
@@ -60,12 +68,9 @@ function initConsentBanner() {
   }
 
   // Google's standard GTM install snippet also adds a <noscript><iframe>
-  // fallback right after <body> that fires UNCONDITIONALLY, with no
-  // consent check — deliberately NOT added here, since that would load
-  // tracking before the PDPA banner's "accept" click, defeating the whole
-  // point of gating loadAnalytics() behind consent in the first place.
-  // No-JS visitors simply get no analytics, same as they'd get no GA4/Pixel
-  // today (this whole site needs JS to render regardless).
+  // fallback right after <body>. Not added here: it can't carry the Consent
+  // Mode defaults set above (ad_* = denied until "accept"), and this whole
+  // site needs JS to render anyway, so no-JS visitors get no analytics.
   function loadGTM(gtmId) {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
@@ -106,29 +111,52 @@ function initConsentBanner() {
     window.fbq('track', 'PageView');
   }
 
+  // Consent Mode helpers (see header). Pushes the same `arguments` object
+  // gtag() would, so gtm.js and gtag.js both understand it.
+  function pushGtag() {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(arguments);
+  }
+  function setConsentDefaults(marketingGranted) {
+    var m = marketingGranted ? 'granted' : 'denied';
+    pushGtag('consent', 'default', {
+      analytics_storage: 'granted',
+      ad_storage: m,
+      ad_user_data: m,
+      ad_personalization: m,
+    });
+  }
+  function updateMarketingConsent(granted) {
+    var m = granted ? 'granted' : 'denied';
+    pushGtag('consent', 'update', { ad_storage: m, ad_user_data: m, ad_personalization: m });
+  }
+
+  // Analytics: always loaded (policy above). GTM wins over direct GA4 when
+  // both ids exist so nothing double-counts once GTM's own GA4 tag is live.
   function loadAnalytics() {
     var cfg = window.__PHIVARA_ANALYTICS__ || {};
     if (cfg.gtmId) {
-      // Marketing team's setup (2026-09): GA4 + Meta Pixel are configured
-      // as tags INSIDE this one GTM container, not loaded directly by us —
-      // see phivaraTrackLead() below for how the generate_lead event
-      // reaches them. Deliberately skips the direct gaId/metaPixelId
-      // branch entirely when gtmId is set, so nothing double-fires once
-      // GTM's own GA4/Pixel tags are wired up on the marketing team's side.
+      // GA4 + Meta Pixel are expected to be configured as tags INSIDE the
+      // GTM container (marketing team's side); phivaraTrackLead() below
+      // pushes generate_lead to the dataLayer for them.
       if (!window.__phivaraGtmLoaded) loadGTM(cfg.gtmId);
       return;
     }
-    // Fallback for the period before a GTM container exists yet (or if the
-    // team ever goes back to direct-only tracking) — same direct gtag.js /
-    // Meta Pixel loading this site used before GTM.
+    // No GTM container: direct GA4 (analytics) as before.
     if (cfg.gaId && typeof window.gtag !== 'function') loadGA4(cfg.gaId);
+  }
+
+  // Marketing: Meta Pixel loaded directly by us, after "accept" only. With a
+  // GTM container the Pixel lives inside GTM and follows Consent Mode instead.
+  function loadMarketing() {
+    var cfg = window.__PHIVARA_ANALYTICS__ || {};
+    if (cfg.gtmId) return;
     if (cfg.metaPixelId && typeof window.fbq !== 'function') loadMetaPixel(cfg.metaPixelId);
   }
 
   // Public API used elsewhere on the site:
   // - vip-modal.js calls phivaraTrackLead() after a successful booking
-  //   submission. Safe no-op if analytics was never loaded (no consent, or
-  //   no GA4/Pixel id configured yet).
+  //   submission. Safe no-op if no GTM/GA4/Pixel id is configured yet.
   // - SiteFooter's "Cookie Settings" link calls phivaraReopenConsent() so a
   //   visitor can change their mind after the initial choice.
   window.phivaraTrackLead = function () {
@@ -182,8 +210,13 @@ function initConsentBanner() {
   };
 
   var existing = readConsent();
-  if (existing && existing.choice === 'granted') {
-    loadAnalytics();
+  var marketingGranted = !!(existing && existing.choice === 'granted');
+  // Consent Mode default first, THEN GTM/gtag (they read what's in the
+  // dataLayer when they start). Analytics always loads (see header).
+  setConsentDefaults(marketingGranted);
+  loadAnalytics();
+  if (marketingGranted) {
+    loadMarketing();
     hideBanner(true);
   } else if (existing && existing.choice === 'denied') {
     hideBanner(true);
@@ -194,13 +227,15 @@ function initConsentBanner() {
   if (acceptBtn) {
     acceptBtn.addEventListener('click', function () {
       writeConsent('granted');
-      loadAnalytics();
+      updateMarketingConsent(true);
+      loadMarketing();
       hideBanner();
     });
   }
   if (rejectBtn) {
     rejectBtn.addEventListener('click', function () {
       writeConsent('denied');
+      updateMarketingConsent(false);
       hideBanner();
     });
   }
