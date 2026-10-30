@@ -97,6 +97,15 @@ NEXT_PUBLIC_SERVER_URL=https://www.phivara.site   # โดเมนจริง
 PREVIEW_SECRET=
 
 # Analytics — ไม่บังคับ เว้นว่างไว้ได้ถ้ายังไม่มี ID จริง (เว็บทำงานปกติ แค่ไม่ยิง tracking)
+# - ใส่ GTM (เช่น GTM-XXXXXXX) แล้วระบบโหลดเฉพาะ GTM และ "ไม่สนใจ" GA4 ID ตรงด้านล่าง
+#   (ให้สร้างแท็ก GA4 / Meta Pixel ภายในคอนเทนเนอร์ GTM แทน) — ห้ามวางสคริปต์ gtag/gtm ลงโค้ดเอง
+# - ถ้าไม่ใช้ GTM ให้เว้นช่อง GTM ว่าง แล้วใส่ GA4 (G-XXXXXXXXXX) ตรง
+# - โหลดหลังผู้เข้าชมกดยอมรับคุกกี้เท่านั้น (PDPA) และค่า NEXT_PUBLIC_* ฝังตอน build:
+#   แก้ .env แล้วต้อง npm run build + pm2 restart phivara --update-env
+# - CSP ใน next.config.mjs อนุญาต googletagmanager.com / *.google-analytics.com /
+#   *.analytics.google.com ไว้แล้ว; Meta Pixel และโดเมนเพิ่มเติมจากแท็กใน GTM
+#   (Google Ads ฯลฯ) ต้องเพิ่มใน CSP เองเมื่อใช้จริง
+NEXT_PUBLIC_GTM_CONTAINER_ID=
 NEXT_PUBLIC_GA4_MEASUREMENT_ID=
 NEXT_PUBLIC_META_PIXEL_ID=
 
@@ -451,7 +460,7 @@ sudo ufw delete <เลข rule>
 - [ ] ตั้ง DB backup อัตโนมัติ (เช่น `pg_dump` ผ่าน cron รายวัน) — ตอนนี้ backup ยังทำมือก่อน deploy แต่ละครั้งเท่านั้น ไม่มี schedule ประจำ
 - [ ] เนื้อหา CMS ภาษา ja/zh/vi/ar (bio หมอ, บทความ, โปรแกรม, สาขา) ยังไม่ได้กรอก — ก่อนเปิดภาษาเหล่านี้ publiclyLive ควรมีเนื้อหาจริงก่อน ไม่งั้นหน้า listing จะว่างเปล่า (ตาม strict per-locale filtering)
 - [ ] หน้า `/privacy-policy` ยังมี placeholder ทางกฎหมายที่ไม่ได้กรอกจริง ([ชื่อนิติบุคคล], [ที่อยู่], [DPO contact] ฯลฯ) — ควรให้ที่ปรึกษากฎหมายตรวจก่อนเก็บข้อมูล lead จริงจังต่อเนื่อง
-- [ ] `NEXT_PUBLIC_GA4_MEASUREMENT_ID` / `NEXT_PUBLIC_META_PIXEL_ID` ยังว่าง — เติมถ้าต้องการเก็บ analytics จริง (ต้องเติมก่อน build เสมอ)
+- [ ] `NEXT_PUBLIC_GTM_CONTAINER_ID` / `NEXT_PUBLIC_GA4_MEASUREMENT_ID` / `NEXT_PUBLIC_META_PIXEL_ID` ยังว่าง — เติมถ้าต้องการเก็บ analytics จริง (ต้องเติมก่อน build เสมอ; ถ้าตั้ง GTM จะใช้ GTM อย่างเดียว)
 
 ---
 

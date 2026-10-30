@@ -17,13 +17,33 @@ import { withPayload } from '@payloadcms/next/withPayload'
 // EvalError" in console). Production's build output doesn't need it, so
 // prod keeps the tighter policy.
 const isDev = process.env.NODE_ENV === 'development'
+
+// Analytics (Google Tag Manager / GA4) is only ever loaded by
+// public/js/consent-banner.js AFTER a visitor accepts the PDPA banner, and
+// only when an id is set in .env (NEXT_PUBLIC_GTM_CONTAINER_ID or
+// NEXT_PUBLIC_GA4_MEASUREMENT_ID) — but the browser still enforces this CSP
+// on that late-injected <script> and on the hits it sends, so the Google
+// hosts below must be allowed or tracking is silently blocked even with a
+// correct id and consent. Kept to the minimum GTM + GA4 need. Not included
+// (add only when actually used): Meta Pixel (connect.facebook.net in
+// script-src, www.facebook.com in connect-src) and any extra hosts the
+// marketing team's GTM tags pull in (Google Ads / remarketing:
+// googleadservices.com, *.doubleclick.net, ...) — check the browser console
+// for "Content Security Policy" errors after publishing a new GTM tag.
+const googleTagManagerScript = 'https://www.googletagmanager.com'
+const googleAnalyticsConnect = [
+  'https://www.googletagmanager.com',
+  'https://*.google-analytics.com',
+  'https://*.analytics.google.com',
+].join(' ')
+
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' ${googleTagManagerScript}${isDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self'",
+  `connect-src 'self' ${googleAnalyticsConnect}`,
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
