@@ -513,7 +513,8 @@
     .rich-text li{margin:4px 0}
     .rich-text blockquote{margin:12px 0;padding:4px 14px;border-inline-start:3px solid #8a672e;color:var(--ink-soft)}
     .rich-text a{color:#8a672e;text-decoration:underline}
-    .rich-text .rt-figure{margin:20px 0;max-width:100%}
+    /* Lexical upload nodes carry no size, so cap width (the CMS editor also shows images small); poster-style images stay readable without filling the whole column */
+    .rich-text .rt-figure{margin:20px 0;max-width:min(100%,620px)}
     .rich-text .rt-figure img{display:block;max-width:100%;height:auto;border-radius:12px}
     .rich-text .rt-figure figcaption{margin-top:6px;font-size:13px;color:var(--ink-soft)}
     .rich-text hr{border:0;border-top:1px solid rgba(0,0,0,.12);margin:20px 0}

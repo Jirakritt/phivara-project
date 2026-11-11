@@ -92,8 +92,14 @@ function renderUpload(node: LexNode, key: number): ReactNode {
   const w = Number(media.width) || undefined
   const h = Number(media.height) || undefined
   return (
-    <figure key={key} className="rt-figure">
+    // Inline sizing on purpose: /css/*.css has no content hash and is cached by
+    // browsers for 1h, so a visitor with the previous CSS would otherwise see
+    // the width/height ATTRIBUTES (e.g. 4501x5625) applied literally and the
+    // image stretched ~4x vertically. height:auto keeps the aspect ratio
+    // regardless of which stylesheet version is loaded.
+    <figure key={key} className="rt-figure" style={{ margin: '20px 0', maxWidth: 'min(100%, 620px)' }}>
       <img
+        style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
         src={isOptimizable(src) ? optimizedSrc(src, 1080, QUALITY.photo) : src}
         srcSet={optimizedSrcSet(src, [640, 828, 1080, 1920], QUALITY.photo)}
         sizes="(max-width: 900px) 100vw, 900px"
