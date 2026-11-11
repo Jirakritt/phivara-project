@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { isAdmin, isAdminField } from '../access/roles'
+import { isAdmin, isAdminField, isAdminOrSelf } from '../access/roles'
 
 // Staff accounts for the admin panel. `role` drives who can touch what —
 // wired into each collection's `access` config below (e.g. marketing edits
@@ -14,10 +14,13 @@ export const Users: CollectionConfig = {
   },
   access: {
     // Staff can read the directory (needed for author pickers etc.);
-    // only admins can create, update, or remove accounts.
+    // only admins can create or remove accounts. Update: admins can edit
+    // anyone, every other role can edit only its OWN account (needed so any
+    // user can change their own password); role/assignedBranches remain
+    // admin-only via the field-level access below.
     read: ({ req: { user } }) => Boolean(user),
     create: isAdmin,
-    update: isAdmin,
+    update: isAdminOrSelf,
     delete: isAdmin,
   },
   fields: [

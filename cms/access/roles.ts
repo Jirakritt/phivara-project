@@ -11,6 +11,17 @@ import type { Access, FieldAccess, Where } from 'payload'
 // are never staff).
 export const isAdmin: Access = ({ req: { user } }) => Boolean(user && user.collection === 'users' && user.role === 'admin')
 
+// Admins can update any staff account; every other staff user can update ONLY
+// their own record (so every role can change its own password / name). Role and
+// assignedBranches stay admin-only through field-level `isAdminField` access in
+// cms/collections/Users.ts, so self-update can never escalate privileges.
+// Members (site visitors) are a separate collection and never match.
+export const isAdminOrSelf: Access = ({ req: { user } }) => {
+  if (!user || user.collection !== 'users') return false
+  if (user.role === 'admin') return true
+  return { id: { equals: user.id } }
+}
+
 export const isStaff: Access = ({ req: { user } }) => Boolean(user && user.collection === 'users')
 
 export const hasAnyRole =

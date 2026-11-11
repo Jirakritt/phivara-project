@@ -63,6 +63,7 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 - `site-shell.css` มี reset บังคับ `font-size` ขั้นต่ำของ `p/a/strong`; ถ้าต้องการขนาดเฉพาะให้ใส่ class `phivara-type-size-override` (มีใช้อยู่แล้วที่ `program/[slug]/page.tsx`)
 - ผู้ใช้ทำ pass ปรับ font-size ทั้งเว็บเป็น ≥16px เพื่ออ่านง่าย (commit ช่วง 22–23 ก.ย.) — งานใหม่ควรคง baseline นี้
 
+- **สิทธิ์แก้บัญชีผู้ใช้ (Users)**: `update` = `isAdminOrSelf` (admin แก้ได้ทุกคน, role อื่นแก้ได้เฉพาะบัญชีตัวเอง เพื่อให้ทุกคนเปลี่ยนรหัสผ่านเองได้); `role` และ `assignedBranches` ยัง admin-only ผ่าน field-level access (`isAdminField`) ห้ามยกสิทธิ์ตัวเองได้ และ `create`/`delete` ยัง admin-only (ก่อนหน้านี้ `update: isAdmin` ทำให้ Content Editor เปลี่ยนรหัสผ่านไม่ได้ ปุ่มถูกล็อก)
 ---
 
 ## 4. ฟีเจอร์หลักที่ทำแล้ว (สรุป)
