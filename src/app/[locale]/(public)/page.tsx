@@ -1,10 +1,11 @@
+import type { Metadata } from 'next'
 import Script from 'next/script'
 
 import HomePopup from '@/components/HomePopup'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
-import { DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
+import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
 import type { LocaleCode } from '@/lib/i18n'
 
@@ -34,6 +35,19 @@ import type { LocaleCode } from '@/lib/i18n'
 // full `next build` + restart (see DEPLOY.md — deploys already do a build,
 // this just keeps in-between edits fresh too).
 export const revalidate = 60
+
+// Canonical + hreflang for the homepage (the layout's metadata only carries a
+// bare canonical). Lists every publicly-live language plus `x-default` -> the
+// default locale, so Google reads /th and /en as language versions of one page
+// rather than duplicates. (Other pages declare hreflang via sitemap.ts only.)
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: rawLocale } = await params
+  const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
+  const liveLocales = await getPubliclyLiveLocales()
+  const languages: Record<string, string> = Object.fromEntries(liveLocales.map((code) => [code, canonicalUrl(code, '')]))
+  languages['x-default'] = canonicalUrl(DEFAULT_LOCALE, '')
+  return { alternates: { canonical: canonicalUrl(locale, ''), languages } }
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params

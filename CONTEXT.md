@@ -105,6 +105,12 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 
 ---
 
+## 5B. SEO / Google Search Console (พ.ย. 2569)
+- ยืนยันโดเมน `phivaraphyathai.com` ใน Search Console ด้วย TXT record ที่ DNS (Hostinger, nameserver `*.dns-parking.com`) **ห้ามลบ TXT นี้**; ส่ง `https://www.phivaraphyathai.com/sitemap.xml` แล้ว (สถานะ Couldn't fetch ช่วงแรกเป็นเรื่องปกติ ตรวจซ้ำ)
+- พบ "Duplicate, Google chose different canonical" ที่ `/th`: Google เลือก `/` เป็น canonical เพราะ redirect หน้ารากเป็น 307 ชั่วคราว → แก้เป็น **308** ใน `src/middleware.ts` + เพิ่ม hreflang (th/en/x-default) ที่หน้าแรก (`(public)/page.tsx` generateMetadata)
+- โดเมนไม่มี www เคยตอบ 200 ซ้ำกับ www → ต้อง 301 ไป www ที่ nginx (ดู DEPLOY.md หัวข้อ redirect ไม่มี www)
+- หลัง deploy ให้ Request indexing `/th` และ `/en` ใน Search Console แล้วรอ Google ประเมิน canonical ใหม่ (หลายวันถึงสัปดาห์)
+
 ## 6. งานค้าง / ข้อควรทำต่อ
 
 **จาก `PROJECT_STATUS.md` (ยังจริงอยู่ ณ ตอนนี้ ยกเว้นที่ระบุ)**

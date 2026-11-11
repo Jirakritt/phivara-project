@@ -178,6 +178,25 @@ sudo apt-get install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d phivara.site -d www.phivara.site
 ```
 
+#### redirect โดเมนไม่มี www → www (SEO, ต้องทำเพื่อไม่ให้ Google เห็นหน้าซ้ำ 2 โฮสต์)
+
+เว็บใช้ `https://www.phivaraphyathai.com` เป็นหลัก (canonical, sitemap, NEXT_PUBLIC_SERVER_URL) ดังนั้นโฮสต์ไม่มี www ต้อง redirect ถาวร (301) ไป www ไม่ใช่ตอบเนื้อหาเต็ม
+ตัวอย่าง server block (ปรับ path ใบรับรองให้ตรงกับของจริงที่ Certbot สร้าง ดูจาก `sudo nginx -T | grep ssl_certificate`):
+
+```nginx
+# ไม่มี www -> www (ใช้ใบรับรองเดียวกับ block หลักที่ครอบคลุมทั้งสองชื่อ)
+server {
+    listen 443 ssl;
+    server_name phivaraphyathai.com;
+    ssl_certificate /etc/letsencrypt/live/phivaraphyathai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/phivaraphyathai.com/privkey.pem;
+    return 301 https://www.phivaraphyathai.com$request_uri;
+}
+```
+
+และใน server block หลัก ให้ `server_name www.phivaraphyathai.com;` เท่านั้น (เอา `phivaraphyathai.com` ออก ไม่งั้น nginx จะเตือนชื่อซ้ำ) แล้ว `sudo nginx -t && sudo systemctl reload nginx` ตรวจด้วย `curl -sI https://phivaraphyathai.com/th` ต้องได้ `301` ไป `https://www.phivaraphyathai.com/th`
+
+
 เช็คว่าเว็บขึ้นที่ `https://www.phivara.site` แล้ว → Part 2 เสร็จ ตั้งแต่นี้ไปทุก deploy ถัดไปให้ใช้ **Part 2B**
 
 ---

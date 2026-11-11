@@ -83,7 +83,14 @@ export function middleware(request: NextRequest) {
 
   const url = request.nextUrl.clone()
   url.pathname = `/${DEFAULT_LOCALE}${pathname === '/' ? '' : pathname}`
-  return NextResponse.redirect(url)
+  // 308 (permanent), not Next's default 307: the default locale is a fixed
+  // constant here (never picked from Accept-Language), so `/` always means
+  // `/th`. With a TEMPORARY redirect Google kept `/` as the canonical of the
+  // homepage and treated `/th` as its duplicate ("Duplicate, Google chose
+  // different canonical than user" in Search Console, Nov 2026). Browsers
+  // cache a permanent redirect, so if this ever becomes language detection
+  // (a visitor-dependent target) switch it back to a temporary one.
+  return NextResponse.redirect(url, 308)
 }
 
 export const config = {
