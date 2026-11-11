@@ -86,6 +86,7 @@ blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:
 </ol>
 <h2 id="_2">ข้อควรระวังเมื่อเขียนโค้ดต่อ</h2>
 <ul>
+<li>หน้าที่มี <code>[slug]</code> (doctor, program, article, branch) ต้องมี <code>generateStaticParams</code> ของตัวเองด้วย (คืน <code>[]</code> ได้) ไม่งั้นยังเป็น dynamic ~5 วินาที ตรวจ slug จริงหลัง deploy ทุกครั้ง; slug ที่ไม่มีจะได้ 404 ที่ถูก cache ไว้ ≤60 วินาที</li>
 <li>
 <p>route ที่มี <code>[locale]</code> ต้องมี <code>generateStaticParams</code> ใน <code>[locale]/layout.tsx</code> (มีแล้ว) ห้ามลบ ไม่งั้นทุกหน้าสาธารณะกลับไปเป็น dynamic</p>
 </li>

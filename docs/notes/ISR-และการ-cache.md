@@ -57,6 +57,7 @@ _เขียนเมื่อ พ.ย. 2569 หลังแก้ให้ห�
 
 ## ข้อควรระวังเมื่อเขียนโค้ดต่อ
 
+- หน้าที่มี `[slug]` (doctor, program, article, branch) ต้องมี `generateStaticParams` ของตัวเองด้วย (คืน `[]` ได้) ไม่งั้นยังเป็น dynamic ~5 วินาที ตรวจ slug จริงหลัง deploy ทุกครั้ง; slug ที่ไม่มีจะได้ 404 ที่ถูก cache ไว้ ≤60 วินาที
 - route ที่มี `[locale]` ต้องมี `generateStaticParams` ใน `[locale]/layout.tsx` (มีแล้ว) ห้ามลบ ไม่งั้นทุกหน้าสาธารณะกลับไปเป็น dynamic
 
 - อย่าใช้ `cookies()`, `headers()`, `draftMode()`, `searchParams` ใน layout/page/not-found ของหน้าสาธารณะ ถ้าจำเป็นต้องรู้ภาษาหรือ user ให้ใช้ params ของ route หรืออ่านฝั่ง client
