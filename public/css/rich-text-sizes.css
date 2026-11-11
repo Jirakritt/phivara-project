@@ -1,0 +1,21 @@
+/* Font-size presets chosen in the CMS (Programs > About Program > font size menu).
+   Keep in sync with cms/fields/fontSizes.ts. !important because
+   program-detail.css makes inline elements inherit size with !important. */
+.detail-overview .program-description .rich-text .rt-fs-14{font-size:14px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-16{font-size:16px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-18{font-size:18px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-20{font-size:20px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-22{font-size:22px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-24{font-size:24px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-26{font-size:26px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-28{font-size:28px!important;line-height:1.7!important}
+.detail-overview .program-description .rich-text .rt-fs-30{font-size:30px!important;line-height:1.7!important}
+
+/* On phones the largest sizes are reduced so a 30px line never overflows */
+@media (max-width:768px){
+  .detail-overview .program-description .rich-text .rt-fs-22{font-size:21px!important}
+  .detail-overview .program-description .rich-text .rt-fs-24{font-size:22px!important}
+  .detail-overview .program-description .rich-text .rt-fs-26{font-size:23px!important}
+  .detail-overview .program-description .rich-text .rt-fs-28{font-size:24px!important}
+  .detail-overview .program-description .rich-text .rt-fs-30{font-size:25px!important}
+}

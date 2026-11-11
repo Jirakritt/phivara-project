@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 
+import { FONT_SIZE_VALUES } from '../../cms/fields/fontSizes'
 import { isOptimizable, optimizedSrc, optimizedSrcSet, QUALITY } from '@/lib/imageOpt'
 
 // Renders a Payload (Lexical) richText document with the formatting the CMS
@@ -55,6 +56,14 @@ function renderText(node: LexNode, key: number): ReactNode {
   if (f & 8) el = <u>{el}</u>
   if (f & 32) el = <sub>{el}</sub>
   if (f & 64) el = <sup>{el}</sup>
+  // CMS "font size" menu (TextStateFeature): stored as { $: { fontSize: '20' } }.
+  // Rendered as a class (not inline style) because the program CSS forces inline
+  // elements to inherit size with !important; .rt-fs-NN in
+  // public/css/rich-text-sizes.css wins over that. Unknown keys are ignored.
+  const sizeKey = Number(node.$?.fontSize)
+  if ((FONT_SIZE_VALUES as readonly number[]).includes(sizeKey)) {
+    el = <span className={`rt-fs-${sizeKey}`}>{el}</span>
+  }
   return <Fragment key={key}>{el}</Fragment>
 }
 

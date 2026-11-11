@@ -95,6 +95,7 @@ export default async function ProgramDetailPage({
     <>
       <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/program-detail.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/rich-text-sizes.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-program-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
