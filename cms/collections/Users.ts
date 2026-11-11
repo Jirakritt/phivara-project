@@ -31,8 +31,22 @@ export const Users: CollectionConfig = {
     create: isAdmin,
     update: isAdminOrSelf,
     delete: isAdmin,
+    // Only admins can force-unlock an account (the admin UI hides the
+    // "Force Unlock" button for everyone else). Without this it falls back to
+    // `update`, which every role now has for its own record.
+    unlock: isAdmin,
   },
   fields: [
+    {
+      // Merged into Payload's built-in auth `email` field (same name). The email
+      // is the login id: only admins may change it. Other roles see it read-only
+      // on their own account page but can still change name + password.
+      name: 'email',
+      type: 'email',
+      access: {
+        update: isAdminField,
+      },
+    },
     { name: 'name', type: 'text', required: true },
     {
       name: 'role',

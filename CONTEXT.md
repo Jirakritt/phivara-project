@@ -63,7 +63,8 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 - `site-shell.css` มี reset บังคับ `font-size` ขั้นต่ำของ `p/a/strong`; ถ้าต้องการขนาดเฉพาะให้ใส่ class `phivara-type-size-override` (มีใช้อยู่แล้วที่ `program/[slug]/page.tsx`)
 - ผู้ใช้ทำ pass ปรับ font-size ทั้งเว็บเป็น ≥16px เพื่ออ่านง่าย (commit ช่วง 22–23 ก.ย.) — งานใหม่ควรคง baseline นี้
 
-- **สิทธิ์แก้บัญชีผู้ใช้ (Users)**: `update` = `isAdminOrSelf` (admin แก้ได้ทุกคน, role อื่นแก้ได้เฉพาะบัญชีตัวเอง เพื่อให้ทุกคนเปลี่ยนรหัสผ่านเองได้); `role` และ `assignedBranches` ยัง admin-only ผ่าน field-level access (`isAdminField`) ห้ามยกสิทธิ์ตัวเองได้ และ `create`/`delete` ยัง admin-only (ก่อนหน้านี้ `update: isAdmin` ทำให้ Content Editor เปลี่ยนรหัสผ่านไม่ได้ ปุ่มถูกล็อก)
+- **สิทธิ์แก้บัญชีผู้ใช้ (Users)**: `update` = `isAdminOrSelf` (admin แก้ได้ทุกคน, role อื่นแก้ได้เฉพาะบัญชีตัวเอง เพื่อให้ทุกคนเปลี่ยนรหัสผ่านเองได้); `role` และ `assignedBranches` ยัง admin-only ผ่าน field-level access (`isAdminField`) ห้ามยกสิทธิ์ตัวเองได้ `email` (ชื่อล็อกอิน) แก้ได้เฉพาะ admin (role อื่นเห็นเป็น read-only แต่แก้ชื่อ/รหัสผ่านตัวเองได้) ปุ่ม Force Unlock เห็นเฉพาะ admin (`access.unlock: isAdmin`) และ `create`/`delete` ยัง admin-only (ก่อนหน้านี้ `update: isAdmin` ทำให้ Content Editor เปลี่ยนรหัสผ่านไม่ได้ ปุ่มถูกล็อก)
+- **slug ต้องไม่มีช่องว่าง**: เคยมีหมอ 1 คน (id 44, `dr-pailin-puangpet-pt2 ` มีช่องว่างต่อท้าย) ทำให้หน้าหมอ 404 ทั้งไทย/อังกฤษ และ sitemap มี URL เสีย ตอนนี้ทุก slug (Doctors/Articles/Branches/Programs) ถูกตัดช่องว่างอัตโนมัติตอนบันทึก (`cms/fields/trimSlug.ts`) ข้อมูลเดิมต้องเปิดแล้วกดบันทึกใหม่ 1 ครั้งเพื่อให้ถูกแก้
 ---
 
 ## 4. ฟีเจอร์หลักที่ทำแล้ว (สรุป)

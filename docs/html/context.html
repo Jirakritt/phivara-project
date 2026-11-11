@@ -74,9 +74,15 @@ blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:
 <ul>
 <li>เว็บโหลด <strong>3 stylesheet</strong> (<code>main.css</code>, <code>main_gpt.css</code>, <code>site-shell.css</code>) โดย <code>site-shell.css</code> โหลดท้ายสุดและชนะ — แก้ <code>main.css</code> อย่างเดียวอาจไม่มีผล</li>
 <li><code>site-shell.css</code> มี reset บังคับ <code>font-size</code> ขั้นต่ำของ <code>p/a/strong</code>; ถ้าต้องการขนาดเฉพาะให้ใส่ class <code>phivara-type-size-override</code> (มีใช้อยู่แล้วที่ <code>program/[slug]/page.tsx</code>)</li>
-<li>ผู้ใช้ทำ pass ปรับ font-size ทั้งเว็บเป็น ≥16px เพื่ออ่านง่าย (commit ช่วง 22–23 ก.ย.) — งานใหม่ควรคง baseline นี้</li>
+<li>
+<p>ผู้ใช้ทำ pass ปรับ font-size ทั้งเว็บเป็น ≥16px เพื่ออ่านง่าย (commit ช่วง 22–23 ก.ย.) — งานใหม่ควรคง baseline นี้</p>
+</li>
+<li>
+<p><strong>สิทธิ์แก้บัญชีผู้ใช้ (Users)</strong>: <code>update</code> = <code>isAdminOrSelf</code> (admin แก้ได้ทุกคน, role อื่นแก้ได้เฉพาะบัญชีตัวเอง เพื่อให้ทุกคนเปลี่ยนรหัสผ่านเองได้); <code>role</code> และ <code>assignedBranches</code> ยัง admin-only ผ่าน field-level access (<code>isAdminField</code>) ห้ามยกสิทธิ์ตัวเองได้ <code>email</code> (ชื่อล็อกอิน) แก้ได้เฉพาะ admin (role อื่นเห็นเป็น read-only แต่แก้ชื่อ/รหัสผ่านตัวเองได้) ปุ่ม Force Unlock เห็นเฉพาะ admin (<code>access.unlock: isAdmin</code>) และ <code>create</code>/<code>delete</code> ยัง admin-only (ก่อนหน้านี้ <code>update: isAdmin</code> ทำให้ Content Editor เปลี่ยนรหัสผ่านไม่ได้ ปุ่มถูกล็อก)</p>
+</li>
+<li><strong>slug ต้องไม่มีช่องว่าง</strong>: เคยมีหมอ 1 คน (id 44, <code>dr-pailin-puangpet-pt2</code> มีช่องว่างต่อท้าย) ทำให้หน้าหมอ 404 ทั้งไทย/อังกฤษ และ sitemap มี URL เสีย ตอนนี้ทุก slug (Doctors/Articles/Branches/Programs) ถูกตัดช่องว่างอัตโนมัติตอนบันทึก (<code>cms/fields/trimSlug.ts</code>) ข้อมูลเดิมต้องเปิดแล้วกดบันทึกใหม่ 1 ครั้งเพื่อให้ถูกแก้</li>
 </ul>
-<h2 id="-users-update-isadminorself-admin-role-role-assignedbranches-admin-only-field-level-access-isadminfield-createdelete-admin-only-update-isadmin-content-editor">- <strong>สิทธิ์แก้บัญชีผู้ใช้ (Users)</strong>: <code>update</code> = <code>isAdminOrSelf</code> (admin แก้ได้ทุกคน, role อื่นแก้ได้เฉพาะบัญชีตัวเอง เพื่อให้ทุกคนเปลี่ยนรหัสผ่านเองได้); <code>role</code> และ <code>assignedBranches</code> ยัง admin-only ผ่าน field-level access (<code>isAdminField</code>) ห้ามยกสิทธิ์ตัวเองได้ และ <code>create</code>/<code>delete</code> ยัง admin-only (ก่อนหน้านี้ <code>update: isAdmin</code> ทำให้ Content Editor เปลี่ยนรหัสผ่านไม่ได้ ปุ่มถูกล็อก)</h2>
+<hr />
 <h2 id="4">4. ฟีเจอร์หลักที่ทำแล้ว (สรุป)</h2>
 <table>
 <thead>
