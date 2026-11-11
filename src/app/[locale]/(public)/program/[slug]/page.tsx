@@ -101,9 +101,13 @@ export default async function ProgramDetailPage({
       <Script id="phivara-program-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 
       <div id="preloader">
-        <img src="/assets/images/brand/logo_color.svg" alt="" style={{ width: 54 }} />
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 8 C60 28 78 40 92 50 C78 60 60 72 50 92 C40 72 22 60 8 50 C22 40 40 28 50 8Z" />
+        </svg>
+        <div className="pre-word">PHIVARA</div>
       </div>
-      <div id="progressBar"></div>
+      <div id="progressBar" aria-hidden="true"></div>
+      <div id="cursorRing" aria-hidden="true"></div>
 
       <SiteHeader page="program" topbar={homeData.topbar} locale={locale} localePath={`/program/${slug}`} liveLocales={liveLocales} />
 
