@@ -126,11 +126,23 @@ html[lang="ru"] {
 
 /* Shared typography scale */
 html body small:not(#phivara-type-size-override):not(.phivara-type-size-override) {
-  font-size: 13px;
+  font-size: 14px;
 }
 
-html body :is(p, a, strong):not(#phivara-type-size-override):not(.phivara-type-size-override):not(.card-title-link):not(.journal-card h3 a):not(.card-link):not(.journal-card__link):not(.card-actions a) {
+/* Body copy is 16px. Links and bold text stay 14px on their own (nav links,
+   buttons-as-links and labels depend on it), but when they sit INSIDE a
+   paragraph they follow the paragraph size so a link/bold word is never
+   smaller than the sentence around it. */
+html body p:not(#phivara-type-size-override):not(.phivara-type-size-override):not(.card-title-link):not(.journal-card h3 a):not(.card-link):not(.journal-card__link):not(.card-actions a) {
+  font-size: 16px;
+}
+
+html body :is(a, strong):not(#phivara-type-size-override):not(.phivara-type-size-override):not(.card-title-link):not(.journal-card h3 a):not(.card-link):not(.journal-card__link):not(.card-actions a) {
   font-size: 14px;
+}
+
+html body p :is(a, strong):not(#phivara-type-size-override):not(.phivara-type-size-override):not(.card-title-link):not(.journal-card h3 a):not(.card-link):not(.journal-card__link):not(.card-actions a) {
+  font-size: inherit;
 }
 
 /* Shared branch label used inside cards */

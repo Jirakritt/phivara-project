@@ -330,7 +330,7 @@ body[data-branch-id="pt2"] .branch-top-hero__pills .spec-pill:hover::before {
 .branch-detail-address p {
   margin: 6px 0 0;
   color: var(--ink-soft);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.75;
   font-weight: 300;
 }
@@ -1437,7 +1437,7 @@ body.branch-gallery-lightbox-open {
 .branch-gallery-lightbox__content p {
   margin: 14px 0 0;
   color: rgba(255, 255, 255, .86);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.5;
   text-align: center;

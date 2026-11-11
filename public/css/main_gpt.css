@@ -613,7 +613,7 @@
     }
     .flagship-text::before{ width:30px; margin-bottom:10px; }
     .flagship-text h3{ font-size:clamp(21px,5.8vw,27px); margin-bottom:8px; }
-    .flagship-text p{ font-size:14px!important; line-height:1.55!important; margin-bottom:12px; -webkit-line-clamp:3; }
+    .flagship-text p{ font-size:16px!important; line-height:1.55!important; margin-bottom:12px; -webkit-line-clamp:3; }
     .flagship-nav-btn{ flex-basis:172px; min-height:66px; font-size:13px; }
   }
   @media(max-width:420px){
@@ -670,7 +670,7 @@
      consistency fix so the note text color matches /doctor exactly instead
      of inheriting whichever --ink-soft each file's cascade happens to
      resolve to. */
-  .spec-card p.note{ font-size:14px!important; color:#45413C; font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
+  .spec-card p.note{ font-size:16px!important; color:#45413C; font-weight:400; margin-bottom:14px; line-height:1.5; text-align:left; }
   .spec-card .go{ font-size:13px; font-weight:600; letter-spacing:.06em; color:var(--gold); text-transform:uppercase; transition:color 0.3s ease; }
   .spec-card .go:hover{ color:var(--olive-dark); }
   /* font-weight:400 added (2026-09-23) — /doctor's copy of this rule
@@ -873,4 +873,4 @@
   }
 
   /* Paragraph fallback; component rules may set their own readable scale. */
-  p{ font-size:14px; }
+  p{ font-size:16px; }

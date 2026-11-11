@@ -370,7 +370,7 @@
 }
 
 .prog-card p {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-soft);
   line-height: 1.7;
   margin: 0;
@@ -620,7 +620,7 @@
   overflow: hidden;
   margin-bottom: 13px;
   color: var(--ink-soft);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.65;
   -webkit-box-orient: vertical;

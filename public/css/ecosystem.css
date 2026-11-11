@@ -551,7 +551,7 @@
     padding:45px 22px 25px;
   }
   .eco-content h2{ font-size:26px; }
-  .eco-content p.eco-desc{ padding-left:14px; font-size:14px!important; }
+  .eco-content p.eco-desc{ padding-left:14px; font-size:16px!important; }
   .eco-links{ grid-template-columns:1fr; }
   .eco-link-card{
     min-height:0;
@@ -929,7 +929,7 @@
     opacity:.7;
   }
   .eco-content h2{ font-size:25px; }
-  .eco-content p.eco-desc{ font-size:13px!important; line-height:1.72!important; }
+  .eco-content p.eco-desc{ font-size:14px!important; line-height:1.72!important; }
   .eco-chip-row{
     flex-wrap:nowrap;
     gap:7px;

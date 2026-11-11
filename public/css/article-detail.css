@@ -64,7 +64,7 @@
 .insight-card p{margin:0;font-size:13.5px;line-height:1.75;color:var(--ink-soft)}
 .note-box{margin:36px 0;padding:26px 28px;border-left:3px solid var(--gold);background:var(--cream-deep)}
 .note-box strong{display:block;margin-bottom:6px;font-size:14px}
-.note-box p{margin:0;font-size:14px}
+.note-box p{margin:0;font-size:16px}
 
 .article-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:50px;padding-top:26px;border-top:1px solid var(--line)}
 .article-tags span{padding:7px 13px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--ink-soft)}
@@ -92,7 +92,7 @@
 .program-item:last-child{border-bottom:0}
 .program-item small{display:block;margin-bottom:4px;font-size:10px;color:var(--terracotta)}
 .program-item strong{display:block;font-size:14px;line-height:1.5;font-weight:500;color:var(--olive-dark)}
-.program-item span{display:block;margin-top:5px;font-size:14px;line-height:1.6;color:var(--ink-soft)}
+.program-item span{display:block;margin-top:5px;font-size:16px;line-height:1.6;color:var(--ink-soft)}
 .program-item:hover strong{color:var(--gold)}
 
 .sidebar-cta{padding:22px 20px;background:var(--olive-dark);color:var(--cream)}

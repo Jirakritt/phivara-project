@@ -372,7 +372,7 @@ body.has-cursor button { cursor: auto; }
 .aum-privilege-card p {
   margin: 0;
   color: var(--aum-muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.9;
   transition: color .45s ease;
 }
@@ -525,7 +525,7 @@ body.has-cursor button { cursor: auto; }
 .aum-steps p {
   margin: 0;
   color: rgba(255, 255, 255, .62);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.85;
 }
 
@@ -550,7 +550,7 @@ body.has-cursor button { cursor: auto; }
   max-width: 380px;
   margin: 0;
   color: var(--aum-muted);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.9;
 }
 
@@ -699,7 +699,7 @@ body.has-cursor button { cursor: auto; }
   .aum-kicker { margin-bottom: 28px; letter-spacing: .18em; }
   .aum-mark { font-size: 76px; }
   .aum-hero h1 { margin-top: 28px; font-size: 31px; }
-  .aum-lead { font-size: 14px !important; }
+  .aum-lead { font-size: 16px !important; }
 
   .aum-actions {
     align-items: stretch;
@@ -723,7 +723,7 @@ body.has-cursor button { cursor: auto; }
   .aum-intro-grid { gap: 30px; }
   .aum-intro-copy h2,
   .aum-section-head h2 { font-size: 30px; }
-  .aum-intro-copy > p { font-size: 14px !important; }
+  .aum-intro-copy > p { font-size: 16px !important; }
   .aum-section-head { margin-bottom: 42px; }
 
   .aum-privilege-grid { grid-template-columns: 1fr; }
