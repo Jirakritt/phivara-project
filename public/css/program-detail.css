@@ -511,7 +511,7 @@
        so inline elements below inherit size, weight and colour from their block. */
     .detail-overview .program-description .rich-text p,
     .detail-overview .program-description .rich-text li{
-      font-size:20px!important;font-weight:400!important;line-height:1.8!important;color:var(--ink)!important;
+      font-size:16px!important;font-weight:400!important;line-height:1.8!important;color:var(--ink)!important;
     }
     .detail-overview .program-description .rich-text p{margin:0}
     .detail-overview .program-description .rich-text p+p{margin-top:12px}
@@ -545,8 +545,6 @@
     .rich-text ul,.rich-text ol{margin:10px 0;padding-inline-start:1.5em}
     .rich-text li{margin:4px 0}
     @media (max-width:768px){
-      .detail-overview .program-description .rich-text p,
-      .detail-overview .program-description .rich-text li{font-size:18px!important}
       .detail-overview .program-description .rich-text h1{font-size:30px!important}
       .detail-overview .program-description .rich-text h2{font-size:26px!important}
       .detail-overview .program-description .rich-text h3{font-size:22px!important}
@@ -650,10 +648,16 @@
     .diamond-list li{
       position:relative;
       margin:0;
-      padding-left:17px;
+      padding-left:20px;
       color:var(--ink-soft);
       font-size:14px;
       line-height:1.55;
+    }
+    /* "ตรวจเพื่ออะไร" / "เหมาะกับใคร" bullets: 16px like the rich-text body above.
+       !important because main.css locks li at 14px with id-level specificity. */
+    .program-audience-card .diamond-list li{
+      font-size:16px!important;
+      line-height:1.7!important;
     }
     .diamond-list li::before{
       content:"◆";
