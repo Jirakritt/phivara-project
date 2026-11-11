@@ -45,20 +45,35 @@ blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:
 </tbody>
 </table>
 <p>ก่อนแก้ ISR หน้าแรกอยู่ที่ ~3.7-4.1 วินาที ทุกครั้ง และหน้าอื่น 6-15 วินาที ทุกครั้ง</p>
-<h2 id="_1">สิ่งที่สงสัย (ยังไม่ได้ตรวจ ห้ามสรุปว่าเป็นสาเหตุ)</h2>
+<h2 id="vps-11-2569">ข้อมูลที่ตรวจแล้วบน VPS ปัจจุบัน (11 พ.ย. 2569)</h2>
 <ul>
-<li>CPU ของ VPS เป็นคอขวด (ภาพ pm2 ตอน build เห็น CPU 100%, RAM 51%)</li>
+<li><strong>CPU 1 core</strong> (<code>nproc</code> = 1), RAM 3.8 GB (ใช้ ~0.8 GB ตอนปกติ), swap 2 GB (ใช้น้อย), load average 4.9-5.7 ขณะ build/มีคนเข้า (งานรอคิวมากกว่าที่ 1 core รับได้ ~5 เท่า)</li>
+<li>Postgres, Next (pm2) และ <code>next build</code> ใช้ CPU เดียวกัน การสร้างหน้า static ตอน build จึงเกิน 60 วินาทีต่อหน้า (build ล้มเหลว 1 ครั้ง ผ่านได้บางครั้งเมื่อ retry)</li>
+<li>RAM ไม่ใช่คอขวด คอขวดคือ <strong>CPU</strong></li>
+<li><strong>แผนของทีม: จะย้ายไป server ที่มี resources มากกว่านี้ แต่ตอนนี้ใช้เครื่องนี้ไปก่อน</strong></li>
+<li>ตอนทำ TOR/สเปกเครื่องใหม่ ควรระบุ <strong>จำนวน vCPU</strong> ให้ชัด (ไม่ใช่แค่ RAM/storage) แนะนำอย่างน้อย 4 vCPU เพราะเว็บ + Postgres + การ build อยู่เครื่องเดียวกัน</li>
+</ul>
+<h2 id="_1">สิ่งที่แก้เพื่อให้อยู่กับเครื่องเดิมได้</h2>
+<ul>
+<li><code>generateStaticParams</code> ที่ <code>[locale]/layout.tsx</code> คืนรายการว่าง: ไม่ prerender หน้าสาธารณะตอน build แต่ละหน้าถูกสร้างตอนมีคนเข้าครั้งแรกแล้ว cache (ISR ยังทำงานเหมือนเดิม) build จึงเร็วและไม่ชนเพดาน 60 วินาที</li>
+<li><code>staticPageGenerationTimeout: 180</code> ใน <code>next.config.mjs</code> เป็นตัวกันเหนียว</li>
+<li><code>scripts/warm-cache.sh</code>: หลัง deploy รันเพื่อเรียกทุกหน้าใน sitemap ทีละหน้า (ทีละหน้าเพราะมี 1 core) ให้ cache อุ่นก่อนผู้ใช้จริงเข้า</li>
+<li>เมื่อย้ายเครื่องใหม่แล้ว วิธีเหล่านี้ยังใช้ได้ ปรับกลับไป prerender ตอน build ได้ถ้าต้องการ (เปลี่ยน <code>generateStaticParams</code> ให้คืน th/en)</li>
+</ul>
+<h2 id="_2">สิ่งที่สงสัย (ยังไม่ได้ตรวจ ห้ามสรุปว่าเป็นสาเหตุ)</h2>
+<ul>
+<li>~~CPU ของ VPS เป็นคอขวด~~ ยืนยันแล้ว: เครื่องมี 1 core ดูหัวข้อด้านบน</li>
 <li>DB/query ช้า หรือจำนวน query ต่อหน้าเยอะ</li>
 <li>popup API ช้าเป็นช่วงๆ หลังเซิร์ฟเวอร์สร้างหลายหน้าพร้อมกัน</li>
 </ul>
-<h2 id="_2">ตอนกลับมาทำ เริ่มจาก</h2>
+<h2 id="_3">ตอนกลับมาทำ เริ่มจาก</h2>
 <ol>
 <li>ตรวจบน VPS (อ่านอย่างเดียว): <code>nproc</code>, <code>free -h</code>, <code>top</code>/<code>htop</code> ขณะเรียกหน้า, <code>pm2 logs</code>, เวลา query DB</li>
 <li>Prerender slug จริงตอน build (ดึง slug จาก DB ใน <code>generateStaticParams</code>) ให้ผู้เข้าชมคนแรกไม่ต้องรอ แลกกับ build นานขึ้น</li>
 <li>ลดจำนวน query ต่อหน้า ถ้าพบว่าเยอะเกินจำเป็น</li>
 <li>วัดคะแนน PageSpeed ใหม่ (รอบก่อน quota API เต็ม ใช้ pagespeed.web.dev แทนได้)</li>
 </ol>
-<h2 id="_3">ที่เกี่ยวข้อง</h2>
+<h2 id="_4">ที่เกี่ยวข้อง</h2>
 <ul>
 <li><a href="note-isr-cache.html">ISR และการ cache</a></li>
 <li>CONTEXT.md หัวข้อ 5C (performance หน้าแรก) และ 5D (ISR)</li>
