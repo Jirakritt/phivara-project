@@ -50,7 +50,10 @@ function normalizeLocale(value: unknown): 'th' | 'en' {
   return value === 'en' ? 'en' : 'th'
 }
 
-function renderEmailHTML(copy: Copy, url: string): string {
+function renderEmailHTML(copy: Copy, url: string, opts: { showFallbackLink?: boolean } = {}): string {
+  const fallback = opts.showFallbackLink
+    ? `<p style="margin:20px 0 0;color:#9C9488;font-size:12px;line-height:1.6;word-break:break-all;">หากปุ่มกดไม่ได้ คัดลอกลิงก์นี้ไปเปิดในเบราว์เซอร์ / If the button does not work, copy this link into your browser:<br><a href="${url}" style="color:#775D3B;">${url}</a></p>`
+    : ''
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#F6F1E8;font-family:Arial,Helvetica,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F1E8;padding:32px 16px;">
@@ -61,6 +64,7 @@ function renderEmailHTML(copy: Copy, url: string): string {
           <h1 style="margin:0 0 14px;color:#302E2A;font-size:20px;">${copy.heading}</h1>
           <p style="margin:0 0 24px;color:#6F695F;font-size:14px;line-height:1.7;">${copy.body}</p>
           <a href="${url}" style="display:inline-block;background:#C7A76B;color:#fff;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:14px;font-weight:500;">${copy.button}</a>
+          ${fallback}
           <p style="margin:28px 0 0;color:#9C9488;font-size:12px;line-height:1.6;">${copy.expiry}</p>
         </td></tr>
       </table>
@@ -87,4 +91,30 @@ export function generateForgotPasswordEmailHTML(args?: { token?: string; user?: 
 
 export function generateForgotPasswordEmailSubject(args?: { user?: { preferredLocale?: string } }): string {
   return RESET_COPY[normalizeLocale(args?.user?.preferredLocale)].subject
+}
+
+// ---------------------------------------------------------------------------
+// Staff (Users collection, admin panel) forgot-password email. Without this,
+// Payload sent its plain-text default whose link was the RELATIVE path
+// `/admin/reset/<token>` (no domain, because payload.config has no serverURL),
+// so mail clients could not open it. Staff are Thai-speaking, so the copy is
+// Thai with an English line; the link is absolute and a copy-paste fallback is
+// shown under the button. Token lifetime: Users.auth.forgotPassword.expiration.
+// ---------------------------------------------------------------------------
+const STAFF_RESET_COPY: Copy = {
+  subject: 'ตั้งรหัสผ่านใหม่สำหรับระบบจัดการเว็บไซต์ PHIVARA / Reset your PHIVARA admin password',
+  heading: 'ตั้งรหัสผ่านใหม่ (ระบบจัดการเว็บไซต์ PHIVARA)',
+  body: 'เราได้รับคำขอตั้งรหัสผ่านใหม่สำหรับบัญชีเจ้าหน้าที่ของคุณ กดปุ่มด้านล่างเพื่อตั้งรหัสผ่านใหม่<br><span style="color:#9C9488;">We received a request to reset the password of your PHIVARA admin account. Click the button below to choose a new password.</span>',
+  button: 'ตั้งรหัสผ่านใหม่ / Reset password',
+  expiry:
+    'ลิงก์นี้จะหมดอายุใน 1 ชั่วโมง หากคุณไม่ได้เป็นผู้ขอ กรุณาเพิกเฉยต่ออีเมลฉบับนี้ รหัสผ่านเดิมจะไม่เปลี่ยนแปลง<br>This link expires in 1 hour. If you did not request this, ignore this email and your password will stay the same.',
+}
+
+export function generateStaffForgotPasswordEmailHTML(args?: { token?: string }): string {
+  const url = `${SITE_URL}/admin/reset/${args?.token}`
+  return renderEmailHTML(STAFF_RESET_COPY, url, { showFallbackLink: true })
+}
+
+export function generateStaffForgotPasswordEmailSubject(): string {
+  return STAFF_RESET_COPY.subject
 }

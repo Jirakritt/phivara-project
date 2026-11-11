@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { isAdmin, isAdminField, isAdminOrSelf } from '../access/roles'
+import { generateStaffForgotPasswordEmailHTML, generateStaffForgotPasswordEmailSubject } from '../email/templates'
 
 // Staff accounts for the admin panel. `role` drives who can touch what —
 // wired into each collection's `access` config below (e.g. marketing edits
@@ -8,7 +9,15 @@ import { isAdmin, isAdminField, isAdminOrSelf } from '../access/roles'
 // before publish).
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true,
+  auth: {
+    // Branded email with an ABSOLUTE link (Payload's default sent plain text
+    // with the relative path /admin/reset/<token>, which mail clients can't open).
+    forgotPassword: {
+      expiration: 1000 * 60 * 60, // 1 hour, matches the email copy
+      generateEmailHTML: generateStaffForgotPasswordEmailHTML,
+      generateEmailSubject: generateStaffForgotPasswordEmailSubject,
+    },
+  },
   admin: {
     useAsTitle: 'email',
   },
