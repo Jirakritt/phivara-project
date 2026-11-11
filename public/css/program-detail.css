@@ -502,15 +502,40 @@
     .rich-text > *:first-child{margin-top:0}
     .rich-text p.rt-empty{height:.9em;margin:0!important}
     .rich-text p.rt-empty + p.rt-empty{display:none}
-    .detail-overview .program-description .rich-text p+p{margin-top:10px}
+    /* Typography of CMS rich text (RichTextContent). Editors only have the
+       editor's Normal / H1..H6 levels to control size, so every level must look
+       clearly different. !important is needed because main.css locks paragraph
+       and heading sizes with id-level specificity (see the note on
+       .program-description p above). Body is 18px (was 16px, reported too small)
+       in the full-strength ink colour for contrast. */
+    .detail-overview .program-description .rich-text p{
+      margin:0;font-size:18px!important;line-height:1.85!important;color:var(--ink)!important;
+    }
+    .detail-overview .program-description .rich-text p+p{margin-top:12px}
     .detail-overview .program-description .rich-text h1,
     .detail-overview .program-description .rich-text h2,
     .detail-overview .program-description .rich-text h3,
-    .detail-overview .program-description .rich-text h4{
-      margin:18px 0 6px!important;font-size:18px!important;color:var(--ink)!important;line-height:1.4
+    .detail-overview .program-description .rich-text h4,
+    .detail-overview .program-description .rich-text h5,
+    .detail-overview .program-description .rich-text h6{
+      margin:26px 0 8px!important;padding:0!important;border:0;color:var(--ink)!important;font-weight:600!important;line-height:1.35!important
     }
-    .rich-text ul,.rich-text ol{margin:8px 0;padding-inline-start:1.4em;color:var(--ink-soft);font-size:16px;line-height:1.65}
-    .rich-text li{margin:4px 0}
+    .detail-overview .program-description .rich-text h1{font-size:34px!important}
+    .detail-overview .program-description .rich-text h2{font-size:28px!important}
+    .detail-overview .program-description .rich-text h3{font-size:23px!important}
+    .detail-overview .program-description .rich-text h4{font-size:20px!important}
+    .detail-overview .program-description .rich-text h5,
+    .detail-overview .program-description .rich-text h6{font-size:18px!important}
+    .rich-text ul,.rich-text ol{margin:10px 0;padding-inline-start:1.5em;color:var(--ink);font-size:18px;line-height:1.85}
+    .detail-overview .program-description .rich-text li{margin:4px 0;font-size:18px!important;line-height:1.85!important;color:var(--ink)!important}
+    @media (max-width:768px){
+      .detail-overview .program-description .rich-text p{font-size:17px!important}
+      .detail-overview .program-description .rich-text h1{font-size:28px!important}
+      .detail-overview .program-description .rich-text h2{font-size:24px!important}
+      .detail-overview .program-description .rich-text h3{font-size:21px!important}
+      .detail-overview .program-description .rich-text h4{font-size:19px!important}
+      .detail-overview .program-description .rich-text li{font-size:17px!important}
+    }
     .rich-text blockquote{margin:12px 0;padding:4px 14px;border-inline-start:3px solid #8a672e;color:var(--ink-soft)}
     .rich-text a{color:#8a672e;text-decoration:underline}
     /* Lexical upload nodes carry no size, so cap width (the CMS editor also shows images small); poster-style images stay readable without filling the whole column */

@@ -61,6 +61,11 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Changes on every `next build` (inlined into the bundle). Used as `?v=` on
+  // /css/*.css links that we edit together with the HTML: those files have no
+  // content hash and are cached for 1h (see headers() below), so without it
+  // returning visitors can get new HTML with the old stylesheet.
+  env: { NEXT_PUBLIC_ASSET_VERSION: String(Date.now()) },
   images: {
     // Optimized variants (see src/lib/imageOpt.ts) are served with this
     // lifetime. Safe to keep long: a CMS upload that replaces an image gets a
