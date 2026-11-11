@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 
 import { isOptimizable, optimizedSrc, optimizedSrcSet, QUALITY } from '@/lib/imageOpt'
@@ -42,6 +43,9 @@ function blockStyle(node: LexNode): CSSProperties | undefined {
 }
 
 function renderText(node: LexNode, key: number): ReactNode {
+  // Plain text is returned as-is (NO <span> wrapper): main.css locks `span` to
+  // 12px and `strong` to 14px, so wrapping every text run in a span made the
+  // whole article render tiny. Only formatted runs get semantic tags.
   let el: ReactNode = node.text
   const f: number = node.format || 0
   if (f & 16) el = <code>{el}</code>
@@ -51,7 +55,7 @@ function renderText(node: LexNode, key: number): ReactNode {
   if (f & 8) el = <u>{el}</u>
   if (f & 32) el = <sub>{el}</sub>
   if (f & 64) el = <sup>{el}</sup>
-  return <span key={key}>{el}</span>
+  return <Fragment key={key}>{el}</Fragment>
 }
 
 function renderInline(children: LexNode[] | undefined): ReactNode[] {

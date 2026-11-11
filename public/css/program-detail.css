@@ -504,40 +504,56 @@
     .rich-text p.rt-empty + p.rt-empty{display:none}
     /* Typography of CMS rich text (RichTextContent). Editors only have the
        editor's Normal / H1..H6 levels to control size, so every level must look
-       clearly different. !important is needed because main.css locks paragraph
-       and heading sizes with id-level specificity (see the note on
-       .program-description p above). Body is 18px (was 16px, reported too small)
-       in the full-strength ink colour for contrast. */
-    .detail-overview .program-description .rich-text p{
-      margin:0;font-size:18px!important;line-height:1.85!important;color:var(--ink)!important;
+       clearly different and text must be easy to read. !important is needed
+       because main.css locks p / span / strong / li sizes with id-level
+       specificity (see the note on .program-description p above): it forces
+       span to 12px and strong to 14px gold, which made text inside them tiny,
+       so inline elements below inherit size, weight and colour from their block. */
+    .detail-overview .program-description .rich-text p,
+    .detail-overview .program-description .rich-text li{
+      font-size:20px!important;font-weight:400!important;line-height:1.8!important;color:var(--ink)!important;
     }
+    .detail-overview .program-description .rich-text p{margin:0}
     .detail-overview .program-description .rich-text p+p{margin-top:12px}
+    .detail-overview .program-description .rich-text span,
+    .detail-overview .program-description .rich-text strong,
+    .detail-overview .program-description .rich-text em,
+    .detail-overview .program-description .rich-text u,
+    .detail-overview .program-description .rich-text s,
+    .detail-overview .program-description .rich-text code,
+    .detail-overview .program-description .rich-text sub,
+    .detail-overview .program-description .rich-text sup,
+    .detail-overview .program-description .rich-text a{
+      font-size:inherit!important;line-height:inherit!important;color:inherit!important;
+    }
+    .detail-overview .program-description .rich-text strong{font-weight:600!important}
+    .detail-overview .program-description .rich-text a{color:#8a672e!important;text-decoration:underline}
     .detail-overview .program-description .rich-text h1,
     .detail-overview .program-description .rich-text h2,
     .detail-overview .program-description .rich-text h3,
     .detail-overview .program-description .rich-text h4,
     .detail-overview .program-description .rich-text h5,
     .detail-overview .program-description .rich-text h6{
-      margin:26px 0 8px!important;padding:0!important;border:0;color:var(--ink)!important;font-weight:600!important;line-height:1.35!important
+      margin:28px 0 8px!important;padding:0!important;border:0;color:var(--ink)!important;font-weight:600!important;line-height:1.35!important
     }
-    .detail-overview .program-description .rich-text h1{font-size:34px!important}
-    .detail-overview .program-description .rich-text h2{font-size:28px!important}
-    .detail-overview .program-description .rich-text h3{font-size:23px!important}
-    .detail-overview .program-description .rich-text h4{font-size:20px!important}
+    .detail-overview .program-description .rich-text h1{font-size:40px!important}
+    .detail-overview .program-description .rich-text h2{font-size:32px!important}
+    .detail-overview .program-description .rich-text h3{font-size:26px!important}
+    .detail-overview .program-description .rich-text h4{font-size:22px!important}
     .detail-overview .program-description .rich-text h5,
-    .detail-overview .program-description .rich-text h6{font-size:18px!important}
-    .rich-text ul,.rich-text ol{margin:10px 0;padding-inline-start:1.5em;color:var(--ink);font-size:18px;line-height:1.85}
-    .detail-overview .program-description .rich-text li{margin:4px 0;font-size:18px!important;line-height:1.85!important;color:var(--ink)!important}
+    .detail-overview .program-description .rich-text h6{font-size:20px!important}
+    .rich-text ul,.rich-text ol{margin:10px 0;padding-inline-start:1.5em}
+    .rich-text li{margin:4px 0}
     @media (max-width:768px){
-      .detail-overview .program-description .rich-text p{font-size:17px!important}
-      .detail-overview .program-description .rich-text h1{font-size:28px!important}
-      .detail-overview .program-description .rich-text h2{font-size:24px!important}
-      .detail-overview .program-description .rich-text h3{font-size:21px!important}
-      .detail-overview .program-description .rich-text h4{font-size:19px!important}
-      .detail-overview .program-description .rich-text li{font-size:17px!important}
+      .detail-overview .program-description .rich-text p,
+      .detail-overview .program-description .rich-text li{font-size:18px!important}
+      .detail-overview .program-description .rich-text h1{font-size:30px!important}
+      .detail-overview .program-description .rich-text h2{font-size:26px!important}
+      .detail-overview .program-description .rich-text h3{font-size:22px!important}
+      .detail-overview .program-description .rich-text h4{font-size:20px!important}
     }
     .rich-text blockquote{margin:12px 0;padding:4px 14px;border-inline-start:3px solid #8a672e;color:var(--ink-soft)}
-    .rich-text a{color:#8a672e;text-decoration:underline}
+
     /* Lexical upload nodes carry no size, so cap width (the CMS editor also shows images small); poster-style images stay readable without filling the whole column */
     .rich-text .rt-figure{margin:20px 0;max-width:min(100%,620px)}
     .rich-text .rt-figure img{display:block;max-width:100%;height:auto;border-radius:12px}
