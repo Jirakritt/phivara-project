@@ -75,6 +75,12 @@ const nextConfig = {
       // Add production media domains here once hosting is decided.
     ],
   },
+  // `next build` prerenders th/en for every public page (ISR, see
+  // docs/notes/ISR-และการ-cache.md). On the VPS those renders are slow (CPU/DB
+  // bound, see docs/notes/page-performance-ค้างตรวจ.md) and often exceed Next's
+  // default 60s per-page limit ("Failed to build /th ... took more than 60
+  // seconds"), forcing retries or failing the deploy. Allow 180s per page.
+  staticPageGenerationTimeout: 180,
   experimental: {
     // Needed so src/app/global-not-found.tsx can catch URLs that don't
     // match any route at all — this app has two root layouts ((frontend)

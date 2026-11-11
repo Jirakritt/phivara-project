@@ -36,13 +36,16 @@ import type { LocaleCode } from '@/lib/i18n'
 // that must appear everywhere rather than duplicating it per page.
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
-// Declares the known [locale] values so every public page under this segment
-// is statically renderable / ISR-cacheable. WITHOUT this, pages that have a
-// `revalidate` but no generateStaticParams were still served dynamically
-// (Cache-Control: no-store, ~5-15s TTFB on production). Only th/en are
-// prerendered at build; other locales render on demand (dynamicParams).
+// Declares [locale] as a static-capable param so every public page under this
+// segment is ISR-cacheable (s-maxage=60). WITHOUT any generateStaticParams, pages
+// with a `revalidate` were still served dynamically (no-store, ~5-15s TTFB).
+// The list is deliberately EMPTY: nothing is prerendered at `next build`, each
+// page/locale is rendered on first visit and then cached + refreshed every 60s.
+// Prerendering th/en for ~19 routes at build made the build exceed Next's 60s
+// per-page limit on the 1-vCPU production VPS (deploy failed). Run
+// scripts/warm-cache.sh after a deploy to pre-fill the cache.
 export function generateStaticParams() {
-  return [{ locale: 'th' }, { locale: 'en' }]
+  return []
 }
 
 function resolveLocale(raw: string): LocaleCode {
