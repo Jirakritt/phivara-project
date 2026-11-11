@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Script from 'next/script'
 
+import RichTextContent, { hasRichTextContent } from '@/components/RichTextContent'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
@@ -242,7 +243,11 @@ export default async function ProgramDetailPage({
             <div className="benefit-list" id="audienceContent">
               <div className="program-description">
                 <h3>{t('เกี่ยวกับโปรแกรมตรวจ', 'About This Program')}</h3>
-                <p>{t(program.aboutProgramTh, program.aboutProgramEn)}</p>
+                {hasRichTextContent(program.aboutProgramDoc) ? (
+                  <RichTextContent doc={program.aboutProgramDoc} />
+                ) : (
+                  <p>{t(program.aboutProgramTh, program.aboutProgramEn)}</p>
+                )}
               </div>
               <div className="program-card-grid">
                 <article className="program-audience-card">

@@ -104,6 +104,8 @@ export interface ProgramDetail extends ProgramCard {
   heroImage: string
   aboutProgramTh: string
   aboutProgramEn: string
+  // Raw Lexical document: rendered by <RichTextContent> so CMS layout/images show up.
+  aboutProgramDoc: unknown
   purposeList: Array<{ th: string; en: string }>
   audienceList: Array<{ th: string; en: string }>
   checkupItems: ProgramCheckupItem[]
@@ -253,6 +255,7 @@ export async function getProgramDetail(slug: string, locale: LocaleCode): Promis
     heroImage: mediaUrl(doc.heroImage) || card.image,
     aboutProgramTh: aboutProgram,
     aboutProgramEn: aboutProgram,
+    aboutProgramDoc: doc.aboutProgram ?? null,
     purposeList: (doc.purposeList || []).map((item: any) => ({ th: item.text || '', en: item.text || '' })),
     audienceList: (doc.audienceList || []).map((item: any) => ({ th: item.text || '', en: item.text || '' })),
     checkupItems: (doc.checkupItems || []).map((item: any) => ({

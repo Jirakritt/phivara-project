@@ -498,6 +498,25 @@
       line-height:1.65!important;
     }
     .detail-overview .program-description p+p{margin-top:10px}
+    /* CMS rich text (RichTextContent): headings/lists/images authored in the editor */
+    .rich-text > *:first-child{margin-top:0}
+    .rich-text p.rt-empty{height:.9em;margin:0!important}
+    .rich-text p.rt-empty + p.rt-empty{display:none}
+    .detail-overview .program-description .rich-text p+p{margin-top:10px}
+    .detail-overview .program-description .rich-text h1,
+    .detail-overview .program-description .rich-text h2,
+    .detail-overview .program-description .rich-text h3,
+    .detail-overview .program-description .rich-text h4{
+      margin:18px 0 6px!important;font-size:18px!important;color:var(--ink)!important;line-height:1.4
+    }
+    .rich-text ul,.rich-text ol{margin:8px 0;padding-inline-start:1.4em;color:var(--ink-soft);font-size:16px;line-height:1.65}
+    .rich-text li{margin:4px 0}
+    .rich-text blockquote{margin:12px 0;padding:4px 14px;border-inline-start:3px solid #8a672e;color:var(--ink-soft)}
+    .rich-text a{color:#8a672e;text-decoration:underline}
+    .rich-text .rt-figure{margin:20px 0;max-width:100%}
+    .rich-text .rt-figure img{display:block;max-width:100%;height:auto;border-radius:12px}
+    .rich-text .rt-figure figcaption{margin-top:6px;font-size:13px;color:var(--ink-soft)}
+    .rich-text hr{border:0;border-top:1px solid rgba(0,0,0,.12);margin:20px 0}
     .detail-overview .program-description strong{
       color:#8a672e;
       font-weight:600;
