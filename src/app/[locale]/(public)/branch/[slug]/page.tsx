@@ -197,11 +197,11 @@ export default async function BranchDetailPage({
 
   return (
     <>
-      <link rel="stylesheet" href="/css/main.css" />
-      <link rel="stylesheet" href="/css/catalog.css" />
-      <link rel="stylesheet" href="/css/doctor.css" />
-      <link rel="stylesheet" href="/css/branch-detail.css" />
-      <link rel="stylesheet" href="/css/vip-modal.css" />
+      <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/catalog.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/doctor.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/branch-detail.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-branch-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 

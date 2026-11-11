@@ -113,9 +113,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
-      <link rel="stylesheet" href="/css/journal-card.css" />
-      <link rel="stylesheet" href="/css/vip-modal.css" />
-      <link rel="stylesheet" href="/css/home-popup.css" />
+      <link rel="stylesheet" href={`/css/journal-card.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/home-popup.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       {/* Tells consent-banner.js to hold the cookie banner back until the
           homepage popup (HomePopup, below) has been shown and closed — or

@@ -51,8 +51,8 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<{ 
 
   return (
     <>
-      <link rel="stylesheet" href="/css/main.css" />
-      <link rel="stylesheet" href="/css/article-detail.css" />
+      <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/article-detail.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-privacy-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 

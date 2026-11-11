@@ -54,9 +54,9 @@ export default async function EcosystemPage({ params }: { params: Promise<{ loca
 
   return (
     <>
-      <link rel="stylesheet" href="/css/main.css" />
-      <link rel="stylesheet" href="/css/ecosystem.css" />
-      <link rel="stylesheet" href="/css/vip-modal.css" />
+      <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/ecosystem.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-ecosystem-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 

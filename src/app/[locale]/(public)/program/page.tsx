@@ -58,10 +58,10 @@ export default async function ProgramListPage({ params }: { params: Promise<{ lo
 
   return (
     <>
-      <link rel="stylesheet" href="/css/main.css" />
-      <link rel="stylesheet" href="/css/catalog.css" />
-      <link rel="stylesheet" href="/css/program.css" />
-      <link rel="stylesheet" href="/css/vip-modal.css" />
+      <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/catalog.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/program.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-program-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 

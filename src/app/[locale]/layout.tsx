@@ -213,9 +213,9 @@ export default async function LocaleLayout({
             <link href={`https://fonts.googleapis.com/css2?${localeFont.googleFontsQuery}&display=swap`} rel="stylesheet" />
           </>
         )}
-        <link rel="stylesheet" href="/css/main_gpt.css" />
-        <link rel="stylesheet" href="/css/site-shell.css" />
-        <link rel="stylesheet" href="/css/consent-banner.css" />
+        <link rel="stylesheet" href={`/css/main_gpt.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/site-shell.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/consent-banner.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
         {grayscaleCss && <style id="phivara-grayscale" dangerouslySetInnerHTML={{ __html: grayscaleCss }} />}
         <Script id="phivara-analytics-config" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: analyticsScript }} />
         <Script id="phivara-vip-modal-strings" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: vipModalScript }} />

@@ -69,12 +69,12 @@ export default async function GlobalNotFound() {
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Prompt:wght@200;300;400;500;600&display=swap"
           rel="stylesheet"
         />
-        <link rel="stylesheet" href="/css/main.css" />
-        <link rel="stylesheet" href="/css/site-shell.css" />
-        <link rel="stylesheet" href="/css/journal-card.css" />
-        <link rel="stylesheet" href="/css/404.css" />
-        <link rel="stylesheet" href="/css/vip-modal.css" />
-        <link rel="stylesheet" href="/css/consent-banner.css" />
+        <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/site-shell.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/journal-card.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/404.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+        <link rel="stylesheet" href={`/css/consent-banner.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
         {grayscaleCss && <style id="phivara-grayscale" dangerouslySetInnerHTML={{ __html: grayscaleCss }} />}
         <Script id="phivara-analytics-config" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: analyticsScript }} />
       </head>

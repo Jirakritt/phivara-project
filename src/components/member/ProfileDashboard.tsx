@@ -191,8 +191,8 @@ export default function ProfileDashboard({
 
   return (
     <>
-      <link rel="stylesheet" href="/css/member-profile.css" />
-      <link rel="stylesheet" href="/css/member-profile-v2-nocontainer.css" />
+      <link rel="stylesheet" href={`/css/member-profile.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/member-profile-v2-nocontainer.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <main className="member-dash">
         <div className="wrap member-dash__wrap">

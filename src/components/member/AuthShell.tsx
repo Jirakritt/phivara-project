@@ -28,7 +28,7 @@ export default function AuthShell({
   const t = translator(locale)
   return (
     <>
-      <link rel="stylesheet" href="/css/auth.css" />
+      <link rel="stylesheet" href={`/css/auth.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <div className="auth-shell">
         <div className="auth-card">
           <div className="auth-brand">

@@ -56,8 +56,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
 
   return (
     <>
-      <link rel="stylesheet" href="/css/main.css" />
-      <link rel="stylesheet" href="/css/site-shell.css" />
+      <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/site-shell.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <div id="preloader">
         <svg viewBox="0 0 100 100" aria-hidden="true">
