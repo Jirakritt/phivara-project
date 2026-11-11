@@ -83,6 +83,12 @@ function buildRecordEntries(
 // has content in — see buildSlugLocaleMap()'s comment for why that
 // stopped being the same set as "every live locale" once per-locale
 // content filtering shipped.
+// Without this, `next build` prerenders the sitemap ONCE (shown as ○ Static in the
+// build output) and it never changes until the next deploy: new/edited doctors,
+// programs, articles (or a fixed slug) would be missing/stale for Google. ISR:
+// regenerated at most once an hour on request (one Payload listing per locale).
+export const revalidate = 3600
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const liveLocales = await getPubliclyLiveLocales()
 
