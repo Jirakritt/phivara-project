@@ -13,6 +13,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // informational; the actual "resend" action re-submits the register form
 // (Payload's create endpoint re-sends the verification email on repeat
 // calls with the same email as long as the account is still unverified).
+// Member/auth page: per-visitor, never prerender at build. [locale]/layout.tsx
+// declares generateStaticParams (so public pages are ISR); without this, `next build`
+// also prerendered this page for th/en and on the VPS that exceeded Next's 60s
+// static-generation limit ("Failed to build /th/profile ... > 60 seconds").
+export const dynamic = 'force-dynamic'
+
 export default async function CheckEmailPage({
   params,
   searchParams,

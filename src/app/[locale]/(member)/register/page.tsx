@@ -13,6 +13,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // Step 1 of 3 — ported from phivara-design-html/register.html, with a
 // password field added (the mockup had none; see conversation scope
 // confirmation — email+password auth, not passwordless/magic-link).
+// Member/auth page: per-visitor, never prerender at build. [locale]/layout.tsx
+// declares generateStaticParams (so public pages are ISR); without this, `next build`
+// also prerendered this page for th/en and on the VPS that exceeded Next's 60s
+// static-generation limit ("Failed to build /th/profile ... > 60 seconds").
+export const dynamic = 'force-dynamic'
+
 export default async function RegisterPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE

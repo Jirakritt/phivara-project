@@ -15,6 +15,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // Step 2 (part 2) / entry point of the link a member clicks in their
 // verification email — ?token=... — see VerifyEmailClient for the actual
 // verify call + success/error states.
+// Member/auth page: per-visitor, never prerender at build. [locale]/layout.tsx
+// declares generateStaticParams (so public pages are ISR); without this, `next build`
+// also prerendered this page for th/en and on the VPS that exceeded Next's 60s
+// static-generation limit ("Failed to build /th/profile ... > 60 seconds").
+export const dynamic = 'force-dynamic'
+
 export default async function VerifyEmailPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE

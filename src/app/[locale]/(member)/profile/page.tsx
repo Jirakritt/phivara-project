@@ -26,6 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // pages, this uses the real site header/footer (part of normal browsing,
 // not a focused conversion step — matches the mockup's own
 // phivara-header/phivara-footer usage).
+// Member/auth page: per-visitor, never prerender at build. [locale]/layout.tsx
+// declares generateStaticParams (so public pages are ISR); without this, `next build`
+// also prerendered this page for th/en and on the VPS that exceeded Next's 60s
+// static-generation limit ("Failed to build /th/profile ... > 60 seconds").
+export const dynamic = 'force-dynamic'
+
 export default async function ProfilePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE

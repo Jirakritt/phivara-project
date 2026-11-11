@@ -12,6 +12,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // Shared error state for both the email-verification link and the
 // password-reset link (ported from link-expired.html) — ?reason=verify|reset
 // only changes the "get a new link" destination.
+// Member/auth page: per-visitor, never prerender at build. [locale]/layout.tsx
+// declares generateStaticParams (so public pages are ISR); without this, `next build`
+// also prerendered this page for th/en and on the VPS that exceeded Next's 60s
+// static-generation limit ("Failed to build /th/profile ... > 60 seconds").
+export const dynamic = 'force-dynamic'
+
 export default async function LinkExpiredPage({
   params,
   searchParams,

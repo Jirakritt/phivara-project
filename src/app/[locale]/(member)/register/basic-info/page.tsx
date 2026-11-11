@@ -20,6 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // after email verification, or by revisiting this URL directly while
 // logged in). No session -> back to login; already has a complete profile
 // -> straight to the profile page instead of re-asking.
+// Member/auth page: per-visitor, never prerender at build. [locale]/layout.tsx
+// declares generateStaticParams (so public pages are ISR); without this, `next build`
+// also prerendered this page for th/en and on the VPS that exceeded Next's 60s
+// static-generation limit ("Failed to build /th/profile ... > 60 seconds").
+export const dynamic = 'force-dynamic'
+
 export default async function BasicInfoPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params
   const locale: LocaleCode = isLocaleCode(rawLocale) ? rawLocale : DEFAULT_LOCALE
