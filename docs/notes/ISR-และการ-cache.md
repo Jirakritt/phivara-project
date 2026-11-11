@@ -41,7 +41,7 @@ _เขียนเมื่อ พ.ย. 2569 หลังแก้ให้ห�
 วิธีแก้:
 - `(public)/layout.tsx`: เรียก `draftMode()` เฉพาะเมื่อ locale ยังไม่ live (กรณีรีวิวภาษาที่ยังไม่เปิด)
 - `not-found.tsx`: เลิกอ่าน header; title เป็นสองภาษา; เนื้อหา 404 เตรียมไว้ทุก locale ที่ live แล้ว `src/components/NotFoundByLocale.tsx` (client, `usePathname`) เลือกตาม URL
-- เพิ่ม `generateStaticParams` ที่หน้าแรก (th/en)
+- เพิ่ม `generateStaticParams` (th/en) ที่ `src/app/[locale]/layout.tsx` **ต้องมีที่ระดับ layout ของ `[locale]`**: ตอนแรกใส่ที่หน้าแรกอย่างเดียว หน้าอื่น (doctor, program, contact ฯลฯ) ที่มี `revalidate` แต่ไม่มี `generateStaticParams` ยังเป็น `no-store` และช้า 6-15 วินาทีบน production จนกว่าจะย้ายมาไว้ที่ layout
 
 ## วิธีตรวจว่าหน้าเป็น ISR จริงไหม
 
@@ -56,6 +56,8 @@ _เขียนเมื่อ พ.ย. 2569 หลังแก้ให้ห�
 3. หาตัวการ: ชั่วคราวใส่ `export const dynamic = 'error'` + `generateStaticParams` ใน page แล้ว build ข้อความ error จะบอกว่า API ตัวไหน (`headers`, `cookies`) แล้วไล่ตัดโค้ดทีละส่วน (layout, not-found, component) ทดสอบทีละชั้น **อย่าลืมเอา `dynamic = 'error'` ออกก่อน commit**
 
 ## ข้อควรระวังเมื่อเขียนโค้ดต่อ
+
+- route ที่มี `[locale]` ต้องมี `generateStaticParams` ใน `[locale]/layout.tsx` (มีแล้ว) ห้ามลบ ไม่งั้นทุกหน้าสาธารณะกลับไปเป็น dynamic
 
 - อย่าใช้ `cookies()`, `headers()`, `draftMode()`, `searchParams` ใน layout/page/not-found ของหน้าสาธารณะ ถ้าจำเป็นต้องรู้ภาษาหรือ user ให้ใช้ params ของ route หรืออ่านฝั่ง client
 - หน้าที่ต้อง dynamic จริง (สมาชิก, API) ปล่อยเป็น dynamic ได้ ไม่กระทบหน้าสาธารณะ

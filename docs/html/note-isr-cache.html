@@ -72,7 +72,7 @@ blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:
 <p>วิธีแก้:
 - <code>(public)/layout.tsx</code>: เรียก <code>draftMode()</code> เฉพาะเมื่อ locale ยังไม่ live (กรณีรีวิวภาษาที่ยังไม่เปิด)
 - <code>not-found.tsx</code>: เลิกอ่าน header; title เป็นสองภาษา; เนื้อหา 404 เตรียมไว้ทุก locale ที่ live แล้ว <code>src/components/NotFoundByLocale.tsx</code> (client, <code>usePathname</code>) เลือกตาม URL
-- เพิ่ม <code>generateStaticParams</code> ที่หน้าแรก (th/en)</p>
+- เพิ่ม <code>generateStaticParams</code> (th/en) ที่ <code>src/app/[locale]/layout.tsx</code> <strong>ต้องมีที่ระดับ layout ของ <code>[locale]</code></strong>: ตอนแรกใส่ที่หน้าแรกอย่างเดียว หน้าอื่น (doctor, program, contact ฯลฯ) ที่มี <code>revalidate</code> แต่ไม่มี <code>generateStaticParams</code> ยังเป็น <code>no-store</code> และช้า 6-15 วินาทีบน production จนกว่าจะย้ายมาไว้ที่ layout</p>
 <h2 id="isr_1">วิธีตรวจว่าหน้าเป็น ISR จริงไหม</h2>
 <ol>
 <li>หลัง <code>npx next build</code> ดูตาราง route: <code>●</code> = ISR/static (ดี), <code>ƒ</code> = dynamic (render สดทุกครั้ง)
@@ -86,7 +86,12 @@ blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:
 </ol>
 <h2 id="_2">ข้อควรระวังเมื่อเขียนโค้ดต่อ</h2>
 <ul>
-<li>อย่าใช้ <code>cookies()</code>, <code>headers()</code>, <code>draftMode()</code>, <code>searchParams</code> ใน layout/page/not-found ของหน้าสาธารณะ ถ้าจำเป็นต้องรู้ภาษาหรือ user ให้ใช้ params ของ route หรืออ่านฝั่ง client</li>
+<li>
+<p>route ที่มี <code>[locale]</code> ต้องมี <code>generateStaticParams</code> ใน <code>[locale]/layout.tsx</code> (มีแล้ว) ห้ามลบ ไม่งั้นทุกหน้าสาธารณะกลับไปเป็น dynamic</p>
+</li>
+<li>
+<p>อย่าใช้ <code>cookies()</code>, <code>headers()</code>, <code>draftMode()</code>, <code>searchParams</code> ใน layout/page/not-found ของหน้าสาธารณะ ถ้าจำเป็นต้องรู้ภาษาหรือ user ให้ใช้ params ของ route หรืออ่านฝั่ง client</p>
+</li>
 <li>หน้าที่ต้อง dynamic จริง (สมาชิก, API) ปล่อยเป็น dynamic ได้ ไม่กระทบหน้าสาธารณะ</li>
 <li>ถ้าเพิ่มหน้าสาธารณะใหม่ ให้เช็ก header ตามข้อ 2 หลัง deploy ทุกครั้ง</li>
 </ul></div></body></html>
