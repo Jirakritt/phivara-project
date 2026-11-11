@@ -53,6 +53,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // site-wide and opens the shared VIP modal, prefilled via `data-program`.
 export const revalidate = 60
 
+// Declares the [slug] segment as ISR-cacheable. Without generateStaticParams a
+// dynamic-param page was served dynamically (no-store, ~5s TTFB on prod) even
+// with `revalidate`. Empty list = nothing prerendered at build; each slug is
+// rendered on first visit, then cached and refreshed every 60s. Unknown slugs
+// still hit notFound() (404).
+export function generateStaticParams() {
+  return []
+}
+
 export default async function ProgramDetailPage({
   params,
 }: {
