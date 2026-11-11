@@ -37,12 +37,6 @@ import type { LocaleCode } from '@/lib/i18n'
 // this just keeps in-between edits fresh too).
 export const revalidate = 60
 
-// Prerender th/en at build so the first visitor after a deploy gets a cached
-// page (ISR then refreshes it every 60s). Other locales render on demand.
-export function generateStaticParams() {
-  return [{ locale: 'th' }, { locale: 'en' }]
-}
-
 // Canonical + hreflang for the homepage (the layout's metadata only carries a
 // bare canonical). Lists every publicly-live language plus `x-default` -> the
 // default locale, so Google reads /th and /en as language versions of one page

@@ -36,6 +36,15 @@ import type { LocaleCode } from '@/lib/i18n'
 // that must appear everywhere rather than duplicating it per page.
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
+// Declares the known [locale] values so every public page under this segment
+// is statically renderable / ISR-cacheable. WITHOUT this, pages that have a
+// `revalidate` but no generateStaticParams were still served dynamically
+// (Cache-Control: no-store, ~5-15s TTFB on production). Only th/en are
+// prerendered at build; other locales render on demand (dynamicParams).
+export function generateStaticParams() {
+  return [{ locale: 'th' }, { locale: 'en' }]
+}
+
 function resolveLocale(raw: string): LocaleCode {
   return isLocaleCode(raw) ? raw : DEFAULT_LOCALE
 }
