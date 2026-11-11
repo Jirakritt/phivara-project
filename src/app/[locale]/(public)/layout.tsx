@@ -41,8 +41,15 @@ export default async function PublicLayout({
   // comment) gets Next's own signed draft-mode cookie, which lets them
   // browse a not-yet-live locale to check UI copy — everyone else still
   // 404s here exactly as before.
-  const { isEnabled: isPreview } = await draftMode()
-  if (!liveLocales.includes(locale) && !isPreview) notFound()
+  //
+  // draftMode() reads cookies, and ANY cookie/header read opts the whole
+  // route out of static rendering (Cache-Control: no-store, ~4s TTFB on
+  // every request, `revalidate` ignored). So only touch it when the
+  // locale is NOT live; live locales stay fully ISR-cacheable.
+  if (!liveLocales.includes(locale)) {
+    const { isEnabled: isPreview } = await draftMode()
+    if (!isPreview) notFound()
+  }
 
   return children
 }
