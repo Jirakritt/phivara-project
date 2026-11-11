@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { branchScopedOwnRecord, isAdmin } from '../access/roles'
+import { trimSlug } from '../fields/trimSlug'
 
 // Source: js/site-shell.js `branches` array (single source of truth already
 // on the live site) + facilities/directions/gallery found in js/branch-detail.js
@@ -52,6 +53,7 @@ export const Branches: CollectionConfig = {
               // matches the `id` / `formValue` used in booking forms and URLs today
               name: 'slug',
               type: 'text',
+              hooks: { beforeValidate: [trimSlug] },
               required: true,
               unique: true,
               admin: { description: 'e.g. pt2, ptp, pt1, pts, pt3' },

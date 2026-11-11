@@ -10,6 +10,7 @@ import {
 } from '../access/roles'
 import { seoFields } from '../fields/seo'
 import { autoSlugFromNameEn } from './hooks/autoSlugFromNameEn'
+import { trimSlug } from '../fields/trimSlug'
 
 // Source: js/doctor.js (listing card fields) + js/doctor-detail.js
 // (hardcoded per-doctor detail content — this collection normalizes that
@@ -75,6 +76,7 @@ export const Doctors: CollectionConfig = {
               // hook always has something to generate from.
               name: 'slug',
               type: 'text',
+              hooks: { beforeValidate: [trimSlug] },
               unique: true,
               admin: {
                 description:

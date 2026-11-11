@@ -7,6 +7,7 @@ import {
   validateBranchInScope,
 } from '../access/roles'
 import { seoFields } from '../fields/seo'
+import { trimSlug } from '../fields/trimSlug'
 
 // Source: js/main.js `homepagePrograms`, program.html card markup (card-code,
 // card-tag, card-list, card-foot) and program_detail.html `programs` object
@@ -55,6 +56,7 @@ export const Programs: CollectionConfig = {
             {
               name: 'slug',
               type: 'text',
+              hooks: { beforeValidate: [trimSlug] },
               required: true,
               unique: true,
               admin: { description: 'e.g. pv01: used in program_detail.html?id=' },

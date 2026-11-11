@@ -7,6 +7,7 @@ import {
   validateBranchInScope,
 } from '../access/roles'
 import { seoFields } from '../fields/seo'
+import { trimSlug } from '../fields/trimSlug'
 
 // Source: js/main.js `journalArticles` (card fields) + article_detail.html
 // (full prose body, TOC-driven H2 sections, blockquote, note-box,
@@ -46,6 +47,7 @@ export const Articles: CollectionConfig = {
             {
               name: 'slug',
               type: 'text',
+              hooks: { beforeValidate: [trimSlug] },
               required: true,
               unique: true,
               admin: { description: 'e.g. blue-ocean-pathway: used in article_detail.html?id=' },
