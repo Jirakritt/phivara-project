@@ -135,6 +135,7 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 - [ ] GitHub Actions auto-deploy (ตั้งใจให้ `migrate` ทำมือเสมอ)
 
 **พบระหว่างทำงาน**
+- [ ] **Performance: VPS สร้างหน้าใหม่ช้า (5-7 วินาที บางครั้ง 20 วินาที; local ~0.2 วินาที)** และ popup API ช้าเป็นช่วงๆ ยังไม่รู้สาเหตุ รายละเอียดและขั้นตอนตรวจ: `docs/notes/page-performance-ค้างตรวจ.md`
 - [ ] `RegisterForm.tsx` / `memberAuthClient.ts` (`parseError()`) แสดง error ดิบของ Payload เช่น "The following field is invalid: email" เมื่ออีเมลซ้ำ — ควรแปลงเป็นข้อความไทย/อังกฤษที่เข้าใจง่าย
 - [ ] เมื่อย้ายโดเมน: ตรวจ cert เดิม `phivara.site` (certbot ยัง auto-renew อยู่) และถ้าต้องการ 301 redirect `phivara.site` → โดเมนใหม่ ต้องเพิ่ม server block ใหม่ใน nginx (ผู้ใช้ถามขั้นตอนไว้เฉยๆ ยังไม่ได้ทำ — ถ้าทำ ต้องใช้ cert เดิมที่ `/etc/letsencrypt/live/phivara.site/`)
 - [ ] อัปเดตค่าที่ hardcode ชื่อโดเมนเก่า (ถ้ามี) เช่น ใน `DEPLOY.md`, sitemap/robots, ข้อความอีเมล และ `webFetchAllowedUrls` — ควร `grep -r "phivara.site"` ตรวจ

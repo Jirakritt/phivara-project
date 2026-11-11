@@ -1,0 +1,65 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Page performance: งานค้างตรวจ (VPS render ช้า)</title><style>
+:root{--bg:#fbfaf8;--fg:#1f1d1a;--mut:#6b665f;--line:#e4dfd7;--card:#fff;--acc:#8a6a2f;--code:#f1ede6}
+@media (prefers-color-scheme:dark){:root{--bg:#161512;--fg:#ece8e1;--mut:#9d978d;--line:#34312b;--card:#1f1d19;--acc:#d3b36a;--code:#26231e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--acc)}h1{font-size:1.7rem;margin:.2em 0 .4em}h2{margin-top:2em;padding-top:.6em;border-top:1px solid var(--line);font-size:1.3rem}h3{font-size:1.1rem}
+code{background:var(--code);padding:.1em .35em;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:var(--mut)}
+.nav{font-size:.9rem;margin-bottom:12px}.mut{color:var(--mut)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+.card:hover{border-color:var(--acc)}.card b{display:block;color:var(--acc)}.card span{font-size:.9rem;color:var(--mut)}
+.tag{font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mut)}
+</style></head><body><div class="wrap"><div class="nav"><a href="../index.html">← Documents Portal</a></div><h1 id="page-performance-vps-render">Page performance: งานค้างตรวจ (VPS render ช้า)</h1>
+<p><em>บันทึกเมื่อ 11 พ.ย. 2569 · สถานะ: พักไว้ก่อน รอกลับมาทำ</em></p>
+<p><strong>สรุป:</strong> ISR ใช้งานได้ครบทุกหน้าแล้ว (หน้าแรก, หน้ารายการ, หน้า slug ของ doctor/program/article/branch) แต่ตอนที่ต้อง <strong>สร้างหน้าใหม่</strong> บน VPS ใช้เวลานานผิดปกติ</p>
+<h2 id="production-deploy-f439dd6">ตัวเลขที่วัดบน production (หลัง deploy <code>f439dd6</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>กรณี</th>
+<th>เวลา (TTFB)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>หน้าที่อยู่ใน cache (HIT/STALE)</td>
+<td>0.2-0.5 วินาที</td>
+</tr>
+<tr>
+<td>สร้างหน้า slug ใหม่ครั้งแรก (MISS)</td>
+<td>5-7 วินาที (สูงสุดที่เจอ 20 วินาที)</td>
+</tr>
+<tr>
+<td>รันบนเครื่อง local เทียบกัน</td>
+<td>~0.2 วินาที</td>
+</tr>
+<tr>
+<td><code>/api/popup/active</code> ส่วนใหญ่</td>
+<td>0.15-0.2 วินาที แต่บางครั้งช้า 2.5 / 23.9 / 31 วินาที</td>
+</tr>
+</tbody>
+</table>
+<p>ก่อนแก้ ISR หน้าแรกอยู่ที่ ~3.7-4.1 วินาที ทุกครั้ง และหน้าอื่น 6-15 วินาที ทุกครั้ง</p>
+<h2 id="_1">สิ่งที่สงสัย (ยังไม่ได้ตรวจ ห้ามสรุปว่าเป็นสาเหตุ)</h2>
+<ul>
+<li>CPU ของ VPS เป็นคอขวด (ภาพ pm2 ตอน build เห็น CPU 100%, RAM 51%)</li>
+<li>DB/query ช้า หรือจำนวน query ต่อหน้าเยอะ</li>
+<li>popup API ช้าเป็นช่วงๆ หลังเซิร์ฟเวอร์สร้างหลายหน้าพร้อมกัน</li>
+</ul>
+<h2 id="_2">ตอนกลับมาทำ เริ่มจาก</h2>
+<ol>
+<li>ตรวจบน VPS (อ่านอย่างเดียว): <code>nproc</code>, <code>free -h</code>, <code>top</code>/<code>htop</code> ขณะเรียกหน้า, <code>pm2 logs</code>, เวลา query DB</li>
+<li>Prerender slug จริงตอน build (ดึง slug จาก DB ใน <code>generateStaticParams</code>) ให้ผู้เข้าชมคนแรกไม่ต้องรอ แลกกับ build นานขึ้น</li>
+<li>ลดจำนวน query ต่อหน้า ถ้าพบว่าเยอะเกินจำเป็น</li>
+<li>วัดคะแนน PageSpeed ใหม่ (รอบก่อน quota API เต็ม ใช้ pagespeed.web.dev แทนได้)</li>
+</ol>
+<h2 id="_3">ที่เกี่ยวข้อง</h2>
+<ul>
+<li><a href="note-isr-cache.html">ISR และการ cache</a></li>
+<li>CONTEXT.md หัวข้อ 5C (performance หน้าแรก) และ 5D (ISR)</li>
+</ul></div></body></html>

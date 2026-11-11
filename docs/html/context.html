@@ -211,6 +211,7 @@ blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:
 - [ ] ลบ/เปลี่ยนรหัส test accounts (มี member ทดสอบตอน QA สมัครสมาชิก)
 - [ ] GitHub Actions auto-deploy (ตั้งใจให้ <code>migrate</code> ทำมือเสมอ)</p>
 <p><strong>พบระหว่างทำงาน</strong>
+- [ ] <strong>Performance: VPS สร้างหน้าใหม่ช้า (5-7 วินาที บางครั้ง 20 วินาที; local ~0.2 วินาที)</strong> และ popup API ช้าเป็นช่วงๆ ยังไม่รู้สาเหตุ รายละเอียดและขั้นตอนตรวจ: <code>docs/notes/page-performance-ค้างตรวจ.md</code>
 - [ ] <code>RegisterForm.tsx</code> / <code>memberAuthClient.ts</code> (<code>parseError()</code>) แสดง error ดิบของ Payload เช่น "The following field is invalid: email" เมื่ออีเมลซ้ำ — ควรแปลงเป็นข้อความไทย/อังกฤษที่เข้าใจง่าย
 - [ ] เมื่อย้ายโดเมน: ตรวจ cert เดิม <code>phivara.site</code> (certbot ยัง auto-renew อยู่) และถ้าต้องการ 301 redirect <code>phivara.site</code> → โดเมนใหม่ ต้องเพิ่ม server block ใหม่ใน nginx (ผู้ใช้ถามขั้นตอนไว้เฉยๆ ยังไม่ได้ทำ — ถ้าทำ ต้องใช้ cert เดิมที่ <code>/etc/letsencrypt/live/phivara.site/</code>)
 - [ ] อัปเดตค่าที่ hardcode ชื่อโดเมนเก่า (ถ้ามี) เช่น ใน <code>DEPLOY.md</code>, sitemap/robots, ข้อความอีเมล และ <code>webFetchAllowedUrls</code> — ควร <code>grep -r "phivara.site"</code> ตรวจ
