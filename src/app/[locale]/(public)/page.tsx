@@ -7,6 +7,7 @@ import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
 import { canonicalUrl, DEFAULT_LOCALE, isLocaleCode, localizedHref, translator } from '@/lib/i18n'
 import { getPubliclyLiveLocales } from '@/lib/i18n-server'
+import { optimizedSrc, optimizedSrcSet, QUALITY } from '@/lib/imageOpt'
 import type { LocaleCode } from '@/lib/i18n'
 
 // Rebuilt from phivara-design-html/index.html. The hero banner (eyebrow/
@@ -59,6 +60,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // "บริการที่สนใจ" dropdown so the VIP appointment modal's service list
   // always matches this section, on every page (see homeData.ts's
   // getExpertiseCategoryOptions comment).
+  // First hero background — mirrors main.js's `heroImages[0]` (first CMS
+  // slideshow image, else the repo's herobg01 fallback).
+  const heroFirstImage: string = data.hero.backgroundImages?.[0] || '/assets/images/hero/herobg01.png'
   const dataScript = `window.__PHIVARA_DATA__ = ${JSON.stringify({ ...data, categories: getExpertiseCategoryOptions(data.hero) }).replace(/</g, '\\u003c')};`
 
   // public/js/main.js's own data-th/data-en swap only ever ran on a click
@@ -134,7 +138,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* ================= HERO ================= */}
       <section className="hero" id="top">
-        <div className="bg-stack" id="heroBg"></div>
+        {/* First hero slide rendered on the server so the browser discovers (and
+            prioritises) the LCP image straight from the HTML instead of waiting
+            for main.js to inject it; main.js appends the remaining slides later
+            and leaves this one alone. Same widths/sizes as main.js. */}
+        <div className="bg-stack" id="heroBg">
+          {heroFirstImage && (
+            <div className="bg-slide active">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={optimizedSrc(heroFirstImage, 1080, QUALITY.hero)}
+                srcSet={optimizedSrcSet(heroFirstImage, [640, 828, 1080, 1920], QUALITY.hero)}
+                sizes="100vw"
+                alt=""
+                aria-hidden="true"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
+          )}
+        </div>
         <div className="scrim"></div>
         <div className="wrap">
           <div className="content" id="heroContent">
@@ -324,7 +347,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           getMembershipTeaser() in src/lib/homeData.ts. */}
       <section className="membership" id="membership">
         <div className="mem-grid">
-          <img className="ph-photo reveal" src={data.membershipTeaser.image} alt="PHIVARA AUM Membership" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="ph-photo reveal"
+            src={optimizedSrc(data.membershipTeaser.image, 828, QUALITY.photo)}
+            srcSet={optimizedSrcSet(data.membershipTeaser.image, [640, 828, 1080], QUALITY.photo)}
+            sizes="(max-width: 900px) 100vw, 50vw"
+            alt="PHIVARA AUM Membership"
+            loading="lazy"
+            decoding="async"
+          />
           <div className="mem-text reveal">
             <div className="eyebrow">{t(data.membershipTeaser.eyebrowTh, data.membershipTeaser.eyebrowEn)}</div>
             <h2>{t(data.membershipTeaser.headlineTh, data.membershipTeaser.headlineEn)}</h2>

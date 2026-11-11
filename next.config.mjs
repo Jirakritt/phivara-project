@@ -62,6 +62,15 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    // Optimized variants (see src/lib/imageOpt.ts) are served with this
+    // lifetime. Safe to keep long: a CMS upload that replaces an image gets a
+    // new filename, so the optimizer URL changes with it.
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+    // Three tiers (see src/lib/imageOpt.ts): 75 = hero backgrounds (soft, under
+    // a scrim), 85 = brand photos (programs / articles / branches /
+    // membership), 90 = detail-critical (doctor portraits, award certificates).
+    // A `q` outside this list is rejected (400) by the optimizer.
+    qualities: [75, 85, 90],
     remotePatterns: [
       // Add production media domains here once hosting is decided.
     ],
@@ -79,6 +88,33 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: securityHeaders,
+      },
+      // Caching (PageSpeed "Use efficient cache lifetimes", ~16 MB flagged):
+      // Payload serves /api/media/file/* with NO Cache-Control and the files
+      // under public/ default to max-age=0, so every repeat visit re-downloaded
+      // everything. CMS uploads: long cache — a replacement upload gets a new
+      // filename. Repo assets (images/fonts/logos): a week. CSS/JS in public/
+      // are NOT content-hashed, so keep them short (1h) so a deploy shows up
+      // quickly. /_next/static is already immutable by Next.
+      {
+        source: '/api/media/file/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=2592000, stale-while-revalidate=86400' }],
+      },
+      {
+        source: '/assets/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
+      },
+      {
+        source: '/logo/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
+      },
+      {
+        source: '/css/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' }],
+      },
+      {
+        source: '/js/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' }],
       },
     ]
   },

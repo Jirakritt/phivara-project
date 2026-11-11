@@ -111,6 +111,12 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 - โดเมนไม่มี www เคยตอบ 200 ซ้ำกับ www → ต้อง 301 ไป www ที่ nginx (ดู DEPLOY.md หัวข้อ redirect ไม่มี www)
 - หลัง deploy ให้ Request indexing `/th` และ `/en` ใน Search Console แล้วรอ Google ประเมิน canonical ใหม่ (หลายวันถึงสัปดาห์)
 
+## 5C. Performance หน้าแรก (พ.ย. 2569)
+- PageSpeed มือถือ 62 (LCP 36.5s): หน้าแรกโหลดรูปต้นฉบับ ~21 MB (hero PNG 4 ภาพ ~2 MB, รูป membership 1.9 MB ถูก preload) และรูปจาก CMS/`public` ไม่มี cache
+- แก้: รูปหน้าแรกผ่าน Next image optimizer (`/_next/image`, WebP, ย่อตามขนาดจอ) ด้วย `src/lib/imageOpt.ts` (ฝั่ง server) + helper ซ้ำใน `public/js/main.js` (ฝั่ง browser **ต้องแก้ให้ตรงกัน**; ความกว้างต้องอยู่ใน deviceSizes/imageSizes ของ Next: 256/384/640/828/1080/1920 ไม่งั้น 400); hero ภาพแรก render บน server (`fetchPriority=high`) ภาพ 2–4 โหลดหลัง load; รูปอื่น `loading=lazy`; `images.minimumCacheTTL` 30 วัน; **คุณภาพ WebP 3 ระดับ** (`QUALITY` ใน `imageOpt.ts` และ `Q` ใน `main.js`, ต้องอยู่ใน `images.qualities` = [75, 85, 90] ไม่งั้น 400): hero 75, รูปถ่ายแบรนด์ (โปรแกรม/บทความ/สาขา/membership) 85, แพทย์และใบรางวัล 90 (ที่ 75 ใบหน้า/ตัวอักษรเล็กนุ่มลงเมื่อซูม); ตัวย่อรูปไม่ขยายรูปเล็ก (ความคมถูกจำกัดที่ความละเอียดไฟล์ต้นฉบับ: รางวัล 243 px, แพทย์ 500 px)
+- cache header ใน `next.config.mjs`: `/api/media/file/*` 30 วัน, `/assets` + `/logo` 7 วัน, `/css` + `/js` 1 ชม. (ไฟล์ CSS/JS ไม่มี hash ในชื่อ)
+- ยังไม่ได้ทำ: ลด CSS ที่บล็อกการแสดงผล, width/height ของรูป (CLS 0.059 ผ่านอยู่แล้ว), หน้าอื่นนอกจากหน้าแรกยังใช้รูปต้นฉบับ
+
 ## 6. งานค้าง / ข้อควรทำต่อ
 
 **จาก `PROJECT_STATUS.md` (ยังจริงอยู่ ณ ตอนนี้ ยกเว้นที่ระบุ)**

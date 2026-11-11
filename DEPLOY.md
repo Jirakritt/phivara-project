@@ -181,20 +181,18 @@ sudo certbot --nginx -d phivara.site -d www.phivara.site
 #### redirect โดเมนไม่มี www → www (SEO, ต้องทำเพื่อไม่ให้ Google เห็นหน้าซ้ำ 2 โฮสต์)
 
 เว็บใช้ `https://www.phivaraphyathai.com` เป็นหลัก (canonical, sitemap, NEXT_PUBLIC_SERVER_URL) ดังนั้นโฮสต์ไม่มี www ต้อง redirect ถาวร (301) ไป www ไม่ใช่ตอบเนื้อหาเต็ม
-ตัวอย่าง server block (ปรับ path ใบรับรองให้ตรงกับของจริงที่ Certbot สร้าง ดูจาก `sudo nginx -T | grep ssl_certificate`):
+วิธีที่ใช้จริง (ทำเมื่อ 11 พ.ย. 2569, ได้ผลตรวจแล้ว): ใน server block ที่ `listen 443 ssl; # managed by Certbot` ของ `/etc/nginx/sites-available/phivara` เพิ่มใต้บรรทัด `server_name phivaraphyathai.com www.phivaraphyathai.com;` (ไม่แก้ `server_name` หรือบรรทัดที่ Certbot จัดการ):
 
 ```nginx
-# ไม่มี www -> www (ใช้ใบรับรองเดียวกับ block หลักที่ครอบคลุมทั้งสองชื่อ)
-server {
-    listen 443 ssl;
-    server_name phivaraphyathai.com;
-    ssl_certificate /etc/letsencrypt/live/phivaraphyathai.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/phivaraphyathai.com/privkey.pem;
-    return 301 https://www.phivaraphyathai.com$request_uri;
-}
+    # non-www -> www (SEO: one canonical host)
+    if ($host = phivaraphyathai.com) {
+        return 301 https://www.phivaraphyathai.com$request_uri;
+    }
 ```
 
-และใน server block หลัก ให้ `server_name www.phivaraphyathai.com;` เท่านั้น (เอา `phivaraphyathai.com` ออก ไม่งั้น nginx จะเตือนชื่อซ้ำ) แล้ว `sudo nginx -t && sudo systemctl reload nginx` ตรวจด้วย `curl -sI https://phivaraphyathai.com/th` ต้องได้ `301` ไป `https://www.phivaraphyathai.com/th`
+แล้ว `sudo nginx -t && sudo systemctl reload nginx` ตรวจด้วย `curl -sI https://phivaraphyathai.com/th` ต้องได้ `301` ไป `https://www.phivaraphyathai.com/th`
+
+**ข้อควรระวัง:** ห้ามเก็บไฟล์สำรอง nginx ไว้ในโฟลเดอร์ `/etc/nginx/sites-enabled/` (nginx โหลดทุกไฟล์ในนั้น ทำให้ขึ้น `conflicting server name`) ให้เก็บนอกโฟลเดอร์ เช่น `/root/phivara.nginx.bak-YYYYMMDD`
 
 
 เช็คว่าเว็บขึ้นที่ `https://www.phivara.site` แล้ว → Part 2 เสร็จ ตั้งแต่นี้ไปทุก deploy ถัดไปให้ใช้ **Part 2B**

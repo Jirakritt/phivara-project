@@ -90,6 +90,35 @@
      by src/app/(frontend)/page.tsx) instead of a hardcoded list, so staff
      can change the rotation from the CMS. Falls back to the original
      hardcoded set only if that data is ever missing/empty. */
+  /* Image optimization helpers — a copy of src/lib/imageOpt.ts (keep in sync).
+     Routes same-origin CMS uploads and repo assets through Next's optimizer
+     (/_next/image: resized + WebP + cached) instead of shipping the original
+     multi-MB PNGs. Widths must be in Next's allowed list (256, 384, 640, 828,
+     1080, 1920 are). Anything else (empty / absolute URL) passes through. */
+  function isOptimizable(src){
+    return typeof src === 'string' && (src.indexOf('/api/media/file/') === 0 || src.indexOf('/assets/') === 0);
+  }
+  /* Quality tiers (must match QUALITY in src/lib/imageOpt.ts and
+     images.qualities in next.config.mjs): hero 75 (soft backgrounds),
+     photo 85 (brand photos), detail 90 (faces + small text). */
+  const Q = { hero: 75, photo: 85, detail: 90 };
+  function optSrc(src, w, q){
+    return isOptimizable(src) ? '/_next/image?url=' + encodeURIComponent(src) + '&w=' + w + '&q=' + q : src;
+  }
+  function optSrcset(src, widths, q){
+    return isOptimizable(src) ? widths.map(function(w){ return optSrc(src, w, q) + ' ' + w + 'w'; }).join(', ') : '';
+  }
+  /* Returns ' src="…" srcset="…" sizes="…" loading="lazy" decoding="async"' */
+  function imgAttrs(src, widths, sizes, eager, q){
+    if (!src) return ' src=""';
+    const quality = q || Q.photo;
+    const mid = widths[Math.floor(widths.length / 2)];
+    let attrs = ' src="' + optSrc(src, mid, quality) + '"';
+    if (isOptimizable(src)) attrs += ' srcset="' + optSrcset(src, widths, quality) + '" sizes="' + sizes + '"';
+    attrs += eager ? ' decoding="async"' : ' loading="lazy" decoding="async"';
+    return attrs;
+  }
+
   const cmsHeroImages = (window.__PHIVARA_DATA__ && window.__PHIVARA_DATA__.hero && window.__PHIVARA_DATA__.hero.backgroundImages) || [];
   const heroImages = cmsHeroImages.length ? cmsHeroImages : [
     'assets/images/hero/herobg01.png',
@@ -98,16 +127,29 @@
     'assets/images/hero/herobg04.png'
   ];
   const heroBg = document.getElementById('heroBg');
-  heroBg.innerHTML = heroImages
-    .map((image,index) => `<div class="bg-slide${index === 0 ? ' active' : ''}"><img src="${image}" alt="" aria-hidden="true"></div>`)
-    .join('');
+  /* The first slide is already in the server HTML (page.tsx) so the LCP image
+     loads straight away — keep it. Build only the missing first slide when the
+     server didn't render one, and add the rest AFTER the page has loaded so the
+     other (large) backgrounds don't compete with the first for bandwidth. */
+  const HERO_WIDTHS = [640, 828, 1080, 1920];
+  const heroSlideHtml = (image, index) => `<div class="bg-slide${index === 0 ? ' active' : ''}"><img${imgAttrs(image, HERO_WIDTHS, '100vw', index === 0, Q.hero)} alt="" aria-hidden="true"${index === 0 ? ' fetchpriority="high"' : ''}></div>`;
+  if (!heroBg.querySelector('.bg-slide')) heroBg.insertAdjacentHTML('beforeend', heroSlideHtml(heroImages[0], 0));
+  const addRemainingHeroSlides = () => {
+    if (heroBg.querySelectorAll('.bg-slide').length > 1) return;
+    heroBg.insertAdjacentHTML('beforeend', heroImages.slice(1).map((image, i) => heroSlideHtml(image, i + 1)).join(''));
+  };
+  if (document.readyState === 'complete') setTimeout(addRemainingHeroSlides, 1200);
+  else window.addEventListener('load', () => setTimeout(addRemainingHeroSlides, 1200), { once: true });
 
   /* Hero background slideshow — auto-detects however many .bg-slide divs exist */
   (function(){
-    const heroSlides = document.querySelectorAll('#heroBg .bg-slide');
-    if(heroSlides.length > 1 && !reduceMotion){
+    if(heroImages.length > 1 && !reduceMotion){
       let slideIdx = 0;
       setInterval(() => {
+        /* Slides 2..n are added after the page load (see above) — look them up
+           on every tick and just wait if they aren't there yet. */
+        const heroSlides = document.querySelectorAll('#heroBg .bg-slide');
+        if(heroSlides.length < 2) return;
         heroSlides[slideIdx].classList.remove('active');
         slideIdx = (slideIdx + 1) % heroSlides.length;
         heroSlides[slideIdx].classList.add('active');
@@ -288,7 +330,7 @@
     const formattedPrice = Number(price || 0).toLocaleString('en-US');
 
     return `<div class="program-card">
-      <div class="card-visual"><a href="${href}" aria-label="${titleTh}"><img src="${image}" alt="${titleTh}"></a></div>
+      <div class="card-visual"><a href="${href}" aria-label="${titleTh}"><img${imgAttrs(image, [384, 640, 828], '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw')} alt="${titleTh}"></a></div>
       <div class="card-body">
         <div class="program-branch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
@@ -328,7 +370,7 @@
   journalGrid.innerHTML = journalArticles.map((article,index) => {
     const href = `/article/${article.id}`;
     return `<article class="journal-card s-item" style="transition-delay:${index * 0.1}s">
-      <a class="journal-card__media" href="${href}"><img class="journal-card__image" src="${article.image}" alt="${article.alt}"></a>
+      <a class="journal-card__media" href="${href}"><img class="journal-card__image"${imgAttrs(article.image, [384, 640, 828], '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw')} alt="${article.alt}"></a>
       <div class="journal-card__body">
         <span class="journal-card__tag" data-th="${article.categoryTh}" data-en="${article.categoryEn}">${article.categoryTh}</span>
         <h3><a href="${href}" data-th="${article.titleTh}" data-en="${article.titleEn}">${article.titleTh}</a></h3>
@@ -352,7 +394,7 @@
   // #awardTrack is absent when every award is switched off (section hidden).
   if (awardTrack) awardTrack.innerHTML = awards.map(award => `
     <div class="award-card">
-      <div class="photo-wrap"><img class="ph-photo" src="${award.image}" alt="${award.captionEn}" onerror="this.hidden=true"></div>
+      <div class="photo-wrap"><img class="ph-photo"${imgAttrs(award.image, [256, 384, 640], '(max-width: 640px) 90vw, 260px', false, Q.detail)} alt="${award.captionEn}" onerror="this.hidden=true"></div>
       <p class="award-caption" data-th="${award.captionTh}" data-en="${award.captionEn}">${award.captionTh}</p>
     </div>
   `).join('');
@@ -445,7 +487,7 @@
       role="tabpanel" aria-labelledby="flagshipTab${index}" aria-hidden="${index !== 0}" data-slide="${index}">
       <div class="flagship-body">
         <div class="flagship-media">
-          <img src="${branch.image}" alt="${branch.nameEn} — ${branch.titleEn}">
+          <img${imgAttrs(branch.image, [640, 828, 1080], '(max-width: 900px) 100vw, 50vw')} alt="${branch.nameEn} — ${branch.titleEn}">
           <div class="flagship-image-label" aria-hidden="true">
             <span>${String(index + 1).padStart(2, '0')}</span>
             <span>${branch.nameEn}</span>
@@ -580,7 +622,7 @@
       // flat placeholder gradient instead of the real room photo).
       const photoWrapStyle = doctorDisplay.profileBackground ? ` style="background-image:url('${doctorDisplay.profileBackground}')"` : '';
       return `<div class="spec-card">
-        <div class="photo-wrap"${photoWrapStyle}><a href="${profileHref}" aria-label="${profile.nameTh}"><img class="ph-photo" src="${profile.image}" alt="${profile.nameTh}"></a></div>
+        <div class="photo-wrap"${photoWrapStyle}><a href="${profileHref}" aria-label="${profile.nameTh}"><img class="ph-photo"${imgAttrs(profile.image, [256, 384, 640], '(max-width: 640px) 80vw, 300px', false, Q.detail)} alt="${profile.nameTh}"></a></div>
         ${branchLabelAtTop ? branchLabel : ''}
         <h3><a href="${profileHref}" data-th="${profile.nameTh}" data-en="${profile.nameEn}">${profile.nameTh}</a></h3>
         <p class="note" data-th="${profile.noteTh}" data-en="${profile.noteEn}">${profile.noteTh}</p>
