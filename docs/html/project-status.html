@@ -1,0 +1,58 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROJECT_STATUS.md</title><style>
+:root{--bg:#fbfaf8;--fg:#1f1d1a;--mut:#6b665f;--line:#e4dfd7;--card:#fff;--acc:#8a6a2f;--code:#f1ede6}
+@media (prefers-color-scheme:dark){:root{--bg:#161512;--fg:#ece8e1;--mut:#9d978d;--line:#34312b;--card:#1f1d19;--acc:#d3b36a;--code:#26231e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--acc)}h1{font-size:1.7rem;margin:.2em 0 .4em}h2{margin-top:2em;padding-top:.6em;border-top:1px solid var(--line);font-size:1.3rem}h3{font-size:1.1rem}
+code{background:var(--code);padding:.1em .35em;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:var(--mut)}
+.nav{font-size:.9rem;margin-bottom:12px}.mut{color:var(--mut)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+.card:hover{border-color:var(--acc)}.card b{display:block;color:var(--acc)}.card span{font-size:.9rem;color:var(--mut)}
+.tag{font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mut)}
+</style></head><body><div class="wrap"><div class="nav"><a href="../index.html">← Documents Portal</a></div><h1 id="phivara">PHIVARA — สถานะโปรเจกต์</h1>
+<p><em>อัปเดตล่าสุด: 18 สิงหาคม 2569</em></p>
+<p>เอกสารนี้สรุปว่าทำอะไรไปแล้วบ้าง และยังเหลืออะไรที่ต้องทำต่อ — อัปเดตทุกครั้งที่มีงานใหญ่เสร็จ ใช้เป็นจุดเช็คสถานะร่วมกันแทนการไล่ดู chat ย้อนหลัง</p>
+<p>สำหรับขั้นตอน deploy แบบละเอียด (คำสั่ง, troubleshooting) ดูที่ <code>DEPLOY.md</code></p>
+<hr />
+<h2 id="_1">เสร็จแล้ว</h2>
+<h3 id="i18n-deploy-production">ระบบหลายภาษา (i18n) — deploy ขึ้น production แล้ว</h3>
+<ul>
+<li>แปลทุกหน้าเว็บ (ไทย + อังกฤษ) รวมส่วนที่เคย hardcode ไว้ใน <code>main.js</code></li>
+<li>ระบบ fallback locale + strict per-locale filtering (ไม่โชว์เนื้อหาที่ยังไม่แปล)</li>
+<li>แก้หน้า 404 ให้แปลภาษาถูกต้องทั้ง 2 กรณี (<code>[locale]/not-found.tsx</code> และ <code>global-not-found.tsx</code>)</li>
+<li>แก้ bug list/bullet ในบทความจาก CMS ที่เคยหายตอน render บนหน้าเว็บ</li>
+<li>Deploy ครั้งแรกของฟีเจอร์นี้ขึ้น production สำเร็จ (2026-08-18) พร้อมแก้ปัญหา migration bookkeeping ที่ชนกับ schema เดิม</li>
+</ul>
+<h3 id="cms">หน้านโยบายความเป็นส่วนตัว — ทำให้แก้ไขผ่าน CMS ได้</h3>
+<ul>
+<li>ย้ายจาก hardcode ในโค้ด → Payload Global เดียว เป็น rich text ต่อภาษา (พิมพ์/แก้หัวข้อ, ย่อหน้า, list ได้อิสระ)</li>
+<li>Seed เนื้อหาเดิม (ไทย/อังกฤษ) เข้า CMS แล้ว แก้ไขได้จาก <code>/admin/globals/privacy-policy</code></li>
+<li>Deploy ขึ้น production แล้ว</li>
+</ul>
+<h3 id="language-management-ux">หน้าจัดการภาษา (Language Management) — ปรับ UX ใหม่</h3>
+<ul>
+<li>จาก checkbox list ยาวต้อง scroll เยอะ → card grid พร้อม toggle switch, sort อัตโนมัติตามสถานะ, accessibility (aria-label, keyboard)</li>
+<li>Deploy ขึ้น production แล้ว</li>
+</ul>
+<hr />
+<h2 id="_2">ยังไม่เสร็จ / ต้องทำต่อ</h2>
+<ul>
+<li>[ ] เนื้อหาภาษา ja/zh/vi/ar (bio หมอ, บทความ, โปรแกรม, สาขา) ยังไม่มี — เปิด "เผยแพร่บนหน้าเว็บ" จากหน้า Language Management ได้แล้ว แต่ถ้ายังไม่มีเนื้อหาจริง หน้า listing ของภาษานั้นจะว่างเปล่า</li>
+<li>[ ] Privacy Policy ยังมี placeholder ทางกฎหมาย ([ชื่อนิติบุคคล], [ที่อยู่], [DPO contact], [ระยะเวลาเก็บข้อมูล] ฯลฯ) — แก้ไขได้จาก <code>/admin</code> แล้ว รอทีมกฎหมายกรอกข้อมูลจริงก่อนเปิดใช้งานจริงจัง</li>
+<li>[ ] Analytics ยังไม่ผูก — <code>NEXT_PUBLIC_GA4_MEASUREMENT_ID</code> / <code>NEXT_PUBLIC_META_PIXEL_ID</code> ว่างอยู่ใน production <code>.env</code></li>
+<li>[ ] DB backup ยังทำมือก่อน deploy แต่ละครั้งเท่านั้น — ยังไม่มี automated schedule (เช่น cron รายวัน)</li>
+<li>[ ] Media (รูปภาพที่ upload ผ่าน CMS) เก็บบน local disk ของ VPS — ควรมี monitoring พื้นที่ disk และแผนย้ายไป cloud storage (S3-compatible) ในระยะยาว</li>
+<li>[ ] ลบ/เปลี่ยนรหัส test accounts ก่อนเปิดใช้งานจริงเต็มรูปแบบ</li>
+<li>[ ] GitHub Actions auto-deploy ยังไม่ได้ตั้งจริง (มีตัวอย่าง workflow ใน <code>DEPLOY.md</code> Part 3 แล้ว แต่ตั้งใจให้ <code>migrate</code> ยังคงทำด้วยมือเสมอ)</li>
+</ul>
+<hr />
+<h2 id="_3">เอกสารที่เกี่ยวข้อง</h2>
+<ul>
+<li><code>DEPLOY.md</code> — ขั้นตอน deploy แบบละเอียด, troubleshooting ที่เคยเจอจริง, checklist ก่อนใช้งานจริง</li>
+<li><code>phivara-design-html/cms/</code> — mockup หน้า admin ที่รีวิวกันไว้ก่อน implement จริง (เช่น <code>edit-language-settings-v2.html</code>)</li>
+</ul></div></body></html>

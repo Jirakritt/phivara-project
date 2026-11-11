@@ -1,0 +1,393 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DEPLOY.md</title><style>
+:root{--bg:#fbfaf8;--fg:#1f1d1a;--mut:#6b665f;--line:#e4dfd7;--card:#fff;--acc:#8a6a2f;--code:#f1ede6}
+@media (prefers-color-scheme:dark){:root{--bg:#161512;--fg:#ece8e1;--mut:#9d978d;--line:#34312b;--card:#1f1d19;--acc:#d3b36a;--code:#26231e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--acc)}h1{font-size:1.7rem;margin:.2em 0 .4em}h2{margin-top:2em;padding-top:.6em;border-top:1px solid var(--line);font-size:1.3rem}h3{font-size:1.1rem}
+code{background:var(--code);padding:.1em .35em;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:var(--mut)}
+.nav{font-size:.9rem;margin-bottom:12px}.mut{color:var(--mut)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+.card:hover{border-color:var(--acc)}.card b{display:block;color:var(--acc)}.card span{font-size:.9rem;color:var(--mut)}
+.tag{font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mut)}
+</style></head><body><div class="wrap"><div class="nav"><a href="../index.html">← Documents Portal</a></div><h1 id="deploy-guide-phivara-vps-github">Deploy Guide — PHIVARA (VPS ผ่าน GitHub)</h1>
+<p>Payload CMS 3 + Next.js 15, Postgres, media เก็บ local disk, process คุมด้วย pm2 (fork mode). Guide นี้แบ่งเป็น 4 ส่วน: (1) เตรียม VPS ครั้งแรก, (2) deploy ครั้งแรกสุด (DB ว่าง), (2B) <strong>deploy อัปเดตตามปกติ</strong> (DB มีข้อมูลจริงอยู่แล้ว — ใช้บ่อยที่สุด), (3) auto-deploy ผ่าน GitHub Actions (ยังไม่ได้ตั้งจริง, เป็นแผนสำรอง), (4) ปัญหาที่เคยเจอจริงและวิธีแก้</p>
+<p>Runbook นี้ปรับปรุงจากการ deploy จริงรอบ "เพิ่มภาษา" (2026-08-18) ซึ่งเจอปัญหาหลายจุดที่ guide เดิมไม่ครอบคลุม — ทุกจุดอธิบายไว้ใน Part 4</p>
+<hr />
+<h2 id="_1">ภาพรวม</h2>
+<pre><code>git push origin master
+      │
+      ▼ (manual, ผ่าน SSH — ดู Part 2B)
+VPS: backup DB → git pull → npm ci → schema check → migrate → backfill → build → pm2 restart → verify
+</code></pre>
+<p>GitHub Actions auto-deploy (Part 3) ยังไม่ได้ตั้งค่าจริง — ตอนนี้ deploy ทุกครั้งทำแบบ manual ผ่าน SSH เพราะขั้นตอน migrate จำเป็นต้องมีคนตรวจสอบก่อน/หลังทุกครั้ง (ดูเหตุผลใน Part 4)</p>
+<hr />
+<h2 id="part-1-vps">Part 1 — เตรียม VPS (ทำครั้งเดียว)</h2>
+<h3 id="11">1.1 ติดตั้งพื้นฐาน</h3>
+<pre><code class="language-bash"># Node.js 20 LTS
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Postgres
+sudo apt-get install -y postgresql postgresql-contrib
+
+# pm2 (process manager — คุม node process ให้รันตลอด + restart อัตโนมัติ)
+sudo npm install -g pm2
+
+# nginx (reverse proxy)
+sudo apt-get install -y nginx
+</code></pre>
+<h3 id="12-database-user">1.2 สร้าง database + user</h3>
+<pre><code class="language-bash">sudo -u postgres psql
+</code></pre>
+<pre><code class="language-sql">CREATE DATABASE phivara_cms;
+CREATE USER phivara WITH ENCRYPTED PASSWORD 'ตั้งรหัสผ่านที่แข็งแรงเอง';
+GRANT ALL PRIVILEGES ON DATABASE phivara_cms TO phivara;
+\q
+</code></pre>
+<h3 id="13-deploy-key-vps-github">1.3 สร้าง deploy key ให้ VPS ดึงโค้ดจาก GitHub ได้</h3>
+<pre><code class="language-bash">ssh-keygen -t ed25519 -C &quot;phivara-vps-deploy&quot; -f ~/.ssh/phivara_deploy
+cat ~/.ssh/phivara_deploy.pub
+</code></pre>
+<p>เอา public key ไปใส่ใน GitHub repo → <strong>Settings → Deploy keys → Add deploy key</strong> (ไม่ต้องติ๊ก write access)</p>
+<h3 id="14-firewall-5432">1.4 Firewall — เปิดเฉพาะที่จำเป็น, ห้ามเปิด 5432 ออกสู่อินเทอร์เน็ต</h3>
+<pre><code class="language-bash">sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+</code></pre>
+<p><strong>อย่าเปิดพอร์ต 5432 (Postgres) ให้ "Anywhere" เด็ดขาด</strong> — DB มีข้อมูลจริงของลูกค้า (Leads) เปิดตรงๆ ออกอินเทอร์เน็ตเสี่ยงเกินไป ถ้าต้องต่อ DB client จากเครื่องตัวเอง ใช้ <strong>SSH tunnel</strong> แทน (วิธีทำอยู่ใน Part 4)</p>
+<hr />
+<h2 id="part-2-deploy-db">Part 2 — Deploy ครั้งแรกสุด (DB ว่างเปล่า, ไม่เคยมีข้อมูล)</h2>
+<p>ใช้ส่วนนี้เฉพาะตอนตั้ง production ใหม่จริงๆ ที่ DB ยังไม่มีอะไรเลย ถ้า DB มีข้อมูลอยู่แล้ว (กรณีปกติหลังจากนี้) ให้ข้ามไป <strong>Part 2B</strong></p>
+<pre><code class="language-bash"># clone
+git clone git@github.com:Jirakritt/phivara-project.git /var/www/phivara
+cd /var/www/phivara
+
+# .env — สร้างเองบน server, ห้าม commit เข้า git
+nano .env
+</code></pre>
+<p><code>.env</code> บน production ต้องมีครบ 6 ตัวนี้เสมอ (เช็คตรงกับโค้ดที่ import <code>process.env.*</code> จริง — ถ้าเพิ่มตัวแปรใหม่ในอนาคต ให้ <code>grep -rn "process.env\." src/ cms/</code> เทียบด้วย):</p>
+<pre><code>DATABASE_URI=postgresql://phivara:&lt;รหัสผ่านที่ตั้งไว้&gt;@localhost:5432/phivara_cms
+PAYLOAD_SECRET=&lt;generate ใหม่ — อย่าใช้ค่า dev เดิม&gt;
+PAYLOAD_CONFIG_PATH=cms/payload.config.ts
+NEXT_PUBLIC_SERVER_URL=https://www.phivara.site   # โดเมนจริง
+
+# ไม่บังคับ — ใส่ถ้าต้องการให้คนนอก (เช่น native speaker ตรวจคำแปล) preview
+# ภาษาที่ยังไม่เปิด publiclyLive ได้ ผ่านลิงก์ /api/preview?secret=...&amp;redirect=/ja
+# generate: openssl rand -base64 32 — ดู src/app/api/preview/route.ts
+PREVIEW_SECRET=
+
+# Analytics — ไม่บังคับ เว้นว่างไว้ได้ถ้ายังไม่มี ID จริง (เว็บทำงานปกติ แค่ไม่ยิง tracking)
+# - ใส่ GTM (เช่น GTM-XXXXXXX) แล้วระบบโหลดเฉพาะ GTM และ &quot;ไม่สนใจ&quot; GA4 ID ตรงด้านล่าง
+#   (ให้สร้างแท็ก GA4 / Meta Pixel ภายในคอนเทนเนอร์ GTM แทน) — ห้ามวางสคริปต์ gtag/gtm ลงโค้ดเอง
+# - ถ้าไม่ใช้ GTM ให้เว้นช่อง GTM ว่าง แล้วใส่ GA4 (G-XXXXXXXXXX) ตรง
+# - นโยบาย PHIVARA: GTM/GA4 (analytics) โหลดทุกครั้งที่เปิดหน้า ไม่ผูกกับปุ่มยอมรับคุกกี้; ปุ่มยอมรับ/ปฏิเสธคุมเฉพาะคุกกี้การตลาด
+#   (Consent Mode: ad_storage/ad_user_data/ad_personalization = denied จนกว่าจะกดยอมรับ, และ Meta Pixel ที่โหลดตรง)
+#   ค่า NEXT_PUBLIC_* ฝังตอน build:
+#   แก้ .env แล้วต้อง npm run build + pm2 restart phivara --update-env
+# - CSP ใน next.config.mjs อนุญาต googletagmanager.com / *.google-analytics.com /
+#   *.analytics.google.com ไว้แล้ว; Meta Pixel และโดเมนเพิ่มเติมจากแท็กใน GTM
+#   (Google Ads ฯลฯ) ต้องเพิ่มใน CSP เองเมื่อใช้จริง
+NEXT_PUBLIC_GTM_CONTAINER_ID=
+NEXT_PUBLIC_GA4_MEASUREMENT_ID=
+NEXT_PUBLIC_META_PIXEL_ID=
+
+# Member-account transactional email (verify-account / forgot-password —
+# cms/collections/Members.ts). Admin picks the active provider in CMS &gt;
+# Email Settings; only fill in the env vars for whichever provider(s) are
+# actually in use. See cms/email/gmail.ts and cms/email/microsoftGraph.ts
+# for exactly how each is used.
+EMAIL_FROM_ADDRESS=no-reply@phivara.site
+EMAIL_FROM_NAME=PHIVARA
+
+# Gmail (OAuth2 via Gmail API — not SMTP): create an OAuth client (type
+# &quot;Desktop app&quot;) in a Google Cloud project, then generate a refresh token
+# once via https://developers.google.com/oauthplayground authorizing scope
+# https://www.googleapis.com/auth/gmail.send against the sending mailbox.
+GMAIL_CLIENT_ID=
+GMAIL_CLIENT_SECRET=
+GMAIL_REFRESH_TOKEN=
+GMAIL_SENDER_EMAIL=
+
+# Microsoft Graph (app-only / client-credentials — Azure AD App
+# Registration with the *application* permission Mail.Send, admin-consented,
+# scoped to the sending mailbox).
+MSGRAPH_TENANT_ID=
+MSGRAPH_CLIENT_ID=
+MSGRAPH_CLIENT_SECRET=
+MSGRAPH_SENDER_UPN=
+</code></pre>
+<p>generate secret ใหม่: <code>openssl rand -base64 32</code></p>
+<p><strong>สำคัญ</strong>: <code>NEXT_PUBLIC_*</code> ทุกตัวต้องมีค่าอยู่ <strong>ก่อน</strong> รัน <code>npm run build</code> เท่านั้น เพราะถูกฝังเข้า client bundle ตอน build — เพิ่มค่าเข้า <code>.env</code> หลัง build ไปแล้วจะไม่มีผลจนกว่าจะ build ใหม่</p>
+<pre><code class="language-bash">npm ci
+npm run build
+npm run migrate      # สร้าง schema จริงใน production DB จาก cms/migrations (DB ว่าง รันได้ตรงๆ ไม่มีปัญหา)
+npm run seed         # ถ้าต้องการ seed ข้อมูลตั้งต้น — ข้ามได้ถ้าจะกรอกเองผ่าน admin
+
+pm2 start npm --name phivara -- start
+pm2 save
+pm2 startup          # ทำตามคำสั่งที่มันบอกให้รัน เพื่อให้ pm2 auto-start ตอน server reboot
+</code></pre>
+<h3 id="nginx-reverse-proxy-ssl">nginx reverse proxy + SSL</h3>
+<pre><code class="language-nginx"># /etc/nginx/sites-available/phivara
+server {
+    listen 80;
+    server_name phivara.site www.phivara.site;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+</code></pre>
+<pre><code class="language-bash">sudo ln -s /etc/nginx/sites-available/phivara /etc/nginx/sites-enabled/
+sudo nginx -t &amp;&amp; sudo systemctl reload nginx
+
+sudo apt-get install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d phivara.site -d www.phivara.site
+</code></pre>
+<h4 id="redirect-www-www-seo-google-2">redirect โดเมนไม่มี www → www (SEO, ต้องทำเพื่อไม่ให้ Google เห็นหน้าซ้ำ 2 โฮสต์)</h4>
+<p>เว็บใช้ <code>https://www.phivaraphyathai.com</code> เป็นหลัก (canonical, sitemap, NEXT_PUBLIC_SERVER_URL) ดังนั้นโฮสต์ไม่มี www ต้อง redirect ถาวร (301) ไป www ไม่ใช่ตอบเนื้อหาเต็ม
+วิธีที่ใช้จริง (ทำเมื่อ 11 พ.ย. 2569, ได้ผลตรวจแล้ว): ใน server block ที่ <code>listen 443 ssl; # managed by Certbot</code> ของ <code>/etc/nginx/sites-available/phivara</code> เพิ่มใต้บรรทัด <code>server_name phivaraphyathai.com www.phivaraphyathai.com;</code> (ไม่แก้ <code>server_name</code> หรือบรรทัดที่ Certbot จัดการ):</p>
+<pre><code class="language-nginx">    # non-www -&gt; www (SEO: one canonical host)
+    if ($host = phivaraphyathai.com) {
+        return 301 https://www.phivaraphyathai.com$request_uri;
+    }
+</code></pre>
+<p>แล้ว <code>sudo nginx -t &amp;&amp; sudo systemctl reload nginx</code> ตรวจด้วย <code>curl -sI https://phivaraphyathai.com/th</code> ต้องได้ <code>301</code> ไป <code>https://www.phivaraphyathai.com/th</code></p>
+<p><strong>ข้อควรระวัง:</strong> ห้ามเก็บไฟล์สำรอง nginx ไว้ในโฟลเดอร์ <code>/etc/nginx/sites-enabled/</code> (nginx โหลดทุกไฟล์ในนั้น ทำให้ขึ้น <code>conflicting server name</code>) ให้เก็บนอกโฟลเดอร์ เช่น <code>/root/phivara.nginx.bak-YYYYMMDD</code></p>
+<p>เช็คว่าเว็บขึ้นที่ <code>https://www.phivara.site</code> แล้ว → Part 2 เสร็จ ตั้งแต่นี้ไปทุก deploy ถัดไปให้ใช้ <strong>Part 2B</strong></p>
+<hr />
+<h2 id="part-2b-deploy-db">Part 2B — Deploy อัปเดตตามปกติ (DB มีข้อมูลจริงอยู่แล้ว) ★ ใช้บ่อยที่สุด</h2>
+<p>ทำตามลำดับนี้ทุกครั้ง อย่าข้ามขั้นตอนไหน โดยเฉพาะ backup กับ schema check — ทั้งสองอย่างนี้คือสิ่งที่ช่วยจับปัญหาได้ก่อนพังจริง</p>
+<h3 id="1-local-push-git">ขั้นที่ 1 — Local: ให้แน่ใจว่าโค้ด push ขึ้น git ครบแล้ว</h3>
+<pre><code class="language-bash">npx tsc --noEmit        # ต้องไม่มี output ใดๆ (เงียบ = ผ่าน)
+git status               # ต้อง clean หรือมีแต่สิ่งที่ตั้งใจจะ commit จริงๆ
+</code></pre>
+<p>เช็ค <code>git status</code> ให้ดี — ไฟล์ที่ควรอยู่ใน commit เสมอ: <code>cms/migrations/*</code> (ทุกไฟล์ที่ generate ใหม่), <code>cms/scripts/*</code> (backfill scripts), ไฟล์ src/cms ที่แก้จริง ไฟล์ที่<strong>ไม่ควร</strong>หลุดเข้า commit: <code>scratch_*</code>, ไฟล์ทดสอบชั่วคราวอื่นๆ, <code>tsconfig.tsbuildinfo</code> (ถ้าเห็นว่า track อยู่ ให้ <code>git rm --cached tsconfig.tsbuildinfo</code> ครั้งเดียวพอ เพราะอยู่ใน <code>.gitignore</code> แล้ว)</p>
+<pre><code class="language-bash">git add -A
+git commit -m &quot;...&quot;
+git push origin master
+</code></pre>
+<h3 id="2-production">ขั้นที่ 2 — Production: เตรียมตัวก่อนแตะอะไร</h3>
+<pre><code class="language-bash">cd /var/www/phivara
+
+# tag HEAD ปัจจุบันไว้เป็นจุด rollback ทุกครั้งก่อน deploy
+git log --oneline -3
+git tag pre-deploy-$(date +%Y%m%d-%H%M)
+
+# เช็ค env vars ครบไหม (ดูรายการใน Part 2)
+cat .env
+
+# backup DB — ทำทุกครั้ง ไม่มีข้อยกเว้น
+pg_dump &quot;$DATABASE_URI&quot; -F c -f phivara_prod_backup_$(date +%Y%m%d_%H%M%S).dump
+pg_restore --list phivara_prod_backup_*.dump | head -20   # เช็คว่าไฟล์อ่านได้จริง ไม่ corrupt
+</code></pre>
+<p>แนะนำ copy ไฟล์ backup ออกจาก server ไปเก็บที่อื่นด้วย (download ลงเครื่อง หรือ upload cloud storage) อย่าพึ่ง disk เดียวกับ server</p>
+<h3 id="3-diff-pull">ขั้นที่ 3 — ดู diff ก่อน pull จริง</h3>
+<pre><code class="language-bash">git fetch origin
+git diff HEAD..origin/master --stat
+</code></pre>
+<p>เช็คว่ารายชื่อไฟล์ตรงกับที่คาดไว้ ไม่มีอะไรแปลกปลอม โดยเฉพาะถ้า diff มี <code>cms/migrations/*.ts</code> ใหม่ ให้เปิดอ่านเนื้อหาไฟล์นั้นก่อน (ทาง local หรือ <code>cat</code> บน server หลัง pull) ว่าเป็น <code>ALTER TABLE ... ADD COLUMN</code> แบบ additive เท่านั้น ไม่มี <code>DROP</code>/เปลี่ยน type ข้อมูลเดิม — ถ้าเจอ <code>DROP</code>/<code>ALTER ... TYPE</code> ให้หยุดและตรวจสอบให้ละเอียดก่อน ห้ามรันต่อ</p>
+<blockquote>
+<p><strong>ข้อยกเว้นที่ตรวจสอบแล้ว (2026-08-24)</strong>: <code>cms/migrations/20260824_162948.ts</code> มีทั้ง <code>DROP TABLE</code>/<code>ALTER ... TYPE</code>/<code>DROP TYPE</code> จริง — เป็น migration ที่ generate จาก <code>payload migrate:create</code> เพื่อรวม schema drift ที่ dev-mode auto-push เคยดันไว้ (ตาราง <code>member_privileges_cards_tiers</code> เป็นชื่อตารางที่เดาผิดตอนแรก ตอนนี้ทดแทนด้วย <code>member_privileges_rels</code> ที่ถูกต้อง) ตรวจสอบเทียบกับ live schema แล้วว่าปลอดภัย ทุก statement ถูกแก้ให้มี <code>IF EXISTS</code>/<code>IF NOT EXISTS</code>/exception guard ครบแล้ว รันได้ตามปกติ ไม่ต้องหยุด — แต่ยังแนะนำให้ backup ก่อนตามขั้นตอนปกติเสมอ</p>
+</blockquote>
+<h3 id="4-pull-install">ขั้นที่ 4 — Pull + install</h3>
+<pre><code class="language-bash">git pull origin master
+npm ci
+</code></pre>
+<h3 id="5-schema-migrate">ขั้นที่ 5 — เช็ค schema <em>ก่อน</em> migrate (สำคัญมาก — อย่าข้าม)</h3>
+<p>ถ้า migration ใหม่แก้ตารางไหน ให้ดูโครงสร้างตารางนั้นก่อน เก็บผลไว้เทียบหลัง migrate ตัวอย่าง (ปรับชื่อ table/column ตาม migration จริงที่จะรัน):</p>
+<pre><code class="language-bash">psql &quot;$DATABASE_URI&quot; -c &quot;\d ชื่อตารางที่จะถูกแก้&quot;
+</code></pre>
+<h3 id="6-migrate">ขั้นที่ 6 — Migrate</h3>
+<pre><code class="language-bash">npm run migrate
+</code></pre>
+<p><strong>ถ้าเจอ error ประเภท <code>relation "..." already exists</code></strong> — อย่าตกใจและอย่ารันซ้ำทันที นี่คือปัญหาที่เจอบ่อยเวลา DB เคยถูกสร้าง schema ผ่าน Payload dev-mode push มาก่อน (ทำให้ตารางมีอยู่จริงแล้วแต่ <code>payload_migrations</code> ไม่มี record) วิธีวินิจฉัยและแก้ไขแบบละเอียดอยู่ใน <strong>Part 4 → "Migration ชนกับ schema ที่มีอยู่แล้ว"</strong></p>
+<h3 id="7-schema-migrate">ขั้นที่ 7 — เช็ค schema <em>หลัง</em> migrate</h3>
+<p>รันคำสั่งเดิมจากขั้นที่ 5 อีกครั้ง เทียบว่าตรงกับที่ migration ควรสร้าง/แก้จริง (column ใหม่ครบ, index/constraint ครบ)</p>
+<h3 id="8-backfill-script">ขั้นที่ 8 — รัน backfill script (ถ้ามี)</h3>
+<p>ถ้า migration รอบนี้มาพร้อม backfill script (เช่น field ใหม่ที่ต้อง populate ค่าจาก field เก่า) รันตอนนี้:</p>
+<pre><code class="language-bash">npx tsx cms/scripts/ชื่อสคริปต์.ts
+</code></pre>
+<p>เช็คจำนวน record ที่ update ให้ตรงกับจำนวนจริงใน DB (<code>SELECT count(*) FROM ตาราง;</code>)</p>
+<p><strong>สำหรับ deploy รอบ membership feature (2026-08-24)</strong> — migration เองไม่ได้ seed ข้อมูล tier/privilege ให้ (ตั้งใจแยกออก เพื่อไม่ทับข้อมูลที่แก้ผ่าน CMS ไปแล้ว) ถ้านี่เป็นการ deploy feature นี้ครั้งแรกบน production (ยังไม่เคยมี tier ไหนเลย) ให้รันเพิ่ม:</p>
+<pre><code class="language-bash">npm run seed:membership-tiers    # สร้าง Silver/Gold/Diamond ถ้ายังไม่มี — safe ที่จะรันซ้ำ (skip อัตโนมัติถ้ามีอยู่แล้ว)
+npm run seed:member-privileges   # ใส่การ์ดสิทธิพิเศษ 6 ใบตั้งต้น
+</code></pre>
+<p>ถ้า production เคยมี tier/privilege data อยู่แล้ว (เช่น deploy ซ้ำ หรือกรอกผ่าน CMS ไปแล้วจริง) <strong>ข้ามสองคำสั่งนี้ไปได้เลย</strong> — <code>seed:member-privileges</code> เป็นการ overwrite ทั้งก้อน ไม่ใช่ merge จะทับข้อมูลที่แก้ไว้ใน CMS กลับไปเป็นค่าเริ่มต้น</p>
+<p><code>cms/seed/debugFooter.ts</code> และ <code>cms/seed/fixFooterThaiText.ts</code> เป็น script วินิจฉัย/ซ่อมเฉพาะกรณีที่เจอใน local dev DB วันนี้ (ข้อความ footer ภาษาไทยหายจาก dev-mode auto-push) — ไม่จำเป็นต้องรันบน production เว้นแต่เจออาการเดียวกันจริง (footer แสดงข้อความว่างเฉพาะภาษาไทย)</p>
+<h3 id="9-build-restart">ขั้นที่ 9 — Build + restart</h3>
+<pre><code class="language-bash">npm run build              # ต้องจบด้วย &quot;Compiled successfully&quot; ไม่มี error สีแดง
+pm2 list                   # เช็คชื่อ process (ปกติคือ &quot;phivara&quot;)
+pm2 restart phivara
+pm2 logs phivara --lines 50 --nostream    # เช็ค log ทันทีหลัง restart ว่า &quot;Ready in ...ms&quot; ไม่มี error ตอน start
+pm2 status
+</code></pre>
+<h3 id="10-verify">ขั้นที่ 10 — Verify</h3>
+<pre><code class="language-bash">curl -I http://localhost:3000          # เช็คในเครื่อง server เอง
+curl -I https://www.phivara.site       # เช็คผ่าน nginx + โดเมนจริง
+</code></pre>
+<p>ทั้งสองควรได้ status ที่คาดไว้ (เช่น <code>307</code> redirect ไป <code>/th</code> ถ้าเข้า path ที่ไม่มี locale prefix) แล้วเปิดเบราว์เซอร์จริงเช็คหน้าเว็บสำคัญๆ อย่างน้อย: หน้าแรกในภาษาหลัก, หน้าที่เพิ่งแก้/เพิ่ม feature รอบนี้, หน้า 404 ในภาษาที่ไม่ใช่ th (<code>/en/xxx-ไม่มีจริง</code> และ URL ที่ผิด pattern ไปเลยเช่น <code>/en/xyz/xxx</code> — สองแบบนี้ใช้ไฟล์ 404 คนละตัวกัน ต้องเช็คทั้งคู่ ดู Part 4), เปิด VIP modal สักครั้ง</p>
+<p>ปล่อย log ไว้ดูสัก 1-2 นาทีหลัง restart เผื่อมี error ใหม่ๆ โผล่มา (แยกจาก noise ปกติแบบ <code>Failed to find Server Action</code> ที่เกิดจาก browser tab เก่าที่ค้าง bundle เดิมอยู่ — อันนั้นหายเองเมื่อ user refresh)</p>
+<hr />
+<h2 id="part-3-auto-deploy-github-actions">Part 3 — ตั้ง auto-deploy ผ่าน GitHub Actions (แผนสำรอง, ยังไม่ได้ตั้งจริง)</h2>
+<p>⚠️ <strong>คำเตือนก่อนตั้งจริง</strong>: workflow ตัวอย่างด้านล่างรัน <code>npm run migrate</code> อัตโนมัติทุกครั้งที่ push โดยไม่มีคนตรวจสอบก่อน — จากประสบการณ์ deploy จริงที่เจอ (Part 4) migrate อาจ fail แบบที่ต้อง diagnose ด้วยมือ (schema ชนกับของเดิม) การ automate ส่วนนี้เต็มรูปแบบมีความเสี่ยง <strong>แนะนำให้ auto-deploy แค่ build+restart อัตโนมัติ ส่วน migrate ให้ยังคงรันด้วยมือผ่าน Part 2B เสมอ</strong> จนกว่าจะมี staging environment แยกไว้ซ้อม migration ก่อนทุกครั้ง</p>
+<h3 id="31-deploy-user-action-ssh-deploy-key-13">3.1 สร้าง deploy user ให้ Action ใช้ SSH เข้ามา (แยกจาก deploy key ข้อ 1.3)</h3>
+<pre><code class="language-bash">ssh-keygen -t ed25519 -C &quot;github-actions-phivara&quot; -f ~/.ssh/gh_actions_deploy
+cat ~/.ssh/gh_actions_deploy.pub &gt;&gt; ~/.ssh/authorized_keys
+cat ~/.ssh/gh_actions_deploy          # เก็บ private key นี้ไว้ — เอาไปใส่ GitHub secret ข้อ 3.2
+</code></pre>
+<h3 id="32-github-secrets">3.2 ใส่ GitHub Secrets</h3>
+<p>Repo → <strong>Settings → Secrets and variables → Actions</strong> → New repository secret:</p>
+<table>
+<thead>
+<tr>
+<th>Secret name</th>
+<th>ค่า</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SSH_HOST</code></td>
+<td>IP หรือโดเมนของ VPS</td>
+</tr>
+<tr>
+<td><code>SSH_USER</code></td>
+<td>user ที่ใช้ SSH (เช่น <code>deploy</code> หรือ <code>root</code>)</td>
+</tr>
+<tr>
+<td><code>SSH_PRIVATE_KEY</code></td>
+<td>เนื้อหาทั้งหมดของ <code>~/.ssh/gh_actions_deploy</code> (private key จากข้อ 3.1)</td>
+</tr>
+<tr>
+<td><code>APP_PATH</code></td>
+<td><code>/var/www/phivara</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-workflow-auto-migrate">3.3 สร้างไฟล์ workflow (เวอร์ชันปลอดภัย — ไม่ auto-migrate)</h3>
+<p><code>.github/workflows/deploy.yml</code>:</p>
+<pre><code class="language-yaml">name: Deploy to VPS
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy (build + restart only — migrate ทำด้วยมือผ่าน Part 2B)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.APP_PATH }}
+            git pull origin master
+            npm ci
+            npm run build
+            pm2 restart phivara
+</code></pre>
+<p>ถ้า commit รอบไหนมี migration ใหม่ ให้ SSH เข้าไปรัน <code>npm run migrate</code> (พร้อม backup + schema check ตาม Part 2B) <strong>ด้วยมือก่อน</strong> ค่อย push เพื่อให้ Action build+restart ตาม</p>
+<hr />
+<h2 id="part-4">Part 4 — ปัญหาที่เคยเจอจริง และวิธีแก้</h2>
+<h3 id="41-migration-schema-relation-already-exists">4.1 Migration ชนกับ schema ที่มีอยู่แล้ว (<code>relation "..." already exists</code>)</h3>
+<p><strong>อาการ</strong>: <code>npm run migrate</code> ขึ้น prompt เตือนก่อนว่า <em>"It looks like you've run Payload in dev mode, meaning you've dynamically pushed changes to your database. If you'd like to run migrations, data loss will occur. Would you like to proceed?"</em> แล้วพอตอบ yes ก็ error ว่า <code>relation "ชื่อตาราง" already exists</code></p>
+<p><strong>สาเหตุ</strong>: DB นี้เคยถูกสร้าง/แก้ schema ผ่าน Payload dev-mode auto-push (ตอนรัน <code>npm run dev</code> มันจะ sync schema อัตโนมัติ) มาก่อนที่จะมีการใช้ migration file อย่างเป็นทางการ ทำให้ตาราง/column นั้นมีอยู่จริงใน DB แล้ว แต่ตาราง <code>payload_migrations</code> (ตัวบันทึกว่า migration ไหนรันไปแล้ว) ไม่มี record ของ migration file ที่ตรงกับมัน — Payload จะมี row พิเศษชื่อ <code>dev</code> (column <code>batch = -1</code>) บันทึกไว้ว่าช่วงเวลานั้นเคยมีการ push เกิดขึ้น แต่ไม่ได้ mark migration file ที่ชื่อตรงกันว่า applied</p>
+<p><strong>วิธีวินิจฉัย (ห้ามเดา ต้องเช็คจริงทุกครั้ง)</strong>:</p>
+<pre><code class="language-bash"># 1. ดู migration ที่บันทึกว่า applied แล้ว
+psql &quot;$DATABASE_URI&quot; -c &quot;SELECT * FROM payload_migrations ORDER BY id;&quot;
+
+# 2. เช็คว่าตาราง/ข้อมูลที่ error พูดถึง ยังอยู่ครบ ไม่ได้หายไป
+psql &quot;$DATABASE_URI&quot; -c &quot;SELECT count(*) FROM ชื่อตารางที่ error;&quot;
+
+# 3. เช็คว่าเว็บเดิม (ที่ยังไม่ restart) ยังตอบสนองปกติ ไม่กระทบ
+curl -I http://localhost:3000
+
+# 4. เปิดไฟล์ migration ที่ fail (เช่น cms/migrations/xxxxx.ts) อ่าน up() ทั้งหมด
+#    แล้วเทียบทีละ column/table กับโครงสร้างจริงใน DB
+psql &quot;$DATABASE_URI&quot; -c &quot;\d ชื่อตารางในไฟล์ migration&quot;
+</code></pre>
+<p>ถ้าโครงสร้างตรงกัน 100% (ทุก column, index, constraint) และมีข้อมูลอยู่ครบ (ไม่ใช่ตารางว่างเปล่าผิดปกติ) — <strong>แปลว่าไม่มีข้อมูลสูญหาย เป็นแค่ bookkeeping ไม่ตรงกัน</strong> วิธีแก้คือ mark migration นั้นว่า applied โดยไม่ต้องรัน SQL ซ้ำ:</p>
+<pre><code class="language-bash">psql &quot;$DATABASE_URI&quot; -c &quot;INSERT INTO payload_migrations (name, batch, updated_at, created_at) VALUES ('ชื่อ_migration_ที่_fail', &lt;batch_ถัดไปจากที่มีอยู่&gt;, now(), now());&quot;
+</code></pre>
+<p>แล้วรัน <code>npm run migrate</code> ใหม่ — รอบนี้จะ skip migration ที่ mark ไปแล้ว และรันแค่ migration ใหม่จริงๆ ที่ยังไม่เคย apply</p>
+<p><strong>ถ้าโครงสร้างไม่ตรงกัน</strong> (มี column ขาด/เกิน จากที่ migration ควรสร้าง) — <strong>ห้าม</strong> mark เป็น applied เด็ดขาด ต้อง restore จาก backup แล้วพิจารณาเขียน migration แก้ไขเฉพาะส่วนต่างที่ขาดแทน</p>
+<h3 id="42-vim-swap-file-env">4.2 vim swap file ค้าง ทำให้แก้ <code>.env</code> ไม่ได้</h3>
+<p><strong>อาการ</strong>: เปิด <code>vi .env</code> แล้วเจอ <code>E325: ATTENTION — Found a swap file</code></p>
+<p><strong>สาเหตุที่พบจริง</strong>: เปิด <code>vi .env</code> แล้วกด Ctrl+Z (suspend) แทนการ <code>:wq</code>/<code>:q</code> ออกให้ถูกวิธี หลายรอบติดกัน ทำให้มี process ค้างสถานะ <code>Tl</code> (stopped) หลายตัวพร้อมกัน แต่ละตัวสร้าง swap file คนละนามสกุล (<code>.swp</code>, <code>.swo</code>, <code>.swn</code>, ...)</p>
+<p><strong>วิธีแก้</strong>:</p>
+<pre><code class="language-bash"># หา process vi ที่ค้างอยู่ทั้งหมด
+ps aux | grep '[v]i .env'
+
+# เช็คให้ชัวร์ว่า status เป็น T (stopped) ไม่ใช่ R (running) ก่อน kill
+kill -9 &lt;PID ทั้งหมดที่เจอ&gt;
+
+# ลบ swap file ที่เหลือค้าง
+rm -f /var/www/phivara/.env.sw?
+
+# ดูค่าแบบปลอดภัย ไม่สร้าง swap file ซ้ำ
+cat .env
+</code></pre>
+<p>ถ้าแค่จะ "ดู" ค่าใน <code>.env</code> ใช้ <code>cat</code>/<code>less</code> แทน <code>vi</code> ไปเลยจะปลอดภัยกว่า ไม่มีความเสี่ยงเรื่อง swap file ตั้งแต่แรก</p>
+<h3 id="43-db-client-5432">4.3 ต่อ DB client จากเครื่องตัวเองไม่ได้ / ไม่อยากเปิดพอร์ต 5432 ออกอินเทอร์เน็ต</h3>
+<p><strong>อย่าเปิด <code>ufw allow 5432</code> แบบ "Anywhere"</strong> เพราะ DB มีข้อมูลจริง ให้ใช้ SSH tunnel แทน:</p>
+<pre><code class="language-bash"># รันบนเครื่อง local (ไม่ใช่ server)
+ssh -L 5432:localhost:5432 root@&lt;IP_SERVER&gt;
+</code></pre>
+<p>เปิด terminal นี้ค้างไว้ตลอดเวลาที่ใช้ DB client แล้วตั้งค่าใน DB client:
+- Host: <code>localhost</code>
+- Port: <code>5432</code> (ใช้พอร์ตอื่นฝั่ง local ได้ถ้าเครื่องมี Postgres local ชนกันอยู่แล้ว เช่น <code>ssh -L 5433:localhost:5432 ...</code>)
+- Username/Password/Database เหมือนเดิม</p>
+<p>สะดวกขึ้นได้ด้วยการเพิ่ม entry ใน <code>~/.ssh/config</code>:</p>
+<pre><code>Host phivara-tunnel
+    HostName &lt;IP_SERVER&gt;
+    User root
+    LocalForward 5432 localhost:5432
+</code></pre>
+<p>แล้วพิมพ์แค่ <code>ssh phivara-tunnel</code></p>
+<p>ถ้าเคยเปิด <code>ufw allow from &lt;IP&gt; to any port 5432</code> ไว้ชั่วคราวตอนแก้ปัญหาเฉพาะหน้า อย่าลืมปิดทีหลัง:</p>
+<pre><code class="language-bash">sudo ufw status numbered
+sudo ufw delete &lt;เลข rule&gt;
+</code></pre>
+<h3 id="44-404-2-verify">4.4 หน้า 404 มี 2 ไฟล์คนละตัว ต้องเช็คทั้งคู่เวลา verify</h3>
+<ul>
+<li><code>src/app/[locale]/not-found.tsx</code> — ใช้เมื่อ URL ตรงกับ route ที่มีจริง แต่ข้อมูลไม่มี (เช่น <code>/en/doctor/สลัก-ไม่มีจริง</code> — route <code>[locale]/(public)/doctor/[slug]</code> match แต่โค้ดเรียก <code>notFound()</code> เอง)</li>
+<li><code>src/app/global-not-found.tsx</code> — ใช้เมื่อ URL ไม่ตรงกับ route pattern ใดๆ เลย (เช่น <code>/en/xyz/xxx</code> ที่ไม่มี directory <code>xyz</code> อยู่จริง)</li>
+</ul>
+<p>ทั้งสองไฟล์อ่าน locale จาก header <code>x-phivara-locale</code> ที่ <code>src/middleware.ts</code> ตั้งไว้ (เช็คจาก segment แรกของ path ว่าเป็น locale code ที่ถูกต้องไหม) — ถ้าแก้ไฟล์ใดไฟล์หนึ่งเรื่อง locale แล้วลืมอีกไฟล์ จะเจออาการ "404 บาง pattern แปลถูก บาง pattern ไม่แปล" แบบที่เคยเกิดขึ้นจริง ต้องทดสอบทั้ง 2 รูปแบบ URL คู่กันเสมอ</p>
+<h3 id="45-tsc">4.5 <code>tsc</code> ใช้ไม่ได้ตรงๆ</h3>
+<p><code>npx tsc --noEmit</code> ไม่ใช่ <code>tsc --noEmit</code> เฉยๆ — <code>typescript</code> เป็นแค่ devDependency ในโปรเจกต์ ไม่ได้ติดตั้งแบบ global</p>
+<h3 id="46-tsconfigtsbuildinfo-git-status-gitignore">4.6 <code>tsconfig.tsbuildinfo</code> โผล่ใน <code>git status</code> ทั้งที่อยู่ใน <code>.gitignore</code></h3>
+<p>เกิดจากไฟล์นี้เคย commit เข้า git ไปแล้วก่อนที่จะเพิ่ม <code>.gitignore</code> rule — <code>.gitignore</code> กัน "ไฟล์ใหม่" เท่านั้น ไม่ทำให้ไฟล์ที่ track อยู่แล้วเลิก track อัตโนมัติ แก้ครั้งเดียวจบด้วย <code>git rm --cached tsconfig.tsbuildinfo</code> แล้ว commit</p>
+<hr />
+<h2 id="_2">เช็คก่อนใช้งานจริง</h2>
+<ul>
+<li>[ ] <code>.env</code> บน VPS ใช้ค่า production จริงทั้งหมด (ไม่ใช่ localhost / dev secret) — เช็คครบ 6 ตัวแปรตาม Part 2</li>
+<li>[ ] <code>cms/migrations/</code> ทุกไฟล์ที่ generate ในเครื่อง dev ถูก commit เข้า git แล้วก่อน deploy ทุกครั้ง (<code>git status</code> เช็คอย่าให้มี migration ตกหล่น)</li>
+<li>[ ] Firewall ไม่เปิดพอร์ต 5432 ให้ "Anywhere" — ใช้ SSH tunnel เท่านั้น (Part 4.3)</li>
+<li>[ ] VPS มี disk พอสำหรับรูปที่ upload ผ่าน CMS ไปเรื่อยๆ (<code>media/</code> เก็บ local disk) — ควรมี monitoring พื้นที่ disk และแผนย้ายไป cloud storage (S3-compatible) ในอนาคต</li>
+<li>[ ] ลบ/เปลี่ยนรหัส test accounts ก่อนเปิดใช้งานจริง</li>
+<li>[ ] ตั้ง DB backup อัตโนมัติ (เช่น <code>pg_dump</code> ผ่าน cron รายวัน) — ตอนนี้ backup ยังทำมือก่อน deploy แต่ละครั้งเท่านั้น ไม่มี schedule ประจำ</li>
+<li>[ ] เนื้อหา CMS ภาษา ja/zh/vi/ar (bio หมอ, บทความ, โปรแกรม, สาขา) ยังไม่ได้กรอก — ก่อนเปิดภาษาเหล่านี้ publiclyLive ควรมีเนื้อหาจริงก่อน ไม่งั้นหน้า listing จะว่างเปล่า (ตาม strict per-locale filtering)</li>
+<li>[ ] หน้า <code>/privacy-policy</code> ยังมี placeholder ทางกฎหมายที่ไม่ได้กรอกจริง ([ชื่อนิติบุคคล], [ที่อยู่], [DPO contact] ฯลฯ) — ควรให้ที่ปรึกษากฎหมายตรวจก่อนเก็บข้อมูล lead จริงจังต่อเนื่อง</li>
+<li>[ ] <code>NEXT_PUBLIC_GTM_CONTAINER_ID</code> / <code>NEXT_PUBLIC_GA4_MEASUREMENT_ID</code> / <code>NEXT_PUBLIC_META_PIXEL_ID</code> ยังว่าง — เติมถ้าต้องการเก็บ analytics จริง (ต้องเติมก่อน build เสมอ; ถ้าตั้ง GTM จะใช้ GTM อย่างเดียว)</li>
+</ul>
+<hr />
+<h2 id="github-actions">ทางเลือกอื่น (ถ้าไม่อยากใช้ GitHub Actions)</h2>
+<p>ถ้าไม่อยากให้ GitHub มี SSH key เข้า server ได้ ใช้วิธีนี้แทนได้:
+- ตั้ง cron บน VPS ให้ <code>git pull</code> เองทุก N นาที แล้ว build ถ้ามีการเปลี่ยนแปลง (ไม่รวม migrate — ยังควรทำด้วยมือ) หรือ
+- ใช้ GitHub webhook ยิงมาที่ endpoint เล็กๆ บน VPS (เช่น <code>webhook</code> package) แทนที่จะให้ Action SSH เข้ามา</p>
+<p>ข้อดีคือ private key ไม่ต้องออกจาก VPS เลย แต่ setup ซับซ้อนกว่า sample ข้างบนเล็กน้อย</p></div></body></html>

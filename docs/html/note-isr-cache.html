@@ -1,0 +1,92 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ISR และการ cache หน้าเว็บ (Next.js)</title><style>
+:root{--bg:#fbfaf8;--fg:#1f1d1a;--mut:#6b665f;--line:#e4dfd7;--card:#fff;--acc:#8a6a2f;--code:#f1ede6}
+@media (prefers-color-scheme:dark){:root{--bg:#161512;--fg:#ece8e1;--mut:#9d978d;--line:#34312b;--card:#1f1d19;--acc:#d3b36a;--code:#26231e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--acc)}h1{font-size:1.7rem;margin:.2em 0 .4em}h2{margin-top:2em;padding-top:.6em;border-top:1px solid var(--line);font-size:1.3rem}h3{font-size:1.1rem}
+code{background:var(--code);padding:.1em .35em;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:var(--mut)}
+.nav{font-size:.9rem;margin-bottom:12px}.mut{color:var(--mut)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+.card:hover{border-color:var(--acc)}.card b{display:block;color:var(--acc)}.card span{font-size:.9rem;color:var(--mut)}
+.tag{font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mut)}
+</style></head><body><div class="wrap"><div class="nav"><a href="../index.html">← Documents Portal</a></div><h1 id="isr-cache-nextjs">ISR และการ cache หน้าเว็บ (Next.js)</h1>
+<p><em>เขียนเมื่อ พ.ย. 2569 หลังแก้ให้หน้าสาธารณะเป็น ISR จริง</em></p>
+<h2 id="isr">ISR คืออะไร</h2>
+<p><strong>ISR = Incremental Static Regeneration</strong> (สร้างหน้า static ใหม่ทีละส่วนเมื่อถึงเวลา) คือการเก็บหน้าเว็บสำเร็จรูปไว้ แล้วสร้างใหม่เบื้องหลังเป็นรอบ</p>
+<table>
+<thead>
+<tr>
+<th>แบบ</th>
+<th>วิธีทำงาน</th>
+<th>ความเร็ว</th>
+<th>ข้อมูลสด</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dynamic (SSR)</td>
+<td>สร้างหน้าใหม่ทุกครั้งที่มีคนเข้า (ดึง DB, ประกอบ HTML)</td>
+<td>ช้า (~4 วินาทีบน prod ก่อนแก้)</td>
+<td>สดที่สุด</td>
+</tr>
+<tr>
+<td>Static</td>
+<td>สร้างครั้งเดียวตอน build</td>
+<td>เร็วมาก</td>
+<td>ไม่อัปเดตจนกว่าจะ build ใหม่</td>
+</tr>
+<tr>
+<td><strong>ISR</strong></td>
+<td>สร้างไว้ล่วงหน้า แล้วสร้างใหม่เบื้องหลังทุกช่วงเวลาที่กำหนด</td>
+<td>เร็วมาก</td>
+<td>เก่าได้ไม่เกินช่วงที่ตั้ง</td>
+</tr>
+</tbody>
+</table>
+<h2 id="export-const-revalidate-60">ทำงานอย่างไรกับเว็บเรา (<code>export const revalidate = 60</code>)</h2>
+<ol>
+<li>ตอน <code>next build</code> สร้างหน้า <code>/th</code> และ <code>/en</code> เก็บไว้ (<code>generateStaticParams</code> ใน <code>(public)/page.tsx</code>)</li>
+<li>ผู้เข้าชมได้หน้าสำเร็จรูปทันที ไม่รอ DB (ทดสอบในเครื่อง 6-59 ms)</li>
+<li>ถ้าหน้าที่เก็บไว้เก่าเกิน 60 วินาที คนถัดไปยังได้หน้าเก่าก่อน แต่ระบบสร้างหน้าใหม่เบื้องหลัง (<code>stale-while-revalidate</code>)</li>
+<li>คนต่อๆ ไปได้หน้าใหม่</li>
+</ol>
+<p>ตัวอย่าง: แก้ใน CMS ตอน 10:00:00 หน้าเว็บอาจยังเป็นของเก่าได้ถึงราว 10:01:00 ถ้าไม่มีอะไรสั่งอัปเดตทันที</p>
+<h2 id="_1">ผลกับงานของทีม</h2>
+<ul>
+<li>แก้ใน CMS แล้วเห็นบนเว็บ: ช้าได้สูงสุดราว 1 นาที แต่ hook <code>revalidatePath</code> (เช่น Awards, Popup) สั่งสร้างใหม่ทันที จึงมักเห็นเร็วกว่านั้น</li>
+<li>Popup (<code>/api/popup/active</code>) ยังเป็น dynamic จึงเปิด/ปิดตามเวลาได้ตรง</li>
+<li>หน้าสมาชิก (login, profile ฯลฯ) ยังเป็น dynamic เพราะต้องรู้ว่าใครล็อกอิน</li>
+<li>ปรับความสดด้วยตัวเลข <code>revalidate</code>: 30 = สดขึ้นแต่โหลด DB มากขึ้น, 300 = เบาขึ้นแต่เก่าได้นานขึ้น (ตอนนี้ 60)</li>
+</ul>
+<h2 id="isr-2569">เหตุการณ์ที่ ISR ไม่ทำงาน (พบ พ.ย. 2569)</h2>
+<p>อาการ: หน้าแรกบน production ตอบช้า TTFB ~3.7-4.1 วินาที ทุกครั้ง และ header เป็น <code>Cache-Control: private, no-cache, no-store</code> ทั้งที่ตั้ง <code>revalidate = 60</code> ไว้ (API และ <code>robots.txt</code> ตอบ 0.14 วินาที จึงไม่ใช่เซิร์ฟเวอร์ช้า)</p>
+<p>สาเหตุ: มีโค้ดเรียก <code>headers()</code> / <code>draftMode()</code> (ซึ่งอ่าน cookie/header) ใน segment <code>[locale]</code> สองจุด
+1. <code>(public)/layout.tsx</code> เรียก <code>draftMode()</code> ทุก request
+2. <code>[locale]/not-found.tsx</code> อ่าน header <code>x-phivara-locale</code> ทั้งใน <code>generateMetadata</code> และตัว component</p>
+<p><strong>กฎ: การเรียก dynamic API ที่ใดก็ตามใน route (layout, page, หรือ not-found.tsx) ทำให้ทั้ง route กลายเป็น dynamic ไม่ใช่แค่ตรงนั้น</strong> แล้ว <code>revalidate</code> ถูกเพิกเฉย</p>
+<p>วิธีแก้:
+- <code>(public)/layout.tsx</code>: เรียก <code>draftMode()</code> เฉพาะเมื่อ locale ยังไม่ live (กรณีรีวิวภาษาที่ยังไม่เปิด)
+- <code>not-found.tsx</code>: เลิกอ่าน header; title เป็นสองภาษา; เนื้อหา 404 เตรียมไว้ทุก locale ที่ live แล้ว <code>src/components/NotFoundByLocale.tsx</code> (client, <code>usePathname</code>) เลือกตาม URL
+- เพิ่ม <code>generateStaticParams</code> ที่หน้าแรก (th/en)</p>
+<h2 id="isr_1">วิธีตรวจว่าหน้าเป็น ISR จริงไหม</h2>
+<ol>
+<li>หลัง <code>npx next build</code> ดูตาราง route: <code>●</code> = ISR/static (ดี), <code>ƒ</code> = dynamic (render สดทุกครั้ง)
+   - หมายเหตุ: route ที่มี <code>[param]</code> แต่ไม่มี <code>generateStaticParams</code> จะโชว์ <code>ƒ</code> แม้ runtime เป็น ISR ให้ดู header จริงแทน</li>
+<li>ตรวจ header ของหน้า (บน local หลัง <code>next start</code> หรือบน production):
+   <code>bash
+   curl -sI https://www.phivaraphyathai.com/th | grep -i -E "cache-control|x-nextjs-cache"</code>
+   - ถูกต้อง: <code>Cache-Control: s-maxage=60, stale-while-revalidate=...</code> และ <code>x-nextjs-cache: HIT</code>
+   - ผิด: <code>private, no-cache, no-store</code> แปลว่ามีอะไรทำให้เป็น dynamic</li>
+<li>หาตัวการ: ชั่วคราวใส่ <code>export const dynamic = 'error'</code> + <code>generateStaticParams</code> ใน page แล้ว build ข้อความ error จะบอกว่า API ตัวไหน (<code>headers</code>, <code>cookies</code>) แล้วไล่ตัดโค้ดทีละส่วน (layout, not-found, component) ทดสอบทีละชั้น <strong>อย่าลืมเอา <code>dynamic = 'error'</code> ออกก่อน commit</strong></li>
+</ol>
+<h2 id="_2">ข้อควรระวังเมื่อเขียนโค้ดต่อ</h2>
+<ul>
+<li>อย่าใช้ <code>cookies()</code>, <code>headers()</code>, <code>draftMode()</code>, <code>searchParams</code> ใน layout/page/not-found ของหน้าสาธารณะ ถ้าจำเป็นต้องรู้ภาษาหรือ user ให้ใช้ params ของ route หรืออ่านฝั่ง client</li>
+<li>หน้าที่ต้อง dynamic จริง (สมาชิก, API) ปล่อยเป็น dynamic ได้ ไม่กระทบหน้าสาธารณะ</li>
+<li>ถ้าเพิ่มหน้าสาธารณะใหม่ ให้เช็ก header ตามข้อ 2 หลัง deploy ทุกครั้ง</li>
+</ul></div></body></html>

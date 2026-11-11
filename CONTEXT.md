@@ -2,7 +2,7 @@
 
 _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส.ค. – 28 ก.ย. 2569) · เขียนเมื่อ 1 ต.ค. 2569_
 
-เอกสารนี้เก็บ **บริบทและการตัดสินใจ** ที่ไม่อยู่ในโค้ดหรือ git history ส่วนเอกสารอื่น:
+เอกสารนี้เก็บ **บริบทและการตัดสินใจ** ที่ไม่อยู่ในโค้ดหรือ git history ส่วนเอกสารอื่น (Documents Portal อยู่ที่ `docs/index.html`: หน้า HTML เปิดในเบราว์เซอร์ได้, สร้างด้วย `python3 docs/build.py`):
 - `README.md` — setup local
 - `DEPLOY.md` — runbook deploy + troubleshooting (**อ่าน Part 2B และ 4.1 ก่อน deploy ทุกครั้ง**)
 - `PROJECT_STATUS.md` — สถานะงาน (อัปเดตล่าสุด 18 ส.ค. อาจเก่ากว่าเอกสารนี้)
@@ -116,6 +116,12 @@ _สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส
 - แก้: รูปหน้าแรกผ่าน Next image optimizer (`/_next/image`, WebP, ย่อตามขนาดจอ) ด้วย `src/lib/imageOpt.ts` (ฝั่ง server) + helper ซ้ำใน `public/js/main.js` (ฝั่ง browser **ต้องแก้ให้ตรงกัน**; ความกว้างต้องอยู่ใน deviceSizes/imageSizes ของ Next: 256/384/640/828/1080/1920 ไม่งั้น 400); hero ภาพแรก render บน server (`fetchPriority=high`) ภาพ 2–4 โหลดหลัง load; รูปอื่น `loading=lazy`; `images.minimumCacheTTL` 30 วัน; **คุณภาพ WebP 3 ระดับ** (`QUALITY` ใน `imageOpt.ts` และ `Q` ใน `main.js`, ต้องอยู่ใน `images.qualities` = [75, 85, 90] ไม่งั้น 400): hero 75, รูปถ่ายแบรนด์ (โปรแกรม/บทความ/สาขา/membership) 85, แพทย์และใบรางวัล 90 (ที่ 75 ใบหน้า/ตัวอักษรเล็กนุ่มลงเมื่อซูม); ตัวย่อรูปไม่ขยายรูปเล็ก (ความคมถูกจำกัดที่ความละเอียดไฟล์ต้นฉบับ: รางวัล 243 px, แพทย์ 500 px)
 - cache header ใน `next.config.mjs`: `/api/media/file/*` 30 วัน, `/assets` + `/logo` 7 วัน, `/css` + `/js` 1 ชม. (ไฟล์ CSS/JS ไม่มี hash ในชื่อ)
 - ยังไม่ได้ทำ: ลด CSS ที่บล็อกการแสดงผล, width/height ของรูป (CLS 0.059 ผ่านอยู่แล้ว), หน้าอื่นนอกจากหน้าแรกยังใช้รูปต้นฉบับ
+
+## 5D. ISR / การ cache หน้าสาธารณะ (พ.ย. 2569)
+- หน้าแรกเคยตอบช้า (TTFB ~4 วินาที, `Cache-Control: no-store`) เพราะ `revalidate = 60` ไม่ทำงาน: มี `draftMode()` ใน `(public)/layout.tsx` และ `headers()` ใน `[locale]/not-found.tsx` ซึ่งทำให้ **ทั้ง route** เป็น dynamic
+- **กฎ: ห้ามใช้ `cookies()` / `headers()` / `draftMode()` / `searchParams` ใน layout, page หรือ not-found.tsx ของหน้าสาธารณะ** ถ้าจำเป็นต้องรู้ภาษาให้ใช้ params หรืออ่านฝั่ง client (เช่น `NotFoundByLocale.tsx` ใช้ `usePathname`)
+- ตรวจหลัง deploy: `curl -sI https://www.phivaraphyathai.com/th | grep -i -E "cache-control|x-nextjs-cache"` ต้องเห็น `s-maxage=60` (ไม่ใช่ `no-store`)
+- รายละเอียด ISR และวิธีไล่หาสาเหตุ: `docs/notes/ISR-และการ-cache.md`
 
 ## 6. งานค้าง / ข้อควรทำต่อ
 

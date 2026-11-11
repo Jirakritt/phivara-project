@@ -2,7 +2,7 @@
 
 เว็บไซต์ PHIVARA Aesthetic & Longevity Center สร้างด้วย Next.js 15 + Payload CMS 3 (Postgres) รองรับหลายภาษา (ไทย/อังกฤษ เป็นหลัก)
 
-เอกสารอื่นที่เกี่ยวข้อง:
+เอกสารอื่นที่เกี่ยวข้อง (สารบัญทั้งหมด: `docs/README.md`):
 - `PROJECT_STATUS.md` — สรุปว่าทำอะไรเสร็จแล้ว/เหลืออะไร
 - `DEPLOY.md` — ขั้นตอน deploy ขึ้น production (VPS) แบบละเอียด, troubleshooting ที่เคยเจอจริง
 

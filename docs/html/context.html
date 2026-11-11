@@ -1,0 +1,225 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONTEXT.md</title><style>
+:root{--bg:#fbfaf8;--fg:#1f1d1a;--mut:#6b665f;--line:#e4dfd7;--card:#fff;--acc:#8a6a2f;--code:#f1ede6}
+@media (prefers-color-scheme:dark){:root{--bg:#161512;--fg:#ece8e1;--mut:#9d978d;--line:#34312b;--card:#1f1d19;--acc:#d3b36a;--code:#26231e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+a{color:var(--acc)}h1{font-size:1.7rem;margin:.2em 0 .4em}h2{margin-top:2em;padding-top:.6em;border-top:1px solid var(--line);font-size:1.3rem}h3{font-size:1.1rem}
+code{background:var(--code);padding:.1em .35em;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto}pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+blockquote{margin:1em 0;padding:.2em 1em;border-left:3px solid var(--acc);color:var(--mut)}
+.nav{font-size:.9rem;margin-bottom:12px}.mut{color:var(--mut)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+.card:hover{border-color:var(--acc)}.card b{display:block;color:var(--acc)}.card span{font-size:.9rem;color:var(--mut)}
+.tag{font-size:.72rem;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--mut)}
+</style></head><body><div class="wrap"><div class="nav"><a href="../index.html">← Documents Portal</a></div><h1 id="phivara-context-claude">PHIVARA — Context สำหรับคนที่เข้ามาทำงานต่อ (และ Claude)</h1>
+<p><em>สรุปจาก session Cowork "Phivara-design-html understanding" (6 ส.ค. – 28 ก.ย. 2569) · เขียนเมื่อ 1 ต.ค. 2569</em></p>
+<p>เอกสารนี้เก็บ <strong>บริบทและการตัดสินใจ</strong> ที่ไม่อยู่ในโค้ดหรือ git history ส่วนเอกสารอื่น (Documents Portal อยู่ที่ <code>docs/index.html</code>: หน้า HTML เปิดในเบราว์เซอร์ได้, สร้างด้วย <code>python3 docs/build.py</code>):
+- <code>README.md</code> — setup local
+- <code>DEPLOY.md</code> — runbook deploy + troubleshooting (<strong>อ่าน Part 2B และ 4.1 ก่อน deploy ทุกครั้ง</strong>)
+- <code>PROJECT_STATUS.md</code> — สถานะงาน (อัปเดตล่าสุด 18 ส.ค. อาจเก่ากว่าเอกสารนี้)</p>
+<blockquote>
+<p>⚠️ ห้ามใส่ secret/รหัสผ่านจริงในไฟล์นี้ — ค่า secret อยู่ใน <code>.env</code> เท่านั้น</p>
+</blockquote>
+<hr />
+<h2 id="1">1. ระบบคืออะไร</h2>
+<p>เว็บไซต์ + CMS ของ PHIVARA Aesthetic &amp; Longevity Center (คลินิก/โรงพยาบาลความงาม หลายสาขา)</p>
+<ul>
+<li><strong>Stack:</strong> Next.js 15 (App Router, route <code>[locale]</code>) + Payload CMS 3 + Postgres (<code>@payloadcms/db-postgres</code>)</li>
+<li><strong>ภาษา:</strong> th/en เป็นหลัก; ja/zh/vi/ar มี dictionary (แปลด้วยเครื่อง ยังไม่ผ่านคนตรวจ) แต่เนื้อหา CMS ยังว่าง</li>
+<li><strong>Repo:</strong> <code>git@github.com:Jirakritt/phivara-project.git</code> (branch <code>master</code>)</li>
+<li><strong>Production:</strong> VPS, pm2 (process ชื่อ <code>phivara</code>, fork mode) + nginx, โค้ดอยู่ใต้ <code>/var/www/</code> (ยืนยัน path จริงบน VPS ก่อนใช้ — session เก่าใช้ <code>/var/www/phivara</code>, session ล่าสุดใช้ <code>/var/www/phivara-project</code>)</li>
+<li><strong>โดเมน:</strong> ย้ายจาก <code>phivara.site</code> → <strong><code>www.phivaraphyathai.com</code></strong> เสร็จเมื่อ 28 ก.ย. 2569 (DNS, SSL, nginx, <code>NEXT_PUBLIC_SERVER_URL</code>, <code>EMAIL_FROM_ADDRESS</code> เรียบร้อย) <code>phivara.site</code> เลิกใช้แล้ว</li>
+</ul>
+<h3 id="_1">โครงสร้างหลัก</h3>
+<ul>
+<li><code>src/app/[locale]/(public)/…</code> — หน้าเว็บสาธารณะ; <code>(member)</code> — หน้าสมาชิก; <code>src/app/api/preview/</code> — preview ภาษาที่ยังไม่เปิด</li>
+<li><code>src/lib/*Data.ts</code> — data fetching จาก Payload (เช่น <code>doctorsData.ts</code>, <code>programsData.ts</code>)</li>
+<li><code>cms/collections/</code> — Articles, Awards, Branches, Doctors, Leads, Media, Members, MembershipTiers, Programs, Users</li>
+<li><code>cms/globals/</code> — Footer, TopBar, HomeHero, Membership, MemberPrivileges, Ecosystem, PrivacyPolicy, LanguageSettings, EmailSettings, DoctorDisplaySettings</li>
+<li><code>cms/migrations/</code> — migration ของ Payload (<code>.ts</code> + <code>.json</code> snapshot)</li>
+<li><code>phivara-design-html/</code> — <strong>mockup/ต้นแบบ HTML ที่อนุมัติแล้ว</strong> ใช้เป็น reference ก่อน implement (เช่น <code>doctor_detail-multibranch.html</code>, <code>member-profile-v2.html</code>, <code>cms/edit-language-settings-v2.html</code>)</li>
+<li><code>Project Documents/</code> — TOR, Proposal (theme ของบริษัท Codeworks), DES-PHIVARA-2569-001 (เอกสารยืนยัน UX/UI), Scope of Work, เอกสารส่งมอบงาน, spec VPS</li>
+</ul>
+<hr />
+<h2 id="2-claude">2. ข้อจำกัดในการทำงานกับ Claude (สำคัญ)</h2>
+<ul>
+<li>Claude <strong>แก้ไฟล์ในโปรเจกต์ได้โดยตรง</strong> แต่ <strong>ไม่มีสิทธิ์เข้า SSH/VPS, production DB หรือ <code>git push</code></strong></li>
+<li>งานฝั่ง server ทั้งหมด (git pull, migrate, build, pm2, backup, SQL) <strong>ผู้ใช้รันเอง</strong> แล้ววางผลลัพธ์ให้ Claude ตรวจ ทีละขั้น</li>
+<li>Claude ไม่เขียน <code>.env</code> จริง — บอกบรรทัดที่ต้องเพิ่มแทน (<code>.env.example</code> แก้ได้)</li>
+<li>ผู้ใช้ชอบให้ <strong>ตรวจใน local ก่อน commit/deploy</strong> และชอบ "วางแผน → confirm → ลงมือ" สำหรับงานใหญ่</li>
+<li>ตอบเป็นภาษาไทย</li>
+</ul>
+<hr />
+<h2 id="3">3. กฎ/บทเรียนที่ได้มาแบบเจ็บตัว (ห้ามลืม)</h2>
+<h3 id="deploy">Deploy</h3>
+<ol>
+<li><strong>ลำดับบน production: <code>pull</code> → <code>migrate</code> → <code>build</code> → <code>pm2 reload</code></strong> — ต้อง migrate <em>ก่อน</em> build เพราะ <code>next build</code> prerender หน้า (เช่น <code>/sitemap.xml</code>) โดยยิง DB จริง ถ้า schema ยังไม่มีจะ build พัง (เคยพลาดครั้งหนึ่ง กู้ได้โดยไม่เสียข้อมูล)</li>
+<li><strong>Backup DB ทุกครั้งก่อน migrate</strong> และ tag git HEAD เป็นจุด rollback — <code>pg_dump</code> ต้องดึง URI จาก <code>.env</code> ตรงๆ (<code>$DATABASE_URI</code> ไม่ได้ export ใน shell):
+   <code>pg_dump --format=custom "$(grep '^DATABASE_URI=' .env | cut -d '=' -f2-)" &gt; backup.dump</code></li>
+<li><strong>ใช้ <code>npx payload migrate</code> ตรงๆ ใน terminal ที่โต้ตอบได้</strong> — <code>npm run migrate</code> จะเงียบ (no-op) ถ้า Payload ถามยืนยัน ("data loss will occur…") ซึ่งเป็นคำเตือนทั่วไปเพราะเคยใช้ dev-push กับ DB นั้น ให้อ่าน SQL ใน migration ว่าเป็น additive จริงก่อนตอบ yes</li>
+<li><strong><code>payload migrate:create</code> เทียบกับ snapshot journal ของ migration เก่า ไม่ได้ introspect DB จริง</strong> — ถ้า DB เคยถูก dev-push (<code>next dev</code> push mode สร้างแถว <code>dev</code>, batch -1) จะเจอ error "already exists" ให้ตรวจ schema จริงก่อน แล้วค่อย reconcile <code>payload_migrations</code> ด้วย INSERT ตาม <code>DEPLOY.md</code> Part 4.1 (ห้ามเดา)</li>
+<li>สร้าง migration ต้องทำบนเครื่อง Mac ของผู้ใช้ที่ DB local ถูก sync แล้ว (sandbox ของ Claude รัน <code>tsx</code>/esbuild ไม่ได้ — platform ไม่ตรง และต่อ DB ไม่ได้)</li>
+<li>ถ้าแก้ไฟล์ generated บน server เพี้ยน ให้ <code>git checkout -- &lt;file&gt;</code> กู้ อย่า hand-patch</li>
+</ol>
+<h3 id="payload">Payload</h3>
+<ul>
+<li><code>update()</code> validate <strong>ทั้ง document</strong> ทุกครั้ง → script ที่แก้ field เดียวอาจ FAILED เพราะคำแปลที่ยังไม่ครบใน field อื่น (เห็นตอน backfill หมอ 143 รายการ — ไม่ block และไม่ได้เกิดจากโค้ดใหม่)</li>
+<li>field แบบ hasMany relationship ครั้งแรกของ collection จะสร้างตาราง <code>&lt;collection&gt;_rels</code> ใหม่ (+ ตาราง <code>_v_</code> สำหรับ drafts)</li>
+<li>Unpublish ผ่านเมนูใน admin เคยไม่ทำงาน → ใช้ REST: <code>PATCH /api/doctors/&lt;id&gt;</code> body <code>{"_status":"draft"}</code></li>
+</ul>
+<h3 id="css">CSS</h3>
+<ul>
+<li>เว็บโหลด <strong>3 stylesheet</strong> (<code>main.css</code>, <code>main_gpt.css</code>, <code>site-shell.css</code>) โดย <code>site-shell.css</code> โหลดท้ายสุดและชนะ — แก้ <code>main.css</code> อย่างเดียวอาจไม่มีผล</li>
+<li><code>site-shell.css</code> มี reset บังคับ <code>font-size</code> ขั้นต่ำของ <code>p/a/strong</code>; ถ้าต้องการขนาดเฉพาะให้ใส่ class <code>phivara-type-size-override</code> (มีใช้อยู่แล้วที่ <code>program/[slug]/page.tsx</code>)</li>
+<li>ผู้ใช้ทำ pass ปรับ font-size ทั้งเว็บเป็น ≥16px เพื่ออ่านง่าย (commit ช่วง 22–23 ก.ย.) — งานใหม่ควรคง baseline นี้</li>
+</ul>
+<hr />
+<h2 id="4">4. ฟีเจอร์หลักที่ทำแล้ว (สรุป)</h2>
+<table>
+<thead>
+<tr>
+<th>ฟีเจอร์</th>
+<th>สถานะ</th>
+<th>หมายเหตุ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>i18n + fallback/strict per-locale filtering</td>
+<td>production</td>
+<td>locale ที่ไม่ <code>publiclyLive</code> → 404 ที่ <code>(public)/layout.tsx</code> (ไม่ใช่ middleware)</td>
+</tr>
+<tr>
+<td>Privacy Policy แก้ผ่าน CMS</td>
+<td>production</td>
+<td>Global เดียว rich text ต่อภาษา; ยังมี placeholder ทางกฎหมายรอทีมกฎหมาย</td>
+</tr>
+<tr>
+<td>Language Management (card grid)</td>
+<td>production</td>
+<td><code>/admin</code></td>
+</tr>
+<tr>
+<td>Membership (tier, privilege, profile, สมัคร/ยืนยันอีเมล/ลืมรหัส)</td>
+<td>production</td>
+<td>ต้นแบบ <code>phivara-design-html/member-*.html</code>; อีเมลผ่าน Gmail API หรือ Microsoft Graph เลือกที่ CMS &gt; Email Settings</td>
+</tr>
+<tr>
+<td>Program price variants + LINE OA ต่อสาขา</td>
+<td>production</td>
+<td>LINE กลางแก้ได้ที่ Footer &gt; Social Links (<code>lineId</code>, <code>line</code>) มี fallback hardcode กันลิงก์ตาย</td>
+</tr>
+<tr>
+<td>TopBar LINE เป็นลิงก์จริง, <code>?booking=open</code> เปิด popup จอง (สำหรับ LINE Rich Menu)</td>
+<td>production</td>
+<td></td>
+</tr>
+<tr>
+<td>GTM (ลำดับก่อน GA4/Meta Pixel โดยตรง)</td>
+<td>โค้ดพร้อม + CSP อนุญาต Google แล้ว (ยังไม่ deploy)</td>
+<td>ID ใน production <code>.env</code> ยังว่าง; container ที่ทีมการตลาดมี = <code>GTM-THMQZMVR</code>; ตั้ง GTM แล้วระบบไม่ใช้ GA4 ตรง; <strong>นโยบาย PHIVARA (ทีมยืนยัน ต.ค. 2569): GTM/GA4 โหลดทุกหน้า ไม่ผูกกับปุ่มยอมรับคุกกี้ (ข้อความและปุ่มแบนเนอร์คงเดิม); ปุ่มคุมเฉพาะคุกกี้การตลาดผ่าน Google Consent Mode (ad_* denied จนกว่ากดยอมรับ) และ Meta Pixel ที่โหลดตรง; ทีมการตลาดต้องตั้งเงื่อนไข consent ของแท็กโฆษณาใน GTM; ข้อความแบนเนอร์เดิมเขียนว่าเลือกยอมรับ/ปฏิเสธการวิเคราะห์ได้ ให้ DPO/ทีมกฎหมายยืนยันว่าตรงกับนโยบาย</strong>; <code>next.config.mjs</code> CSP เพิ่ม googletagmanager.com / <em>.google-analytics.com / </em>.analytics.google.com (Meta Pixel และโดเมนแท็กอื่นต้องเพิ่มเมื่อใช้); แก้ <code>.env</code> ต้อง build + restart</td>
+</tr>
+<tr>
+<td>Popup วันพิเศษหน้าแรก</td>
+<td>commit แล้ว ยังไม่ deploy</td>
+<td>collection <code>popups</code> (<code>cms/collections/Popups.ts</code>) ตั้งรูป/วัน-เวลาเริ่ม-สิ้นสุด/สวิตช์เปิดปิด/ช่วงแสดงซ้ำ (ค่าเริ่มต้น 15 นาที); เสิร์ฟผ่าน <code>/api/popup/active</code> (คิดเวลาตอน request เพราะหน้าแรกเป็น ISR 60s); จำรอบแสดงใน localStorage <code>phivara_popup</code> (key = popup id + รูป → เปลี่ยนรูปแสดงทันที); แบนเนอร์คุกกี้รอจนปิด popup (<code>__PHIVARA_POPUP_GATE__</code>); migration <code>20261007_150536_popups</code> (เพิ่มตารางอย่างเดียว) — deploy ตามลำดับ pull → <code>npx payload migrate</code> → build → reload</td>
+</tr>
+<tr>
+<td>โหมดขาว-ดำ (Grayscale)</td>
+<td>commit แล้ว ยังไม่ deploy</td>
+<td>global <code>grayscale-mode</code> (<code>cms/globals/GrayscaleMode.ts</code>, admin เท่านั้นที่แก้ได้): สวิตช์ + ระดับ 0–100% ทีละ 10% + เริ่ม/หยุดแสดง (ไม่บังคับ); ใส่ <code>html{filter:grayscale(N%)}</code> ผ่าน <code>src/lib/grayscaleMode.ts</code> ใน <code>[locale]/layout.tsx</code> และ <code>global-not-found.tsx</code> (ไม่แตะ /admin); บันทึกแล้ว <code>revalidatePath('/', 'layout')</code> ล้างแคชทันที ส่วนเปลี่ยนตามเวลาอัตโนมัติช้าได้ ≤1 นาที (ISR หน้าแรก); migration <code>20261008_031314_grayscale</code> (เพิ่มอย่างเดียว)</td>
+</tr>
+<tr>
+<td>Splash เต็มจอ (โหมดของ Popup)</td>
+<td>commit แล้ว ยังไม่ deploy</td>
+<td><code>popups.displayMode</code> = modal (เดิม) หรือ fullscreen; fullscreen ใช้ <code>image</code> เป็นรูปเดสก์ท็อป 16:9 + <code>imageMobile</code> 9:16 (บังคับ) + <code>buttonLabel</code> (แยกภาษา) + <code>linkUrl</code> (ว่างหรือหน้าปัจจุบัน = ปุ่มแค่ปิด); <code>&lt;picture&gt;</code> เลือกรูปด้วย <code>(max-width:768px),(orientation:portrait)</code>; มีปุ่ม × เล็กกับ ESC ไม่ปิดเมื่อคลิกพื้นหลัง; ออกแบบรูปให้เนื้อหาอยู่กรอบกลาง 4:3 (เดสก์ท็อป) และเว้นข้างมือถือ ~12% เพราะ cover ตัดขอบ; migration <code>20261009_025241_popup_fullscreen</code> (เพิ่มอย่างเดียว); mockup: <code>phivara-design-html/popup-fullscreen-mockup.html</code></td>
+</tr>
+<tr>
+<td>สวิตช์เปิด/ปิดรางวัล (Awards)</td>
+<td>commit แล้ว ยังไม่ deploy</td>
+<td><code>awards.enabled</code> (ค่าเริ่มต้น true) กรองใน <code>homeData.ts</code> (<code>enabled !== false</code>); ปิดครบทุกรายการ → <code>(public)/page.tsx</code> ซ่อนทั้ง section AWARDS &amp; RECOGNITION และ <code>main.js</code> ป้องกัน <code>#awardTrack</code> ไม่มี; hook <code>revalidatePath('/', 'layout')</code> ล้างแคชเมื่อบันทึก/ลบ; migration <code>20261014_041234_awards_enabled</code> (เพิ่มอย่างเดียว)</td>
+</tr>
+<tr>
+<td>Preview ภาษาที่ยังไม่เปิด (Draft Mode + <code>PREVIEW_SECRET</code>)</td>
+<td>commit แล้ว (<code>89eca42</code>, <code>dc73c02</code>)</td>
+<td>ลิงก์ <code>/api/preview?secret=…&amp;redirect=/ja</code>; ปุ่มสร้างลิงก์อยู่ใน Language Management; ตรวจว่าตั้ง <code>PREVIEW_SECRET</code> ใน production <code>.env</code> แล้วหรือยัง</td>
+</tr>
+<tr>
+<td><strong>Doctor multi-branch CR</strong></td>
+<td>deploy production แล้ว 22 ก.ย.</td>
+<td>ดูหัวข้อ 5</td>
+</tr>
+<tr>
+<td>เอกสาร TOR / Proposal / DES-PHIVARA-2569-001 / Scope / ส่งมอบ</td>
+<td>เสร็จ</td>
+<td>Proposal ใช้ theme บริษัท Codeworks (ต่างจาก TOR)</td>
+</tr>
+<tr>
+<td>Slide deck "WHY-PHIVARA"</td>
+<td>ถูกลบออกจาก workspace แล้ว</td>
+<td>ผู้ใช้ไม่ต้องการแล้ว</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-doctor-multi-branch-cr">5. Doctor multi-branch CR (รายละเอียด)</h2>
+<p><strong>เป้าหมาย:</strong> หมอ 1 คน = 1 record ใน CMS ใช้ได้หลายสาขา (เดิมสร้าง record ซ้ำต่อสาขา แล้ว merge หน้า <code>/doctor</code> ด้วยการเทียบชื่อตรงตัว)</p>
+<ul>
+<li>Schema (<code>cms/collections/Doctors.ts</code>): <code>branches</code> (hasMany), <code>mainBranch</code> (ต้องอยู่ใน <code>branches</code>, กำหนดตำแหน่ง featured), <code>scheduleByBranch</code> (array <code>{branch, rows[]}</code>); field เดิม <code>branch</code>/<code>schedule</code> ยังเก็บไว้เพื่อ backward compat</li>
+<li>Listing (<code>src/lib/doctorsData.ts</code>, <code>/doctor/page.tsx</code>): ตัวเลือก expand เลือกสาขาแสดง <strong>เฉพาะ</strong> กลุ่มที่ยังเป็นหลาย record ซ้ำ (<code>needsBranchPicker</code> = จำนวน <code>recordSlug</code> ที่ต่างกัน &gt; 1); หมอ record เดียวหลายสาขาลิงก์เข้าโปรไฟล์ตรง</li>
+<li>โปรไฟล์ (<code>/doctor/[slug]</code>): badge ต่อสาขาใน hero, ตารางเวลาแบบ tab ต่อสาขา (<code>public/js/doctor-appointment-form.js</code> → <code>initScheduleBranchTabs</code>), dropdown จองแสดงเฉพาะสาขาของหมอ</li>
+<li>Migration: <code>cms/migrations/20260922_101544.ts</code> (commit <code>6a228bb</code>) · backfill: <code>cms/scripts/backfillDoctorBranches.ts</code> (production: set <code>branches/mainBranch</code> 12/12, <code>scheduleByBranch</code> 11/12)</li>
+</ul>
+<p><strong>ค้างอยู่ของ CR นี้</strong>
+- [ ] ตรวจหมอคนอื่นที่ยังมี record ซ้ำชื่อเดียวกัน (เช็คแล้วเฉพาะ นพ.ดุลยณัฐ อรัญยะปาล)
+- [ ] <strong>merge หมอซ้ำบน production</strong> — การ merge ที่ทำไปแล้วทำบน local DB เท่านั้น (เก็บ record ศรีราชา, ปิด/unpublish พญาไท 1, 2)
+- [ ] กรอก <code>scheduleByBranch</code> ของสาขาพญาไท 1/2 ด้วยข้อมูลจริง (Claude จงใจไม่แต่งข้อมูลเอง)
+- [ ] (nice-to-have) SEO slug + 301 redirect
+- [ ] (ภายหลัง) ลบ field <code>branch</code>/<code>schedule</code> เดิม และเลิกใช้ <code>groupDoctorsByName()</code> เมื่อ merge ครบ</p>
+<hr />
+<h2 id="5b-seo-google-search-console-2569">5B. SEO / Google Search Console (พ.ย. 2569)</h2>
+<ul>
+<li>ยืนยันโดเมน <code>phivaraphyathai.com</code> ใน Search Console ด้วย TXT record ที่ DNS (Hostinger, nameserver <code>*.dns-parking.com</code>) <strong>ห้ามลบ TXT นี้</strong>; ส่ง <code>https://www.phivaraphyathai.com/sitemap.xml</code> แล้ว (สถานะ Couldn't fetch ช่วงแรกเป็นเรื่องปกติ ตรวจซ้ำ)</li>
+<li>พบ "Duplicate, Google chose different canonical" ที่ <code>/th</code>: Google เลือก <code>/</code> เป็น canonical เพราะ redirect หน้ารากเป็น 307 ชั่วคราว → แก้เป็น <strong>308</strong> ใน <code>src/middleware.ts</code> + เพิ่ม hreflang (th/en/x-default) ที่หน้าแรก (<code>(public)/page.tsx</code> generateMetadata)</li>
+<li>โดเมนไม่มี www เคยตอบ 200 ซ้ำกับ www → ต้อง 301 ไป www ที่ nginx (ดู DEPLOY.md หัวข้อ redirect ไม่มี www)</li>
+<li>หลัง deploy ให้ Request indexing <code>/th</code> และ <code>/en</code> ใน Search Console แล้วรอ Google ประเมิน canonical ใหม่ (หลายวันถึงสัปดาห์)</li>
+</ul>
+<h2 id="5c-performance-2569">5C. Performance หน้าแรก (พ.ย. 2569)</h2>
+<ul>
+<li>PageSpeed มือถือ 62 (LCP 36.5s): หน้าแรกโหลดรูปต้นฉบับ ~21 MB (hero PNG 4 ภาพ ~2 MB, รูป membership 1.9 MB ถูก preload) และรูปจาก CMS/<code>public</code> ไม่มี cache</li>
+<li>แก้: รูปหน้าแรกผ่าน Next image optimizer (<code>/_next/image</code>, WebP, ย่อตามขนาดจอ) ด้วย <code>src/lib/imageOpt.ts</code> (ฝั่ง server) + helper ซ้ำใน <code>public/js/main.js</code> (ฝั่ง browser <strong>ต้องแก้ให้ตรงกัน</strong>; ความกว้างต้องอยู่ใน deviceSizes/imageSizes ของ Next: 256/384/640/828/1080/1920 ไม่งั้น 400); hero ภาพแรก render บน server (<code>fetchPriority=high</code>) ภาพ 2–4 โหลดหลัง load; รูปอื่น <code>loading=lazy</code>; <code>images.minimumCacheTTL</code> 30 วัน; <strong>คุณภาพ WebP 3 ระดับ</strong> (<code>QUALITY</code> ใน <code>imageOpt.ts</code> และ <code>Q</code> ใน <code>main.js</code>, ต้องอยู่ใน <code>images.qualities</code> = [75, 85, 90] ไม่งั้น 400): hero 75, รูปถ่ายแบรนด์ (โปรแกรม/บทความ/สาขา/membership) 85, แพทย์และใบรางวัล 90 (ที่ 75 ใบหน้า/ตัวอักษรเล็กนุ่มลงเมื่อซูม); ตัวย่อรูปไม่ขยายรูปเล็ก (ความคมถูกจำกัดที่ความละเอียดไฟล์ต้นฉบับ: รางวัล 243 px, แพทย์ 500 px)</li>
+<li>cache header ใน <code>next.config.mjs</code>: <code>/api/media/file/*</code> 30 วัน, <code>/assets</code> + <code>/logo</code> 7 วัน, <code>/css</code> + <code>/js</code> 1 ชม. (ไฟล์ CSS/JS ไม่มี hash ในชื่อ)</li>
+<li>ยังไม่ได้ทำ: ลด CSS ที่บล็อกการแสดงผล, width/height ของรูป (CLS 0.059 ผ่านอยู่แล้ว), หน้าอื่นนอกจากหน้าแรกยังใช้รูปต้นฉบับ</li>
+</ul>
+<h2 id="5d-isr-cache-2569">5D. ISR / การ cache หน้าสาธารณะ (พ.ย. 2569)</h2>
+<ul>
+<li>หน้าแรกเคยตอบช้า (TTFB ~4 วินาที, <code>Cache-Control: no-store</code>) เพราะ <code>revalidate = 60</code> ไม่ทำงาน: มี <code>draftMode()</code> ใน <code>(public)/layout.tsx</code> และ <code>headers()</code> ใน <code>[locale]/not-found.tsx</code> ซึ่งทำให้ <strong>ทั้ง route</strong> เป็น dynamic</li>
+<li><strong>กฎ: ห้ามใช้ <code>cookies()</code> / <code>headers()</code> / <code>draftMode()</code> / <code>searchParams</code> ใน layout, page หรือ not-found.tsx ของหน้าสาธารณะ</strong> ถ้าจำเป็นต้องรู้ภาษาให้ใช้ params หรืออ่านฝั่ง client (เช่น <code>NotFoundByLocale.tsx</code> ใช้ <code>usePathname</code>)</li>
+<li>ตรวจหลัง deploy: <code>curl -sI https://www.phivaraphyathai.com/th | grep -i -E "cache-control|x-nextjs-cache"</code> ต้องเห็น <code>s-maxage=60</code> (ไม่ใช่ <code>no-store</code>)</li>
+<li>รายละเอียด ISR และวิธีไล่หาสาเหตุ: <code>docs/notes/ISR-และการ-cache.md</code></li>
+</ul>
+<h2 id="6">6. งานค้าง / ข้อควรทำต่อ</h2>
+<p><strong>จาก <code>PROJECT_STATUS.md</code> (ยังจริงอยู่ ณ ตอนนี้ ยกเว้นที่ระบุ)</strong>
+- [ ] เนื้อหา ja/zh/vi/ar (CMS ว่าง; dictionary เป็น machine translation ยังไม่ผ่านเจ้าของภาษา — ใช้ระบบ preview ให้เจ้าของภาษาตรวจก่อนเปิด)
+- [ ] Privacy Policy placeholder ทางกฎหมาย
+- [ ] ผูก Analytics (GTM/GA4/Meta Pixel ใน production <code>.env</code>)
+- [ ] DB backup อัตโนมัติ (ตอนนี้ทำมือก่อน deploy เท่านั้น)
+- [ ] Media อยู่บน disk ของ VPS — ต้อง monitor พื้นที่/วางแผนย้าย S3-compatible
+- [ ] ลบ/เปลี่ยนรหัส test accounts (มี member ทดสอบตอน QA สมัครสมาชิก)
+- [ ] GitHub Actions auto-deploy (ตั้งใจให้ <code>migrate</code> ทำมือเสมอ)</p>
+<p><strong>พบระหว่างทำงาน</strong>
+- [ ] <code>RegisterForm.tsx</code> / <code>memberAuthClient.ts</code> (<code>parseError()</code>) แสดง error ดิบของ Payload เช่น "The following field is invalid: email" เมื่ออีเมลซ้ำ — ควรแปลงเป็นข้อความไทย/อังกฤษที่เข้าใจง่าย
+- [ ] เมื่อย้ายโดเมน: ตรวจ cert เดิม <code>phivara.site</code> (certbot ยัง auto-renew อยู่) และถ้าต้องการ 301 redirect <code>phivara.site</code> → โดเมนใหม่ ต้องเพิ่ม server block ใหม่ใน nginx (ผู้ใช้ถามขั้นตอนไว้เฉยๆ ยังไม่ได้ทำ — ถ้าทำ ต้องใช้ cert เดิมที่ <code>/etc/letsencrypt/live/phivara.site/</code>)
+- [ ] อัปเดตค่าที่ hardcode ชื่อโดเมนเก่า (ถ้ามี) เช่น ใน <code>DEPLOY.md</code>, sitemap/robots, ข้อความอีเมล และ <code>webFetchAllowedUrls</code> — ควร <code>grep -r "phivara.site"</code> ตรวจ
+- [ ] <code>PROJECT_STATUS.md</code> ล้าหลัง — ควรอัปเดตให้ตรงกับตารางหัวข้อ 4</p>
+<hr />
+<h2 id="7">7. ข้อมูลอ้างอิงเร็ว</h2>
+<ul>
+<li>Admin: <code>/admin</code> (Payload)</li>
+<li>Migration status: <code>npx payload migrate:status</code> (อ่านอย่างเดียว ใช้เช็คก่อน/หลัง deploy)</li>
+<li>Type check: <code>npx tsc --noEmit</code></li>
+<li>Deploy นับจากที่ push แล้ว: ดู <code>DEPLOY.md</code> Part 2B ขั้นที่ 1–10</li>
+</ul></div></body></html>
