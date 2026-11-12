@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { hasAnyRole } from '../access/roles'
+import { fontSizeEditor } from '../fields/richTextFontSize'
 
 // Source: privacy-policy.html — a single legal page, not a repeatable
 // collection. Modeled as one localized Lexical rich-text field (not split
@@ -28,6 +29,7 @@ export const PrivacyPolicy: GlobalConfig = {
       name: 'body',
       type: 'richText',
       localized: true,
+      editor: fontSizeEditor, // font size menu (cms/fields/richTextFontSize.ts)
       admin: {
         description:
           'เนื้อหานโยบายความเป็นส่วนตัวทั้งหมด (หัวข้อ ย่อหน้า และ list) แก้ไขได้อิสระต่อภาษา ยังคงมีข้อความ [...] เป็น placeholder ที่ต้องรอทีมกฎหมายกรอกก่อนเผยแพร่จริง หากภาษาใดยังไม่มีเนื้อหา หน้าเว็บจะแสดงฉบับอังกฤษแทน (หรือไทย หากอังกฤษก็ยังไม่มี)',

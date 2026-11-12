@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { hasAnyRole } from '../access/roles'
+import { fontSizeEditor } from '../fields/richTextFontSize'
 
 // Source: ecosystem.html — a single landing page (like membership.html),
 // not a repeatable collection, so this is a Payload Global too. The 4
@@ -48,6 +49,7 @@ export const Ecosystem: GlobalConfig = {
                   name: 'lead',
                   type: 'richText',
                   localized: true,
+                  editor: fontSizeEditor, // font size menu (cms/fields/richTextFontSize.ts)
                 },
               ],
             },

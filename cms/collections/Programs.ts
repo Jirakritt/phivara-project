@@ -8,8 +8,7 @@ import {
 } from '../access/roles'
 import { seoFields } from '../fields/seo'
 import { trimSlug } from '../fields/trimSlug'
-import { FixedToolbarFeature, TextStateFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
-import { fontSizeState } from '../fields/fontSizes'
+import { fontSizeEditor } from '../fields/richTextFontSize'
 
 // Source: js/main.js `homepagePrograms`, program.html card markup (card-code,
 // card-tag, card-list, card-foot) and program_detail.html `programs` object
@@ -166,17 +165,8 @@ export const Programs: CollectionConfig = {
               name: 'aboutProgram',
               type: 'richText',
               localized: true,
-              // Adds a "font size" dropdown (14px to 30px, step 2) to this field's
-              // toolbar. The shared root editor (payload.config.ts) stays unchanged;
-              // only this field gets the extra feature, because only the program
-              // detail page renders text sizes (see RichTextContent.tsx).
-              editor: lexicalEditor({
-                features: ({ defaultFeatures }) => [
-                  ...defaultFeatures,
-                  FixedToolbarFeature(),
-                  TextStateFeature({ state: fontSizeState }),
-                ],
-              }),
+              // Font size menu (14px to 30px): see cms/fields/richTextFontSize.ts
+              editor: fontSizeEditor,
               admin: { description: 'Full "เกี่ยวกับโปรแกรมตรวจ" description on the detail page' },
             },
             {

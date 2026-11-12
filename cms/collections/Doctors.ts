@@ -11,6 +11,7 @@ import {
 import { seoFields } from '../fields/seo'
 import { autoSlugFromNameEn } from './hooks/autoSlugFromNameEn'
 import { trimSlug } from '../fields/trimSlug'
+import { fontSizeEditor } from '../fields/richTextFontSize'
 
 // Source: js/doctor.js (listing card fields) + js/doctor-detail.js
 // (hardcoded per-doctor detail content — this collection normalizes that
@@ -274,6 +275,7 @@ export const Doctors: CollectionConfig = {
               name: 'bio',
               type: 'richText',
               localized: true,
+              editor: fontSizeEditor, // font size menu (cms/fields/richTextFontSize.ts)
             },
             {
               name: 'credentialGroups',
