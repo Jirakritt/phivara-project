@@ -210,3 +210,14 @@ export default function RichTextContent({ doc, className }: { doc: LexNode; clas
   if (!nodes.length) return null
   return <div className={`rich-text${className ? ` ${className}` : ''}`}>{nodes.map(renderBlock)}</div>
 }
+
+// Building blocks for pages that need their own block-level layout around the CMS
+// content (e.g. the article page: table of contents, lead paragraph, note box,
+// insight cards) but still want inline formatting, images, alignment and font sizes.
+export {
+  blockStyle as blockStyleOf,
+  isEmptyBlock as isEmptyBlockNode,
+  renderInline as renderInlineNodes,
+  renderList as renderListNode,
+  renderUpload as renderUploadNode,
+}

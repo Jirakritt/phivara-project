@@ -21,13 +21,17 @@ export interface ArticleCard {
 }
 
 export interface ArticleBodyBlock {
-  type: 'paragraph' | 'heading' | 'quote' | 'list'
+  type: 'paragraph' | 'heading' | 'quote' | 'list' | 'upload' | 'rule'
   tag?: 'h2' | 'h3'
   id?: string
   textTh: string
   textEn: string
   isLead?: boolean
   insightStepsAfter?: boolean
+  // Raw Lexical node: the page renders inline formatting / images / alignment /
+  // font sizes from it (textTh/textEn above stay plain text for the TOC).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node?: any
   // Only set when type === 'list' — Lexical's `list` node (bullet/number)
   // and its `listitem` children never carried a flat .text value, so the
   // old parseBodyBlocks fell through to the generic paragraph case and
@@ -197,7 +201,7 @@ export async function getOtherArticles(locale: LocaleCode, excludeSlug: string, 
 }
 
 // Walks a Lexical root and pulls the plain text back out.
-function parseBodyBlocks(doc: any): ArticleBodyBlock[] {
+export function parseBodyBlocks(doc: any): ArticleBodyBlock[] {
   const nodes: any[] = doc?.root?.children || []
   const getText = (node: any) => (node?.children || []).map((c: any) => c.text || '').join('')
 
@@ -209,10 +213,10 @@ function parseBodyBlocks(doc: any): ArticleBodyBlock[] {
     if (node.type === 'heading') {
       const id = slugifyHeading(text)
       const insightStepsAfter = nextNode?.type === 'heading'
-      return { type: 'heading' as const, tag: node.tag, id, textTh: text, textEn: text, insightStepsAfter }
+      return { type: 'heading' as const, tag: node.tag, id, textTh: text, textEn: text, insightStepsAfter, node }
     }
     if (node.type === 'quote') {
-      return { type: 'quote' as const, textTh: text, textEn: text }
+      return { type: 'quote' as const, textTh: text, textEn: text, node }
     }
     if (node.type === 'list') {
       // A `list` node's children are `listitem` nodes, not text nodes, so
@@ -231,11 +235,15 @@ function parseBodyBlocks(doc: any): ArticleBodyBlock[] {
           return { textTh: itemText, textEn: itemText }
         })
       const listType = node.listType === 'number' ? 'number' as const : 'bullet' as const
-      return { type: 'list' as const, listType, items, textTh: '', textEn: '' }
+      return { type: 'list' as const, listType, items, textTh: '', textEn: '', node }
     }
-    const isLead = !sawFirstParagraph
-    sawFirstParagraph = true
-    return { type: 'paragraph' as const, textTh: text, textEn: text, isLead }
+    if (node.type === 'upload') return { type: 'upload' as const, textTh: '', textEn: '', node }
+    if (node.type === 'horizontalrule') return { type: 'rule' as const, textTh: '', textEn: '', node }
+    // The lead style goes to the first paragraph that actually has text.
+    const hasText = text.trim().length > 0
+    const isLead = hasText && !sawFirstParagraph
+    if (hasText) sawFirstParagraph = true
+    return { type: 'paragraph' as const, textTh: text, textEn: text, isLead, node }
   })
 }
 

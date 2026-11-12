@@ -13,7 +13,8 @@
 .rich-text sub,
 .rich-text sup,
 .rich-text a{font-size:inherit!important;line-height:inherit!important}
-.rich-text strong{font-weight:600}
+/* Editors often bold a whole heading; that must not change the heading weight/colour */
+.rich-text :is(h1,h2,h3,h4,h5,h6) strong{font-weight:inherit!important;color:inherit!important}
 
 /* Empty paragraphs are spacers; a run of them collapses to one */
 .rich-text p.rt-empty{height:.9em;margin:0!important}

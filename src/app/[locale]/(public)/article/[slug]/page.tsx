@@ -3,6 +3,7 @@ import Script from 'next/script'
 import type { ReactNode } from 'react'
 
 import { getArticleDetail, getOtherArticles, getPopularArticles } from '@/lib/articlesData'
+import { renderArticleBody } from '@/components/ArticleBody'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
@@ -100,6 +101,7 @@ export default async function ArticleDetailPage({
       <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/journal-card.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/article-detail.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/rich-text.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-article-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
@@ -156,56 +158,8 @@ export default async function ArticleDetailPage({
                 ))}
               </aside>
 
-              <article className="prose" id="articleBody">
-                {article.bodyBlocks.map((block, i) => {
-                  const showNoteBox = article.noteBox && block.type === 'heading' && block.insightStepsAfter
-                  const nodes: ReactNode[] = []
-                  if (showNoteBox && article.noteBox) {
-                    nodes.push(
-                      <div className="note-box" key={`note-${i}`}>
-                        <strong>{t(article.noteBox.headingTh, article.noteBox.headingEn)}</strong>
-                        <p>{t(article.noteBox.textTh, article.noteBox.textEn)}</p>
-                      </div>
-                    )
-                  }
-                  if (block.type === 'heading') {
-                    const Tag = block.tag === 'h3' ? 'h3' : 'h2'
-                    nodes.push(
-                      <Tag key={i} id={block.id}>{t(block.textTh, block.textEn)}</Tag>
-                    )
-                    if (block.insightStepsAfter && article.insightSteps.length > 0) {
-                      nodes.push(
-                        <div className="insight-grid" key={`insight-${i}`}>
-                          {article.insightSteps.map((step, si) => (
-                            <div className="insight-card" key={si}>
-                              <span className="insight-no">{String(si + 1).padStart(2, '0')}</span>
-                              <h3>{t(step.titleTh, step.titleEn)}</h3>
-                              <p>{t(step.descriptionTh, step.descriptionEn)}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )
-                    }
-                  } else if (block.type === 'quote') {
-                    nodes.push(
-                      <blockquote key={i}>{t(block.textTh, block.textEn)}</blockquote>
-                    )
-                  } else if (block.type === 'list') {
-                    const ListTag = block.listType === 'number' ? 'ol' : 'ul'
-                    nodes.push(
-                      <ListTag key={i}>
-                        {(block.items || []).map((item, li) => (
-                          <li key={li}>{t(item.textTh, item.textEn)}</li>
-                        ))}
-                      </ListTag>
-                    )
-                  } else {
-                    nodes.push(
-                      <p key={i} className={block.isLead ? 'lead' : undefined}>{t(block.textTh, block.textEn)}</p>
-                    )
-                  }
-                  return nodes
-                })}
+              <article className="prose rich-text" id="articleBody">
+                {renderArticleBody(article, t)}
 
                 {article.tags.length > 0 && (
                   <div className="article-tags">
