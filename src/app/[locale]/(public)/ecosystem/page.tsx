@@ -1,6 +1,7 @@
 import Script from 'next/script'
 import type { ReactNode } from 'react'
 
+import RichTextContent from '@/components/RichTextContent'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getEcosystemContent } from '@/lib/ecosystemData'
@@ -56,6 +57,7 @@ export default async function EcosystemPage({ params }: { params: Promise<{ loca
     <>
       <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/ecosystem.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/rich-text.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-ecosystem-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
@@ -112,19 +114,7 @@ export default async function EcosystemPage({ params }: { params: Promise<{ loca
                 <span>{t(content.hero.headlineLine1Th, content.hero.headlineLine1En)}</span><br />
                 <span>{t(content.hero.headlineLine2Th, content.hero.headlineLine2En)}</span>
               </h1>
-              {content.hero.leadBlocks.map((block, i): ReactNode => {
-                if (block.type === 'list') {
-                  const ListTag = block.listType === 'number' ? 'ol' : 'ul'
-                  return (
-                    <ListTag key={i} className="eco-hero-lead-list">
-                      {(block.items || []).map((item, li) => (
-                        <li key={li}>{item}</li>
-                      ))}
-                    </ListTag>
-                  )
-                }
-                return <p key={i}>{block.text}</p>
-              })}
+              <RichTextContent doc={content.hero.leadDoc} />
               <div className="cta-row">
                 <a href="#vipModalOverlay" className="btn btn-outline-dark vip-trigger">{t('จองปรึกษาส่วนตัว', 'Book a Private Consultation')}</a>
               </div>

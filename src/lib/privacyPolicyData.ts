@@ -26,6 +26,8 @@ function formatEnDate(dateString: string): string {
 
 export interface PrivacyPolicyContent {
   blocks: RichTextBlock[]
+  // Raw Lexical doc of the chosen language: rendered by <RichTextContent>.
+  bodyDoc: unknown
   // The Global's own `updatedAt` (shared across every locale's content,
   // since they all live on the same document row) — replaces the old
   // hardcoded "[วันที่ประกาศใช้]" placeholder with the real last-edit date
@@ -69,6 +71,7 @@ export async function getPrivacyPolicyContent(locale: LocaleCode): Promise<Priva
 
   return {
     blocks,
+    bodyDoc: source?.body ?? null,
     updatedAtTh: updatedAtRaw ? formatThaiDate(updatedAtRaw) : null,
     updatedAtEn: updatedAtRaw ? formatEnDate(updatedAtRaw) : null,
   }

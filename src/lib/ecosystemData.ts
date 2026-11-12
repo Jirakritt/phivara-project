@@ -55,6 +55,8 @@ export interface EcosystemContent {
     // this carries the already-locale-resolved doc as parsed blocks instead.
     // See src/app/[locale]/(public)/ecosystem/page.tsx for how these render.
     leadBlocks: RichTextBlock[]
+    // Raw Lexical doc: rendered by <RichTextContent> (formatting, lists, sizes).
+    leadDoc: unknown
   }
   disciplines: EcosystemDiscipline[]
   closingCta: {
@@ -141,6 +143,7 @@ export async function getEcosystemContent(locale: LocaleCode): Promise<Ecosystem
       headlineLine2Th: headlineLine2,
       headlineLine2En: headlineLine2,
       leadBlocks: parseRichTextBlocks(leadDoc),
+      leadDoc,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     disciplines: (th.disciplines || []).map((d: any, i: number) => {

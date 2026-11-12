@@ -1,6 +1,7 @@
 import Script from 'next/script'
 import type { ReactNode } from 'react'
 
+import RichTextContent from '@/components/RichTextContent'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getExpertiseCategoryOptions, getHomeData } from '@/lib/homeData'
@@ -53,6 +54,7 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<{ 
     <>
       <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/article-detail.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/rich-text.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-privacy-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 
@@ -91,30 +93,7 @@ export default async function PrivacyPolicyPage({ params }: { params: Promise<{ 
         <section style={{ padding: '20px 0 80px' }}>
           <div className="wrap" style={{ maxWidth: 860 }}>
             <article className="prose">
-              {policy.blocks.map((block, i): ReactNode => {
-                if (block.type === 'heading') {
-                  const Tag = block.tag === 'h3' ? 'h3' : 'h2'
-                  return (
-                    <Tag key={i} id={block.id}>
-                      {block.text}
-                    </Tag>
-                  )
-                }
-                if (block.type === 'quote') {
-                  return <blockquote key={i}>{block.text}</blockquote>
-                }
-                if (block.type === 'list') {
-                  const ListTag = block.listType === 'number' ? 'ol' : 'ul'
-                  return (
-                    <ListTag key={i}>
-                      {(block.items || []).map((item, li) => (
-                        <li key={li}>{item}</li>
-                      ))}
-                    </ListTag>
-                  )
-                }
-                return <p key={i}>{block.text}</p>
-              })}
+              <RichTextContent doc={policy.bodyDoc} />
             </article>
           </div>
         </section>

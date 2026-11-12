@@ -74,6 +74,8 @@ export interface DoctorRichProfile {
   tags: Array<{ th: string; en: string }>
   bioTh: string
   bioEn: string
+  // Raw Lexical doc: rendered by <RichTextContent> so formatting/images/alignment show up.
+  bioDoc: unknown
   credentialGroups: Array<{
     headingTh: string
     headingEn: string
@@ -349,6 +351,7 @@ export async function getDoctorDetail(slug: string, locale: LocaleCode): Promise
         }),
         bioTh: lexicalToPlainText(doc.bio),
         bioEn: lexicalToPlainText(doc.bio),
+        bioDoc: doc.bio ?? null,
         credentialGroups: (doc.credentialGroups || []).map((group: any) => ({
           headingTh: group.heading || '',
           headingEn: group.heading || '',

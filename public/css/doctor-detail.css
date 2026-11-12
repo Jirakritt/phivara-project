@@ -242,6 +242,11 @@
   word-break: break-word;
 }
 
+/* The bio is now rendered from the CMS rich text (a <div class="doc-bio"> holding
+   paragraphs); give those paragraphs the same look the old single <p> had. */
+.doc-bio p{margin:0 0 .9em;font-size:16px !important;line-height:1.8 !important;color:var(--ink-soft)}
+.doc-bio p:last-child{margin-bottom:0}
+
 /* The booking CTA's label is built dynamically as "จองนัดหมายปรึกษา
    {doctor.nameTh}" (see doctor/[slug]/page.tsx) — much longer than the
    short, fixed button labels the global .btn{white-space:nowrap} rule

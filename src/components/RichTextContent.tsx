@@ -92,6 +92,19 @@ function renderInline(children: LexNode[] | undefined): ReactNode[] {
   })
 }
 
+// Anchor id for a heading (same slug rule as src/lib/richText.ts), so
+// /page#section links keep working now that pages render the document directly.
+function headingId(node: LexNode): string | undefined {
+  const text = (node.children || []).map((c: LexNode) => c.text || '').join('')
+  const id = text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+  return id || undefined
+}
+
 function isEmptyBlock(node: LexNode): boolean {
   const kids: LexNode[] = node.children || []
   return kids.every((c) => c.type === 'text' && !String(c.text || '').trim())
@@ -158,7 +171,7 @@ function renderBlock(node: LexNode, key: number): ReactNode {
     case 'heading': {
       const Tag = (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(node.tag) ? node.tag : 'h3') as 'h3'
       return (
-        <Tag key={key} style={blockStyle(node)}>
+        <Tag key={key} id={headingId(node)} style={blockStyle(node)}>
           {renderInline(node.children)}
         </Tag>
       )

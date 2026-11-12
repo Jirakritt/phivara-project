@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Script from 'next/script'
 
+import RichTextContent, { hasRichTextContent } from '@/components/RichTextContent'
 import SiteFooter from '@/components/SiteFooter'
 import SiteHeader from '@/components/SiteHeader'
 import { getDoctorDetail, getDoctorDisplayBackgrounds, getDoctorJournalArticles } from '@/lib/doctorsData'
@@ -124,6 +125,7 @@ export default async function DoctorDetailPage({
       <link rel="stylesheet" href={`/css/main.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/vip-modal.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
       <link rel="stylesheet" href={`/css/doctor-detail.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
+      <link rel="stylesheet" href={`/css/rich-text.css?v=${process.env.NEXT_PUBLIC_ASSET_VERSION}`} />
 
       <Script id="phivara-doctor-detail-data" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: dataScript }} />
 
@@ -199,9 +201,13 @@ export default async function DoctorDetailPage({
                 </div>
               )}
 
-              {rich?.bioTh && (
+              {rich && hasRichTextContent(rich.bioDoc) ? (
+                <div className="doc-bio">
+                  <RichTextContent doc={rich.bioDoc} />
+                </div>
+              ) : rich?.bioTh ? (
                 <p className="doc-bio">{t(rich.bioTh, rich.bioEn)}</p>
-              )}
+              ) : null}
 
               <div className="doc-cta-group">
                 <a href="#contact" className="btn btn-gold vip-trigger" data-doc-name={doctor.nameTh}>

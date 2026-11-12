@@ -1,0 +1,46 @@
+/* Shared styles for CMS rich text rendered by <RichTextContent>. Works on any page.
+   Selectors are only `.rich-text ...` (no page wrappers). !important is needed
+   because main.css / site-shell.css lock p, span, strong, li and a sizes with
+   id-level specificity (e.g. span 12px, strong 14px). */
+
+/* Inline formatting never changes the size of the block around it */
+.rich-text span,
+.rich-text strong,
+.rich-text em,
+.rich-text u,
+.rich-text s,
+.rich-text code,
+.rich-text sub,
+.rich-text sup,
+.rich-text a{font-size:inherit!important;line-height:inherit!important}
+.rich-text strong{font-weight:600}
+
+/* Empty paragraphs are spacers; a run of them collapses to one */
+.rich-text p.rt-empty{height:.9em;margin:0!important}
+.rich-text p.rt-empty + p.rt-empty{display:none}
+
+/* Images inserted in the editor */
+.rich-text .rt-figure{margin:20px 0}
+.rich-text .rt-figure img{border-radius:12px}
+.rich-text .rt-figure figcaption{margin-top:6px;font-size:13px}
+
+/* Font-size presets from the CMS "font size" menu (14 to 30px, 2px steps).
+   Keep in sync with cms/fields/fontSizes.ts and RichTextContent.tsx. */
+.rich-text .rt-fs-14{font-size:14px!important;line-height:1.7!important}
+.rich-text .rt-fs-16{font-size:16px!important;line-height:1.7!important}
+.rich-text .rt-fs-18{font-size:18px!important;line-height:1.7!important}
+.rich-text .rt-fs-20{font-size:20px!important;line-height:1.7!important}
+.rich-text .rt-fs-22{font-size:22px!important;line-height:1.7!important}
+.rich-text .rt-fs-24{font-size:24px!important;line-height:1.7!important}
+.rich-text .rt-fs-26{font-size:26px!important;line-height:1.7!important}
+.rich-text .rt-fs-28{font-size:28px!important;line-height:1.7!important}
+.rich-text .rt-fs-30{font-size:30px!important;line-height:1.7!important}
+
+/* On phones the largest sizes are reduced so a 30px line never overflows */
+@media (max-width:768px){
+  .rich-text .rt-fs-22{font-size:21px!important}
+  .rich-text .rt-fs-24{font-size:22px!important}
+  .rich-text .rt-fs-26{font-size:23px!important}
+  .rich-text .rt-fs-28{font-size:24px!important}
+  .rich-text .rt-fs-30{font-size:25px!important}
+}
