@@ -8,6 +8,7 @@ import {
 } from '../access/roles'
 import { seoFields } from '../fields/seo'
 import { trimSlug } from '../fields/trimSlug'
+import { fontSizeEditor } from '../fields/richTextFontSize'
 
 // Source: js/main.js `journalArticles` (card fields) + article_detail.html
 // (full prose body, TOC-driven H2 sections, blockquote, note-box,
@@ -91,6 +92,7 @@ export const Articles: CollectionConfig = {
               name: 'body',
               type: 'richText',
               localized: true,
+              editor: fontSizeEditor, // font size menu (cms/fields/richTextFontSize.ts)
               admin: {
                 description:
                   'Main prose. H2 sections build the table of contents automatically; use blocks below for note-box / insight-grid components seen on the current site.',
