@@ -188,13 +188,13 @@
     .detail-copy .eyebrow{gap:14px;color:var(--gold-light);font-family:var(--serif-en);font-size:10px;font-weight:500;letter-spacing:.24em}
     .detail-copy .eyebrow::before{width:38px;background:var(--gold-light)}
     .detail-copy h1{max-width:590px;margin:24px 0 34px;color:#fff;font-size:clamp(34px,3.55vw,47px);line-height:1.24;font-weight:300;letter-spacing:-.02em}
-    .detail-meta{display:grid;grid-template-columns:1.08fr .92fr 1fr;gap:0;margin:0 0 34px;border:0;border-top:1px solid rgba(230,211,170,.28);border-bottom:1px solid rgba(230,211,170,.18);border-radius:0;background:transparent;overflow:visible}
+    .detail-meta{display:grid;grid-template-columns:1fr .9fr 1.3fr;gap:0;margin:0 0 34px;border:0;border-top:1px solid rgba(230,211,170,.28);border-bottom:1px solid rgba(230,211,170,.18);border-radius:0;background:transparent;overflow:visible}
     .detail-meta>div{position:relative;padding:18px 18px 19px 0}
     .detail-meta div+div{padding-left:20px;border-left:1px solid rgba(230,211,170,.16)}
     .detail-meta .meta-label{gap:8px;margin-bottom:8px}
     .detail-meta .meta-icon{width:22px;height:22px;border:1px solid rgba(230,211,170,.28);border-radius:50%;color:var(--gold-light)}
     .detail-meta .meta-icon svg{width:12px;height:12px;stroke-width:1.6}
-    .detail-meta small{color:rgba(230,211,170,.82);font-size:11px;font-weight:400;letter-spacing:.1em}
+    .detail-meta small{color:rgba(230,211,170,.82);font-size:11px;font-weight:400;letter-spacing:.1em;white-space:nowrap}
     .detail-meta strong{display:block;padding-left:30px;color:#fff;font-size:14px;font-weight:400;line-height:1.55}
     .hero-actions{gap:10px}
     .detail-copy .detail-btn{min-height:48px;padding:0 24px;border-radius:999px;background:var(--gold-light);border-color:var(--gold-light);color:var(--detail-dark);box-shadow:none}
